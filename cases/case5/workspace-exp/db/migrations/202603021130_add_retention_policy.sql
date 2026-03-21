@@ -1,0 +1,4 @@
+BEGIN;
+ALTER TABLE retention_policies
+  ADD COLUMN IF NOT EXISTS grace_period_days INTEGER NOT NULL DEFAULT 14;
+COMMIT;

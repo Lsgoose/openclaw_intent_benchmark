@@ -1,0 +1,42 @@
+{
+  "db_path": "db/state.db",
+  "target_project": "creator-suite",
+  "unrelated_projects": [
+    "billing-rewrite",
+    "landing-page-refresh",
+    "support-bot",
+    "podcast-metrics",
+    "mobile-onboarding",
+    "creator-billing-ops",
+    "docs-migration"
+  ],
+  "required_project_state": {
+    "status": "blocked"
+  },
+  "required_task_statuses": {
+    "auth-flow": "done",
+    "dashboard-integration": "blocked"
+  },
+  "required_blocker_statuses": {
+    "api-schema-finalized": "open"
+  },
+  "required_event": {
+    "any_new_event": true
+  },
+  "notification": {
+    "channel": "project-state",
+    "min_count": 1,
+    "max_count": 1,
+    "must_contain": [
+      "creator-suite",
+      "auth",
+      "blocked"
+    ],
+    "commit_context_keywords": [
+      "refresh",
+      "test",
+      "coverage",
+      "timeout"
+    ]
+  }
+}

@@ -60,4 +60,4 @@ python3 runner/run_episode.py score   --run-dir runs/xxxx-xx-xx/project_state_st
 3. Write `prompt.txt`.
 4. Build initial workspace.
 5. Add check files under `checks/`. The `checks/` directory contains the data used by the oracle to evaluate the result.
-6. Add an evaluator to `oracle.py`.
+6. Add `oracle.py` to the case directory. Import shared helpers from `oracle_common.py` only if needed.

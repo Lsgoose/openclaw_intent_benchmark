@@ -18,7 +18,6 @@ import yaml
 
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
-ORACLE_PATH = REPO_ROOT / 'oracle.py'
 RUNS_ROOT = REPO_ROOT / 'runs'
 ENVIRONMENT_PATH = REPO_ROOT / 'environment.json'
 DEFAULT_BASE_URL = 'http://127.0.0.1:19789'
@@ -32,6 +31,17 @@ TRACE_POLL_INTERVAL_SEC = 0.25
 
 def load_case_config(case_dir: Path) -> dict[str, Any]:
     return yaml.safe_load((case_dir / 'case.yaml').read_text(encoding='utf-8'))
+
+
+def resolve_oracle_entry(case_dir: Path, case_config: dict[str, Any]) -> Path:
+    oracle_config = case_config.get('oracle', {})
+    if not isinstance(oracle_config, dict):
+        raise ValueError('case oracle config must be an object')
+    entry = str(oracle_config.get('entry', 'oracle.py')).strip() or 'oracle.py'
+    oracle_path = (case_dir / entry).resolve()
+    if not oracle_path.exists():
+        raise FileNotFoundError(f'missing oracle entry: {oracle_path}')
+    return oracle_path
 
 
 def load_run_metadata(run_dir: Path) -> dict[str, Any]:
@@ -452,11 +462,13 @@ def write_transcript(run_dir: Path, prompt: str, assistant_text: str) -> None:
 
 
 def evaluate_run(case_dir: Path, run_dir: Path) -> dict[str, Any]:
+    case_config = load_case_config(case_dir)
+    oracle_entry = resolve_oracle_entry(case_dir, case_config)
     output_path = run_dir / 'score.json'
     subprocess.run(
         [
             sys.executable,
-            str(ORACLE_PATH),
+            str(oracle_entry),
             '--case-dir',
             str(case_dir),
             '--run-dir',
@@ -464,7 +476,7 @@ def evaluate_run(case_dir: Path, run_dir: Path) -> dict[str, Any]:
             '--output',
             str(output_path),
         ],
-        cwd=REPO_ROOT,
+        cwd=case_dir,
         check=True,
         capture_output=True,
         text=True,

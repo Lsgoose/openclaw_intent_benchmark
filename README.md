@@ -1,5 +1,13 @@
 ## Run
 
+`cases/` is now grouped into five category folders:
+
+- `cases/01_information_intelligence_agent`
+- `cases/02_content_creation_pipeline_agent`
+- `cases/03_platform_automation_agent`
+- `cases/04_personal_ai_second_brain_agent`
+- `cases/05_self_healing_devops_agent`
+
 1. Open sandbox in config.
 
 2. Create `environment.json` in the repo root.
@@ -15,7 +23,7 @@
 Use `run` to do `prepare + execute` in one command.
 
 ```bash
-python3 runner/run_episode.py run   --case-dir cases/project_state_standup_001   --run-date xxxx-xx-xx   --run-name runN
+python3 runner/run_episode.py run   --case-dir cases/02_content_creation_pipeline_agent/project_state_standup_001   --run-date xxxx-xx-xx   --run-name runN
 ```
 
 Then score it:
@@ -28,7 +36,7 @@ python3 runner/run_episode.py score   --run-dir runs/xxxx-xx-xx/project_state_st
 
 Prepare a run.
 ```bash
-python3 runner/run_episode.py prepare   --case-dir cases/project_state_standup_001   --run-date xxxx-xx-xx   --run-name runN
+python3 runner/run_episode.py prepare   --case-dir cases/02_content_creation_pipeline_agent/project_state_standup_001   --run-date xxxx-xx-xx   --run-name runN
 ```
 
 Execute. The runner will automatically:
@@ -47,7 +55,7 @@ python3 runner/run_episode.py score   --run-dir runs/xxxx-xx-xx/project_state_st
 
 ## Add a new cases
 
-1. Create a new directory under `cases/`
+1. Create a new directory under the appropriate category in `cases/`
 2. Define the case in `case.yaml`. It tells the runner where to find the prompt and initial workspace, and tells the oracle which evaluator to use.
 3. Write `prompt.txt`.
 4. Build initial workspace.

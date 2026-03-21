@@ -651,13 +651,13 @@ def build_parser() -> argparse.ArgumentParser:
     subparsers = parser.add_subparsers(dest='subcommand', required=True)
 
     prepare = subparsers.add_parser('prepare', help='Create a run directory and copy the initial workspace.')
-    prepare.add_argument('--case-dir', required=True, help='Path to a case directory, for example cases/project_state_standup_001.')
+    prepare.add_argument('--case-dir', required=True, help='Path to a case directory, for example cases/02_content_creation_pipeline_agent/project_state_standup_001.')
     prepare.add_argument('--run-date', default=str(date.today()), help='Date partition for the run directory.')
     prepare.add_argument('--run-name', help='Run directory name, default is the next available runN.')
     prepare.set_defaults(handler=prepare_command)
 
     run = subparsers.add_parser('run', help='Prepare a run directory and immediately execute it against OpenClaw.')
-    run.add_argument('--case-dir', required=True, help='Path to a case directory, for example cases/project_state_standup_001.')
+    run.add_argument('--case-dir', required=True, help='Path to a case directory, for example cases/02_content_creation_pipeline_agent/project_state_standup_001.')
     run.add_argument('--run-date', default=str(date.today()), help='Date partition for the run directory.')
     run.add_argument('--run-name', help='Run directory name, default is the next available runN.')
     run.add_argument('--base-url', help='OpenClaw Gateway base URL. Defaults to environment.json/openclaw.json when available.')

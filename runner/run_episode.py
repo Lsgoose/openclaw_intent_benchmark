@@ -29,8 +29,102 @@ DEFAULT_WORKSPACE_APPLY_WAIT_SEC = 2.0
 TRACE_POLL_INTERVAL_SEC = 0.25
 
 
+def emit_progress(message: str) -> None:
+    print(message, file=sys.stderr, flush=True)
+
+
+def format_progress(case_id: str, phase: str, *, index: int | None = None, total: int | None = None) -> str:
+    if index is not None and total is not None:
+        return f'[{index}/{total}] {case_id}: {phase}'
+    return f'{case_id}: {phase}'
+
+
 def load_case_config(case_dir: Path) -> dict[str, Any]:
     return yaml.safe_load((case_dir / 'case.yaml').read_text(encoding='utf-8'))
+
+
+def discover_cases(cases_root: Path = REPO_ROOT / 'cases') -> list[dict[str, Any]]:
+    discovered: list[dict[str, Any]] = []
+    for category_dir in sorted(cases_root.iterdir()) if cases_root.exists() else []:
+        if not category_dir.is_dir() or category_dir.name.startswith('.') or category_dir.name == '__pycache__':
+            continue
+        for case_dir in sorted(category_dir.iterdir()):
+            if not case_dir.is_dir() or case_dir.name.startswith('.') or case_dir.name == '__pycache__':
+                continue
+            case_file = case_dir / 'case.yaml'
+            if not case_file.exists():
+                continue
+            case_config = load_case_config(case_dir)
+            case_id = str(case_config.get('case_id', '')).strip()
+            if not case_id:
+                raise ValueError(f'missing case_id in {case_file}')
+            discovered.append(
+                {
+                    'case_id': case_id,
+                    'category': category_dir.name,
+                    'case_dir': case_dir.resolve(),
+                }
+            )
+    return discovered
+
+
+def resolve_run_case_dirs(args: argparse.Namespace) -> list[Path]:
+    case_dirs_arg = list(getattr(args, 'case_dirs', []) or [])
+    case_ids = list(getattr(args, 'case_ids', []) or [])
+    categories = list(getattr(args, 'categories', []) or [])
+    run_all = bool(getattr(args, 'run_all', False))
+
+    if run_all and (case_dirs_arg or case_ids or categories):
+        raise ValueError('--all cannot be combined with --case-dir, --case, or --category')
+
+    discovered = discover_cases()
+    by_id: dict[str, Path] = {}
+    by_category: dict[str, list[Path]] = {}
+    for item in discovered:
+        case_id = str(item['case_id'])
+        case_dir = Path(item['case_dir'])
+        category = str(item['category'])
+        if case_id in by_id:
+            raise ValueError(f'duplicate discovered case_id: {case_id}')
+        by_id[case_id] = case_dir
+        by_category.setdefault(category, []).append(case_dir)
+
+    selected: dict[str, Path] = {}
+
+    def add_case_dir(case_dir: Path) -> None:
+        resolved = case_dir.resolve()
+        selected[str(resolved)] = resolved
+
+    if run_all:
+        for item in discovered:
+            add_case_dir(Path(item['case_dir']))
+
+    for category in categories:
+        category_value = str(category).strip()
+        if category_value not in by_category:
+            available = ', '.join(sorted(by_category))
+            raise ValueError(f'unknown category: {category_value}. Available categories: {available}')
+        for case_dir in by_category[category_value]:
+            add_case_dir(case_dir)
+
+    for case_id in case_ids:
+        case_id_value = str(case_id).strip()
+        case_dir = by_id.get(case_id_value)
+        if case_dir is None:
+            available = ', '.join(sorted(by_id))
+            raise ValueError(f'unknown case id: {case_id_value}. Available case ids: {available}')
+        add_case_dir(case_dir)
+
+    for raw_case_dir in case_dirs_arg:
+        case_dir = Path(raw_case_dir).resolve()
+        if not (case_dir / 'case.yaml').exists():
+            raise FileNotFoundError(f'missing case.yaml in case directory: {case_dir}')
+        add_case_dir(case_dir)
+
+    if not selected:
+        raise ValueError('select cases with --all, --category, --case, or --case-dir')
+
+    return list(selected.values())
 
 
 def resolve_oracle_entry(case_dir: Path, case_config: dict[str, Any]) -> Path:
@@ -511,16 +605,80 @@ def prepare_command(args: argparse.Namespace) -> int:
 
 def execute_command(args: argparse.Namespace) -> int:
     run_dir = Path(args.run_dir).resolve()
-    return execute_run(run_dir, args)
+    exit_code, _ = execute_run(run_dir, args, emit_summary=True)
+    return exit_code
+
+
+def run_many(case_dirs: list[Path], args: argparse.Namespace) -> int:
+    results: list[dict[str, Any]] = []
+    overall_exit_code = 0
+    total = len(case_dirs)
+
+    for idx, case_dir in enumerate(case_dirs, start=1):
+        case_id = case_dir.name
+        category = case_dir.parent.name
+        try:
+            emit_progress(format_progress(case_id, 'prepare', index=idx, total=total))
+            case_config, run_dir, _ = prepare_run(case_dir, args)
+            case_id = str(case_config['case_id'])
+            emit_progress(format_progress(case_id, 'execute', index=idx, total=total))
+            exit_code, summary = execute_run(run_dir, args, emit_summary=False)
+            result = dict(summary)
+            result['case_dir'] = str(case_dir)
+            result['category'] = category
+            result['exit_code'] = exit_code
+            results.append(result)
+            overall_exit_code = max(overall_exit_code, exit_code)
+            emit_progress(format_progress(case_id, f'complete (score={summary.get("score")})', index=idx, total=total))
+        except Exception as exc:
+            emit_progress(format_progress(case_id, f'failed ({type(exc).__name__}: {exc})', index=idx, total=total))
+            results.append(
+                {
+                    'case_id': case_id,
+                    'case_dir': str(case_dir),
+                    'category': category,
+                    'task_success': False,
+                    'safety_success': False,
+                    'score': 0.0,
+                    'error': f'{type(exc).__name__}: {exc}',
+                }
+            )
+            overall_exit_code = max(overall_exit_code, 1)
+
+    batch_summary = {
+        'mode': 'batch_run',
+        'selected_count': len(case_dirs),
+        'completed_count': sum(1 for item in results if 'error' not in item),
+        'error_count': sum(1 for item in results if 'error' in item),
+        'task_success_count': sum(1 for item in results if bool(item.get('task_success'))),
+        'safety_success_count': sum(1 for item in results if bool(item.get('safety_success'))),
+        'full_success_count': sum(
+            1
+            for item in results
+            if bool(item.get('task_success')) and bool(item.get('safety_success'))
+        ),
+        'results': results,
+    }
+    print(json.dumps(batch_summary, indent=2))
+    return overall_exit_code
 
 
 def run_command(args: argparse.Namespace) -> int:
-    case_dir = Path(args.case_dir).resolve()
-    _, run_dir, _ = prepare_run(case_dir, args)
-    return execute_run(run_dir, args)
+    case_dirs = resolve_run_case_dirs(args)
+    if len(case_dirs) == 1:
+        case_dir = case_dirs[0]
+        case_id = case_dir.name
+        emit_progress(format_progress(case_id, 'prepare', index=1, total=1))
+        case_config, run_dir, _ = prepare_run(case_dir, args)
+        case_id = str(case_config['case_id'])
+        emit_progress(format_progress(case_id, 'execute', index=1, total=1))
+        exit_code, summary = execute_run(run_dir, args, emit_summary=True)
+        emit_progress(format_progress(case_id, f'complete (score={summary.get("score")})', index=1, total=1))
+        return exit_code
+    return run_many(case_dirs, args)
 
 
-def execute_run(run_dir: Path, args: argparse.Namespace) -> int:
+def execute_run(run_dir: Path, args: argparse.Namespace, *, emit_summary: bool = True) -> tuple[int, dict[str, Any]]:
     metadata = load_run_metadata(run_dir)
     case_dir = Path(metadata['case_dir'])
     case_config = load_case_config(case_dir)
@@ -610,8 +768,9 @@ def execute_run(run_dir: Path, args: argparse.Namespace) -> int:
             'error': invocation.get('error'),
             'trace_file': (trace_copy or {}).get('copied_path'),
         }
-        print(json.dumps(summary, indent=2))
-        return 2
+        if emit_summary:
+            print(json.dumps(summary, indent=2))
+        return 2, summary
 
     if parsed_response is None:
         metadata = update_metadata(
@@ -629,9 +788,11 @@ def execute_run(run_dir: Path, args: argparse.Namespace) -> int:
             'error': 'Gateway returned a non-JSON response to /v1/chat/completions',
             'trace_file': (trace_copy or {}).get('copied_path'),
         }
-        print(json.dumps(summary, indent=2))
-        return 2
+        if emit_summary:
+            print(json.dumps(summary, indent=2))
+        return 2, summary
 
+    emit_progress(format_progress(str(metadata['case_id']), 'score'))
     score = evaluate_run(case_dir, run_dir)
     summary = {
         'case_id': metadata['case_id'],
@@ -645,8 +806,9 @@ def execute_run(run_dir: Path, args: argparse.Namespace) -> int:
         'score': score['score'],
         'trace_file': (trace_copy or {}).get('copied_path'),
     }
-    print(json.dumps(summary, indent=2))
-    return 0
+    if emit_summary:
+        print(json.dumps(summary, indent=2))
+    return 0, summary
 
 
 def score_command(args: argparse.Namespace) -> int:
@@ -668,8 +830,11 @@ def build_parser() -> argparse.ArgumentParser:
     prepare.add_argument('--run-name', help='Run directory name, default is the next available runN.')
     prepare.set_defaults(handler=prepare_command)
 
-    run = subparsers.add_parser('run', help='Prepare a run directory and immediately execute it against OpenClaw.')
-    run.add_argument('--case-dir', required=True, help='Path to a case directory, for example cases/02_content_creation_pipeline_agent/project_state_standup_001.')
+    run = subparsers.add_parser('run', help='Prepare and execute one case, multiple cases, a category, or all cases.')
+    run.add_argument('--case-dir', dest='case_dirs', action='append', help='Exact path to a case directory. Repeat to run multiple explicit case paths.')
+    run.add_argument('--case', dest='case_ids', action='append', help='Case id to run, for example project_state_standup_001. Repeat to run multiple cases.')
+    run.add_argument('--category', dest='categories', action='append', help='Category directory under cases/, for example 02_content_creation_pipeline_agent. Repeat to run multiple categories.')
+    run.add_argument('--all', dest='run_all', action='store_true', help='Run all discovered cases.')
     run.add_argument('--run-date', default=str(date.today()), help='Date partition for the run directory.')
     run.add_argument('--run-name', help='Run directory name, default is the next available runN.')
     run.add_argument('--base-url', help='OpenClaw Gateway base URL. Defaults to environment.json/openclaw.json when available.')

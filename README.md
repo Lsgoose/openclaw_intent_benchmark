@@ -22,11 +22,33 @@
 
 Use `run` to do `prepare + execute` in one command.
 
+Run one case by `case_id`:
+
 ```bash
-python3 runner/run_episode.py run   --case-dir cases/02_content_creation_pipeline_agent/project_state_standup_001   --run-date xxxx-xx-xx   --run-name runN
+python3 runner/run_episode.py run   --case project_state_standup_001   --run-date xxxx-xx-xx   --run-name runN
 ```
 
-Then score it:
+Run multiple specific cases:
+
+```bash
+python3 runner/run_episode.py run   --case project_state_standup_001   --case game_hotfix_review_001   --run-date xxxx-xx-xx
+```
+
+Run one category:
+
+```bash
+python3 runner/run_episode.py run   --category 02_content_creation_pipeline_agent   --run-date xxxx-xx-xx
+```
+
+Run all discovered cases:
+
+```bash
+python3 runner/run_episode.py run   --all   --run-date xxxx-xx-xx
+```
+
+You can still run an exact path with `--case-dir` if needed.
+
+Then score a single run with:
 
 ```bash
 python3 runner/run_episode.py score   --run-dir runs/xxxx-xx-xx/project_state_standup_001/runN

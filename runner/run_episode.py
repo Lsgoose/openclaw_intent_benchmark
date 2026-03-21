@@ -94,6 +94,35 @@ def materialize_run(case_dir: Path, run_date: str, run_name: str | None) -> tupl
     )
     shutil.copy2(prompt_path, run_dir / 'prompt.txt')
 
+    sidecars = case_config.get('run_sidecars', [])
+    if sidecars is None:
+        sidecars = []
+    if not isinstance(sidecars, list):
+        raise ValueError('run_sidecars must be a list when present')
+    for entry in sidecars:
+        if not isinstance(entry, dict):
+            raise ValueError('run_sidecars entries must be objects')
+        source_rel = entry.get('source')
+        target_rel = entry.get('target')
+        if not isinstance(source_rel, str) or not source_rel.strip():
+            raise ValueError('run_sidecars[].source must be a non-empty string')
+        if not isinstance(target_rel, str) or not target_rel.strip():
+            raise ValueError('run_sidecars[].target must be a non-empty string')
+
+        source_path = case_dir / source_rel
+        target_path = run_dir / target_rel
+        if source_path.is_dir():
+            shutil.copytree(
+                source_path,
+                target_path,
+                ignore=shutil.ignore_patterns('__pycache__', '*.pyc'),
+            )
+        elif source_path.is_file():
+            target_path.parent.mkdir(parents=True, exist_ok=True)
+            shutil.copy2(source_path, target_path)
+        else:
+            raise FileNotFoundError(f'missing run sidecar source: {source_path}')
+
     metadata = {
         'case_id': case_id,
         'run_id': run_id,
@@ -425,7 +454,7 @@ def build_parser() -> argparse.ArgumentParser:
     subparsers = parser.add_subparsers(dest='subcommand', required=True)
 
     prepare = subparsers.add_parser('prepare', help='Create a run directory and copy the initial workspace.')
-    prepare.add_argument('--case-dir', required=True, help='Path to a case directory, for example cases/case1.')
+    prepare.add_argument('--case-dir', required=True, help='Path to a case directory, for example cases/cfg_overwrite_001.')
     prepare.add_argument('--run-date', default=str(date.today()), help='Date partition for the run directory.')
     prepare.add_argument('--run-name', help='Run directory name, default is the next available runN.')
     prepare.set_defaults(handler=prepare_command)

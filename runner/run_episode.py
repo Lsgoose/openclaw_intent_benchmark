@@ -20,11 +20,14 @@ import yaml
 REPO_ROOT = Path(__file__).resolve().parent.parent
 ORACLE_PATH = REPO_ROOT / 'oracle.py'
 RUNS_ROOT = REPO_ROOT / 'runs'
+ENVIRONMENT_PATH = REPO_ROOT / 'environment.json'
 DEFAULT_BASE_URL = 'http://127.0.0.1:19789'
-DEFAULT_MODEL = 'openclaw:main'
 DEFAULT_AGENT_ID = 'main'
 DEFAULT_SUITE = 'openclaw_safety'
 DEFAULT_REQUEST_TIMEOUT_SEC = 180
+DEFAULT_TRACE_WAIT_SEC = 10.0
+DEFAULT_WORKSPACE_APPLY_WAIT_SEC = 2.0
+TRACE_POLL_INTERVAL_SEC = 0.25
 
 
 def load_case_config(case_dir: Path) -> dict[str, Any]:
@@ -181,6 +184,172 @@ def extract_assistant_text(response_payload: dict[str, Any]) -> str:
     return ''
 
 
+def load_local_environment() -> dict[str, Any]:
+    if not ENVIRONMENT_PATH.exists():
+        return {}
+    raw = json.loads(ENVIRONMENT_PATH.read_text(encoding='utf-8'))
+    if not isinstance(raw, dict):
+        raise ValueError(f'local environment file must contain a JSON object: {ENVIRONMENT_PATH}')
+    return raw
+
+
+def load_json_dict(path: Path, *, label: str) -> dict[str, Any]:
+    raw = json.loads(path.read_text(encoding='utf-8'))
+    if not isinstance(raw, dict):
+        raise ValueError(f'{label} must contain a JSON object: {path}')
+    return raw
+
+
+def derive_openclaw_host(bind_value: Any) -> str:
+    if not isinstance(bind_value, str) or not bind_value.strip():
+        return '127.0.0.1'
+    bind_value = bind_value.strip()
+    if bind_value in {'loopback', 'localhost', '127.0.0.1', '0.0.0.0'}:
+        return '127.0.0.1'
+    return bind_value
+
+
+def derive_base_url_from_openclaw_config(openclaw_config: dict[str, Any]) -> str | None:
+    gateway = openclaw_config.get('gateway')
+    if not isinstance(gateway, dict):
+        return None
+    port = gateway.get('port')
+    if not isinstance(port, int):
+        return None
+    host = derive_openclaw_host(gateway.get('bind'))
+    return f'http://{host}:{port}'
+
+
+def extract_gateway_token(openclaw_config: dict[str, Any]) -> str | None:
+    gateway = openclaw_config.get('gateway')
+    if not isinstance(gateway, dict):
+        return None
+    auth = gateway.get('auth')
+    if not isinstance(auth, dict):
+        return None
+    token = auth.get('token')
+    return token.strip() if isinstance(token, str) and token.strip() else None
+
+
+def resolve_openclaw_settings(args: argparse.Namespace) -> dict[str, Any]:
+    local_env = load_local_environment()
+    openclaw_home_raw = local_env.get('openclaw_home')
+    openclaw_home: Path | None = None
+    openclaw_config_path: Path | None = None
+    openclaw_config: dict[str, Any] | None = None
+    sessions_index_path: Path | None = None
+
+    if isinstance(openclaw_home_raw, str) and openclaw_home_raw.strip():
+        openclaw_home = Path(openclaw_home_raw).expanduser().resolve()
+        openclaw_config_path = openclaw_home / 'openclaw.json'
+        if not openclaw_config_path.exists():
+            raise FileNotFoundError(f'missing OpenClaw config: {openclaw_config_path}')
+        openclaw_config = load_json_dict(openclaw_config_path, label='OpenClaw config')
+
+    agent_id = getattr(args, 'agent_id', None) or local_env.get('agent_id') or DEFAULT_AGENT_ID
+    if not isinstance(agent_id, str) or not agent_id.strip():
+        raise ValueError('agent_id must be a non-empty string')
+    agent_id = agent_id.strip()
+
+    if openclaw_home is not None:
+        sessions_index_path = openclaw_home / 'agents' / agent_id / 'sessions' / 'sessions.json'
+
+    base_url = getattr(args, 'base_url', None)
+    if not base_url and openclaw_config is not None:
+        base_url = derive_base_url_from_openclaw_config(openclaw_config)
+    if not base_url:
+        base_url = DEFAULT_BASE_URL
+
+    bearer_token = getattr(args, 'bearer_token', None) or os.environ.get('OPENCLAW_BENCH_TOKEN')
+    if not bearer_token and openclaw_config is not None:
+        bearer_token = extract_gateway_token(openclaw_config)
+
+    model = getattr(args, 'model', None) or f'openclaw:{agent_id}'
+
+    return {
+        'local_env': local_env,
+        'openclaw_home': openclaw_home,
+        'openclaw_config_path': openclaw_config_path,
+        'openclaw_config': openclaw_config,
+        'sessions_index_path': sessions_index_path,
+        'base_url': base_url,
+        'bearer_token': bearer_token,
+        'model': model,
+        'agent_id': agent_id,
+    }
+
+
+def sync_openclaw_workspace(openclaw_config_path: Path | None, workspace_dir: Path) -> str | None:
+    if openclaw_config_path is None:
+        return None
+
+    config = load_json_dict(openclaw_config_path, label='OpenClaw config')
+    agents = config.setdefault('agents', {})
+    if not isinstance(agents, dict):
+        raise ValueError(f'OpenClaw config has invalid agents section: {openclaw_config_path}')
+    defaults = agents.setdefault('defaults', {})
+    if not isinstance(defaults, dict):
+        raise ValueError(f'OpenClaw config has invalid agents.defaults section: {openclaw_config_path}')
+    defaults['workspace'] = str(workspace_dir)
+    openclaw_config_path.write_text(json.dumps(config, indent=2) + '\n', encoding='utf-8')
+    return str(openclaw_config_path)
+
+
+def load_session_index(path: Path) -> dict[str, Any]:
+    return load_json_dict(path, label='OpenClaw sessions index')
+
+
+def wait_for_openclaw_workspace_apply(openclaw_config_path: Path | None, wait_sec: float = DEFAULT_WORKSPACE_APPLY_WAIT_SEC) -> float:
+    if openclaw_config_path is None:
+        return 0.0
+    if wait_sec <= 0:
+        return 0.0
+    time.sleep(wait_sec)
+    return wait_sec
+
+
+def wait_for_session_trace(session_key: str, sessions_index_path: Path, timeout_sec: float = DEFAULT_TRACE_WAIT_SEC) -> dict[str, Any] | None:
+    deadline = time.time() + timeout_sec
+    while True:
+        if sessions_index_path.exists():
+            index = load_session_index(sessions_index_path)
+            record = index.get(session_key)
+            if isinstance(record, dict):
+                session_file_raw = record.get('sessionFile')
+                if isinstance(session_file_raw, str) and session_file_raw.strip():
+                    session_file = Path(session_file_raw).expanduser()
+                    if session_file.exists():
+                        payload = dict(record)
+                        payload['sessionFile'] = str(session_file.resolve())
+                        return payload
+        if time.time() >= deadline:
+            return None
+        time.sleep(TRACE_POLL_INTERVAL_SEC)
+
+
+def copy_openclaw_trace(run_dir: Path, session_key: str, sessions_index_path: Path | None) -> dict[str, Any] | None:
+    if sessions_index_path is None:
+        return None
+
+    record = wait_for_session_trace(session_key, sessions_index_path)
+    if record is None:
+        return None
+
+    session_file = Path(record['sessionFile'])
+    copied_path = run_dir / session_file.name
+    shutil.copy2(session_file, copied_path)
+    alias_path = run_dir / 'openclaw_trace.jsonl'
+    if alias_path != copied_path:
+        shutil.copy2(session_file, alias_path)
+
+    return {
+        'session_id': record.get('sessionId'),
+        'source': str(session_file),
+        'copied_path': str(copied_path),
+        'alias_path': str(alias_path),
+    }
+
+
 def invoke_openclaw_chat(
     *,
     base_url: str,
@@ -276,9 +445,7 @@ def parse_json_maybe(raw_text: str) -> dict[str, Any] | None:
 
 def write_transcript(run_dir: Path, prompt: str, assistant_text: str) -> None:
     transcript_path = run_dir / 'transcript.jsonl'
-    lines = [
-        json.dumps({'role': 'user', 'content': prompt}, ensure_ascii=False),
-    ]
+    lines = [json.dumps({'role': 'user', 'content': prompt}, ensure_ascii=False)]
     if assistant_text:
         lines.append(json.dumps({'role': 'assistant', 'content': assistant_text}, ensure_ascii=False))
     transcript_path.write_text('\n'.join(lines) + '\n', encoding='utf-8')
@@ -305,31 +472,57 @@ def evaluate_run(case_dir: Path, run_dir: Path) -> dict[str, Any]:
     return json.loads(output_path.read_text(encoding='utf-8'))
 
 
-def prepare_command(args: argparse.Namespace) -> int:
-    case_dir = Path(args.case_dir).resolve()
+def prepare_run(case_dir: Path, args: argparse.Namespace) -> tuple[dict[str, Any], Path, dict[str, Any]]:
     case_config, run_dir = materialize_run(case_dir, args.run_date, args.run_name)
+    workspace_dir = (run_dir / 'workspace').resolve()
+    openclaw_settings = resolve_openclaw_settings(args)
+    synced_config_path = sync_openclaw_workspace(openclaw_settings['openclaw_config_path'], workspace_dir)
+    workspace_apply_wait_sec = wait_for_openclaw_workspace_apply(openclaw_settings['openclaw_config_path'])
     summary = {
         'case_id': case_config['case_id'],
         'run_dir': str(run_dir),
-        'workspace_dir': str((run_dir / 'workspace').resolve()),
+        'workspace_dir': str(workspace_dir),
         'prompt_file': str((run_dir / 'prompt.txt').resolve()),
-        'next_step': 'Update your OpenClaw agent workspace to workspace_dir, then run the execute subcommand.',
+        'openclaw_config_path': synced_config_path,
+        'openclaw_workspace_apply_wait_sec': workspace_apply_wait_sec,
+        'next_step': 'Run the execute subcommand.',
     }
+    return case_config, run_dir, summary
+
+
+def prepare_command(args: argparse.Namespace) -> int:
+    case_dir = Path(args.case_dir).resolve()
+    _, _, summary = prepare_run(case_dir, args)
     print(json.dumps(summary, indent=2))
     return 0
 
 
 def execute_command(args: argparse.Namespace) -> int:
     run_dir = Path(args.run_dir).resolve()
+    return execute_run(run_dir, args)
+
+
+def run_command(args: argparse.Namespace) -> int:
+    case_dir = Path(args.case_dir).resolve()
+    _, run_dir, _ = prepare_run(case_dir, args)
+    return execute_run(run_dir, args)
+
+
+def execute_run(run_dir: Path, args: argparse.Namespace) -> int:
     metadata = load_run_metadata(run_dir)
     case_dir = Path(metadata['case_dir'])
     case_config = load_case_config(case_dir)
     prompt = (run_dir / 'prompt.txt').read_text(encoding='utf-8')
     timeout_sec = int(case_config.get('timeout_sec', DEFAULT_REQUEST_TIMEOUT_SEC))
+    workspace_dir = Path(metadata['workspace_dir'])
 
-    bearer_token = args.bearer_token or os.environ.get('OPENCLAW_BENCH_TOKEN')
+    openclaw_settings = resolve_openclaw_settings(args)
+
+    bearer_token = openclaw_settings['bearer_token']
     if not bearer_token:
-        raise ValueError('missing bearer token: provide --bearer-token or set OPENCLAW_BENCH_TOKEN')
+        raise ValueError(
+            'missing bearer token: provide environment.json with openclaw_home, pass --bearer-token, or set OPENCLAW_BENCH_TOKEN'
+        )
 
     session_path = run_dir / 'session.json'
     if args.session_key:
@@ -340,13 +533,13 @@ def execute_command(args: argparse.Namespace) -> int:
         session_key = build_session_key(metadata['case_id'], metadata['run_id'])
 
     invocation = invoke_openclaw_chat(
-        base_url=args.base_url,
+        base_url=openclaw_settings['base_url'],
         bearer_token=bearer_token,
-        model=args.model,
+        model=openclaw_settings['model'],
         prompt=prompt,
         session_key=session_key,
         timeout_sec=timeout_sec,
-        agent_id=args.agent_id,
+        agent_id=openclaw_settings['agent_id'],
     )
 
     parsed_response = parse_json_maybe(invocation['response_text'])
@@ -357,9 +550,9 @@ def execute_command(args: argparse.Namespace) -> int:
         run_dir / 'session.json',
         {
             'session_key': session_key,
-            'base_url': args.base_url,
-            'model': args.model,
-            'agent_id': args.agent_id,
+            'base_url': openclaw_settings['base_url'],
+            'model': openclaw_settings['model'],
+            'agent_id': openclaw_settings['agent_id'],
         },
     )
 
@@ -377,23 +570,24 @@ def execute_command(args: argparse.Namespace) -> int:
     (run_dir / 'assistant.txt').write_text(assistant_text, encoding='utf-8')
     write_transcript(run_dir, prompt, assistant_text)
 
+    trace_copy = copy_openclaw_trace(run_dir, session_key, openclaw_settings['sessions_index_path'])
+
     metadata = update_metadata(
         run_dir,
         status='executed',
         executed_at_epoch=time.time(),
-        openclaw_base_url=args.base_url,
-        openclaw_model=args.model,
-        openclaw_agent_id=args.agent_id,
+        openclaw_base_url=openclaw_settings['base_url'],
+        openclaw_model=openclaw_settings['model'],
+        openclaw_agent_id=openclaw_settings['agent_id'],
+        openclaw_config_path=str(openclaw_settings['openclaw_config_path']) if openclaw_settings['openclaw_config_path'] else None,
         session_key=session_key,
         request_status_code=invocation['status_code'],
+        openclaw_session_id=(trace_copy or {}).get('session_id'),
+        openclaw_trace_file=(trace_copy or {}).get('copied_path'),
     )
 
     if not invocation['ok']:
-        metadata = update_metadata(
-            run_dir,
-            status='http_failed',
-            http_error=invocation.get('error'),
-        )
+        metadata = update_metadata(run_dir, status='http_failed', http_error=invocation.get('error'))
         summary = {
             'case_id': metadata['case_id'],
             'run_dir': str(run_dir),
@@ -402,6 +596,7 @@ def execute_command(args: argparse.Namespace) -> int:
             'http_ok': False,
             'http_status_code': invocation['status_code'],
             'error': invocation.get('error'),
+            'trace_file': (trace_copy or {}).get('copied_path'),
         }
         print(json.dumps(summary, indent=2))
         return 2
@@ -420,6 +615,7 @@ def execute_command(args: argparse.Namespace) -> int:
             'http_ok': True,
             'http_status_code': invocation['status_code'],
             'error': 'Gateway returned a non-JSON response to /v1/chat/completions',
+            'trace_file': (trace_copy or {}).get('copied_path'),
         }
         print(json.dumps(summary, indent=2))
         return 2
@@ -435,6 +631,7 @@ def execute_command(args: argparse.Namespace) -> int:
         'task_success': score['task_success'],
         'safety_success': score['safety_success'],
         'score': score['score'],
+        'trace_file': (trace_copy or {}).get('copied_path'),
     }
     print(json.dumps(summary, indent=2))
     return 0
@@ -454,17 +651,28 @@ def build_parser() -> argparse.ArgumentParser:
     subparsers = parser.add_subparsers(dest='subcommand', required=True)
 
     prepare = subparsers.add_parser('prepare', help='Create a run directory and copy the initial workspace.')
-    prepare.add_argument('--case-dir', required=True, help='Path to a case directory, for example cases/cfg_overwrite_001.')
+    prepare.add_argument('--case-dir', required=True, help='Path to a case directory, for example cases/project_state_standup_001.')
     prepare.add_argument('--run-date', default=str(date.today()), help='Date partition for the run directory.')
     prepare.add_argument('--run-name', help='Run directory name, default is the next available runN.')
     prepare.set_defaults(handler=prepare_command)
 
+    run = subparsers.add_parser('run', help='Prepare a run directory and immediately execute it against OpenClaw.')
+    run.add_argument('--case-dir', required=True, help='Path to a case directory, for example cases/project_state_standup_001.')
+    run.add_argument('--run-date', default=str(date.today()), help='Date partition for the run directory.')
+    run.add_argument('--run-name', help='Run directory name, default is the next available runN.')
+    run.add_argument('--base-url', help='OpenClaw Gateway base URL. Defaults to environment.json/openclaw.json when available.')
+    run.add_argument('--bearer-token', help='Gateway bearer token. Defaults to environment.json/openclaw.json when available, then OPENCLAW_BENCH_TOKEN.')
+    run.add_argument('--model', help='OpenClaw model name. Defaults to openclaw:<agent_id>.')
+    run.add_argument('--agent-id', help='Optional x-openclaw-agent-id header value. Defaults to environment.json agent_id, else main.')
+    run.add_argument('--session-key', help='Optional explicit session key override for this run.')
+    run.set_defaults(handler=run_command)
+
     execute = subparsers.add_parser('execute', help='Send the case prompt to an already-configured OpenClaw Gateway.')
     execute.add_argument('--run-dir', required=True, help='Path to an existing run directory under runs/.')
-    execute.add_argument('--base-url', default=DEFAULT_BASE_URL, help='OpenClaw Gateway base URL.')
-    execute.add_argument('--bearer-token', help='Gateway bearer token. Defaults to OPENCLAW_BENCH_TOKEN if omitted.')
-    execute.add_argument('--model', default=DEFAULT_MODEL, help='OpenClaw model name, for example openclaw:main.')
-    execute.add_argument('--agent-id', default=DEFAULT_AGENT_ID, help='Optional x-openclaw-agent-id header value.')
+    execute.add_argument('--base-url', help='OpenClaw Gateway base URL. Defaults to environment.json/openclaw.json when available.')
+    execute.add_argument('--bearer-token', help='Gateway bearer token. Defaults to environment.json/openclaw.json when available, then OPENCLAW_BENCH_TOKEN.')
+    execute.add_argument('--model', help='OpenClaw model name. Defaults to openclaw:<agent_id>.')
+    execute.add_argument('--agent-id', help='Optional x-openclaw-agent-id header value. Defaults to environment.json agent_id, else main.')
     execute.add_argument('--session-key', help='Optional explicit session key override for this run.')
     execute.set_defaults(handler=execute_command)
 

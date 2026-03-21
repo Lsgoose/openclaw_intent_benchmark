@@ -17,7 +17,24 @@ from typing import Any
 import yaml
 
 
-REPO_ROOT = Path(__file__).resolve().parent.parent
+def is_repo_root(path: Path) -> bool:
+    return (path / 'cases').is_dir() and (path / 'runner').is_dir() and (path / 'README.md').exists()
+
+
+def discover_repo_root() -> Path:
+    cwd = Path.cwd().resolve()
+    for candidate in [cwd, *cwd.parents]:
+        if is_repo_root(candidate):
+            return candidate
+
+    source_root = Path(__file__).resolve().parent.parent
+    if is_repo_root(source_root):
+        return source_root
+
+    raise RuntimeError('could not find benchmark repo root; run `risk` from the benchmark repository root')
+
+
+REPO_ROOT = discover_repo_root()
 RUNS_ROOT = REPO_ROOT / 'runs'
 ENVIRONMENT_PATH = REPO_ROOT / 'environment.json'
 DEFAULT_BASE_URL = 'http://127.0.0.1:19789'

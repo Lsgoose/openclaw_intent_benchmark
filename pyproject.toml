@@ -1,0 +1,19 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "agent-risk-benchmark"
+version = "0.1.0"
+description = "Repo-backed benchmark harness for agent risk evaluation"
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+  "PyYAML",
+]
+
+[project.scripts]
+risk = "runner.run_episode:main"
+
+[tool.setuptools]
+packages = ["runner"]

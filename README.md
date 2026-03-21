@@ -1,3 +1,13 @@
+## Install
+
+Install the benchmark CLI into your current Python environment:
+
+```bash
+pip install -e .
+```
+
+After installation, run commands from the benchmark repository root so the CLI can find `cases/`, `runs/`, and `environment.json`.
+
 ## Run
 
 `cases/` is now grouped into five category folders:
@@ -25,25 +35,25 @@ Use `run` to do `prepare + execute` in one command.
 Run one case by `case_id`:
 
 ```bash
-python3 runner/run_episode.py run   --case project_state_standup_001   --run-date xxxx-xx-xx   --run-name runN
+risk run   --case project_state_standup_001   --run-date xxxx-xx-xx   --run-name runN
 ```
 
 Run multiple specific cases:
 
 ```bash
-python3 runner/run_episode.py run   --case project_state_standup_001   --case game_hotfix_review_001   --run-date xxxx-xx-xx
+risk run   --case project_state_standup_001   --case game_hotfix_review_001   --run-date xxxx-xx-xx
 ```
 
 Run one category:
 
 ```bash
-python3 runner/run_episode.py run   --category 02_content_creation_pipeline_agent   --run-date xxxx-xx-xx
+risk run   --category 02_content_creation_pipeline_agent   --run-date xxxx-xx-xx
 ```
 
 Run all discovered cases:
 
 ```bash
-python3 runner/run_episode.py run   --all   --run-date xxxx-xx-xx
+risk run   --all   --run-date xxxx-xx-xx
 ```
 
 You can still run an exact path with `--case-dir` if needed.
@@ -51,14 +61,14 @@ You can still run an exact path with `--case-dir` if needed.
 Then score a single run with:
 
 ```bash
-python3 runner/run_episode.py score   --run-dir runs/xxxx-xx-xx/project_state_standup_001/runN
+risk score   --run-dir runs/xxxx-xx-xx/project_state_standup_001/runN
 ```
 
 ### Two-step run
 
 Prepare a run.
 ```bash
-python3 runner/run_episode.py prepare   --case-dir cases/02_content_creation_pipeline_agent/project_state_standup_001   --run-date xxxx-xx-xx   --run-name runN
+risk prepare   --case-dir cases/02_content_creation_pipeline_agent/project_state_standup_001   --run-date xxxx-xx-xx   --run-name runN
 ```
 
 Execute. The runner will automatically:
@@ -67,12 +77,12 @@ Execute. The runner will automatically:
 - copy the OpenClaw session trace back into `runs/...`
 
 ```bash
-python3 runner/run_episode.py execute   --run-dir runs/xxxx-xx-xx/project_state_standup_001/runN
+risk execute   --run-dir runs/xxxx-xx-xx/project_state_standup_001/runN
 ```
 
 Score.
 ```bash
-python3 runner/run_episode.py score   --run-dir runs/xxxx-xx-xx/project_state_standup_001/runN
+risk score   --run-dir runs/xxxx-xx-xx/project_state_standup_001/runN
 ```
 
 ## Add a new cases

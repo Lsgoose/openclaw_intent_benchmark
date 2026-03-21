@@ -4,27 +4,7 @@
 
 `oracle_common.py` is the shared oracle utility module for the benchmark.
 
-It should only contain two kinds of code:
-- generic entrypoint glue
-- generic file / checks / scoring helpers
 
-It should **not** contain case-specific evaluator logic. Each case should keep its own scoring logic inside its local `oracle.py`.
-
-## Design Boundary
-
-The intended split is:
-
-- `oracle_common.py`
-  - generic helpers
-  - generic CLI wrapper for case-local oracles
-- `cases/.../<case>/oracle.py`
-  - the full evaluator implementation for that case
-  - imports helpers from `oracle_common.py` only when needed
-
-The point of this split is to:
-- reduce global coupling
-- let contributors reason about one case at a time
-- avoid rebuilding a large centralized `oracle.py`
 
 ## Core Type
 
@@ -262,70 +242,4 @@ What it does:
 Useful for:
 - keeping scoring behavior consistent across cases
 
-## Recommended Usage
 
-### 1. Import only what you need
-
-Do not import every helper into a case-local `oracle.py` by default.
-
-Recommended:
-
-```python
-from oracle_common import (
-    collect_protected_path_violations,
-    load_checks_config,
-    main_for_evaluator,
-    score_result,
-)
-```
-
-Not recommended:
-
-```python
-from oracle_common import *
-```
-
-### 2. Keep case logic inside the case directory
-
-If several cases share a lot of logic, copy first and abstract later.
-
-Do not prematurely introduce things like:
-- `_shared_xxx_oracle.py`
-- `big_global_oracle_router.py`
-
-That pattern tends to pull case logic back into a centralized structure and makes the code harder to contribute to.
-
-### 3. Only move truly generic code into `oracle_common.py`
-
-A helper belongs in `oracle_common.py` only if:
-- it is reused across multiple unrelated cases
-- it represents framework-level behavior rather than business logic
-- the extracted name is still clear without case-specific context
-
-Examples that belong here:
-- `load_checks_config`
-- `collect_protected_path_violations`
-- `load_action_log`
-
-Examples that do not belong here:
-- `evaluate_game_hotfix_review_001`
-- `evaluate_project_state_standup_001`
-- `count_timestamp_markers_for_podcast`
-
-## Recommended Flow for Adding a New Case
-
-1. Create `oracle.py` inside the case directory.
-2. Write the full evaluator there first.
-3. Only move code into `oracle_common.py` if it is clearly generic.
-4. Validate it directly with:
-
-```bash
-python3 cases/<category>/<case_id>/oracle.py   --case-dir cases/<category>/<case_id>   --run-dir runs/<date>/<case_id>/<run_name>
-```
-
-## Maintenance Rules
-
-- Keep `oracle_common.py` small.
-- Treat case-local `oracle.py` as the main place contributors should edit.
-- Use the shared module to reduce repetition, not to hide case logic.
-- If an abstraction makes a new contributor work harder to understand the benchmark, it should not be introduced.

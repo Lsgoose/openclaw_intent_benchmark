@@ -14,15 +14,22 @@ usage() {
   cat <<EOF
 Usage: $0 <case> [--run-name NAME] [--run-date DATE]
 
-  <case>          Case number or directory name  (e.g. 1, case1, case9)
+  <case>   Accepts any of the following forms:
+             9                          → cases/case9  (legacy number)
+             case9                      → cases/case9  (legacy name)
+             kb_cred_injection_001      → auto-searched under cases/*/
+             04_personal_ai_second_brain_agent/kb_cred_injection_001
+                                        → cases/<category>/<name>
+
   --run-name      Optional run name  (default: auto-increment)
   --run-date      Optional date partition  (default: today)
 
 Examples:
-  $0 1
+  $0 9
   $0 case9
-  $0 5 --run-name trial1
-  $0 case7 --run-date 2026-03-20 --run-name r2
+  $0 kb_cred_injection_001
+  $0 04_personal_ai_second_brain_agent/kb_cred_injection_001
+  $0 kb_policy_injection_001 --run-name trial1
 EOF
 }
 
@@ -45,18 +52,51 @@ while [[ $# -gt 0 ]]; do
   esac
 done
 
-# Normalise: accept "5" or "case5"
-if [[ "$CASE_ARG" =~ ^[0-9]+$ ]]; then
-  CASE_NAME="case${CASE_ARG}"
-else
-  CASE_NAME="$CASE_ARG"
-fi
+# Normalise case argument → absolute CASE_DIR
+# Supported forms:
+#   9                         → cases/case9
+#   case9                     → cases/case9
+#   kb_cred_injection_001     → cases/*/kb_cred_injection_001  (auto-search)
+#   04_personal_ai_.../name   → cases/04_personal_ai_.../name  (explicit path)
+resolve_case_dir() {
+  local arg="$1"
+  local base="${SCRIPT_DIR}/cases"
 
-CASE_DIR="${SCRIPT_DIR}/cases/${CASE_NAME}"
+  # Form 1: bare number  →  cases/caseN
+  if [[ "$arg" =~ ^[0-9]+$ ]]; then
+    echo "${base}/case${arg}"; return
+  fi
+
+  # Form 2: already a two-part path (category/name)
+  if [[ "$arg" == */* ]]; then
+    echo "${base}/${arg}"; return
+  fi
+
+  # Form 3: legacy "caseN" shorthand  →  cases/caseN
+  if [[ "$arg" =~ ^case[0-9]+$ ]]; then
+    echo "${base}/${arg}"; return
+  fi
+
+  # Form 4: bare case name  →  search one level deep under cases/
+  local found
+  found="$(find "${base}" -mindepth 2 -maxdepth 2 -type d -name "${arg}" | head -1)"
+  if [[ -n "$found" ]]; then
+    echo "$found"; return
+  fi
+
+  # Fallback: treat as direct child of cases/
+  echo "${base}/${arg}"
+}
+
+CASE_DIR="$(resolve_case_dir "${CASE_ARG}")"
 if [[ ! -d "$CASE_DIR" ]]; then
   echo "ERROR: case directory not found: ${CASE_DIR}" >&2
+  echo "       (searched under ${SCRIPT_DIR}/cases/)" >&2
   exit 1
 fi
+
+# Derive a display name from the resolved path for the banner
+CASE_NAME="$(basename "$CASE_DIR")"
 
 # ── JSON helpers (pure Python, no jq dependency) ──────────────────────────────
 get_workspace() {

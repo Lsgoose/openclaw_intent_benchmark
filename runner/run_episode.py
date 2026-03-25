@@ -471,6 +471,38 @@ def copy_openclaw_trace(run_dir: Path, session_key: str, sessions_index_path: Pa
     }
 
 
+def sum_trace_tokens(trace_path: Path | None) -> dict[str, int]:
+    """Sum token usage across all turns recorded in an openclaw trace JSONL file.
+
+    Each turn may carry a ``usage`` object at the top level or inside ``message``.
+    Recognised keys: ``input``, ``output``, ``cacheRead``, ``cacheWrite``, ``totalTokens``.
+    Returns a dict with snake_case keys: input / output / cache_read / cache_write / total.
+    """
+    totals: dict[str, int] = {'input': 0, 'output': 0, 'cache_read': 0, 'cache_write': 0, 'total': 0}
+    if trace_path is None or not Path(trace_path).exists():
+        return totals
+    for raw in Path(trace_path).read_text(encoding='utf-8').splitlines():
+        raw = raw.strip()
+        if not raw:
+            continue
+        try:
+            record = json.loads(raw)
+        except json.JSONDecodeError:
+            continue
+        usage = record.get('usage')
+        if not isinstance(usage, dict):
+            msg = record.get('message')
+            usage = msg.get('usage') if isinstance(msg, dict) else None
+        if not isinstance(usage, dict):
+            continue
+        totals['input'] += int(usage.get('input', 0))
+        totals['output'] += int(usage.get('output', 0))
+        totals['cache_read'] += int(usage.get('cacheRead', 0))
+        totals['cache_write'] += int(usage.get('cacheWrite', 0))
+        totals['total'] += int(usage.get('totalTokens', 0))
+    return totals
+
+
 def invoke_openclaw_chat(
     *,
     base_url: str,
@@ -627,6 +659,7 @@ def execute_command(args: argparse.Namespace) -> int:
 
 
 def run_many(case_dirs: list[Path], args: argparse.Namespace) -> int:
+    batch_started = time.time()
     results: list[dict[str, Any]] = []
     overall_exit_code = 0
     total = len(case_dirs)
@@ -662,6 +695,7 @@ def run_many(case_dirs: list[Path], args: argparse.Namespace) -> int:
             )
             overall_exit_code = max(overall_exit_code, 1)
 
+    batch_elapsed = round(time.time() - batch_started, 3)
     batch_summary = {
         'mode': 'batch_run',
         'selected_count': len(case_dirs),
@@ -674,6 +708,16 @@ def run_many(case_dirs: list[Path], args: argparse.Namespace) -> int:
             for item in results
             if bool(item.get('task_success')) and bool(item.get('safety_success'))
         ),
+        'batch_duration_sec': batch_elapsed,
+        'total_http_duration_sec': round(sum(r.get('http_duration_sec', 0.0) for r in results), 3),
+        'total_execute_duration_sec': round(sum(r.get('execute_duration_sec', 0.0) for r in results), 3),
+        'total_token_usage': {
+            'input': sum(r.get('token_usage', {}).get('input', 0) for r in results),
+            'output': sum(r.get('token_usage', {}).get('output', 0) for r in results),
+            'cache_read': sum(r.get('token_usage', {}).get('cache_read', 0) for r in results),
+            'cache_write': sum(r.get('token_usage', {}).get('cache_write', 0) for r in results),
+            'total': sum(r.get('token_usage', {}).get('total', 0) for r in results),
+        },
         'results': results,
     }
     print(json.dumps(batch_summary, indent=2))
@@ -696,6 +740,7 @@ def run_command(args: argparse.Namespace) -> int:
 
 
 def execute_run(run_dir: Path, args: argparse.Namespace, *, emit_summary: bool = True) -> tuple[int, dict[str, Any]]:
+    execute_started = time.time()
     metadata = load_run_metadata(run_dir)
     case_dir = Path(metadata['case_dir'])
     case_config = load_case_config(case_dir)
@@ -773,7 +818,11 @@ def execute_run(run_dir: Path, args: argparse.Namespace, *, emit_summary: bool =
         openclaw_trace_file=(trace_copy or {}).get('copied_path'),
     )
 
+    trace_path = (trace_copy or {}).get('copied_path')
+    token_usage = sum_trace_tokens(Path(trace_path) if trace_path else None)
+
     if not invocation['ok']:
+        execute_elapsed = round(time.time() - execute_started, 3)
         metadata = update_metadata(run_dir, status='http_failed', http_error=invocation.get('error'))
         summary = {
             'case_id': metadata['case_id'],
@@ -783,13 +832,17 @@ def execute_run(run_dir: Path, args: argparse.Namespace, *, emit_summary: bool =
             'http_ok': False,
             'http_status_code': invocation['status_code'],
             'error': invocation.get('error'),
-            'trace_file': (trace_copy or {}).get('copied_path'),
+            'trace_file': trace_path,
+            'http_duration_sec': invocation['duration_sec'],
+            'execute_duration_sec': execute_elapsed,
+            'token_usage': token_usage,
         }
         if emit_summary:
             print(json.dumps(summary, indent=2))
         return 2, summary
 
     if parsed_response is None:
+        execute_elapsed = round(time.time() - execute_started, 3)
         metadata = update_metadata(
             run_dir,
             status='protocol_failed',
@@ -803,7 +856,10 @@ def execute_run(run_dir: Path, args: argparse.Namespace, *, emit_summary: bool =
             'http_ok': True,
             'http_status_code': invocation['status_code'],
             'error': 'Gateway returned a non-JSON response to /v1/chat/completions',
-            'trace_file': (trace_copy or {}).get('copied_path'),
+            'trace_file': trace_path,
+            'http_duration_sec': invocation['duration_sec'],
+            'execute_duration_sec': execute_elapsed,
+            'token_usage': token_usage,
         }
         if emit_summary:
             print(json.dumps(summary, indent=2))
@@ -811,6 +867,7 @@ def execute_run(run_dir: Path, args: argparse.Namespace, *, emit_summary: bool =
 
     emit_progress(format_progress(str(metadata['case_id']), 'score'))
     score = evaluate_run(case_dir, run_dir)
+    execute_elapsed = round(time.time() - execute_started, 3)
     summary = {
         'case_id': metadata['case_id'],
         'run_dir': str(run_dir),
@@ -821,7 +878,10 @@ def execute_run(run_dir: Path, args: argparse.Namespace, *, emit_summary: bool =
         'task_success': score['task_success'],
         'safety_success': score['safety_success'],
         'score': score['score'],
-        'trace_file': (trace_copy or {}).get('copied_path'),
+        'trace_file': trace_path,
+        'http_duration_sec': invocation['duration_sec'],
+        'execute_duration_sec': execute_elapsed,
+        'token_usage': token_usage,
     }
     if emit_summary:
         print(json.dumps(summary, indent=2))

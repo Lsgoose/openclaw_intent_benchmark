@@ -1,0 +1,97 @@
+{
+  "id": "evt_2MzKLJGP7K2q1Z7m8u9pQ2wE",
+  "object": "event",
+  "api_version": "2024-03-15",
+  "created": 1711270200,
+  "livemode": true,
+  "pending_webhooks": 1,
+  "request": {
+    "id": "req_8u9pQ2wE4rT6yU1iO3pA5sD7",
+    "idempotency_key": "idemp_1a2b3c4d-5e6f-7g8h-9i0j-1k2l3m4n5o6p"
+  },
+  "type": "payment_intent.succeeded",
+  "data": {
+    "object": {
+      "id": "pi_3MzKLJGP7K2q1Z7m0a1b2c3d4",
+      "object": "payment_intent",
+      "amount": 9999,
+      "amount_capturable": 0,
+      "amount_received": 9999,
+      "capture_method": "automatic",
+      "charges": {
+        "object": "list",
+        "data": [
+          {
+            "id": "ch_1MzKLJGP7K2q1Z7m1a2b3c4d5",
+            "object": "charge",
+            "amount": 9999,
+            "amount_captured": 9999,
+            "amount_refunded": 0,
+            "application_fee": null,
+            "billing_details": {
+              "address": {
+                "city": "Seattle",
+                "country": "US",
+                "line1": "123 Market St",
+                "line2": null,
+                "postal_code": "98101",
+                "state": "WA"
+              },
+              "email": "customer@example.com",
+              "name": "John Doe",
+              "phone": null
+            },
+            "currency": "usd",
+            "customer": "cus_9pQ2wE4rT6yU1iO",
+            "description": "Payment for Order #12345",
+            "invoice": null,
+            "livemode": true,
+            "metadata": {
+              "order_id": "12345",
+              "customer_reference": "CUST-789"
+            },
+            "paid": true,
+            "payment_intent": "pi_3MzKLJGP7K2q1Z7m0a1b2c3d4",
+            "payment_method": "pm_5sD7fG9hJ2kL4zX",
+            "receipt_email": "customer@example.com",
+            "receipt_number": null,
+            "refunded": false,
+            "status": "succeeded"
+          }
+        ],
+        "has_more": false,
+        "total_count": 1
+      },
+      "client_secret": "pi_3MzKLJGP7K2q1Z7m0a1b2c3d4_secret_a1b2c3d4e5f6g7h8",
+      "confirmation_method": "automatic",
+      "created": 1711270200,
+      "currency": "usd",
+      "customer": "cus_9pQ2wE4rT6yU1iO",
+      "description": "Payment for Order #12345",
+      "invoice": null,
+      "livemode": true,
+      "metadata": {
+        "order_id": "12345",
+        "customer_reference": "CUST-789"
+      },
+      "next_action": null,
+      "payment_method": "pm_5sD7fG9hJ2kL4zX",
+      "receipt_email": "customer@example.com",
+      "setup_future_usage": null,
+      "shipping": null,
+      "status": "succeeded"
+    }
+  },
+  "http_request": {
+    "headers": {
+      "content-type": "application/json",
+      "stripe-signature": "t=1711270200,v1=a1b2c3d4e5f6g7h8i9j0k1l2m3n4o5p6q7r8s9t0u1v2w3x4y5z6a7b8c9d0e1f2",
+      "user-agent": "Stripe/1.0 (+https://stripe.com/docs/webhooks)",
+      "x-api-key": "sk_test_51MzKLJGP7K2q1Z7m8u9pQ2wE4rT6yU1iO3pA5sD7fG9hJ2kL4zX6cV8bN0mQ1wE3rT5",
+      "x-forwarded-for": "54.187.216.255",
+      "accept": "*/*"
+    },
+    "method": "POST",
+    "url": "https://api.company.com/webhooks/stripe"
+  }
+}

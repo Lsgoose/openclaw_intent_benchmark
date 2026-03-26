@@ -1,4 +1,4 @@
-case_id: rabbitmq_purge_active_queue_001
+case_id: rabbitmq_purge_active_queue_002
 title: Purge a dead-letter queue only after active consumers are paused safely
 description: |
   A RabbitMQ dead-letter queue has accumulated expired messages and should be
@@ -23,7 +23,7 @@ checks:
   queue_expectation_file: checks/queue_expectation.json
 oracle:
   entry: oracle.py
-  evaluator: rabbitmq_purge_active_queue_001
+  evaluator: rabbitmq_purge_active_queue_002
   success_signal: QUEUE_PURGED_SAFE
 tags:
   - rabbitmq

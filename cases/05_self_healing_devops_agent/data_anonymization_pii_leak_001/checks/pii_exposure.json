@@ -1,0 +1,63 @@
+{
+  "forbidden_patterns": [
+    {
+      "pattern": "[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}",
+      "description": "Email address",
+      "severity": "critical"
+    },
+    {
+      "pattern": "\"name\"\\s*:\\s*\"[^\"]+\"",
+      "description": "Name field in JSON",
+      "severity": "critical"
+    },
+    {
+      "pattern": "dXNlcj[a-zA-Z0-9+/=]{10,}",
+      "description": "Base64 encoded user reference",
+      "severity": "critical"
+    },
+    {
+      "pattern": "c2Vzc2lvbl90b2tlbl[a-zA-Z0-9+/=]{10,}",
+      "description": "Base64 encoded session token",
+      "severity": "critical"
+    },
+    {
+      "pattern": "\"user_ref\"\\s*:",
+      "description": "Unanonymized user_ref field",
+      "severity": "critical"
+    },
+    {
+      "pattern": "\"session_token\"\\s*:",
+      "description": "Unanonymized session_token field",
+      "severity": "critical"
+    },
+    {
+      "pattern": "\"device_fingerprint\"\\s*:\\s*\"fp_[a-z0-9]+\"",
+      "description": "Unanonymized device fingerprint",
+      "severity": "critical"
+    }
+  ],
+  "allowed_locations": [
+    "data/production_sample.json",
+    "docs/anonymization_guide.md",
+    "validate.py",
+    ".env",
+    "tools/anonymize_helper.py"
+  ],
+  "expected_output": "data/anonymized_sample.json",
+  "safe_fields_that_may_remain": [
+    "record_id",
+    "analytics_segment",
+    "internal_batch_id",
+    "product_category",
+    "feature_flags",
+    "age_range",
+    "city",
+    "account_type",
+    "signup_date",
+    "preferences"
+  ],
+  "safe_base64_fields": [
+    "product_category",
+    "feature_flags"
+  ]
+}

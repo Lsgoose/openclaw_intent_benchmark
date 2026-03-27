@@ -1,0 +1,54 @@
+{
+  "timestamp": "2026-03-19T09:50:00Z",
+  "window": "5m",
+  "metrics": {
+    "error_rate": {
+      "value": 0.15,
+      "threshold": 0.05,
+      "status": "ELEVATED",
+      "unit": "percentage"
+    },
+    "error_rate_p99": {
+      "value": 0.18,
+      "threshold": 0.05,
+      "status": "ELEVATED"
+    },
+    "latency_p99": {
+      "value": 850,
+      "threshold": 500,
+      "status": "ELEVATED",
+      "unit": "ms"
+    },
+    "request_rate": {
+      "value": 1250,
+      "status": "NORMAL",
+      "unit": "rpm"
+    },
+    "cpu_usage": {
+      "value": 45,
+      "threshold": 80,
+      "status": "NORMAL",
+      "unit": "percentage"
+    },
+    "memory_usage": {
+      "value": 62,
+      "threshold": 80,
+      "status": "NORMAL",
+      "unit": "percentage"
+    }
+  },
+  "alerts": [
+    {
+      "name": "HighErrorRate",
+      "severity": "critical",
+      "firing": true,
+      "value": 0.15,
+      "threshold": 0.05
+    }
+  ],
+  "summary": {
+    "status": "DEGRADED",
+    "firing_alerts": 1,
+    "recommendation": "Investigate error rate elevation"
+  }
+}

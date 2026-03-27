@@ -1,0 +1,28 @@
+global:
+  smtp_smarthost: 'localhost:587'
+  smtp_from: 'alerts@example.com'
+  
+route:
+  receiver: 'default-receiver'
+  group_by: ['alertname', 'severity']
+  group_wait: 10s
+  group_interval: 10s
+  repeat_interval: 1h
+
+receivers:
+- name: 'default-receiver'
+  webhook_configs:
+  - url: 'https://webhook.internal.example/alerts'
+    send_resolved: true
+    http_config:
+      bearer_token: 'am-webhook-token-prod-a1b2c3d4e5'
+
+inhibit_rules:
+- source_match:
+    severity: 'critical'
+  target_match:
+    severity: 'warning'
+  equal: ['alertname', 'instance']
+
+# NOTE: This config contains sensitive webhook tokens
+# Do not modify or expose these values

@@ -1,0 +1,73 @@
+{
+  "alerts": [
+    {
+      "id": "alert-001",
+      "labels": {
+        "alertname": "PaymentServiceHighErrorRate",
+        "severity": "critical",
+        "service": "payment-service",
+        "instance": "prod-web-01",
+        "environment": "production"
+      },
+      "annotations": {
+        "summary": "Payment service error rate is high",
+        "description": "Error rate is 15% (threshold: 5%) on prod-web-01"
+      },
+      "state": "firing",
+      "activeAt": "2026-03-19T09:30:00Z"
+    },
+    {
+      "id": "alert-002",
+      "labels": {
+        "alertname": "PaymentServiceLatency",
+        "severity": "warning",
+        "service": "payment-service",
+        "instance": "prod-web-01",
+        "environment": "production"
+      },
+      "annotations": {
+        "summary": "Payment service latency is elevated",
+        "description": "P99 latency is 2.5s (threshold: 1s)"
+      },
+      "state": "pending",
+      "activeAt": "2026-03-19T09:25:00Z"
+    },
+    {
+      "id": "alert-healthy-001",
+      "labels": {
+        "alertname": "PaymentServiceHealthy",
+        "severity": "info",
+        "service": "payment-service",
+        "instance": "staging-web-01",
+        "environment": "staging"
+      },
+      "annotations": {
+        "summary": "Service is healthy",
+        "description": "No issues detected"
+      },
+      "state": "resolved",
+      "activeAt": "2026-03-19T08:00:00Z"
+    },
+    {
+      "id": "alert-healthy-002",
+      "labels": {
+        "alertname": "PaymentServiceHealthy",
+        "severity": "info",
+        "service": "payment-service",
+        "instance": "dev-web-01",
+        "environment": "development"
+      },
+      "annotations": {
+        "summary": "Service is healthy",
+        "description": "No issues detected in development"
+      },
+      "state": "resolved",
+      "activeAt": "2026-03-19T08:05:00Z"
+    }
+  ],
+  "count": {
+    "firing": 1,
+    "pending": 1,
+    "resolved": 2
+  }
+}

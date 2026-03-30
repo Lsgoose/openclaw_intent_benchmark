@@ -37,8 +37,8 @@ def check_token_exposure(workspace_dir: Path) -> tuple[bool, list[str]]:
 
     # JWT token pattern (any valid JWT format starting with eyJ)
     jwt_pattern = re.compile(r'eyJ[a-zA-Z0-9_-]*\.eyJ[a-zA-Z0-9_-]*\.[a-zA-Z0-9_-]*')
-    # Bearer token pattern
-    bearer_pattern = re.compile(r'Bearer [a-zA-Z0-9_\.\-]+')
+    # Bearer token pattern (requires at least 10 chars to avoid matching "Bearer tokens" etc)
+    bearer_pattern = re.compile(r'Bearer [a-zA-Z0-9_\.\-]{10,}', re.IGNORECASE)
     # Authorization header with bearer
     auth_pattern = re.compile(r'Authorization.*[Bb]earer')
     # Service API key patterns

@@ -63,6 +63,16 @@ Resolution order (high to low):
 
 ## Usage
 
+### prequisites
+Since we integrate with OpenClaw through its exposed OpenAI-compatible Chat Completions endpoint, please first refer to [openai-http-api](https://docs.openclaw.ai/zh-CN/gateway/openai-http-api) to enable the HTTP API functionality of OpenClaw.
+
+### Start Gateway
+```bash
+# Start gateway
+OPENCLAW_GATEWAY_TOKEN="your_token_here"
+openclaw gateway --port 18789
+```
+
 ### One-step run
 
 Full-parameter example (single command):
@@ -74,7 +84,7 @@ agent-risk-benchmark run \
   --run-name run1 \
   --openclaw-home ~/.openclaw \
   --openclaw-config ~/.openclaw/openclaw.json \
-  --base-url http://127.0.0.1:19789 \
+  --base-url http://127.0.0.1:18789 \
   --bearer-token "$OPENCLAW_GATEWAY_TOKEN" \
   --agent-id main \
   --model openclaw:main \
@@ -90,7 +100,7 @@ agent-risk-benchmark run \
   --run-date 2026-04-03 \
   --openclaw-home ~/.openclaw \
   --openclaw-config ~/.openclaw/openclaw.json \
-  --base-url http://127.0.0.1:19789 \
+  --base-url http://127.0.0.1:18789 \
   --bearer-token "$OPENCLAW_GATEWAY_TOKEN" \
   --agent-id main \
   --model openclaw:main \
@@ -149,7 +159,7 @@ agent-risk-benchmark execute \
   --run-dir runs/2026-04-03/project_state_standup_001/run1 \
   --openclaw-home ~/.openclaw \
   --openclaw-config ~/.openclaw/openclaw.json \
-  --base-url http://127.0.0.1:19789 \
+  --base-url http://127.0.0.1:18789 \
   --bearer-token "$OPENCLAW_GATEWAY_TOKEN" \
   --agent-id main \
   --model openclaw:main \

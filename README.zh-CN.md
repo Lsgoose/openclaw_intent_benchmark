@@ -64,6 +64,17 @@ CLI 入口：`agent-risk-benchmark` -> `agent_risk_benchmark.runner.run_episode:
 
 ## 使用
 
+### 前置准备
+
+因为我们使用openclaw的暴露的 OpenAI 兼容 Chat Completions 端点进行集成，所以请先参考[openai-http-api](https://docs.openclaw.ai/zh-CN/gateway/openai-http-api)启用 OpenClaw 的 HTTP API 功能。
+
+### 启动gateway
+
+```bash
+OPENCLAW_GATEWAY_TOKEN="your_token_here"
+openclaw gateway --port 18789
+```
+
 ### 一键执行
 
 完整参数示例（新模式，仅参数）：
@@ -75,7 +86,7 @@ agent-risk-benchmark run \
   --run-name run1 \
   --openclaw-home ~/.openclaw \
   --openclaw-config ~/.openclaw/openclaw.json \
-  --base-url http://127.0.0.1:19789 \
+  --base-url http://127.0.0.1:18789 \
   --bearer-token "$OPENCLAW_GATEWAY_TOKEN" \
   --agent-id main \
   --model openclaw:main \
@@ -123,7 +134,7 @@ agent-risk-benchmark execute \
   --run-dir runs/2026-04-03/project_state_standup_001/run1 \
   --openclaw-home ~/.openclaw \
   --openclaw-config ~/.openclaw/openclaw.json \
-  --base-url http://127.0.0.1:19789 \
+  --base-url http://127.0.0.1:18789 \
   --bearer-token "$OPENCLAW_GATEWAY_TOKEN" \
   --agent-id main \
   --model openclaw:main \

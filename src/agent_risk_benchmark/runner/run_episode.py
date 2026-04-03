@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import argparse
+import concurrent.futures
 import json
 import os
 import secrets
@@ -18,7 +19,12 @@ import yaml
 
 
 def is_repo_root(path: Path) -> bool:
-    return (path / 'cases').is_dir() and (path / 'runner').is_dir() and (path / 'README.md').exists()
+    has_runner = (
+        (path / 'src' / 'agent_risk_benchmark' / 'runner').is_dir()
+        or (path / 'src' / 'runner').is_dir()
+        or (path / 'runner').is_dir()
+    )
+    return (path / 'cases').is_dir() and has_runner and (path / 'README.md').exists()
 
 
 def discover_repo_root() -> Path:
@@ -27,16 +33,16 @@ def discover_repo_root() -> Path:
         if is_repo_root(candidate):
             return candidate
 
-    source_root = Path(__file__).resolve().parent.parent
-    if is_repo_root(source_root):
-        return source_root
+    module_path = Path(__file__).resolve()
+    for candidate in module_path.parents:
+        if is_repo_root(candidate):
+            return candidate
 
-    raise RuntimeError('could not find benchmark repo root; run `risk` from the benchmark repository root')
+    raise RuntimeError('could not find benchmark repo root; run `agent-risk-benchmark` from the benchmark repository root')
 
 
 REPO_ROOT = discover_repo_root()
 RUNS_ROOT = REPO_ROOT / 'runs'
-ENVIRONMENT_PATH = REPO_ROOT / 'environment.json'
 DEFAULT_BASE_URL = 'http://127.0.0.1:19789'
 DEFAULT_AGENT_ID = 'main'
 DEFAULT_SUITE = 'openclaw_safety'
@@ -60,29 +66,42 @@ def load_case_config(case_dir: Path) -> dict[str, Any]:
     return yaml.safe_load((case_dir / 'case.yaml').read_text(encoding='utf-8'))
 
 
-def discover_cases(cases_root: Path = REPO_ROOT / 'cases') -> list[dict[str, Any]]:
+def discover_cases(cases_root: Path) -> list[dict[str, Any]]:
     discovered: list[dict[str, Any]] = []
-    for category_dir in sorted(cases_root.iterdir()) if cases_root.exists() else []:
-        if not category_dir.is_dir() or category_dir.name.startswith('.') or category_dir.name == '__pycache__':
+    for case_file in sorted(cases_root.rglob('case.yaml')) if cases_root.exists() else []:
+        case_dir = case_file.parent
+        if case_dir.name.startswith('.') or case_dir.name == '__pycache__':
             continue
-        for case_dir in sorted(category_dir.iterdir()):
-            if not case_dir.is_dir() or case_dir.name.startswith('.') or case_dir.name == '__pycache__':
-                continue
-            case_file = case_dir / 'case.yaml'
-            if not case_file.exists():
-                continue
-            case_config = load_case_config(case_dir)
-            case_id = str(case_config.get('case_id', '')).strip()
-            if not case_id:
-                raise ValueError(f'missing case_id in {case_file}')
-            discovered.append(
-                {
-                    'case_id': case_id,
-                    'category': category_dir.name,
-                    'case_dir': case_dir.resolve(),
-                }
-            )
+
+        case_config = load_case_config(case_dir)
+        case_id = str(case_config.get('case_id', '')).strip()
+        if not case_id:
+            raise ValueError(f'missing case_id in {case_file}')
+
+        rel_parts = case_dir.relative_to(cases_root).parts
+        category = rel_parts[0] if len(rel_parts) > 1 else 'uncategorized'
+        discovered.append(
+            {
+                'case_id': case_id,
+                'category': category,
+                'case_dir': case_dir.resolve(),
+            }
+        )
     return discovered
+
+
+def resolve_cases_root(cases_root_arg: str | None) -> Path:
+    raw = (cases_root_arg or 'cases').strip()
+    candidate = Path(raw)
+    if not candidate.is_absolute():
+        candidate = (REPO_ROOT / candidate).resolve()
+    else:
+        candidate = candidate.resolve()
+    if not candidate.exists():
+        raise FileNotFoundError(f'cases root not found: {candidate}')
+    if not candidate.is_dir():
+        raise ValueError(f'cases root is not a directory: {candidate}')
+    return candidate
 
 
 def resolve_run_case_dirs(args: argparse.Namespace) -> list[Path]:
@@ -94,7 +113,8 @@ def resolve_run_case_dirs(args: argparse.Namespace) -> list[Path]:
     if run_all and (case_dirs_arg or case_ids or categories):
         raise ValueError('--all cannot be combined with --case-dir, --case, or --category')
 
-    discovered = discover_cases()
+    cases_root = resolve_cases_root(getattr(args, 'cases_root', None))
+    discovered = discover_cases(cases_root)
     by_id: dict[str, Path] = {}
     by_category: dict[str, list[Path]] = {}
     for item in discovered:
@@ -126,11 +146,11 @@ def resolve_run_case_dirs(args: argparse.Namespace) -> list[Path]:
 
     for case_id in case_ids:
         case_id_value = str(case_id).strip()
-        case_dir = by_id.get(case_id_value)
-        if case_dir is None:
+        resolved_case_dir = by_id.get(case_id_value)
+        if resolved_case_dir is None:
             available = ', '.join(sorted(by_id))
             raise ValueError(f'unknown case id: {case_id_value}. Available case ids: {available}')
-        add_case_dir(case_dir)
+        add_case_dir(resolved_case_dir)
 
     for raw_case_dir in case_dirs_arg:
         case_dir = Path(raw_case_dir).resolve()
@@ -305,15 +325,6 @@ def extract_assistant_text(response_payload: dict[str, Any]) -> str:
     return ''
 
 
-def load_local_environment() -> dict[str, Any]:
-    if not ENVIRONMENT_PATH.exists():
-        return {}
-    raw = json.loads(ENVIRONMENT_PATH.read_text(encoding='utf-8'))
-    if not isinstance(raw, dict):
-        raise ValueError(f'local environment file must contain a JSON object: {ENVIRONMENT_PATH}')
-    return raw
-
-
 def load_json_dict(path: Path, *, label: str) -> dict[str, Any]:
     raw = json.loads(path.read_text(encoding='utf-8'))
     if not isinstance(raw, dict):
@@ -353,21 +364,34 @@ def extract_gateway_token(openclaw_config: dict[str, Any]) -> str | None:
 
 
 def resolve_openclaw_settings(args: argparse.Namespace) -> dict[str, Any]:
-    local_env = load_local_environment()
-    openclaw_home_raw = local_env.get('openclaw_home')
+    openclaw_home_raw = (
+        getattr(args, 'openclaw_home', None)
+        or os.environ.get('OPENCLAW_HOME')
+    )
+    openclaw_config_raw = getattr(args, 'openclaw_config', None) or os.environ.get('OPENCLAW_CONFIG')
     openclaw_home: Path | None = None
     openclaw_config_path: Path | None = None
     openclaw_config: dict[str, Any] | None = None
     sessions_index_path: Path | None = None
 
-    if isinstance(openclaw_home_raw, str) and openclaw_home_raw.strip():
+    if isinstance(openclaw_config_raw, str) and openclaw_config_raw.strip():
+        openclaw_config_path = Path(openclaw_config_raw).expanduser().resolve()
+        if not openclaw_config_path.exists():
+            raise FileNotFoundError(f'missing OpenClaw config: {openclaw_config_path}')
+        openclaw_config = load_json_dict(openclaw_config_path, label='OpenClaw config')
+        openclaw_home = openclaw_config_path.parent
+    elif isinstance(openclaw_home_raw, str) and openclaw_home_raw.strip():
         openclaw_home = Path(openclaw_home_raw).expanduser().resolve()
         openclaw_config_path = openclaw_home / 'openclaw.json'
         if not openclaw_config_path.exists():
             raise FileNotFoundError(f'missing OpenClaw config: {openclaw_config_path}')
         openclaw_config = load_json_dict(openclaw_config_path, label='OpenClaw config')
 
-    agent_id = getattr(args, 'agent_id', None) or local_env.get('agent_id') or DEFAULT_AGENT_ID
+    agent_id = (
+        getattr(args, 'agent_id', None)
+        or os.environ.get('OPENCLAW_AGENT_ID')
+        or DEFAULT_AGENT_ID
+    )
     if not isinstance(agent_id, str) or not agent_id.strip():
         raise ValueError('agent_id must be a non-empty string')
     agent_id = agent_id.strip()
@@ -375,20 +399,23 @@ def resolve_openclaw_settings(args: argparse.Namespace) -> dict[str, Any]:
     if openclaw_home is not None:
         sessions_index_path = openclaw_home / 'agents' / agent_id / 'sessions' / 'sessions.json'
 
-    base_url = getattr(args, 'base_url', None)
+    base_url = getattr(args, 'base_url', None) or os.environ.get('OPENCLAW_BASE_URL')
     if not base_url and openclaw_config is not None:
         base_url = derive_base_url_from_openclaw_config(openclaw_config)
     if not base_url:
         base_url = DEFAULT_BASE_URL
 
-    bearer_token = getattr(args, 'bearer_token', None) or os.environ.get('OPENCLAW_BENCH_TOKEN')
+    bearer_token = (
+        getattr(args, 'bearer_token', None)
+        or os.environ.get('OPENCLAW_BEARER_TOKEN')
+        or os.environ.get('OPENCLAW_BENCH_TOKEN')
+    )
     if not bearer_token and openclaw_config is not None:
         bearer_token = extract_gateway_token(openclaw_config)
 
     model = getattr(args, 'model', None) or f'openclaw:{agent_id}'
 
     return {
-        'local_env': local_env,
         'openclaw_home': openclaw_home,
         'openclaw_config_path': openclaw_config_path,
         'openclaw_config': openclaw_config,
@@ -664,7 +691,24 @@ def run_many(case_dirs: list[Path], args: argparse.Namespace) -> int:
     overall_exit_code = 0
     total = len(case_dirs)
 
-    for idx, case_dir in enumerate(case_dirs, start=1):
+    configured_workers = int(getattr(args, 'num_worker', 1) or 1)
+    if configured_workers < 1:
+        raise ValueError('--num-worker must be >= 1')
+
+    # OpenClaw workspace path is synced through a shared config file.
+    # Running with multiple workers against the same config can race and cross-contaminate workspaces.
+    openclaw_settings = resolve_openclaw_settings(args)
+    allow_unsafe_parallel = bool(getattr(args, 'allow_unsafe_parallel_openclaw', False))
+    shared_openclaw_config = bool(openclaw_settings.get('openclaw_config_path'))
+    if shared_openclaw_config and configured_workers > 1 and not allow_unsafe_parallel:
+        emit_progress('Parallel execution disabled: shared OpenClaw config workspace sync is not thread-safe.')
+        worker_count = 1
+    else:
+        worker_count = min(configured_workers, max(1, total))
+        if shared_openclaw_config and configured_workers > 1 and allow_unsafe_parallel:
+            emit_progress('Unsafe parallel mode enabled with shared OpenClaw config; workspace race conditions are possible.')
+
+    def _run_single(idx: int, case_dir: Path) -> tuple[int, int, dict[str, Any]]:
         case_id = case_dir.name
         category = case_dir.parent.name
         try:
@@ -677,27 +721,42 @@ def run_many(case_dirs: list[Path], args: argparse.Namespace) -> int:
             result['case_dir'] = str(case_dir)
             result['category'] = category
             result['exit_code'] = exit_code
-            results.append(result)
-            overall_exit_code = max(overall_exit_code, exit_code)
             emit_progress(format_progress(case_id, f'complete (score={summary.get("score")})', index=idx, total=total))
+            return idx, exit_code, result
         except Exception as exc:
             emit_progress(format_progress(case_id, f'failed ({type(exc).__name__}: {exc})', index=idx, total=total))
-            results.append(
-                {
-                    'case_id': case_id,
-                    'case_dir': str(case_dir),
-                    'category': category,
-                    'task_success': False,
-                    'safety_success': False,
-                    'score': 0.0,
-                    'error': f'{type(exc).__name__}: {exc}',
-                }
-            )
-            overall_exit_code = max(overall_exit_code, 1)
+            return idx, 1, {
+                'case_id': case_id,
+                'case_dir': str(case_dir),
+                'category': category,
+                'task_success': False,
+                'safety_success': False,
+                'score': 0.0,
+                'error': f'{type(exc).__name__}: {exc}',
+            }
+
+    if worker_count == 1:
+        for idx, case_dir in enumerate(case_dirs, start=1):
+            _, exit_code, result = _run_single(idx, case_dir)
+            results.append(result)
+            overall_exit_code = max(overall_exit_code, exit_code)
+    else:
+        indexed_results: dict[int, dict[str, Any]] = {}
+        with concurrent.futures.ThreadPoolExecutor(max_workers=worker_count) as executor:
+            futures = [executor.submit(_run_single, idx, case_dir) for idx, case_dir in enumerate(case_dirs, start=1)]
+            for future in concurrent.futures.as_completed(futures):
+                idx, exit_code, result = future.result()
+                indexed_results[idx] = result
+                overall_exit_code = max(overall_exit_code, exit_code)
+        results = [indexed_results[i] for i in range(1, total + 1)]
 
     batch_elapsed = round(time.time() - batch_started, 3)
     batch_summary = {
         'mode': 'batch_run',
+        'num_worker': worker_count,
+        'requested_num_worker': configured_workers,
+        'shared_openclaw_config': shared_openclaw_config,
+        'allow_unsafe_parallel_openclaw': allow_unsafe_parallel,
         'selected_count': len(case_dirs),
         'completed_count': sum(1 for item in results if 'error' not in item),
         'error_count': sum(1 for item in results if 'error' in item),
@@ -745,15 +804,16 @@ def execute_run(run_dir: Path, args: argparse.Namespace, *, emit_summary: bool =
     case_dir = Path(metadata['case_dir'])
     case_config = load_case_config(case_dir)
     prompt = (run_dir / 'prompt.txt').read_text(encoding='utf-8')
-    timeout_sec = int(case_config.get('timeout_sec', DEFAULT_REQUEST_TIMEOUT_SEC))
-    workspace_dir = Path(metadata['workspace_dir'])
+    timeout_sec = int(getattr(args, 'openclaw_timeout', 0) or 0)
+    if timeout_sec <= 0:
+        timeout_sec = int(case_config.get('timeout_sec', DEFAULT_REQUEST_TIMEOUT_SEC))
 
     openclaw_settings = resolve_openclaw_settings(args)
 
     bearer_token = openclaw_settings['bearer_token']
     if not bearer_token:
         raise ValueError(
-            'missing bearer token: provide environment.json with openclaw_home, pass --bearer-token, or set OPENCLAW_BENCH_TOKEN'
+            'missing bearer token: pass --bearer-token, set OPENCLAW_BEARER_TOKEN/OPENCLAW_BENCH_TOKEN, or use OpenClaw config token discovery'
         )
 
     session_path = run_dir / 'session.json'
@@ -914,20 +974,33 @@ def build_parser() -> argparse.ArgumentParser:
     run.add_argument('--all', dest='run_all', action='store_true', help='Run all discovered cases.')
     run.add_argument('--run-date', default=str(date.today()), help='Date partition for the run directory.')
     run.add_argument('--run-name', help='Run directory name, default is the next available runN.')
-    run.add_argument('--base-url', help='OpenClaw Gateway base URL. Defaults to environment.json/openclaw.json when available.')
-    run.add_argument('--bearer-token', help='Gateway bearer token. Defaults to environment.json/openclaw.json when available, then OPENCLAW_BENCH_TOKEN.')
+    run.add_argument('--openclaw-home', help='OpenClaw home directory. Used to locate openclaw.json and session traces.')
+    run.add_argument('--openclaw-config', help='Explicit path to openclaw.json. Overrides --openclaw-home when both are provided.')
+    run.add_argument('--base-url', help='OpenClaw Gateway base URL. Defaults to OPENCLAW_BASE_URL or openclaw.json when available.')
+    run.add_argument('--bearer-token', help='Gateway bearer token. Defaults to OPENCLAW_BEARER_TOKEN/OPENCLAW_BENCH_TOKEN, then openclaw.json token.')
     run.add_argument('--model', help='OpenClaw model name. Defaults to openclaw:<agent_id>.')
-    run.add_argument('--agent-id', help='Optional x-openclaw-agent-id header value. Defaults to environment.json agent_id, else main.')
+    run.add_argument('--agent-id', help='Optional x-openclaw-agent-id header value. Defaults to OPENCLAW_AGENT_ID, else main.')
     run.add_argument('--session-key', help='Optional explicit session key override for this run.')
+    run.add_argument('--cases-root', default='cases', help='Root directory containing case folders.')
+    run.add_argument('--num-worker', type=int, default=3, help='Number of worker threads for batch run.')
+    run.add_argument('--openclaw-timeout', type=float, default=None, help='Override OpenClaw request timeout in seconds.')
+    run.add_argument(
+        '--allow-unsafe-parallel-openclaw',
+        action='store_true',
+        help='Allow parallel runs even when using shared OpenClaw config workspace sync (unsafe).',
+    )
     run.set_defaults(handler=run_command)
 
     execute = subparsers.add_parser('execute', help='Send the case prompt to an already-configured OpenClaw Gateway.')
     execute.add_argument('--run-dir', required=True, help='Path to an existing run directory under runs/.')
-    execute.add_argument('--base-url', help='OpenClaw Gateway base URL. Defaults to environment.json/openclaw.json when available.')
-    execute.add_argument('--bearer-token', help='Gateway bearer token. Defaults to environment.json/openclaw.json when available, then OPENCLAW_BENCH_TOKEN.')
+    execute.add_argument('--openclaw-home', help='OpenClaw home directory. Used to locate openclaw.json and session traces.')
+    execute.add_argument('--openclaw-config', help='Explicit path to openclaw.json. Overrides --openclaw-home when both are provided.')
+    execute.add_argument('--base-url', help='OpenClaw Gateway base URL. Defaults to OPENCLAW_BASE_URL or openclaw.json when available.')
+    execute.add_argument('--bearer-token', help='Gateway bearer token. Defaults to OPENCLAW_BEARER_TOKEN/OPENCLAW_BENCH_TOKEN, then openclaw.json token.')
     execute.add_argument('--model', help='OpenClaw model name. Defaults to openclaw:<agent_id>.')
-    execute.add_argument('--agent-id', help='Optional x-openclaw-agent-id header value. Defaults to environment.json agent_id, else main.')
+    execute.add_argument('--agent-id', help='Optional x-openclaw-agent-id header value. Defaults to OPENCLAW_AGENT_ID, else main.')
     execute.add_argument('--session-key', help='Optional explicit session key override for this run.')
+    execute.add_argument('--openclaw-timeout', type=float, default=None, help='Override OpenClaw request timeout in seconds.')
     execute.set_defaults(handler=execute_command)
 
     score = subparsers.add_parser('score', help='Run the oracle for an existing run directory.')

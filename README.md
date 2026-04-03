@@ -1,97 +1,209 @@
-## Install
+# Agent Risk Benchmark (Reference Runner)
 
-Install the benchmark CLI into your current Python environment:
+This repository contains a lightweight benchmark runner for OpenClaw-oriented risk cases.
+
+Core capabilities:
+
+- case discovery by id/category/path/all
+- one-step run (`prepare + execute + score`) or staged workflow
+- batch execution with safety guard for shared OpenClaw workspace config
+- local oracle scoring per case
+
+## Install
 
 ```bash
 pip install -e .
 ```
 
+## Project Layout
 
-## Run
-
-### Prepare
-1. Open sandbox in config.
-
-2. Change `environment.json` in the root. For example
-```json
-{
-  "openclaw_home": "/xxx/.openclaw-exp",
-  "agent_id": "main"
-}
+```text
+agent-risk-benchmark/
+  cases/
+  doc/
+  runs/
+  src/
+    agent_risk_benchmark/
+      runner/
+        run_episode.py
+    runner/  # compatibility shim
+      run_episode.py
+  pyproject.toml
+  README.md
 ```
 
+`agent-risk-benchmark` CLI entrypoint points to `agent_risk_benchmark.runner.run_episode:main`.
 
-### Run in one step
-Run one case by `case_id`:
+Legacy module path `runner.run_episode` remains available as a compatibility shim.
+
+## Configuration
+
+Use CLI args and environment variables.
+
+Recommended options:
+
+- CLI args:
+  - `--openclaw-home`
+  - `--openclaw-config`
+  - `--base-url`
+  - `--bearer-token`
+  - `--agent-id`
+- Environment variables:
+  - `OPENCLAW_HOME`
+  - `OPENCLAW_CONFIG`
+  - `OPENCLAW_BASE_URL`
+  - `OPENCLAW_BEARER_TOKEN` (or `OPENCLAW_BENCH_TOKEN`)
+  - `OPENCLAW_AGENT_ID`
+
+Resolution order (high to low):
+
+1. explicit CLI args
+2. environment variables
+3. built-in defaults
+
+## Usage
+
+### One-step run
+
+Full-parameter example (single command):
 
 ```bash
-risk run   --case project_state_standup_001   --run-date xxxx-xx-xx   --run-name runN
+agent-risk-benchmark run \
+  --all \
+  --run-date 2026-04-03 \
+  --run-name run1 \
+  --openclaw-home ~/.openclaw \
+  --openclaw-config ~/.openclaw/openclaw.json \
+  --base-url http://127.0.0.1:19789 \
+  --bearer-token "$OPENCLAW_GATEWAY_TOKEN" \
+  --agent-id main \
+  --model openclaw:main \
+  --num-worker 1 \
+  --openclaw-timeout 180
+```
+
+Full-parameter parallel example (only when each worker is fully isolated):
+
+```bash
+agent-risk-benchmark run \
+  --all \
+  --run-date 2026-04-03 \
+  --openclaw-home ~/.openclaw \
+  --openclaw-config ~/.openclaw/openclaw.json \
+  --base-url http://127.0.0.1:19789 \
+  --bearer-token "$OPENCLAW_GATEWAY_TOKEN" \
+  --agent-id main \
+  --model openclaw:main \
+  --num-worker 4 \
+  --allow-unsafe-parallel-openclaw \
+  --openclaw-timeout 180
+```
+
+If your workers share OpenClaw config/workspace sync state, keep `--num-worker 1` and do not use `--allow-unsafe-parallel-openclaw`.
+
+Run one case by case id:
+
+```bash
+agent-risk-benchmark run --case project_state_standup_001 --run-date 2026-04-03
 ```
 
 Run multiple cases:
 
 ```bash
-risk run   --case project_state_standup_001   --case game_hotfix_review_001   --run-date xxxx-xx-xx
+agent-risk-benchmark run --case project_state_standup_001 --case game_hotfix_review_001 --run-date 2026-04-03
 ```
 
 Run by category:
 
 ```bash
-risk run   --category 02_content_creation_pipeline_agent   --run-date xxxx-xx-xx
+agent-risk-benchmark run --category 02_content_creation_pipeline_agent --run-date 2026-04-03
 ```
 
-Run all cases:
+Run all:
 
 ```bash
-risk run   --all   --run-date xxxx-xx-xx
+agent-risk-benchmark run --all --run-date 2026-04-03
 ```
 
-You can still run an exact path with `--case-dir` if needed.
-
-
-
-### Run step by step
-
-Prepare a run.
-```bash
-risk prepare   --case-dir cases/02_content_creation_pipeline_agent/project_state_standup_001   --run-date xxxx-xx-xx   --run-name runN
-```
-
-Execute. The runner will automatically:
+Custom OpenClaw settings (example):
 
 ```bash
-risk execute   --run-dir runs/xxxx-xx-xx/project_state_standup_001/runN
+agent-risk-benchmark run \
+  --all \
+  --openclaw-home ~/.openclaw \
+  --bearer-token "$OPENCLAW_GATEWAY_TOKEN" \
+  --run-date 2026-04-03
 ```
 
-### Score
+### Step-by-step run
 
-Score a single run with:
+Full-parameter example (prepare + execute + score):
 
 ```bash
-risk score   --run-dir runs/xxxx-xx-xx/project_state_standup_001/runN
+agent-risk-benchmark prepare \
+  --case-dir cases/02_content_creation_pipeline_agent/project_state_standup_001 \
+  --run-date 2026-04-03 \
+  --run-name run1
+
+agent-risk-benchmark execute \
+  --run-dir runs/2026-04-03/project_state_standup_001/run1 \
+  --openclaw-home ~/.openclaw \
+  --openclaw-config ~/.openclaw/openclaw.json \
+  --base-url http://127.0.0.1:19789 \
+  --bearer-token "$OPENCLAW_GATEWAY_TOKEN" \
+  --agent-id main \
+  --model openclaw:main \
+  --openclaw-timeout 180
+
+agent-risk-benchmark score \
+  --run-dir runs/2026-04-03/project_state_standup_001/run1
 ```
 
-## Add a new case
+Prepare:
 
-Create new cases under `cases/`
+```bash
+agent-risk-benchmark prepare \
+  --case-dir cases/02_content_creation_pipeline_agent/project_state_standup_001 \
+  --run-date 2026-04-03 \
+  --run-name run1
+```
 
-A new case should usually look like this:
+Execute:
+
+```bash
+agent-risk-benchmark execute --run-dir runs/2026-04-03/project_state_standup_001/run1
+```
+
+Score:
+
+```bash
+agent-risk-benchmark score --run-dir runs/2026-04-03/project_state_standup_001/run1
+```
+
+## Parallel Execution Safety
+
+If shared OpenClaw config/workspace sync is detected, the runner forces single-worker mode by default to avoid cross-case contamination.
+
+You can explicitly bypass this protection only when you know each worker is isolated:
+
+```bash
+agent-risk-benchmark run --all --num-worker 4 --allow-unsafe-parallel-openclaw --run-date 2026-04-03
+```
+
+## Add a New Case
+
+Create under `cases/<category>/<case_id>/`:
 
 ```text
-cases/<category>/<case_id>/
-  case.yaml
-  prompt.txt
-  note.md
-  oracle.py
-  workspace-exp/
-  checks/
+case.yaml
+prompt.txt
+note.md
+oracle.py
+workspace-exp/
+checks/
 ```
 
-
-
-### 1 Define `case.yaml`
-
-`case.yaml` is the main configuration file for the case. It tells the runner where to find the prompt, the initial workspace, and the case-local oracle entry. At minimum it should define:
+`case.yaml` minimum fields:
 
 - `case_id`
 - `title`
@@ -100,48 +212,29 @@ cases/<category>/<case_id>/
 - `workspace_source`
 - `oracle.entry`
 
-Example:
+Shared oracle helpers are in [doc/oracle_common.md](doc/oracle_common.md).
 
-```yaml
-case_id: my_new_case_001
-title: One-line title for the task
-description: >
-  Short description of the task and what can go wrong.
-category: internal_to_external
-prompt_file: prompt.txt
-workspace_source: workspace-exp
-oracle:
-  entry: oracle.py
+## Development
+
+Install dev dependencies:
+
+```bash
+pip install -e .[dev]
 ```
 
+Common checks:
 
-### 3. Write `prompt.txt`
+```bash
+python -m black src/agent_risk_benchmark/runner src/runner
+python -m ruff check src/agent_risk_benchmark/runner src/runner
+python -m mypy src/agent_risk_benchmark/runner
+python -m agent_risk_benchmark.runner.run_episode run --help
+```
 
-`prompt.txt` is the task instruction sent to OpenClaw.
+## Docs
 
-### 4. Build `workspace-exp/`
-
-`workspace-exp/` is the initial workspace that gets copied into `runs/.../workspace` during `prepare`.
-
-
-### 5. Add `checks/` files
-
-Put oracle input files in `checks/`. Common examples are:
-
-- `protected_paths.txt`
-- `expected_hashes.json`
-- `allowed_diff_roots.json`
-- `protected_refs.json`
-- `secret_patterns.json`
-
-
-
-### 6. Implement `oracle.py`
-
-Each case owns its own scoring logic in `oracle.py`.
-
-
-oracle_common.py provides shared helpers such as `score_result()` and `load_checks_config()`. See [doc/oracle_common.md](doc/oracle_common.md).
+- 中文文档: [README.zh-CN.md](README.zh-CN.md)
+- Contribution guide: [CONTRIBUTING.md](CONTRIBUTING.md)
 
 
 

@@ -897,6 +897,329 @@ def score_command(args: argparse.Namespace) -> int:
     return 0
 
 
+# ── Container execution path ───────────────────────────────────────────────────
+# mirrors WildClawBench's eval/run_batch.py but adapted to agent-risk-benchmark's
+# case format (case.yaml / workspace-exp / oracle.py).
+
+from concurrent.futures import ThreadPoolExecutor, as_completed  # noqa: E402
+
+CONTAINER_WORKSPACE      = '/root/.openclaw/workspace'
+CONTAINER_AGENT_SESSION  = 'bench-run'
+DEFAULT_CONTAINER_IMAGE  = 'openclaw-bench:v1.0'
+
+
+def _docker(*args: str, check: bool = True) -> subprocess.CompletedProcess:
+    return subprocess.run(['docker', *args], capture_output=True, text=True, check=check)
+
+
+def container_start(name: str, workspace_dir: Path, run_dir: Path, image: str, env_vars: dict[str, str]) -> None:
+    """Start a detached container.
+
+    Mounts:
+      workspace_dir → CONTAINER_WORKSPACE  (rw) so openclaw reads/writes host files directly
+      run_dir       → /run_dir             (rw) for direct result sharing
+    """
+    env_args: list[str] = []
+    for k, v in env_vars.items():
+        env_args += ['-e', f'{k}={v}']
+    # Clear any proxy env vars baked into the image so that the agent can reach
+    # external APIs directly (the image may carry https_proxy that points to a
+    # host-side proxy unreachable from inside the container).
+    no_proxy_args = [
+        '-e', 'http_proxy=',
+        '-e', 'https_proxy=',
+        '-e', 'HTTP_PROXY=',
+        '-e', 'HTTPS_PROXY=',
+        '-e', 'no_proxy=',
+        '-e', 'NO_PROXY=',
+    ]
+    r = subprocess.run(
+        ['docker', 'run', '-d', '--name', name,
+         *no_proxy_args,
+         *env_args,
+         '-v', f'{workspace_dir}:{CONTAINER_WORKSPACE}',
+         '-v', f'{run_dir}:/run_dir',
+         image, '/bin/bash', '-c', 'tail -f /dev/null'],
+        capture_output=True, text=True,
+    )
+    if r.returncode != 0:
+        raise RuntimeError(f'Container start failed:\n{r.stderr}')
+
+
+def container_exec(name: str, bash_cmd: str, *, check: bool = True) -> subprocess.CompletedProcess:
+    return subprocess.run(
+        ['docker', 'exec', name, '/bin/bash', '-c', bash_cmd],
+        capture_output=True, text=True, check=check,
+    )
+
+
+def container_exec_background(name: str, bash_cmd: str, log_path: Path) -> subprocess.Popen:
+    log_path.parent.mkdir(parents=True, exist_ok=True)
+    log_file = log_path.open('w', encoding='utf-8')
+    proc = subprocess.Popen(
+        ['docker', 'exec', name, '/bin/bash', '-c',
+         f'cd {CONTAINER_WORKSPACE} && {bash_cmd}'],
+        stdout=log_file, stderr=subprocess.STDOUT, encoding='utf-8',
+    )
+    proc._log_file = log_file  # type: ignore[attr-defined]
+    return proc
+
+
+def container_cp_from(name: str, container_path: str, host_path: Path) -> bool:
+    r = subprocess.run(
+        ['docker', 'cp', f'{name}:{container_path}', str(host_path)],
+        capture_output=True, text=True,
+    )
+    return r.returncode == 0
+
+
+def container_cp_to(name: str, host_path: Path, container_path: str) -> bool:
+    r = subprocess.run(
+        ['docker', 'cp', f'{host_path}/.', f'{name}:{container_path}'],
+        capture_output=True, text=True,
+    )
+    return r.returncode == 0
+
+
+def container_rm(name: str) -> None:
+    subprocess.run(['docker', 'rm', '-f', name], capture_output=True)
+
+
+def container_setup_workspace(name: str) -> None:
+    """Ensure the mounted workspace is writable (host dir is already mounted at CONTAINER_WORKSPACE)."""
+    container_exec(name, f'chmod -R u+w {CONTAINER_WORKSPACE}')
+
+
+def container_set_model(name: str, model: str) -> None:
+    container_exec(name, f"openclaw models set '{model}'")
+
+
+def container_run_case(
+    case_dir: Path,
+    run_dir: Path,
+    *,
+    image: str,
+    model: str | None,
+    run_idx: int,
+    run_total: int,
+) -> dict[str, Any]:
+    """
+    Full container lifecycle for one case:
+      prepare → start container (run_dir mounted as /run_dir) →
+      docker-cp workspace in → gateway → agent → collect → score → cleanup.
+    Returns a result dict matching the existing run_command output schema.
+    """
+    case_config = load_case_config(case_dir)
+    case_id     = str(case_config['case_id'])
+    timeout_sec = int(case_config.get('timeout_sec', DEFAULT_REQUEST_TIMEOUT_SEC))
+    prompt      = (run_dir / 'prompt.txt').read_text(encoding='utf-8')
+    workspace_dir = run_dir / 'workspace'
+
+    # Build a unique container name
+    run_name  = run_dir.name
+    task_id   = f'risk-bench-{case_id}-{run_name}'[:63]  # docker name limit ~63 chars
+    task_id   = task_id.replace('_', '-')                # docker dislikes underscores
+
+    # Each container runs its OWN openclaw gateway internally.
+    # No host gateway involvement → full isolation, safe for parallel runs.
+    # BRAVE_API_KEY placeholder prevents gateway startup errors on some image versions.
+    env_vars: dict[str, str] = {
+        'BRAVE_API_KEY': os.environ.get('BRAVE_API_KEY', 'placeholder'),
+    }
+
+    emit_progress(format_progress(case_id, 'container-start', index=run_idx, total=run_total))
+
+    agent_proc   = None
+    gateway_proc = None
+    started      = time.time()
+
+    try:
+        # 1. Start container:
+        #    workspace_dir → CONTAINER_WORKSPACE (openclaw reads/writes host files directly)
+        #    run_dir       → /run_dir (logs and results shared with host)
+        container_rm(task_id)   # clean up any leftover from a previous interrupted run
+        container_start(task_id, workspace_dir, run_dir, image, env_vars)
+
+        # 2. Ensure the mounted workspace is writable.
+        container_setup_workspace(task_id)
+
+        # 3. Optionally set model.
+        if model:
+            container_set_model(task_id, model)
+
+        # 4. Start the in-container openclaw gateway on CONTAINER_GATEWAY_PORT.
+        #    Each container has an isolated network namespace, so port conflicts
+        #    between parallel containers are impossible.
+        emit_progress(format_progress(case_id, 'container-gateway', index=run_idx, total=run_total))
+        gateway_proc = container_exec_background(
+            task_id,
+            'openclaw gateway',
+            log_path=run_dir / 'gateway.log',
+        )
+        time.sleep(4)   # wait for gateway to be ready
+
+        # 5. Run agent inside container (connects to its own gateway).
+        emit_progress(format_progress(case_id, 'container-agent', index=run_idx, total=run_total))
+        safe_prompt = prompt.replace("'", "'\\''")
+        agent_proc = container_exec_background(
+            task_id,
+            f"openclaw agent --session-id {CONTAINER_AGENT_SESSION} --timeout {timeout_sec} --message '{safe_prompt}'",
+            log_path=run_dir / 'agent.log',
+        )
+        try:
+            agent_proc.wait(timeout=timeout_sec + 30)
+        except subprocess.TimeoutExpired:
+            agent_proc.kill()
+            agent_proc.wait()
+
+        elapsed = round(time.time() - started, 3)
+
+        # 6. Collect: copy session trace JSONL from container.
+        #    (workspace is a direct volume mount — no docker cp needed for files)
+        emit_progress(format_progress(case_id, 'container-collect', index=run_idx, total=run_total))
+        container_session_jsonl = f'/root/.openclaw/agents/main/sessions/{CONTAINER_AGENT_SESSION}.jsonl'
+        trace_host = run_dir / f'{CONTAINER_AGENT_SESSION}.jsonl'
+        if container_cp_from(task_id, container_session_jsonl, trace_host):
+            token_usage = sum_trace_tokens(trace_host)
+        else:
+            token_usage = {'input': 0, 'output': 0, 'cache_read': 0, 'cache_write': 0, 'total': 0}
+
+    except Exception as exc:
+        elapsed = round(time.time() - started, 3)
+        return {
+            'case_id': case_id,
+            'run_dir': str(run_dir),
+            'workspace_dir': str(workspace_dir),
+            'error': f'{type(exc).__name__}: {exc}',
+            'task_success': False,
+            'safety_success': False,
+            'score': 0.0,
+            'token_usage': {'input': 0, 'output': 0, 'cache_read': 0, 'cache_write': 0, 'total': 0},
+            'execute_duration_sec': elapsed,
+            'container_image': image,
+        }
+
+    finally:
+        # Close background process log files and destroy container
+        for proc in [agent_proc, gateway_proc]:
+            if proc is not None:
+                log_file = getattr(proc, '_log_file', None)
+                if log_file and not log_file.closed:
+                    log_file.close()
+        container_rm(task_id)
+
+    # 8. Score using oracle.py on the host
+    emit_progress(format_progress(case_id, 'score', index=run_idx, total=run_total))
+    try:
+        score = evaluate_run(case_dir, run_dir)
+    except Exception as exc:
+        score = {'task_success': False, 'safety_success': False, 'score': 0.0,
+                 'error': f'oracle error: {exc}'}
+
+    return {
+        'case_id': case_id,
+        'run_dir': str(run_dir),
+        'workspace_dir': str(workspace_dir),
+        'task_success': score.get('task_success', False),
+        'safety_success': score.get('safety_success', False),
+        'score': score.get('score', 0.0),
+        'token_usage': token_usage,
+        'execute_duration_sec': elapsed,
+        'container_image': image,
+    }
+
+
+def _resolve_container_args(args: argparse.Namespace, local_env: dict[str, Any]) -> dict[str, Any]:
+    image = getattr(args, 'container_image', None) or local_env.get('container_image') or DEFAULT_CONTAINER_IMAGE
+    model = getattr(args, 'model', None) or None
+    parallel = max(1, int(getattr(args, 'parallel', 1) or 1))
+    return {
+        'image': image,
+        'model': model,
+        'parallel': parallel,
+    }
+
+
+def run_container_command(args: argparse.Namespace) -> int:
+    case_dirs  = resolve_run_case_dirs(args)
+    local_env  = load_local_environment()
+    ctr        = _resolve_container_args(args, local_env)
+    run_date   = args.run_date
+    total      = len(case_dirs)
+
+    emit_progress(
+        f'run-container: {total} case(s), image={ctr["image"]}, '
+        f'model={ctr["model"] or "openclaw:main"}, parallel={ctr["parallel"]}'
+    )
+
+    results: list[dict[str, Any]] = []
+    batch_started = time.time()
+    overall_exit  = 0
+
+    def _run_one(idx_case: tuple[int, Path]) -> dict[str, Any]:
+        idx, case_dir = idx_case
+        case_id = case_dir.name
+        try:
+            emit_progress(format_progress(case_id, 'prepare', index=idx, total=total))
+            _case_config, run_dir = materialize_run(case_dir, run_date, getattr(args, 'run_name', None))
+            result = container_run_case(
+                case_dir, run_dir,
+                image=ctr['image'],
+                model=ctr['model'],
+                run_idx=idx,
+                run_total=total,
+            )
+            emit_progress(
+                format_progress(case_id, f'complete (score={result.get("score")})', index=idx, total=total)
+            )
+            return result
+        except Exception as exc:
+            emit_progress(format_progress(case_id, f'failed ({type(exc).__name__}: {exc})', index=idx, total=total))
+            return {
+                'case_id': case_id,
+                'task_success': False,
+                'safety_success': False,
+                'score': 0.0,
+                'error': str(exc),
+            }
+
+    indexed = list(enumerate(case_dirs, start=1))
+    if ctr['parallel'] == 1:
+        results = [_run_one(ic) for ic in indexed]
+    else:
+        with ThreadPoolExecutor(max_workers=ctr['parallel']) as pool:
+            futures = {pool.submit(_run_one, ic): ic for ic in indexed}
+            for fut in as_completed(futures):
+                results.append(fut.result())
+
+    batch_elapsed = round(time.time() - batch_started, 3)
+    batch_summary = {
+        'mode': 'container_run',
+        'container_image': ctr['image'],
+        'model': ctr['model'],
+        'selected_count': total,
+        'completed_count': sum(1 for r in results if 'error' not in r),
+        'error_count': sum(1 for r in results if 'error' in r),
+        'task_success_count':   sum(1 for r in results if r.get('task_success')),
+        'safety_success_count': sum(1 for r in results if r.get('safety_success')),
+        'full_success_count':   sum(1 for r in results if r.get('task_success') and r.get('safety_success')),
+        'batch_duration_sec': batch_elapsed,
+        'total_token_usage': {
+            'input':       sum(r.get('token_usage', {}).get('input', 0) for r in results),
+            'output':      sum(r.get('token_usage', {}).get('output', 0) for r in results),
+            'cache_read':  sum(r.get('token_usage', {}).get('cache_read', 0) for r in results),
+            'cache_write': sum(r.get('token_usage', {}).get('cache_write', 0) for r in results),
+            'total':       sum(r.get('token_usage', {}).get('total', 0) for r in results),
+        },
+        'results': results,
+    }
+    print(json.dumps(batch_summary, indent=2))
+
+    if any('error' in r for r in results):
+        overall_exit = 1
+    return overall_exit
+
+
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(description='Prepare, execute, and score benchmark episodes against OpenClaw.')
     subparsers = parser.add_subparsers(dest='subcommand', required=True)
@@ -933,6 +1256,37 @@ def build_parser() -> argparse.ArgumentParser:
     score = subparsers.add_parser('score', help='Run the oracle for an existing run directory.')
     score.add_argument('--run-dir', required=True, help='Path to an existing run directory under runs/.')
     score.set_defaults(handler=score_command)
+
+    # ── run-container ──────────────────────────────────────────────────────────
+    runc = subparsers.add_parser(
+        'run-container',
+        help='Run cases inside Docker containers (gateway + agent run in the container).',
+        description=(
+            'Container-based execution path: spins up a Docker container per case, '
+            'runs openclaw gateway + agent inside it, collects results, and scores with oracle.py. '
+            'Mirrors WildClawBench eval/run_batch.py but uses agent-risk-benchmark case format.'
+        ),
+    )
+    # Case selection (same as `run`)
+    runc.add_argument('--case-dir', dest='case_dirs', action='append',
+                      help='Exact path to a case directory. Repeat for multiple.')
+    runc.add_argument('--case', dest='case_ids', action='append',
+                      help='Case id, e.g. kb_article_publish_full_explicit. Repeat for multiple.')
+    runc.add_argument('--category', dest='categories', action='append',
+                      help='Category directory under cases/. Repeat for multiple.')
+    runc.add_argument('--all', dest='run_all', action='store_true', help='Run all discovered cases.')
+    # Run naming
+    runc.add_argument('--run-date', default=str(date.today()), help='Date partition for the run directory.')
+    runc.add_argument('--run-name', help='Run directory name; default is next available runN.')
+    # Container settings
+    runc.add_argument('--image', dest='container_image',
+                      default=None,
+                      help=f'Docker image name (default: environment.json container_image or {DEFAULT_CONTAINER_IMAGE}).')
+    runc.add_argument('--model', default=None,
+                      help='OpenClaw model string, e.g. openrouter/anthropic/claude-sonnet-4.6.')
+    runc.add_argument('--parallel', type=int, default=1,
+                      help='Number of containers to run in parallel (default: 1).')
+    runc.set_defaults(handler=run_container_command)
 
     return parser
 

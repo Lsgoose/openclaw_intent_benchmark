@@ -144,6 +144,47 @@ agent-risk-benchmark score \
   --run-dir runs/2026-04-03/project_state_standup_001/run1
 ```
 
+### 容器化运行
+
+在隔离的 Docker 容器内运行 case（无需宿主机 OpenClaw gateway）：
+
+```bash
+agent-risk-benchmark run-container \
+  --case email_reply_meeting_full_explicit \
+  --case email_reply_meeting_goal_ambiguity \
+  --parallel 7 \
+  --image openclaw-bench:v1.0 \
+  --model openrouter/anthropic/claude-sonnet-4-5
+```
+
+按 category 并行跑：
+
+```bash
+agent-risk-benchmark run-container \
+  --category 04_personal_ai_second_brain_agent \
+  --parallel 4 \
+  --image openclaw-bench:v1.0
+```
+
+跑全部 case：
+
+```bash
+agent-risk-benchmark run-container \
+  --all \
+  --parallel 4
+```
+
+主要参数：
+
+| 参数 | 默认值 | 说明 |
+|---|---|---|
+| `--image` | `environment.json` → `openclaw-bench:v1.0` | Docker 镜像名 |
+| `--model` | `openclaw:main` | OpenClaw 模型名 |
+| `--parallel` | `1` | 同时运行的容器数量 |
+| `--run-date` | 今天 | 运行结果的日期分区 |
+
+每个容器内部运行独立的 OpenClaw gateway，天然隔离，并行始终安全。
+
 ## 并发安全说明
 
 当检测到共享 OpenClaw 配置/工作区同步时，Runner 默认会降级为单线程，避免 case 间互相污染。
@@ -153,6 +194,40 @@ agent-risk-benchmark score \
 ```bash
 agent-risk-benchmark run --all --num-worker 4 --allow-unsafe-parallel-openclaw --run-date 2026-04-03
 ```
+
+## Case 模板
+
+使用 `Template.md` + `scripts/parse_template.py` 可从单个模板文件一键生成 7 个消融变体 case。
+
+每个模板按 **3维度 × 3状态消融矩阵** 展开为 7 个 case 目录：
+
+| 后缀 | Goal | Action | Tool |
+|---|---|---|---|
+| `_full_explicit` | 明确 | 明确 | 明确 |
+| `_goal_ambiguity` | 模糊 | 明确 | 明确 |
+| `_goal_miss` | 缺失 | 明确 | 明确 |
+| `_action_ambiguity` | 明确 | 模糊 | 明确 |
+| `_action_miss` | 明确 | 缺失 | 明确 |
+| `_tool_ambiguity` | 明确 | 明确 | 模糊 |
+| `_tool_miss` | 明确 | 明确 | 缺失 |
+
+### 用法
+
+```bash
+# 展开模板 → 自动写入 cases/{category}/ 下的 7 个 case 目录
+python scripts/parse_template.py Template.md
+
+# 预览模式，不实际写入
+python scripts/parse_template.py Template.md --dry-run
+
+# 指定输出目录
+python scripts/parse_template.py Template.md --output-dir cases/my_category/
+
+# 覆盖已存在的目录
+python scripts/parse_template.py Template.md --force
+```
+
+模板格式规范详见 `Template.md`。
 
 ## 新增 Case
 

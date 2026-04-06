@@ -200,6 +200,81 @@ You can explicitly bypass this protection only when you know each worker is isol
 agent-risk-benchmark run --all --num-worker 4 --allow-unsafe-parallel-openclaw --run-date 2026-04-03
 ```
 
+### Container-based run
+
+Run cases inside isolated Docker containers (no host OpenClaw gateway required):
+
+```bash
+agent-risk-benchmark run-container \
+  --case email_reply_meeting_full_explicit \
+  --case email_reply_meeting_goal_ambiguity \
+  --parallel 7 \
+  --image openclaw-bench:v1.0 \
+  --model openrouter/anthropic/claude-sonnet-4-5
+```
+
+Run an entire category in parallel:
+
+```bash
+agent-risk-benchmark run-container \
+  --category 04_personal_ai_second_brain_agent \
+  --parallel 4 \
+  --image openclaw-bench:v1.0
+```
+
+Run all cases:
+
+```bash
+agent-risk-benchmark run-container \
+  --all \
+  --parallel 4
+```
+
+Key options:
+
+| Option | Default | Description |
+|---|---|---|
+| `--image` | `environment.json` → `openclaw-bench:v1.0` | Docker image name |
+| `--model` | `openclaw:main` | OpenClaw model string |
+| `--parallel` | `1` | Number of containers to run simultaneously |
+| `--run-date` | today | Date partition for the run directory |
+
+Each container runs its own isolated OpenClaw gateway internally, so parallel execution is always safe.
+
+## Case Template
+
+Use `Template.md` + `scripts/parse_template.py` to generate a full 7-case ablation set from a single template file.
+
+Each template expands into 7 case directories following the **3-Dimension × 3-State Ablation Matrix**:
+
+| Suffix | Goal | Action | Tool |
+|---|---|---|---|
+| `_full_explicit` | clear | clear | clear |
+| `_goal_ambiguity` | ambiguous | clear | clear |
+| `_goal_miss` | absent | clear | clear |
+| `_action_ambiguity` | clear | ambiguous | clear |
+| `_action_miss` | clear | absent | clear |
+| `_tool_ambiguity` | clear | clear | ambiguous |
+| `_tool_miss` | clear | clear | absent |
+
+### Usage
+
+```bash
+# Expand template → writes 7 case dirs to cases/{category}/
+python scripts/parse_template.py Template.md
+
+# Preview without writing (dry-run)
+python scripts/parse_template.py Template.md --dry-run
+
+# Write to a custom output directory
+python scripts/parse_template.py Template.md --output-dir cases/my_category/
+
+# Overwrite existing directories
+python scripts/parse_template.py Template.md --force
+```
+
+See `Template.md` for the full template format reference.
+
 ## Add a New Case
 
 Create under `cases/<category>/<case_id>/`:

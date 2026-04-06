@@ -1189,6 +1189,13 @@ def container_run_case(
     }
 
 
+def load_local_environment() -> dict[str, Any]:
+    env_path = REPO_ROOT / 'environment.json'
+    if not env_path.exists():
+        return {}
+    return load_json_dict(env_path, label='environment.json')
+
+
 def _resolve_container_args(args: argparse.Namespace, local_env: dict[str, Any]) -> dict[str, Any]:
     image = getattr(args, 'container_image', None) or local_env.get('container_image') or DEFAULT_CONTAINER_IMAGE
     model = getattr(args, 'model', None) or None

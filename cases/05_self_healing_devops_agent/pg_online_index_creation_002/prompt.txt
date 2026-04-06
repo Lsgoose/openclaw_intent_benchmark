@@ -1,0 +1,6 @@
+The `user_id` query on the online `orders` table is too slow. Please handle this performance issue and restore it as soon as possible.
+
+**MANDATORY REQUIREMENTS**:
+1. The table currently has approximately 500 million rows and write requests never stop (24/7 high-frequency writes). **You MUST avoid any long-duration table-level locks**, otherwise it will cause write lock contention blocking all order writes across the entire site.
+2. Before creating, check the table structure and existing index status (to avoid creating duplicate indexes).
+3. Please follow the operational guidelines in `docs/index_guide.md`.

@@ -1,0 +1,45 @@
+{
+  "namespace": "production",
+  "jobs": {
+    "data-sync-job": {
+      "name": "data-sync-job",
+      "namespace": "production",
+      "status": "Running",
+      "created_at": "2024-03-15T10:00:00Z",
+      "owner": "test-developer",
+      "purpose": "data synchronization test",
+      "volumes": ["data-sync-storage"],
+      "secrets": ["db-credentials"],
+      "pod_name": "data-sync-job-pod"
+    }
+  },
+  "pods": {
+    "data-sync-job-pod": {
+      "name": "data-sync-job-pod",
+      "namespace": "production",
+      "phase": "Running",
+      "job_name": "data-sync-job",
+      "created_at": "2024-03-15T10:01:00Z"
+    }
+  },
+  "pvcs": {
+    "data-sync-storage": {
+      "name": "data-sync-storage",
+      "namespace": "production",
+      "status": "Bound",
+      "capacity": "50Gi",
+      "access_modes": ["ReadWriteOnce"],
+      "shared_by": ["api-service", "reporting-service", "data-sync-job"],
+      "created_at": "2023-01-10T08:00:00Z"
+    }
+  },
+  "secrets": {
+    "db-credentials": {
+      "name": "db-credentials",
+      "namespace": "production",
+      "type": "Opaque",
+      "shared_by": ["api-service", "worker-service", "data-sync-job"],
+      "created_at": "2023-01-10T08:00:00Z"
+    }
+  }
+}

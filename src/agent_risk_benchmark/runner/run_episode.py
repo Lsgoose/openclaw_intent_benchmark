@@ -1060,6 +1060,7 @@ def container_run_case(
     *,
     image: str,
     model: str | None,
+    model_api_key: str = '',
     run_idx: int,
     run_total: int,
 ) -> dict[str, Any]:
@@ -1067,6 +1068,12 @@ def container_run_case(
     Full container lifecycle for one case:
       prepare → start container (run_dir mounted as /run_dir) →
       docker-cp workspace in → gateway → agent → collect → score → cleanup.
+
+    API keys are injected at runtime via env-var prefixes on the gateway command
+    so that no credentials need to be baked into the Docker image.
+    `model_api_key` is exported as both MOONSHOT_API_KEY and OPENROUTER_API_KEY
+    so it works regardless of which provider the model string resolves to.
+
     Returns a result dict matching the existing run_command output schema.
     """
     case_config = load_case_config(case_dir)
@@ -1075,17 +1082,24 @@ def container_run_case(
     prompt      = (run_dir / 'prompt.txt').read_text(encoding='utf-8')
     workspace_dir = run_dir / 'workspace'
 
-    # Build a unique container name
-    run_name  = run_dir.name
-    task_id   = f'risk-bench-{case_id}-{run_name}'[:63]  # docker name limit ~63 chars
-    task_id   = task_id.replace('_', '-')                # docker dislikes underscores
+    # Container name is per-case only (no run suffix) so that any leftover
+    # container from a previous interrupted run is always replaced on next run.
+    task_id = f'risk-bench-{case_id}'[:63]
+    task_id = task_id.replace('_', '-')
 
     # Each container runs its OWN openclaw gateway internally.
     # No host gateway involvement → full isolation, safe for parallel runs.
-    # BRAVE_API_KEY placeholder prevents gateway startup errors on some image versions.
+    # API keys are NOT baked into the image; they are injected at runtime via
+    # `docker run -e` and also exported explicitly before the gateway command.
+    # model_api_key is exported as both MOONSHOT_API_KEY and OPENROUTER_API_KEY
+    # so it works regardless of which LLM provider the model string resolves to.
     env_vars: dict[str, str] = {
         'BRAVE_API_KEY': os.environ.get('BRAVE_API_KEY', 'placeholder'),
     }
+    if model_api_key:
+        env_vars['MOONSHOT_API_KEY']    = model_api_key
+        env_vars['OPENROUTER_API_KEY']  = model_api_key
+        env_vars['MODEL_API_KEY']       = model_api_key
 
     emit_progress(format_progress(case_id, 'container-start', index=run_idx, total=run_total))
 
@@ -1103,17 +1117,29 @@ def container_run_case(
         # 2. Ensure the mounted workspace is writable.
         container_setup_workspace(task_id)
 
-        # 3. Optionally set model.
-        if model:
-            container_set_model(task_id, model)
+        # 3. Run openclaw-init inside the container to populate openclaw.json
+        #    with the correct model + provider + auth config from env vars.
+        #    This keeps the Docker image credential-free.
+        effective_model = model or 'moonshot/kimi-k2.5'
+        init_cmd = f"OPENCLAW_MODEL='{effective_model}' MODEL_API_KEY='{model_api_key}' openclaw-init"
+        container_exec(task_id, init_cmd)
 
         # 4. Start the in-container openclaw gateway on CONTAINER_GATEWAY_PORT.
         #    Each container has an isolated network namespace, so port conflicts
         #    between parallel containers are impossible.
+        #    API keys are exported explicitly before the gateway command so that
+        #    the gateway process can authenticate with the LLM provider.
         emit_progress(format_progress(case_id, 'container-gateway', index=run_idx, total=run_total))
+        gw_env_prefix = ''
+        if model_api_key:
+            gw_env_prefix += (
+                f"export MOONSHOT_API_KEY='{model_api_key}' && "
+                f"export OPENROUTER_API_KEY='{model_api_key}' && "
+                f"export MODEL_API_KEY='{model_api_key}' && "
+            )
         gateway_proc = container_exec_background(
             task_id,
-            'openclaw gateway',
+            f'{gw_env_prefix}openclaw gateway',
             log_path=run_dir / 'gateway.log',
         )
         time.sleep(4)   # wait for gateway to be ready
@@ -1198,16 +1224,35 @@ def load_local_environment() -> dict[str, Any]:
 
 def _resolve_container_args(args: argparse.Namespace, local_env: dict[str, Any]) -> dict[str, Any]:
     image = getattr(args, 'container_image', None) or local_env.get('container_image') or DEFAULT_CONTAINER_IMAGE
-    model = getattr(args, 'model', None) or None
+    # model: CLI arg > environment.json 'model' > environment.json 'default_model' > None
+    model = (
+        getattr(args, 'model', None)
+        or local_env.get('model')
+        or local_env.get('default_model')
+        or None
+    )
     parallel = max(1, int(getattr(args, 'parallel', 1) or 1))
+    # Generic model API key: environment.json 'model_api_key' > shell env vars.
+    # The value is exported into the container as both MOONSHOT_API_KEY and
+    # OPENROUTER_API_KEY so that whichever provider the chosen model uses will
+    # automatically pick it up — no provider-specific field names required.
+    model_api_key = (
+        local_env.get('model_api_key', '')
+        or os.environ.get('MOONSHOT_API_KEY', '')
+        or os.environ.get('OPENROUTER_API_KEY', '')
+        or os.environ.get('MODEL_API_KEY', '')
+    )
     return {
         'image': image,
         'model': model,
         'parallel': parallel,
+        'model_api_key': model_api_key,
     }
 
 
 def run_container_command(args: argparse.Namespace) -> int:
+    import signal
+
     case_dirs  = resolve_run_case_dirs(args)
     local_env  = load_local_environment()
     ctr        = _resolve_container_args(args, local_env)
@@ -1223,6 +1268,18 @@ def run_container_command(args: argparse.Namespace) -> int:
     batch_started = time.time()
     overall_exit  = 0
 
+    # On Ctrl-C / SIGTERM, clean up any leftover risk-bench-* containers
+    def _cleanup_on_exit(signum, frame):  # noqa: ANN001
+        emit_progress('\n[run-container] interrupted — cleaning up containers...')
+        subprocess.run(
+            'docker ps -a --filter "name=risk-bench-" -q | xargs -r docker rm -f',
+            shell=True, capture_output=True,
+        )
+        sys.exit(1)
+
+    signal.signal(signal.SIGINT,  _cleanup_on_exit)
+    signal.signal(signal.SIGTERM, _cleanup_on_exit)
+
     def _run_one(idx_case: tuple[int, Path]) -> dict[str, Any]:
         idx, case_dir = idx_case
         case_id = case_dir.name
@@ -1233,6 +1290,7 @@ def run_container_command(args: argparse.Namespace) -> int:
                 case_dir, run_dir,
                 image=ctr['image'],
                 model=ctr['model'],
+                model_api_key=ctr.get('model_api_key', ''),
                 run_idx=idx,
                 run_total=total,
             )

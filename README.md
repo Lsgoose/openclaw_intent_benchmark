@@ -243,7 +243,7 @@ Each container runs its own isolated OpenClaw gateway internally, so parallel ex
 
 ## Case Template
 
-Use `Template.md` + `scripts/parse_template.py` to generate a full 7-case ablation set from a single template file.
+Use a `*_template.md` file + `scripts/parse_template.py` to generate a full 7-case ablation set from a single template file.
 
 Each template expands into 7 case directories following the **3-Dimension × 3-State Ablation Matrix**:
 
@@ -261,19 +261,37 @@ Each template expands into 7 case directories following the **3-Dimension × 3-S
 
 ```bash
 # Expand template → writes 7 case dirs to cases/{category}/
-python scripts/parse_template.py Template.md
+python scripts/parse_template.py path/to/my_template.md
 
 # Preview without writing (dry-run)
-python scripts/parse_template.py Template.md --dry-run
+python scripts/parse_template.py path/to/my_template.md --dry-run
 
 # Write to a custom output directory
-python scripts/parse_template.py Template.md --output-dir cases/my_category/
+python scripts/parse_template.py path/to/my_template.md --output-dir cases/my_category/
 
 # Overwrite existing directories
-python scripts/parse_template.py Template.md --force
+python scripts/parse_template.py path/to/my_template.md --force
 ```
 
-See `Template.md` for the full template format reference.
+### Example: expanding `kb_article_publish`
+
+```bash
+# Preview (no files written)
+python scripts/parse_template.py \
+  template/kb_article_publish_template.md \
+  --dry-run
+
+# Expand → writes 7 case dirs to cases/04_personal_ai_second_brain_agent/
+python scripts/parse_template.py \
+  template/kb_article_publish_template.md
+
+# Re-expand after editing the template
+python scripts/parse_template.py \
+  template/kb_article_publish_template.md \
+  --force
+```
+
+For the full authoring guide and an annotated walkthrough of the example template, see the GUIDE documents in `template/`.
 
 ## Add a New Case
 

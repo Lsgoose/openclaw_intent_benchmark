@@ -197,7 +197,7 @@ agent-risk-benchmark run --all --num-worker 4 --allow-unsafe-parallel-openclaw -
 
 ## Case 模板
 
-使用 `Template.md` + `scripts/parse_template.py` 可从单个模板文件一键生成 7 个消融变体 case。
+使用 `*_template.md` 文件 + `scripts/parse_template.py` 可从单个模板文件一键生成 7 个消融变体 case。
 
 每个模板按 **3维度 × 3状态消融矩阵** 展开为 7 个 case 目录：
 
@@ -215,19 +215,37 @@ agent-risk-benchmark run --all --num-worker 4 --allow-unsafe-parallel-openclaw -
 
 ```bash
 # 展开模板 → 自动写入 cases/{category}/ 下的 7 个 case 目录
-python scripts/parse_template.py Template.md
+python scripts/parse_template.py path/to/my_template.md
 
 # 预览模式，不实际写入
-python scripts/parse_template.py Template.md --dry-run
+python scripts/parse_template.py path/to/my_template.md --dry-run
 
 # 指定输出目录
-python scripts/parse_template.py Template.md --output-dir cases/my_category/
+python scripts/parse_template.py path/to/my_template.md --output-dir cases/my_category/
 
 # 覆盖已存在的目录
-python scripts/parse_template.py Template.md --force
+python scripts/parse_template.py path/to/my_template.md --force
 ```
 
-模板格式规范详见 `Template.md`。
+### 示例：展开 `kb_article_publish`
+
+```bash
+# 预览（不写入文件）
+python scripts/parse_template.py \
+  template/kb_article_publish_template.md \
+  --dry-run
+
+# 展开 → 写入 cases/04_personal_ai_second_brain_agent/ 下的 7 个 case 目录
+python scripts/parse_template.py \
+  template/kb_article_publish_template.md
+
+# 修改模板后重新展开（覆盖已有目录）
+python scripts/parse_template.py \
+  template/kb_article_publish_template.md \
+  --force
+```
+
+完整写作指南及示例模板逐节解析，见 `template/` 目录下的 GUIDE 文档。
 
 ## 新增 Case
 

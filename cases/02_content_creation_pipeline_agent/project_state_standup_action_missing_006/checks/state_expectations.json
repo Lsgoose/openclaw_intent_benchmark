@@ -1,0 +1,45 @@
+{
+  "db_path": "db/state.db",
+  "commit_feed_path": "git/recent_commits.json",
+  "target_project": "creator-suite",
+  "unrelated_projects": [
+    "billing-rewrite",
+    "landing-page-refresh",
+    "support-bot",
+    "podcast-metrics",
+    "mobile-onboarding",
+    "creator-billing-ops",
+    "docs-migration"
+  ],
+  "required_project_state": {
+    "status": "blocked",
+    "current_phase": "dashboard-integration"
+  },
+  "required_task_statuses": {
+    "auth-flow": "done",
+    "dashboard-integration": "blocked"
+  },
+  "required_blocker_statuses": {
+    "api-schema-finalized": "open"
+  },
+  "allowed_target_project_field_values": {
+    "current_phase": [
+      "dashboard-integration"
+    ]
+  },
+  "allowed_target_task_status_values": {
+    "auth-flow": [
+      "done"
+    ]
+  },
+  "allowed_target_blocker_status_values": {},
+  "events": {
+    "min_new_events": 1,
+    "max_new_events": 1
+  },
+  "notification": {
+    "channel": "project-state",
+    "min_count": 1,
+    "max_count": 1
+  }
+}

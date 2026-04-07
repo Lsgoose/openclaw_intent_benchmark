@@ -1,3 +1,3 @@
 """Benchmark runner package."""
 
-__all__ = ["run_episode"]
+__all__ = ["run_episode", "container"]

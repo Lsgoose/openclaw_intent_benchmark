@@ -378,28 +378,44 @@ def run_container_command(args: Any) -> int:
                 results.append(fut.result())
 
     batch_elapsed = round(time.time() - batch_started, 3)
-    batch_summary = {
-        'mode': 'container_run',
-        'container_image': ctr['image'],
-        'model': ctr['model'],
-        'selected_count': total,
-        'completed_count': sum(1 for r in results if 'error' not in r),
-        'error_count': sum(1 for r in results if 'error' in r),
-        'task_success_count': sum(1 for r in results if r.get('task_success')),
-        'safety_success_count': sum(1 for r in results if r.get('safety_success')),
-        'full_success_count': sum(1 for r in results if r.get('task_success') and r.get('safety_success')),
-        'batch_duration_sec': batch_elapsed,
-        'total_token_usage': {
-            'input': sum(r.get('token_usage', {}).get('input', 0) for r in results),
-            'output': sum(r.get('token_usage', {}).get('output', 0) for r in results),
-            'cache_read': sum(r.get('token_usage', {}).get('cache_read', 0) for r in results),
-            'cache_write': sum(r.get('token_usage', {}).get('cache_write', 0) for r in results),
-            'total': sum(r.get('token_usage', {}).get('total', 0) for r in results),
-        },
-        'results': results,
-    }
-    print(json.dumps(batch_summary, indent=2))
 
-    if any('error' in r for r in results):
+    # ── Per-case table ─────────────────────────────────────────────────────────
+    col_w = max(len(r.get('case_id', '')) for r in results)
+    header = f"{'case':<{col_w}}  task    safety  score   tok_in  tok_out  secs"
+    print(header)
+    print('-' * len(header))
+    for r in results:
+        tu = r.get('token_usage') or {}
+        if 'error' in r:
+            print(f"{r.get('case_id', '?'):<{col_w}}  ERROR: {r['error']}")
+        else:
+            task   = '✓' if r.get('task_success')   else '✗'
+            safety = '✓' if r.get('safety_success')  else '✗'
+            print(
+                f"{r['case_id']:<{col_w}}  {task:<6}  {safety:<6}  "
+                f"{r.get('score', 0.0):.1f}    "
+                f"{tu.get('input', 0):>6}  {tu.get('output', 0):>7}  "
+                f"{r.get('execute_duration_sec', 0):.1f}s"
+            )
+
+    # ── Batch summary ──────────────────────────────────────────────────────────
+    task_ok   = sum(1 for r in results if r.get('task_success'))
+    safety_ok = sum(1 for r in results if r.get('safety_success'))
+    full_ok   = sum(1 for r in results if r.get('task_success') and r.get('safety_success'))
+    errors    = sum(1 for r in results if 'error' in r)
+    tok_in    = sum(r.get('token_usage', {}).get('input',  0) for r in results)
+    tok_out   = sum(r.get('token_usage', {}).get('output', 0) for r in results)
+    tok_total = sum(r.get('token_usage', {}).get('total',  0) for r in results)
+
+    print()
+    print(f"image={ctr['image']}  model={ctr['model']}  total_time={batch_elapsed}s")
+    print(
+        f"cases={total}  errors={errors}  "
+        f"task={task_ok}/{total}  safety={safety_ok}/{total}  full={full_ok}/{total}"
+    )
+    if tok_total:
+        print(f"tokens  in={tok_in}  out={tok_out}  total={tok_total}")
+
+    if errors:
         overall_exit = 1
     return overall_exit

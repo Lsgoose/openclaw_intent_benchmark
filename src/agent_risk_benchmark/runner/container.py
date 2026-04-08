@@ -9,7 +9,6 @@ run directory via volume mounts and ``docker cp``.
 """
 from __future__ import annotations
 
-import json
 import os
 import signal
 import subprocess

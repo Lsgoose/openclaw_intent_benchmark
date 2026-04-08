@@ -202,7 +202,13 @@ agent-risk-benchmark run --all --num-worker 4 --allow-unsafe-parallel-openclaw -
 
 ### Container-based run
 
-Run cases inside isolated Docker containers (no host OpenClaw gateway required):
+Run cases inside isolated Docker containers (no host OpenClaw gateway required).
+
+The pre-built image is published on Docker Hub:
+
+```bash
+docker pull lsgoose/openclaw-bench:v2.0
+```
 
 ```bash
 agent-risk-benchmark run-container \
@@ -235,11 +241,59 @@ Key options:
 | Option | Default | Description |
 |---|---|---|
 | `--image` | `environment.json` → `openclaw-bench:v1.0` | Docker image name |
-| `--model` | `openclaw:main` | OpenClaw model string |
+| `--model` | `environment.json` → `openclaw:main` | OpenClaw model string |
 | `--parallel` | `1` | Number of containers to run simultaneously |
 | `--run-date` | today | Date partition for the run directory |
 
 Each container runs its own isolated OpenClaw gateway internally, so parallel execution is always safe.
+
+### environment.json
+
+Place an `environment.json` file at the repository root to set defaults for `run-container` without repeating CLI flags:
+
+```json
+{
+  "container_image": "openclaw-bench:v2.0",
+  "model": "modelstudio/qwen3.5-plus",
+  "model_api_key": "sk-YOUR_API_KEY_HERE"
+}
+```
+
+| Field | Description |
+|---|---|
+| `container_image` | Docker image used when `--image` is not specified |
+| `model` | Model string passed to `openclaw-init` inside the container (format: `provider/model-id`). Falls back to `default_model` if `model` is absent |
+| `default_model` | Fallback model if `model` is not set |
+| `model_api_key` | API key injected into every container at runtime as `MOONSHOT_API_KEY`, `OPENROUTER_API_KEY`, and `MODEL_API_KEY`. Never baked into the image |
+
+> **Note:** `environment.json` is listed in `.gitignore` to prevent accidental key commits. Copy from `environment.json.example` if provided.
+
+### openclaw-init
+
+`docker/openclaw-init` is a Python script installed at `/usr/local/bin/openclaw-init` inside the Docker image. It is called once per container before the gateway starts to configure OpenClaw from runtime environment variables — keeping the image itself **credential-free**.
+
+What it does:
+
+1. Reads `OPENCLAW_MODEL` (e.g. `modelstudio/qwen3.5-plus`) and `MODEL_API_KEY`
+2. Writes `~/.openclaw/openclaw.json` — sets the primary model and the provider's `baseUrl`
+3. Writes `~/.openclaw/agents/main/agent/auth-profiles.json` — stores the API key for the provider
+
+Supported providers and their base URLs:
+
+| Provider prefix | Model example | Base URL |
+|---|---|---|
+| `moonshot` | `moonshot/kimi-k2.5` | `https://api.moonshot.cn/v1` |
+| `modelstudio` | `modelstudio/qwen3.5-plus` | `https://dashscope.aliyuncs.com/compatible-mode/v1` |
+
+To patch `openclaw-init` into an existing image:
+
+```bash
+chmod +x docker/openclaw-init
+docker create --name initpatch openclaw-bench:v2.0
+docker cp docker/openclaw-init initpatch:/usr/local/bin/openclaw-init
+docker commit initpatch openclaw-bench:v2.0
+docker rm initpatch
+```
 
 ## Case Template
 

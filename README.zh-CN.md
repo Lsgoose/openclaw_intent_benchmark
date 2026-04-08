@@ -146,7 +146,13 @@ agent-risk-benchmark score \
 
 ### 容器化运行
 
-在隔离的 Docker 容器内运行 case（无需宿主机 OpenClaw gateway）：
+在隔离的 Docker 容器内运行 case（无需宿主机 OpenClaw gateway）。
+
+预构建镜像已发布到 Docker Hub，拉取命令：
+
+```bash
+docker pull lsgoose/openclaw-bench:v2.0
+```
 
 ```bash
 agent-risk-benchmark run-container \
@@ -179,11 +185,59 @@ agent-risk-benchmark run-container \
 | 参数 | 默认值 | 说明 |
 |---|---|---|
 | `--image` | `environment.json` → `openclaw-bench:v1.0` | Docker 镜像名 |
-| `--model` | `openclaw:main` | OpenClaw 模型名 |
+| `--model` | `environment.json` → `openclaw:main` | OpenClaw 模型名 |
 | `--parallel` | `1` | 同时运行的容器数量 |
 | `--run-date` | 今天 | 运行结果的日期分区 |
 
 每个容器内部运行独立的 OpenClaw gateway，天然隔离，并行始终安全。
+
+### environment.json
+
+在仓库根目录放置 `environment.json`，可以为 `run-container` 设置默认值，避免每次重复传 CLI 参数：
+
+```json
+{
+  "container_image": "openclaw-bench:v2.0",
+  "model": "modelstudio/qwen3.5-plus",
+  "model_api_key": "sk-YOUR_API_KEY_HERE"
+}
+```
+
+| 字段 | 说明 |
+|---|---|
+| `container_image` | 未指定 `--image` 时使用的 Docker 镜像名 |
+| `model` | 注入容器的模型名，格式为 `provider/model-id`。未设置时回退到 `default_model` |
+| `default_model` | `model` 未设置时的兜底模型 |
+| `model_api_key` | 运行时注入每个容器的 API Key，同时以 `MOONSHOT_API_KEY`、`OPENROUTER_API_KEY`、`MODEL_API_KEY` 三个环境变量传入。**不会写入镜像** |
+
+> **注意：** `environment.json` 已加入 `.gitignore`，避免 key 被误提交。
+
+### openclaw-init
+
+`docker/openclaw-init` 是安装在镜像 `/usr/local/bin/openclaw-init` 的 Python 脚本，在每个容器启动后、gateway 运行前执行一次，从运行时环境变量写入 OpenClaw 配置，使镜像本身**不含任何密钥**。
+
+执行流程：
+
+1. 读取 `OPENCLAW_MODEL`（如 `modelstudio/qwen3.5-plus`）和 `MODEL_API_KEY`
+2. 写入 `~/.openclaw/openclaw.json`，设置主模型及对应 provider 的 `baseUrl`
+3. 写入 `~/.openclaw/agents/main/agent/auth-profiles.json`，存储 API Key
+
+目前已验证的 provider：
+
+| Provider 前缀 | 模型示例 | Base URL |
+|---|---|---|
+| `moonshot` | `moonshot/kimi-k2.5` | `https://api.moonshot.cn/v1` |
+| `modelstudio` | `modelstudio/qwen3.5-plus` | `https://dashscope.aliyuncs.com/compatible-mode/v1` |
+
+将更新后的 `openclaw-init` 打入已有镜像：
+
+```bash
+chmod +x docker/openclaw-init
+docker create --name initpatch openclaw-bench:v2.0
+docker cp docker/openclaw-init initpatch:/usr/local/bin/openclaw-init
+docker commit initpatch openclaw-bench:v2.0
+docker rm initpatch
+```
 
 ## 并发安全说明
 

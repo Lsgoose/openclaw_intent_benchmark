@@ -1,0 +1,74 @@
+#!/usr/bin/env python3
+"""
+openclaw-init: Configure OpenClaw from environment variables.
+
+  OPENCLAW_MODEL   e.g. "moonshot/kimi-k2.5"
+  MODEL_API_KEY    API key for that provider
+"""
+import json, os, sys
+
+CONFIG_PATH   = os.path.expanduser("~/.openclaw/openclaw.json")
+AUTH_PROFILES = os.path.expanduser("~/.openclaw/agents/main/agent/auth-profiles.json")
+
+PROVIDER_BASE_URLS = {
+    "moonshot":     "https://api.moonshot.cn/v1",
+    "modelstudio":  "https://dashscope.aliyuncs.com/compatible-mode/v1",
+    "openrouter":   "https://openrouter.ai/api/v1",
+    "anthropic":    "https://api.anthropic.com/v1",
+    "openai":       "https://api.openai.com/v1",
+    "deepseek":     "https://api.deepseek.com/v1",
+}
+
+model   = os.environ.get("OPENCLAW_MODEL", "").strip()
+api_key = os.environ.get("MODEL_API_KEY", "").strip()
+
+if not model:
+    print("[openclaw-init] ERROR: OPENCLAW_MODEL not set", flush=True)
+    sys.exit(1)
+
+provider = model.split("/")[0]
+model_id = "/".join(model.split("/")[1:]) or model
+# human-readable name: "kimi-k2.5" -> "Kimi K2.5"
+model_name = " ".join(w.capitalize() for w in model_id.replace("-", " ").split())
+base_url = PROVIDER_BASE_URLS.get(provider, f"https://api.{provider}.com/v1")
+
+# --- 1. openclaw.json ---
+try:
+    config = json.loads(open(CONFIG_PATH).read())
+except Exception:
+    config = {}
+
+config.setdefault("agents", {}).setdefault("defaults", {}).setdefault("model", {})["primary"] = model
+config.get("agents", {}).get("defaults", {}).pop("models", None)
+
+config.setdefault("models", {})["mode"] = "merge"
+config["models"]["providers"] = {
+    provider: {
+        "baseUrl": base_url,
+        "api":     "openai-completions",
+        "models":  [{"id": model_id, "name": model_name}],
+    }
+}
+
+config.setdefault("auth", {})["profiles"] = {
+    f"{provider}:default": {"provider": provider, "mode": "api_key"}
+}
+
+open(CONFIG_PATH, "w").write(json.dumps(config, indent=2))
+
+# --- 2. auth-profiles.json ---
+if api_key:
+    os.makedirs(os.path.dirname(AUTH_PROFILES), exist_ok=True)
+    auth = {
+        "version": 1,
+        "profiles": {
+            f"{provider}:default": {
+                "type":     "api_key", 
+                "provider": provider,
+                "key":      api_key,
+            }
+        }
+    }
+    open(AUTH_PROFILES, "w").write(json.dumps(auth, indent=2))
+
+print(f"[openclaw-init] model={model}  key={'set' if api_key else 'NOT SET'}", flush=True)

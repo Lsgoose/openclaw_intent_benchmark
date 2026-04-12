@@ -10,6 +10,7 @@ run directory via volume mounts and ``docker cp``.
 from __future__ import annotations
 
 import os
+import shlex
 import signal
 import subprocess
 import sys
@@ -201,7 +202,11 @@ def container_run_case(
         #    with the correct model + provider + auth config from env vars.
         #    This keeps the Docker image credential-free.
         effective_model = model or 'moonshot/kimi-k2.5'
-        container_exec(task_id, f"OPENCLAW_MODEL='{effective_model}' MODEL_API_KEY='{model_api_key}' openclaw-init")
+        # shlex.quote avoids shell breakage if model or key contains quotes/spaces.
+        container_exec(
+            task_id,
+            f"OPENCLAW_MODEL={shlex.quote(effective_model)} MODEL_API_KEY={shlex.quote(model_api_key)} openclaw-init",
+        )
 
         # 3. Start the in-container openclaw gateway.
         #    Each container has an isolated network namespace so port conflicts
@@ -318,13 +323,20 @@ def _resolve_container_args(args: Any, local_env: dict[str, Any]) -> dict[str, A
 def run_container_command(args: Any) -> int:
     """CLI handler for the ``run-container`` subcommand."""
     from .run_episode import (  # noqa: PLC0415
+        category_for_case_dir,
         emit_progress,
+        format_batch_rollup_text,
         format_progress,
         materialize_run,
+        resolve_summary_outpath,
+        resolve_cases_root,
         resolve_run_case_dirs,
+        summarize_batch_results,
+        write_summary_file,
     )
 
     case_dirs = resolve_run_case_dirs(args)
+    cases_root = resolve_cases_root(getattr(args, 'cases_root', None))
     local_env = load_local_environment()
     ctr = _resolve_container_args(args, local_env)
     run_date = args.run_date
@@ -364,6 +376,8 @@ def run_container_command(args: Any) -> int:
             run_idx=idx,
             run_total=total,
         )
+        result['category'] = category_for_case_dir(case_dir, cases_root)
+        result['case_dir'] = str(case_dir.resolve())
         emit_progress(format_progress(case_id, f'complete (score={result.get("score")})', index=idx, total=total))
         return result
 
@@ -380,7 +394,9 @@ def run_container_command(args: Any) -> int:
 
     # ── Per-case table ─────────────────────────────────────────────────────────
     col_w = max(len(r.get('case_id', '')) for r in results)
-    header = f"{'case':<{col_w}}  task    safety  score   tok_in  tok_out  secs"
+    header = (
+        f"{'case':<{col_w}}  task    safety  score   tok_in  tok_out  c_read  c_wr  secs"
+    )
     print(header)
     print('-' * len(header))
     for r in results:
@@ -394,27 +410,34 @@ def run_container_command(args: Any) -> int:
                 f"{r['case_id']:<{col_w}}  {task:<6}  {safety:<6}  "
                 f"{r.get('score', 0.0):.1f}    "
                 f"{tu.get('input', 0):>6}  {tu.get('output', 0):>7}  "
+                f"{tu.get('cache_read', 0):>6}  {tu.get('cache_write', 0):>4}  "
                 f"{r.get('execute_duration_sec', 0):.1f}s"
             )
 
-    # ── Batch summary ──────────────────────────────────────────────────────────
-    task_ok   = sum(1 for r in results if r.get('task_success'))
-    safety_ok = sum(1 for r in results if r.get('safety_success'))
-    full_ok   = sum(1 for r in results if r.get('task_success') and r.get('safety_success'))
-    errors    = sum(1 for r in results if 'error' in r)
-    tok_in    = sum(r.get('token_usage', {}).get('input',  0) for r in results)
-    tok_out   = sum(r.get('token_usage', {}).get('output', 0) for r in results)
-    tok_total = sum(r.get('token_usage', {}).get('total',  0) for r in results)
+    # ── Batch summary (by category + overall) ──────────────────────────────────
+    rollups = summarize_batch_results(results)
+
+    batch_doc: dict[str, Any] = {
+        'mode': 'run_container',
+        'run_date': run_date,
+        'cases_root': str(cases_root),
+        'container_image': ctr['image'],
+        'model': ctr['model'],
+        'parallel': ctr['parallel'],
+        'wall_clock_sec': batch_elapsed,
+        'batch_rollup': rollups,
+        'results': results,
+    }
+    summary_path = resolve_summary_outpath(args, run_date=str(run_date), mode_label='run-container', case_count=total)
+    if summary_path:
+        written = write_summary_file(summary_path, batch_doc)
+        emit_progress(f'Wrote summary: {written}')
 
     print()
-    print(f"image={ctr['image']}  model={ctr['model']}  total_time={batch_elapsed}s")
-    print(
-        f"cases={total}  errors={errors}  "
-        f"task={task_ok}/{total}  safety={safety_ok}/{total}  full={full_ok}/{total}"
-    )
-    if tok_total:
-        print(f"tokens  in={tok_in}  out={tok_out}  total={tok_total}")
+    print(f"image={ctr['image']}  model={ctr['model'] or 'openclaw:main'}  wall_clock_sec={batch_elapsed}")
+    print(format_batch_rollup_text(rollups))
 
+    errors = rollups['overall']['error_count']
     if errors:
         overall_exit = 1
     return overall_exit

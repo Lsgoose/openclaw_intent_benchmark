@@ -164,6 +164,211 @@ def resolve_run_case_dirs(args: argparse.Namespace) -> list[Path]:
     return list(selected.values())
 
 
+def category_for_case_dir(case_dir: Path, cases_root: Path) -> str:
+    """First path segment under ``cases_root``; matches :func:`discover_cases` category."""
+    try:
+        rel = case_dir.resolve().relative_to(cases_root.resolve())
+    except ValueError:
+        return 'uncategorized'
+    parts = rel.parts
+    if len(parts) > 1:
+        return parts[0]
+    return 'uncategorized'
+
+
+def summarize_batch_results(results: list[dict[str, Any]]) -> dict[str, Any]:
+    """Aggregate counts, token usage, and durations by category and overall."""
+
+    def new_bucket() -> dict[str, Any]:
+        return {
+            'count': 0,
+            'error_count': 0,
+            'completed_count': 0,
+            'task_success_count': 0,
+            'safety_success_count': 0,
+            'full_success_count': 0,
+            'score_sum': 0.0,
+            'score_n': 0,
+            'token_usage': {'input': 0, 'output': 0, 'cache_read': 0, 'cache_write': 0, 'total': 0},
+            'execute_duration_sec': 0.0,
+            'http_duration_sec': 0.0,
+        }
+
+    def ingest(bucket: dict[str, Any], r: dict[str, Any]) -> None:
+        bucket['count'] += 1
+        if 'error' in r:
+            bucket['error_count'] += 1
+        else:
+            bucket['completed_count'] += 1
+        if r.get('task_success'):
+            bucket['task_success_count'] += 1
+        if r.get('safety_success'):
+            bucket['safety_success_count'] += 1
+        if r.get('task_success') and r.get('safety_success'):
+            bucket['full_success_count'] += 1
+        tu = r.get('token_usage') or {}
+        for key in ('input', 'output', 'cache_read', 'cache_write', 'total'):
+            bucket['token_usage'][key] += int(tu.get(key, 0))
+        bucket['execute_duration_sec'] += float(r.get('execute_duration_sec', 0) or 0)
+        bucket['http_duration_sec'] += float(r.get('http_duration_sec', 0) or 0)
+        if 'error' not in r and r.get('score') is not None:
+            bucket['score_sum'] += float(r.get('score', 0) or 0)
+            bucket['score_n'] += 1
+
+    by_category: dict[str, dict[str, Any]] = {}
+    overall = new_bucket()
+    for r in results:
+        cat = str(r.get('category') or 'uncategorized').strip() or 'uncategorized'
+        if cat not in by_category:
+            by_category[cat] = new_bucket()
+        ingest(by_category[cat], r)
+        ingest(overall, r)
+
+    def finalize(bucket: dict[str, Any]) -> dict[str, Any]:
+        n = bucket['count']
+        tu = {k: int(v) for k, v in bucket['token_usage'].items()}
+        return {
+            'count': n,
+            'error_count': bucket['error_count'],
+            'completed_count': bucket['completed_count'],
+            'task_success_count': bucket['task_success_count'],
+            'safety_success_count': bucket['safety_success_count'],
+            'full_success_count': bucket['full_success_count'],
+            'task_success_rate': round(bucket['task_success_count'] / n, 4) if n else 0.0,
+            'safety_success_rate': round(bucket['safety_success_count'] / n, 4) if n else 0.0,
+            'full_success_rate': round(bucket['full_success_count'] / n, 4) if n else 0.0,
+            'mean_score': round(bucket['score_sum'] / bucket['score_n'], 4) if bucket['score_n'] else None,
+            'token_usage': tu,
+            'execute_duration_sec': round(bucket['execute_duration_sec'], 3),
+            'http_duration_sec': round(bucket['http_duration_sec'], 3),
+        }
+
+    return {
+        'by_category': {k: finalize(v) for k, v in sorted(by_category.items())},
+        'overall': finalize(overall),
+    }
+
+
+def format_batch_rollup_text(rollups: dict[str, Any]) -> str:
+    """Human-readable category breakdown + overall (for container / logs)."""
+    lines: list[str] = []
+    by_cat = rollups.get('by_category') or {}
+    overall = rollups.get('overall') or {}
+    if not by_cat and not overall.get('count'):
+        return ''
+
+    lines.append('--- Summary by category ---')
+    if by_cat:
+        cat_w = max(len(c) for c in by_cat)
+        cat_w = max(cat_w, len('category'))
+        hdr = (
+            f"{'category':<{cat_w}}   n  err  task safe full  mean_sc  "
+            f"tok_in  tok_out  c_read  c_wr  exec_s"
+        )
+        lines.append(hdr)
+        lines.append('-' * len(hdr))
+        for name, b in by_cat.items():
+            tu = b.get('token_usage') or {}
+            ms = b.get('mean_score')
+            ms_s = f'{ms:.2f}' if ms is not None else '-'
+            lines.append(
+                f'{name:<{cat_w}}  {b["count"]:>3}  {b["error_count"]:>3}  '
+                f'{b["task_success_count"]:>4}  {b["safety_success_count"]:>4}  {b["full_success_count"]:>4}  '
+                f'{ms_s:>7}  {tu.get("input", 0):>7}  {tu.get("output", 0):>8}  '
+                f'{tu.get("cache_read", 0):>6}  {tu.get("cache_write", 0):>4}  {b["execute_duration_sec"]:>6.1f}'
+            )
+    else:
+        lines.append('(no per-category rows)')
+
+    lines.append('')
+    lines.append('--- Overall ---')
+    tu = overall.get('token_usage') or {}
+    ms = overall.get('mean_score')
+    ms_s = f'{ms:.2f}' if ms is not None else '-'
+    n = int(overall.get('count') or 0)
+    lines.append(
+        f'cases={n}  errors={overall.get("error_count", 0)}  '
+        f'task={overall.get("task_success_count", 0)}/{n}  '
+        f'safety={overall.get("safety_success_count", 0)}/{n}  '
+        f'full={overall.get("full_success_count", 0)}/{n}  '
+        f'mean_score={ms_s}'
+    )
+    if tu.get('total') or tu.get('input') or tu.get('output') or tu.get('cache_read') or tu.get('cache_write'):
+        lines.append(
+            f'tokens  in={tu.get("input", 0)}  out={tu.get("output", 0)}  '
+            f'cache_read={tu.get("cache_read", 0)}  cache_write={tu.get("cache_write", 0)}  '
+            f'total={tu.get("total", 0)}'
+        )
+    lines.append(
+        f'execute_sec={overall.get("execute_duration_sec", 0)}  '
+        f'http_sec={overall.get("http_duration_sec", 0)}'
+    )
+    return '\n'.join(lines)
+
+
+# argparse: bare ``--summary`` (no PATH) sets this const so we pick a default filename.
+SUMMARY_CLI_SENTINEL = '__SUMMARY_DEFAULT_PATH__'
+
+
+def resolve_summary_outpath(
+    args: argparse.Namespace,
+    *,
+    run_date: str,
+    mode_label: str,
+    case_count: int,
+) -> Path | None:
+    """Target path for the written summary file, or None if ``--summary`` was not used."""
+    if case_count == 0:
+        return None
+    raw = getattr(args, 'summary', None)
+    if raw is None:
+        return None
+    if isinstance(raw, str) and raw and raw != SUMMARY_CLI_SENTINEL:
+        return Path(raw).expanduser().resolve()
+    if raw == SUMMARY_CLI_SENTINEL:
+        ts = datetime.now(timezone.utc).strftime('%Y%m%dT%H%M%SZ')
+        safe_mode = mode_label.replace('-', '_')
+        return (RUNS_ROOT / run_date / f'summary_{safe_mode}_{ts}.json').resolve()
+    return None
+
+
+def write_summary_file(path: Path, document: dict[str, Any]) -> Path:
+    """Write ``document`` to ``path`` as JSON, or as Markdown if ``path`` ends with ``.md``."""
+    path = path.expanduser()
+    path.parent.mkdir(parents=True, exist_ok=True)
+    suff = path.suffix.lower()
+    if suff == '.md':
+        rollup = document.get('batch_rollup')
+        if rollup is None and document.get('results'):
+            rollup = summarize_batch_results(document['results'])
+        lines = [
+            '# Summary',
+            f'Generated (UTC): {datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M:%S")}Z',
+            '',
+        ]
+        for key in (
+            'mode',
+            'run_date',
+            'cases_root',
+            'container_image',
+            'model',
+            'parallel',
+            'num_worker',
+            'wall_clock_sec',
+            'batch_duration_sec',
+        ):
+            if key in document and document[key] is not None:
+                lines.append(f'- **{key}:** {document[key]}')
+        lines.append('')
+        lines.append(format_batch_rollup_text(rollup or {}))
+        path.write_text('\n'.join(lines) + '\n', encoding='utf-8')
+        return path.resolve()
+
+    json_path = path if suff == '.json' else path.with_suffix('.json')
+    json_path.write_text(json.dumps(document, indent=2, ensure_ascii=False) + '\n', encoding='utf-8')
+    return json_path.resolve()
+
+
 def resolve_oracle_entry(case_dir: Path, case_config: dict[str, Any]) -> Path:
     oracle_config = case_config.get('oracle', {})
     if not isinstance(oracle_config, dict):
@@ -498,12 +703,30 @@ def copy_openclaw_trace(run_dir: Path, session_key: str, sessions_index_path: Pa
     }
 
 
+def _accumulate_usage_dict(totals: dict[str, int], usage: dict[str, Any]) -> None:
+    """Add one OpenClaw/OpenAI-style usage object into ``totals`` (mutates in place)."""
+    inp = usage.get('input', usage.get('prompt_tokens'))
+    out = usage.get('output', usage.get('completion_tokens'))
+    totals['input'] += int(inp if inp is not None else 0)
+    totals['output'] += int(out if out is not None else 0)
+    totals['cache_read'] += int(usage.get('cacheRead', usage.get('cache_read', 0)) or 0)
+    totals['cache_write'] += int(usage.get('cacheWrite', usage.get('cache_write', 0)) or 0)
+    tot = usage.get('totalTokens', usage.get('total_tokens', usage.get('total')))
+    if tot is not None:
+        totals['total'] += int(tot)
+    elif inp is not None or out is not None:
+        totals['total'] += int(inp or 0) + int(out or 0)
+
+
 def sum_trace_tokens(trace_path: Path | None) -> dict[str, int]:
     """Sum token usage across all turns recorded in an openclaw trace JSONL file.
 
     Each turn may carry a ``usage`` object at the top level or inside ``message``.
-    Recognised keys: ``input``, ``output``, ``cacheRead``, ``cacheWrite``, ``totalTokens``.
-    Returns a dict with snake_case keys: input / output / cache_read / cache_write / total.
+    Recognised keys include OpenClaw-style ``input`` / ``output`` / ``cacheRead`` /
+    ``cacheWrite`` / ``totalTokens``, and OpenAI-style ``prompt_tokens`` /
+    ``completion_tokens`` / ``total_tokens`` (common for some providers in traces).
+    Returns a dict with snake_case keys: ``input``, ``output``, ``cache_read``, ``cache_write``,
+    ``total`` (API-reported totals summed per line; if zero, sum of the four components).
     """
     totals: dict[str, int] = {'input': 0, 'output': 0, 'cache_read': 0, 'cache_write': 0, 'total': 0}
     if trace_path is None or not Path(trace_path).exists():
@@ -522,11 +745,12 @@ def sum_trace_tokens(trace_path: Path | None) -> dict[str, int]:
             usage = msg.get('usage') if isinstance(msg, dict) else None
         if not isinstance(usage, dict):
             continue
-        totals['input'] += int(usage.get('input', 0))
-        totals['output'] += int(usage.get('output', 0))
-        totals['cache_read'] += int(usage.get('cacheRead', 0))
-        totals['cache_write'] += int(usage.get('cacheWrite', 0))
-        totals['total'] += int(usage.get('totalTokens', 0))
+        _accumulate_usage_dict(totals, usage)
+    # Keep input / output / cache_read / cache_write separate (e.g. Anthropic prompt cache).
+    if totals['total'] <= 0:
+        totals['total'] = (
+            totals['input'] + totals['output'] + totals['cache_read'] + totals['cache_write']
+        )
     return totals
 
 
@@ -690,6 +914,7 @@ def run_many(case_dirs: list[Path], args: argparse.Namespace) -> int:
     results: list[dict[str, Any]] = []
     overall_exit_code = 0
     total = len(case_dirs)
+    cases_root = resolve_cases_root(getattr(args, 'cases_root', None))
 
     configured_workers = int(getattr(args, 'num_worker', 1) or 1)
     if configured_workers < 1:
@@ -710,7 +935,7 @@ def run_many(case_dirs: list[Path], args: argparse.Namespace) -> int:
 
     def _run_single(idx: int, case_dir: Path) -> tuple[int, int, dict[str, Any]]:
         case_id = case_dir.name
-        category = case_dir.parent.name
+        category = category_for_case_dir(case_dir, cases_root)
         try:
             emit_progress(format_progress(case_id, 'prepare', index=idx, total=total))
             case_config, run_dir, _ = prepare_run(case_dir, args)
@@ -777,8 +1002,13 @@ def run_many(case_dirs: list[Path], args: argparse.Namespace) -> int:
             'cache_write': sum(r.get('token_usage', {}).get('cache_write', 0) for r in results),
             'total': sum(r.get('token_usage', {}).get('total', 0) for r in results),
         },
+        'batch_rollup': summarize_batch_results(results),
         'results': results,
     }
+    summary_path = resolve_summary_outpath(args, run_date=str(args.run_date), mode_label='run', case_count=total)
+    if summary_path:
+        written = write_summary_file(summary_path, batch_summary)
+        emit_progress(f'Wrote summary: {written}')
     print(json.dumps(batch_summary, indent=2))
     return overall_exit_code
 
@@ -794,6 +1024,22 @@ def run_command(args: argparse.Namespace) -> int:
         emit_progress(format_progress(case_id, 'execute', index=1, total=1))
         exit_code, summary = execute_run(run_dir, args, emit_summary=True)
         emit_progress(format_progress(case_id, f'complete (score={summary.get("score")})', index=1, total=1))
+        summary_path = resolve_summary_outpath(args, run_date=str(args.run_date), mode_label='run', case_count=1)
+        if summary_path:
+            cases_root = resolve_cases_root(getattr(args, 'cases_root', None))
+            row = dict(summary)
+            row['category'] = category_for_case_dir(case_dir, cases_root)
+            row['case_dir'] = str(case_dir.resolve())
+            row['exit_code'] = exit_code
+            summary_doc: dict[str, Any] = {
+                'mode': 'run',
+                'run_date': str(args.run_date),
+                'selected_count': 1,
+                'batch_rollup': summarize_batch_results([row]),
+                'results': [row],
+            }
+            written = write_summary_file(summary_path, summary_doc)
+            emit_progress(f'Wrote summary: {written}')
         return exit_code
     return run_many(case_dirs, args)
 
@@ -957,6 +1203,134 @@ def score_command(args: argparse.Namespace) -> int:
     return 0
 
 
+def _load_score_json(run_dir: Path) -> dict[str, Any] | None:
+    p = run_dir / 'score.json'
+    if not p.is_file():
+        return None
+    try:
+        raw = json.loads(p.read_text(encoding='utf-8'))
+    except (OSError, json.JSONDecodeError):
+        return None
+    return raw if isinstance(raw, dict) else None
+
+
+def _trial_success(score: dict[str, Any], metric: str, score_threshold: float) -> bool:
+    """Whether a single scored run counts as success for pass@k / pass_all_k."""
+    if metric == 'full':
+        return bool(score.get('task_success')) and bool(score.get('safety_success'))
+    if metric == 'task':
+        return bool(score.get('task_success'))
+    if metric == 'safety':
+        return bool(score.get('safety_success'))
+    if metric == 'score':
+        try:
+            return float(score.get('score', 0)) >= score_threshold
+        except (TypeError, ValueError):
+            return False
+    raise ValueError(f'unknown metric: {metric}')
+
+
+def pass_at_k_command(args: argparse.Namespace) -> int:
+    """Aggregate pass@k and pass_all_k over runs/<date>/<case_id>/<replicate>/score.json.
+
+    **pass@k** (standard \"at least one\"): among k trials per case, the case *passes* if
+    **any** trial meets the success criterion.
+
+    **pass_all_k** (strict \"all k\", sometimes written pass^k informally): the case *passes* only if
+    **all k** trials exist **and** each meets the success criterion. Missing ``score.json`` counts
+    as a failed trial for both metrics.
+    """
+    run_date = str(args.run_date).strip()
+    replicates: list[str] = [str(x).strip() for x in (args.replicate or []) if str(x).strip()]
+    if not replicates:
+        print('[pass-at-k] ERROR: provide at least one --replicate RUN_NAME', file=sys.stderr)
+        return 2
+
+    runs_root = Path(args.runs_root).expanduser().resolve()
+    partition = runs_root / run_date
+    if not partition.is_dir():
+        print(f'[pass-at-k] ERROR: not a directory: {partition}', file=sys.stderr)
+        return 2
+
+    metric = str(args.metric)
+    threshold = float(args.score_threshold)
+    k = len(replicates)
+
+    case_roots = sorted(p for p in partition.iterdir() if p.is_dir())
+    per_case: list[dict[str, Any]] = []
+    pass_at_k_n = 0
+    pass_all_k_n = 0
+    missing_scores = 0
+
+    for case_root in case_roots:
+        case_id = case_root.name
+        trials: list[dict[str, Any]] = []
+        trial_success_flags: list[bool] = []
+        for rn in replicates:
+            rd = case_root / rn
+            sc = _load_score_json(rd) if rd.is_dir() else None
+            if sc is None:
+                missing_scores += 1
+                trials.append({'run_name': rn, 'success': None, 'missing': True})
+            else:
+                ok = _trial_success(sc, metric, threshold)
+                trial_success_flags.append(ok)
+                trials.append({'run_name': rn, 'success': ok, 'missing': False})
+
+        any_ok = any(trial_success_flags) if trial_success_flags else False
+        all_ok = len(trial_success_flags) == k and trial_success_flags and all(trial_success_flags)
+        if any_ok:
+            pass_at_k_n += 1
+        if all_ok:
+            pass_all_k_n += 1
+        per_case.append(
+            {
+                'case_id': case_id,
+                'trials': trials,
+                'pass_at_k': any_ok,
+                'pass_all_k': all_ok,
+            }
+        )
+
+    n = len(case_roots)
+    doc: dict[str, Any] = {
+        'run_date': run_date,
+        'runs_partition': str(partition),
+        'replicates': replicates,
+        'k': k,
+        'metric': metric,
+        'score_threshold': threshold,
+        'case_count': n,
+        'pass_at_k_count': pass_at_k_n,
+        'pass_at_k_rate': round(pass_at_k_n / n, 6) if n else 0.0,
+        'pass_all_k_count': pass_all_k_n,
+        'pass_all_k_rate': round(pass_all_k_n / n, 6) if n else 0.0,
+        'missing_score_files': missing_scores,
+        'per_case': per_case,
+    }
+
+    if args.json:
+        print(json.dumps(doc, indent=2, ensure_ascii=False))
+        return 0
+
+    print(
+        f'runs/{run_date}/  k={k}  replicates={replicates!r}  metric={metric}'
+        + (f'  score_threshold={threshold}' if metric == 'score' else '')
+    )
+    print(f'cases discovered: {n}')
+    print(
+        f'pass@k     {pass_at_k_n}/{n}  ({doc["pass_at_k_rate"]:.4f})  '
+        f'[≥1 successful trial per case]'
+    )
+    print(
+        f'pass_all_k {pass_all_k_n}/{n}  ({doc["pass_all_k_rate"]:.4f})  '
+        f'[all {k} trials successful; missing score.json ⇒ fail]'
+    )
+    if missing_scores:
+        print(f'note: missing score.json entries (counted as failed trials): {missing_scores}')
+    return 0
+
+
 # ── Container execution path (see container.py) ────────────────────────────────
 from .container import DEFAULT_CONTAINER_IMAGE, run_container_command  # noqa: E402
 
@@ -993,6 +1367,17 @@ def build_parser() -> argparse.ArgumentParser:
         action='store_true',
         help='Allow parallel runs even when using shared OpenClaw config workspace sync (unsafe).',
     )
+    run.add_argument(
+        '--summary',
+        nargs='?',
+        const=SUMMARY_CLI_SENTINEL,
+        default=None,
+        metavar='PATH',
+        help=(
+            'Write JSON or Markdown summary (PATH ending in .md) with rollup + per-case results. '
+            'Bare --summary uses runs/<--run-date>/summary_run_<utc>.json'
+        ),
+    )
     run.set_defaults(handler=run_command)
 
     execute = subparsers.add_parser('execute', help='Send the case prompt to an already-configured OpenClaw Gateway.')
@@ -1011,14 +1396,63 @@ def build_parser() -> argparse.ArgumentParser:
     score.add_argument('--run-dir', required=True, help='Path to an existing run directory under runs/.')
     score.set_defaults(handler=score_command)
 
+    passk = subparsers.add_parser(
+        'pass-at-k',
+        formatter_class=argparse.RawDescriptionHelpFormatter,
+        help='Compute pass@k and pass_all_k from multiple scored replicates per case.',
+        description=(
+            'Read runs/<--run-date>/<case_id>/<RUN_NAME>/score.json for each case.\n\n'
+            '  pass@k      — case passes if **any** of the k trials succeeds (standard decoding).\n'
+            '  pass_all_k  — case passes only if **all** k trials succeed (strict; missing score.json fails).\n\n'
+            'Example (three replicates run1..run3 under each case folder):\n'
+            '  agent-risk-benchmark pass-at-k --run-date 2026-04-12 --replicate run1 run2 run3'
+        ),
+    )
+    passk.add_argument('--run-date', required=True, help='Date partition under runs/, e.g. 2026-04-12.')
+    passk.add_argument(
+        '--replicate',
+        nargs='+',
+        required=True,
+        metavar='RUN_NAME',
+        help='Run directory names under each runs/<date>/<case_id>/ (order defines k).',
+    )
+    passk.add_argument(
+        '--runs-root',
+        default=str(RUNS_ROOT),
+        help=f'Runs root directory (default: {RUNS_ROOT}).',
+    )
+    passk.add_argument(
+        '--metric',
+        choices=('full', 'task', 'safety', 'score'),
+        default='full',
+        help='Success definition: full=task and safety; score uses --score-threshold.',
+    )
+    passk.add_argument(
+        '--score-threshold',
+        type=float,
+        default=1.0,
+        help='When --metric score, success iff score >= this value (default: 1.0).',
+    )
+    passk.add_argument('--json', action='store_true', help='Print full JSON report on stdout.')
+    passk.set_defaults(handler=pass_at_k_command)
+
     # ── run-container ──────────────────────────────────────────────────────────
     runc = subparsers.add_parser(
         'run-container',
+        formatter_class=argparse.RawDescriptionHelpFormatter,
         help='Run cases inside Docker containers (gateway + agent run in the container).',
         description=(
             'Container-based execution path: spins up a Docker container per case, '
             'runs openclaw gateway + agent inside it, collects results, and scores with oracle.py. '
-            'Mirrors WildClawBench eval/run_batch.py but uses agent-risk-benchmark case format.'
+            'Mirrors WildClawBench eval/run_batch.py but uses agent-risk-benchmark case format.\n\n'
+            'Examples:\n'
+            '  Run every discovered case under cases/ (cannot combine --all with --case/--category/--case-dir):\n'
+            '    agent-risk-benchmark run-container --all --parallel 4\n'
+            '  Same, and write a JSON summary under runs/<date>/:\n'
+            '    agent-risk-benchmark run-container --category 04_personal_ai_second_brain_agent --summary\n'
+            '  Same with explicit image and model:\n'
+            '    agent-risk-benchmark run-container --all --parallel 2 \\\n'
+            '      --image openclaw-bench:v1.0 --model openrouter/anthropic/claude-sonnet-4.5'
         ),
     )
     # Case selection (same as `run`)
@@ -1029,6 +1463,7 @@ def build_parser() -> argparse.ArgumentParser:
     runc.add_argument('--category', dest='categories', action='append',
                       help='Category directory under cases/. Repeat for multiple.')
     runc.add_argument('--all', dest='run_all', action='store_true', help='Run all discovered cases.')
+    runc.add_argument('--cases-root', default='cases', help='Root directory containing case folders (used with --all, --category, --case).')
     # Run naming
     runc.add_argument('--run-date', default=str(date.today()), help='Date partition for the run directory.')
     runc.add_argument('--run-name', help='Run directory name; default is next available runN.')
@@ -1040,6 +1475,17 @@ def build_parser() -> argparse.ArgumentParser:
                       help='OpenClaw model string, e.g. openrouter/anthropic/claude-sonnet-4.6.')
     runc.add_argument('--parallel', type=int, default=1,
                       help='Number of containers to run in parallel (default: 1).')
+    runc.add_argument(
+        '--summary',
+        nargs='?',
+        const=SUMMARY_CLI_SENTINEL,
+        default=None,
+        metavar='PATH',
+        help=(
+            'Write JSON or Markdown summary (PATH ending in .md) with rollup + per-case results. '
+            'Bare --summary uses runs/<--run-date>/summary_run_container_<utc>.json'
+        ),
+    )
     runc.set_defaults(handler=run_container_command)
 
     return parser

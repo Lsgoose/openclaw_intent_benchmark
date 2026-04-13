@@ -153,8 +153,10 @@ def container_run_case(
     # Deferred imports to avoid circular dependency at module load time.
     from .run_episode import (  # noqa: PLC0415
         DEFAULT_REQUEST_TIMEOUT_SEC,
-        emit_progress,
         evaluate_run,
+    )
+    from .tools import (  # noqa: PLC0415
+        emit_progress,
         format_progress,
         load_case_config,
         sum_trace_tokens,
@@ -323,20 +325,24 @@ def _resolve_container_args(args: Any, local_env: dict[str, Any]) -> dict[str, A
 def run_container_command(args: Any) -> int:
     """CLI handler for the ``run-container`` subcommand."""
     from .run_episode import (  # noqa: PLC0415
+        REPO_ROOT,
+        RUNS_ROOT,
         category_for_case_dir,
+        materialize_run,
+        resolve_run_case_dirs,
+    )
+    from .tools import (  # noqa: PLC0415
         emit_progress,
         format_batch_rollup_text,
         format_progress,
-        materialize_run,
-        resolve_summary_outpath,
         resolve_cases_root,
-        resolve_run_case_dirs,
+        resolve_summary_outpath,
         summarize_batch_results,
         write_summary_file,
     )
 
     case_dirs = resolve_run_case_dirs(args)
-    cases_root = resolve_cases_root(getattr(args, 'cases_root', None))
+    cases_root = resolve_cases_root(REPO_ROOT, getattr(args, 'cases_root', None))
     local_env = load_local_environment()
     ctr = _resolve_container_args(args, local_env)
     run_date = args.run_date
@@ -428,7 +434,13 @@ def run_container_command(args: Any) -> int:
         'batch_rollup': rollups,
         'results': results,
     }
-    summary_path = resolve_summary_outpath(args, run_date=str(run_date), mode_label='run-container', case_count=total)
+    summary_path = resolve_summary_outpath(
+        args,
+        run_date=str(run_date),
+        mode_label='run-container',
+        case_count=total,
+        runs_root=RUNS_ROOT,
+    )
     if summary_path:
         written = write_summary_file(summary_path, batch_doc)
         emit_progress(f'Wrote summary: {written}')

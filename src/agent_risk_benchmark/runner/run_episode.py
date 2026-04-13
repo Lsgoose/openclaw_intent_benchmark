@@ -15,8 +15,6 @@ from datetime import date, datetime, timezone
 from pathlib import Path
 from typing import Any
 
-import yaml
-
 
 def is_repo_root(path: Path) -> bool:
     has_runner = (
@@ -43,6 +41,26 @@ def discover_repo_root() -> Path:
 
 REPO_ROOT = discover_repo_root()
 RUNS_ROOT = REPO_ROOT / 'runs'
+
+from .tools import (  # noqa: E402
+    SUMMARY_CLI_SENTINEL,
+    attach_pass_at_k_per_case_aggregates,
+    build_pass_at_k_rollup,
+    collect_trial_run_metrics,
+    discover_cases,
+    empty_token_usage,
+    emit_progress,
+    format_batch_rollup_text,
+    format_progress,
+    load_case_config,
+    resolve_cases_root,
+    resolve_pass_at_k_summary_path,
+    resolve_summary_outpath,
+    summarize_batch_results,
+    sum_trace_tokens,
+    write_summary_file,
+)
+
 DEFAULT_BASE_URL = 'http://127.0.0.1:19789'
 DEFAULT_AGENT_ID = 'main'
 DEFAULT_SUITE = 'openclaw_safety'
@@ -50,58 +68,6 @@ DEFAULT_REQUEST_TIMEOUT_SEC = 180
 DEFAULT_TRACE_WAIT_SEC = 10.0
 DEFAULT_WORKSPACE_APPLY_WAIT_SEC = 2.0
 TRACE_POLL_INTERVAL_SEC = 0.25
-
-
-def emit_progress(message: str) -> None:
-    print(message, file=sys.stderr, flush=True)
-
-
-def format_progress(case_id: str, phase: str, *, index: int | None = None, total: int | None = None) -> str:
-    if index is not None and total is not None:
-        return f'[{index}/{total}] {case_id}: {phase}'
-    return f'{case_id}: {phase}'
-
-
-def load_case_config(case_dir: Path) -> dict[str, Any]:
-    return yaml.safe_load((case_dir / 'case.yaml').read_text(encoding='utf-8'))
-
-
-def discover_cases(cases_root: Path) -> list[dict[str, Any]]:
-    discovered: list[dict[str, Any]] = []
-    for case_file in sorted(cases_root.rglob('case.yaml')) if cases_root.exists() else []:
-        case_dir = case_file.parent
-        if case_dir.name.startswith('.') or case_dir.name == '__pycache__':
-            continue
-
-        case_config = load_case_config(case_dir)
-        case_id = str(case_config.get('case_id', '')).strip()
-        if not case_id:
-            raise ValueError(f'missing case_id in {case_file}')
-
-        rel_parts = case_dir.relative_to(cases_root).parts
-        category = rel_parts[0] if len(rel_parts) > 1 else 'uncategorized'
-        discovered.append(
-            {
-                'case_id': case_id,
-                'category': category,
-                'case_dir': case_dir.resolve(),
-            }
-        )
-    return discovered
-
-
-def resolve_cases_root(cases_root_arg: str | None) -> Path:
-    raw = (cases_root_arg or 'cases').strip()
-    candidate = Path(raw)
-    if not candidate.is_absolute():
-        candidate = (REPO_ROOT / candidate).resolve()
-    else:
-        candidate = candidate.resolve()
-    if not candidate.exists():
-        raise FileNotFoundError(f'cases root not found: {candidate}')
-    if not candidate.is_dir():
-        raise ValueError(f'cases root is not a directory: {candidate}')
-    return candidate
 
 
 def resolve_run_case_dirs(args: argparse.Namespace) -> list[Path]:
@@ -113,7 +79,7 @@ def resolve_run_case_dirs(args: argparse.Namespace) -> list[Path]:
     if run_all and (case_dirs_arg or case_ids or categories):
         raise ValueError('--all cannot be combined with --case-dir, --case, or --category')
 
-    cases_root = resolve_cases_root(getattr(args, 'cases_root', None))
+    cases_root = resolve_cases_root(REPO_ROOT, getattr(args, 'cases_root', None))
     discovered = discover_cases(cases_root)
     by_id: dict[str, Path] = {}
     by_category: dict[str, list[Path]] = {}
@@ -174,199 +140,6 @@ def category_for_case_dir(case_dir: Path, cases_root: Path) -> str:
     if len(parts) > 1:
         return parts[0]
     return 'uncategorized'
-
-
-def summarize_batch_results(results: list[dict[str, Any]]) -> dict[str, Any]:
-    """Aggregate counts, token usage, and durations by category and overall."""
-
-    def new_bucket() -> dict[str, Any]:
-        return {
-            'count': 0,
-            'error_count': 0,
-            'completed_count': 0,
-            'task_success_count': 0,
-            'safety_success_count': 0,
-            'full_success_count': 0,
-            'score_sum': 0.0,
-            'score_n': 0,
-            'token_usage': {'input': 0, 'output': 0, 'cache_read': 0, 'cache_write': 0, 'total': 0},
-            'execute_duration_sec': 0.0,
-            'http_duration_sec': 0.0,
-        }
-
-    def ingest(bucket: dict[str, Any], r: dict[str, Any]) -> None:
-        bucket['count'] += 1
-        if 'error' in r:
-            bucket['error_count'] += 1
-        else:
-            bucket['completed_count'] += 1
-        if r.get('task_success'):
-            bucket['task_success_count'] += 1
-        if r.get('safety_success'):
-            bucket['safety_success_count'] += 1
-        if r.get('task_success') and r.get('safety_success'):
-            bucket['full_success_count'] += 1
-        tu = r.get('token_usage') or {}
-        for key in ('input', 'output', 'cache_read', 'cache_write', 'total'):
-            bucket['token_usage'][key] += int(tu.get(key, 0))
-        bucket['execute_duration_sec'] += float(r.get('execute_duration_sec', 0) or 0)
-        bucket['http_duration_sec'] += float(r.get('http_duration_sec', 0) or 0)
-        if 'error' not in r and r.get('score') is not None:
-            bucket['score_sum'] += float(r.get('score', 0) or 0)
-            bucket['score_n'] += 1
-
-    by_category: dict[str, dict[str, Any]] = {}
-    overall = new_bucket()
-    for r in results:
-        cat = str(r.get('category') or 'uncategorized').strip() or 'uncategorized'
-        if cat not in by_category:
-            by_category[cat] = new_bucket()
-        ingest(by_category[cat], r)
-        ingest(overall, r)
-
-    def finalize(bucket: dict[str, Any]) -> dict[str, Any]:
-        n = bucket['count']
-        tu = {k: int(v) for k, v in bucket['token_usage'].items()}
-        return {
-            'count': n,
-            'error_count': bucket['error_count'],
-            'completed_count': bucket['completed_count'],
-            'task_success_count': bucket['task_success_count'],
-            'safety_success_count': bucket['safety_success_count'],
-            'full_success_count': bucket['full_success_count'],
-            'task_success_rate': round(bucket['task_success_count'] / n, 4) if n else 0.0,
-            'safety_success_rate': round(bucket['safety_success_count'] / n, 4) if n else 0.0,
-            'full_success_rate': round(bucket['full_success_count'] / n, 4) if n else 0.0,
-            'mean_score': round(bucket['score_sum'] / bucket['score_n'], 4) if bucket['score_n'] else None,
-            'token_usage': tu,
-            'execute_duration_sec': round(bucket['execute_duration_sec'], 3),
-            'http_duration_sec': round(bucket['http_duration_sec'], 3),
-        }
-
-    return {
-        'by_category': {k: finalize(v) for k, v in sorted(by_category.items())},
-        'overall': finalize(overall),
-    }
-
-
-def format_batch_rollup_text(rollups: dict[str, Any]) -> str:
-    """Human-readable category breakdown + overall (for container / logs)."""
-    lines: list[str] = []
-    by_cat = rollups.get('by_category') or {}
-    overall = rollups.get('overall') or {}
-    if not by_cat and not overall.get('count'):
-        return ''
-
-    lines.append('--- Summary by category ---')
-    if by_cat:
-        cat_w = max(len(c) for c in by_cat)
-        cat_w = max(cat_w, len('category'))
-        hdr = (
-            f"{'category':<{cat_w}}   n  err  task safe full  mean_sc  "
-            f"tok_in  tok_out  c_read  c_wr  exec_s"
-        )
-        lines.append(hdr)
-        lines.append('-' * len(hdr))
-        for name, b in by_cat.items():
-            tu = b.get('token_usage') or {}
-            ms = b.get('mean_score')
-            ms_s = f'{ms:.2f}' if ms is not None else '-'
-            lines.append(
-                f'{name:<{cat_w}}  {b["count"]:>3}  {b["error_count"]:>3}  '
-                f'{b["task_success_count"]:>4}  {b["safety_success_count"]:>4}  {b["full_success_count"]:>4}  '
-                f'{ms_s:>7}  {tu.get("input", 0):>7}  {tu.get("output", 0):>8}  '
-                f'{tu.get("cache_read", 0):>6}  {tu.get("cache_write", 0):>4}  {b["execute_duration_sec"]:>6.1f}'
-            )
-    else:
-        lines.append('(no per-category rows)')
-
-    lines.append('')
-    lines.append('--- Overall ---')
-    tu = overall.get('token_usage') or {}
-    ms = overall.get('mean_score')
-    ms_s = f'{ms:.2f}' if ms is not None else '-'
-    n = int(overall.get('count') or 0)
-    lines.append(
-        f'cases={n}  errors={overall.get("error_count", 0)}  '
-        f'task={overall.get("task_success_count", 0)}/{n}  '
-        f'safety={overall.get("safety_success_count", 0)}/{n}  '
-        f'full={overall.get("full_success_count", 0)}/{n}  '
-        f'mean_score={ms_s}'
-    )
-    if tu.get('total') or tu.get('input') or tu.get('output') or tu.get('cache_read') or tu.get('cache_write'):
-        lines.append(
-            f'tokens  in={tu.get("input", 0)}  out={tu.get("output", 0)}  '
-            f'cache_read={tu.get("cache_read", 0)}  cache_write={tu.get("cache_write", 0)}  '
-            f'total={tu.get("total", 0)}'
-        )
-    lines.append(
-        f'execute_sec={overall.get("execute_duration_sec", 0)}  '
-        f'http_sec={overall.get("http_duration_sec", 0)}'
-    )
-    return '\n'.join(lines)
-
-
-# argparse: bare ``--summary`` (no PATH) sets this const so we pick a default filename.
-SUMMARY_CLI_SENTINEL = '__SUMMARY_DEFAULT_PATH__'
-
-
-def resolve_summary_outpath(
-    args: argparse.Namespace,
-    *,
-    run_date: str,
-    mode_label: str,
-    case_count: int,
-) -> Path | None:
-    """Target path for the written summary file, or None if ``--summary`` was not used."""
-    if case_count == 0:
-        return None
-    raw = getattr(args, 'summary', None)
-    if raw is None:
-        return None
-    if isinstance(raw, str) and raw and raw != SUMMARY_CLI_SENTINEL:
-        return Path(raw).expanduser().resolve()
-    if raw == SUMMARY_CLI_SENTINEL:
-        ts = datetime.now(timezone.utc).strftime('%Y%m%dT%H%M%SZ')
-        safe_mode = mode_label.replace('-', '_')
-        return (RUNS_ROOT / run_date / f'summary_{safe_mode}_{ts}.json').resolve()
-    return None
-
-
-def write_summary_file(path: Path, document: dict[str, Any]) -> Path:
-    """Write ``document`` to ``path`` as JSON, or as Markdown if ``path`` ends with ``.md``."""
-    path = path.expanduser()
-    path.parent.mkdir(parents=True, exist_ok=True)
-    suff = path.suffix.lower()
-    if suff == '.md':
-        rollup = document.get('batch_rollup')
-        if rollup is None and document.get('results'):
-            rollup = summarize_batch_results(document['results'])
-        lines = [
-            '# Summary',
-            f'Generated (UTC): {datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M:%S")}Z',
-            '',
-        ]
-        for key in (
-            'mode',
-            'run_date',
-            'cases_root',
-            'container_image',
-            'model',
-            'parallel',
-            'num_worker',
-            'wall_clock_sec',
-            'batch_duration_sec',
-        ):
-            if key in document and document[key] is not None:
-                lines.append(f'- **{key}:** {document[key]}')
-        lines.append('')
-        lines.append(format_batch_rollup_text(rollup or {}))
-        path.write_text('\n'.join(lines) + '\n', encoding='utf-8')
-        return path.resolve()
-
-    json_path = path if suff == '.json' else path.with_suffix('.json')
-    json_path.write_text(json.dumps(document, indent=2, ensure_ascii=False) + '\n', encoding='utf-8')
-    return json_path.resolve()
 
 
 def resolve_oracle_entry(case_dir: Path, case_config: dict[str, Any]) -> Path:
@@ -703,57 +476,6 @@ def copy_openclaw_trace(run_dir: Path, session_key: str, sessions_index_path: Pa
     }
 
 
-def _accumulate_usage_dict(totals: dict[str, int], usage: dict[str, Any]) -> None:
-    """Add one OpenClaw/OpenAI-style usage object into ``totals`` (mutates in place)."""
-    inp = usage.get('input', usage.get('prompt_tokens'))
-    out = usage.get('output', usage.get('completion_tokens'))
-    totals['input'] += int(inp if inp is not None else 0)
-    totals['output'] += int(out if out is not None else 0)
-    totals['cache_read'] += int(usage.get('cacheRead', usage.get('cache_read', 0)) or 0)
-    totals['cache_write'] += int(usage.get('cacheWrite', usage.get('cache_write', 0)) or 0)
-    tot = usage.get('totalTokens', usage.get('total_tokens', usage.get('total')))
-    if tot is not None:
-        totals['total'] += int(tot)
-    elif inp is not None or out is not None:
-        totals['total'] += int(inp or 0) + int(out or 0)
-
-
-def sum_trace_tokens(trace_path: Path | None) -> dict[str, int]:
-    """Sum token usage across all turns recorded in an openclaw trace JSONL file.
-
-    Each turn may carry a ``usage`` object at the top level or inside ``message``.
-    Recognised keys include OpenClaw-style ``input`` / ``output`` / ``cacheRead`` /
-    ``cacheWrite`` / ``totalTokens``, and OpenAI-style ``prompt_tokens`` /
-    ``completion_tokens`` / ``total_tokens`` (common for some providers in traces).
-    Returns a dict with snake_case keys: ``input``, ``output``, ``cache_read``, ``cache_write``,
-    ``total`` (API-reported totals summed per line; if zero, sum of the four components).
-    """
-    totals: dict[str, int] = {'input': 0, 'output': 0, 'cache_read': 0, 'cache_write': 0, 'total': 0}
-    if trace_path is None or not Path(trace_path).exists():
-        return totals
-    for raw in Path(trace_path).read_text(encoding='utf-8').splitlines():
-        raw = raw.strip()
-        if not raw:
-            continue
-        try:
-            record = json.loads(raw)
-        except json.JSONDecodeError:
-            continue
-        usage = record.get('usage')
-        if not isinstance(usage, dict):
-            msg = record.get('message')
-            usage = msg.get('usage') if isinstance(msg, dict) else None
-        if not isinstance(usage, dict):
-            continue
-        _accumulate_usage_dict(totals, usage)
-    # Keep input / output / cache_read / cache_write separate (e.g. Anthropic prompt cache).
-    if totals['total'] <= 0:
-        totals['total'] = (
-            totals['input'] + totals['output'] + totals['cache_read'] + totals['cache_write']
-        )
-    return totals
-
-
 def invoke_openclaw_chat(
     *,
     base_url: str,
@@ -914,7 +636,7 @@ def run_many(case_dirs: list[Path], args: argparse.Namespace) -> int:
     results: list[dict[str, Any]] = []
     overall_exit_code = 0
     total = len(case_dirs)
-    cases_root = resolve_cases_root(getattr(args, 'cases_root', None))
+    cases_root = resolve_cases_root(REPO_ROOT, getattr(args, 'cases_root', None))
 
     configured_workers = int(getattr(args, 'num_worker', 1) or 1)
     if configured_workers < 1:
@@ -1005,7 +727,13 @@ def run_many(case_dirs: list[Path], args: argparse.Namespace) -> int:
         'batch_rollup': summarize_batch_results(results),
         'results': results,
     }
-    summary_path = resolve_summary_outpath(args, run_date=str(args.run_date), mode_label='run', case_count=total)
+    summary_path = resolve_summary_outpath(
+        args,
+        run_date=str(args.run_date),
+        mode_label='run',
+        case_count=total,
+        runs_root=RUNS_ROOT,
+    )
     if summary_path:
         written = write_summary_file(summary_path, batch_summary)
         emit_progress(f'Wrote summary: {written}')
@@ -1024,9 +752,15 @@ def run_command(args: argparse.Namespace) -> int:
         emit_progress(format_progress(case_id, 'execute', index=1, total=1))
         exit_code, summary = execute_run(run_dir, args, emit_summary=True)
         emit_progress(format_progress(case_id, f'complete (score={summary.get("score")})', index=1, total=1))
-        summary_path = resolve_summary_outpath(args, run_date=str(args.run_date), mode_label='run', case_count=1)
+        summary_path = resolve_summary_outpath(
+            args,
+            run_date=str(args.run_date),
+            mode_label='run',
+            case_count=1,
+            runs_root=RUNS_ROOT,
+        )
         if summary_path:
-            cases_root = resolve_cases_root(getattr(args, 'cases_root', None))
+            cases_root = resolve_cases_root(REPO_ROOT, getattr(args, 'cases_root', None))
             row = dict(summary)
             row['category'] = category_for_case_dir(case_dir, cases_root)
             row['case_dir'] = str(case_dir.resolve())
@@ -1241,9 +975,20 @@ def pass_at_k_command(args: argparse.Namespace) -> int:
     as a failed trial for both metrics.
     """
     run_date = str(args.run_date).strip()
-    replicates: list[str] = [str(x).strip() for x in (args.replicate or []) if str(x).strip()]
-    if not replicates:
-        print('[pass-at-k] ERROR: provide at least one --replicate RUN_NAME', file=sys.stderr)
+    explicit = [str(x).strip() for x in (getattr(args, 'replicate', None) or []) if str(x).strip()]
+    k_count = getattr(args, 'k_count', None)
+    if k_count is not None and explicit:
+        print('[pass-at-k] ERROR: use either --k N or --replicate RUN_NAME..., not both', file=sys.stderr)
+        return 2
+    if k_count is not None:
+        if k_count < 1:
+            print('[pass-at-k] ERROR: --k must be >= 1', file=sys.stderr)
+            return 2
+        replicates = [f'run{i}' for i in range(1, k_count + 1)]
+    elif explicit:
+        replicates = explicit
+    else:
+        print('[pass-at-k] ERROR: provide --k N or at least one --replicate RUN_NAME', file=sys.stderr)
         return 2
 
     runs_root = Path(args.runs_root).expanduser().resolve()
@@ -1268,14 +1013,39 @@ def pass_at_k_command(args: argparse.Namespace) -> int:
         trial_success_flags: list[bool] = []
         for rn in replicates:
             rd = case_root / rn
+            metrics = (
+                collect_trial_run_metrics(rd)
+                if rd.is_dir()
+                else {'http_duration_sec': None, 'token_usage': empty_token_usage()}
+            )
             sc = _load_score_json(rd) if rd.is_dir() else None
             if sc is None:
                 missing_scores += 1
-                trials.append({'run_name': rn, 'success': None, 'missing': True})
+                trials.append(
+                    {
+                        'run_name': rn,
+                        'success': None,
+                        'missing': True,
+                        'task_success': None,
+                        'safety_success': None,
+                        'score': None,
+                        **metrics,
+                    }
+                )
             else:
                 ok = _trial_success(sc, metric, threshold)
                 trial_success_flags.append(ok)
-                trials.append({'run_name': rn, 'success': ok, 'missing': False})
+                trials.append(
+                    {
+                        'run_name': rn,
+                        'success': ok,
+                        'missing': False,
+                        'task_success': bool(sc.get('task_success')),
+                        'safety_success': bool(sc.get('safety_success')),
+                        'score': sc.get('score'),
+                        **metrics,
+                    }
+                )
 
         any_ok = any(trial_success_flags) if trial_success_flags else False
         all_ok = len(trial_success_flags) == k and trial_success_flags and all(trial_success_flags)
@@ -1293,7 +1063,10 @@ def pass_at_k_command(args: argparse.Namespace) -> int:
         )
 
     n = len(case_roots)
+    attach_pass_at_k_per_case_aggregates(per_case)
+    rollup = build_pass_at_k_rollup(per_case, k=k, n_cases=n)
     doc: dict[str, Any] = {
+        'mode': 'pass_at_k',
         'run_date': run_date,
         'runs_partition': str(partition),
         'replicates': replicates,
@@ -1306,8 +1079,16 @@ def pass_at_k_command(args: argparse.Namespace) -> int:
         'pass_all_k_count': pass_all_k_n,
         'pass_all_k_rate': round(pass_all_k_n / n, 6) if n else 0.0,
         'missing_score_files': missing_scores,
+        'rollup': rollup,
         'per_case': per_case,
     }
+
+    summary_path = resolve_pass_at_k_summary_path(
+        args, run_date=run_date, case_count=n, runs_root=runs_root
+    )
+    if summary_path:
+        written = write_summary_file(summary_path, doc)
+        emit_progress(f'Wrote pass-at-k summary: {written}')
 
     if args.json:
         print(json.dumps(doc, indent=2, ensure_ascii=False))
@@ -1404,17 +1185,30 @@ def build_parser() -> argparse.ArgumentParser:
             'Read runs/<--run-date>/<case_id>/<RUN_NAME>/score.json for each case.\n\n'
             '  pass@k      — case passes if **any** of the k trials succeeds (standard decoding).\n'
             '  pass_all_k  — case passes only if **all** k trials succeed (strict; missing score.json fails).\n\n'
-            'Example (three replicates run1..run3 under each case folder):\n'
+            'By default writes runs/<date>/pass_at_k_summary_<utc>.json with per-trial task/safety/score, '
+            'token usage (trace JSONL), and HTTP latency (openclaw_response.json). Use --no-summary to skip.\n\n'
+            'Examples:\n'
+            '  agent-risk-benchmark pass-at-k --run-date 2026-04-12 -k 3\n'
+            '    (same as --replicate run1 run2 run3)\n'
             '  agent-risk-benchmark pass-at-k --run-date 2026-04-12 --replicate run1 run2 run3'
         ),
     )
     passk.add_argument('--run-date', required=True, help='Date partition under runs/, e.g. 2026-04-12.')
     passk.add_argument(
+        '-k',
+        '--k',
+        type=int,
+        default=None,
+        dest='k_count',
+        metavar='N',
+        help='Shorthand: use run1, run2, …, runN under each case (N≥1). Mutually exclusive with --replicate.',
+    )
+    passk.add_argument(
         '--replicate',
-        nargs='+',
-        required=True,
+        nargs='*',
+        default=[],
         metavar='RUN_NAME',
-        help='Run directory names under each runs/<date>/<case_id>/ (order defines k).',
+        help='Explicit run directory names under each runs/<date>/<case_id>/ (order defines k). Omit if using -k.',
     )
     passk.add_argument(
         '--runs-root',
@@ -1434,6 +1228,22 @@ def build_parser() -> argparse.ArgumentParser:
         help='When --metric score, success iff score >= this value (default: 1.0).',
     )
     passk.add_argument('--json', action='store_true', help='Print full JSON report on stdout.')
+    passk.add_argument(
+        '--no-summary',
+        action='store_true',
+        help='Do not write the pass-at-k summary file (default writes JSON under runs/<--run-date>/).',
+    )
+    passk.add_argument(
+        '--summary',
+        nargs='?',
+        const=SUMMARY_CLI_SENTINEL,
+        default=None,
+        metavar='PATH',
+        help=(
+            'Summary file (.json full document, or .md rollup table). '
+            'Default path: runs/<--run-date>/pass_at_k_summary_<utc>.json'
+        ),
+    )
     passk.set_defaults(handler=pass_at_k_command)
 
     # ── run-container ──────────────────────────────────────────────────────────

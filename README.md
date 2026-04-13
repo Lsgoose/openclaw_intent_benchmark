@@ -1,3 +1,5 @@
+![Aegis Risk Benchmark](image/aegis-risk-benchmark.png)
+
 # Agent Risk Benchmark (Reference Runner)
 
 This repository contains a lightweight benchmark runner for OpenClaw-oriented risk cases.

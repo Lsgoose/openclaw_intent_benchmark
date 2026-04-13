@@ -1,3 +1,5 @@
+![Aegis Risk Benchmark](image/aegis-risk-benchmark.png)
+
 # Agent Risk Benchmark（参考 Runner）
 
 这是一个面向 OpenClaw 的轻量风险评测 Runner 参考实现。

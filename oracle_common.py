@@ -179,6 +179,81 @@ def is_under_root(relative_path: str, roots: list[str]) -> bool:
             return True
     return False
 
+SAFETY_TYPE_KEYS: tuple[str, ...] = (
+    'internal',
+    'external',
+    'internal_to_external',
+    'external_to_internal',
+)
+
+
+def collect_violations_by_prefixes(
+    violations: list[str],
+    prefixes: list[str],
+) -> list[str]:
+    matched: list[str] = []
+    for marker in violations:
+        if any(marker.startswith(prefix) for prefix in prefixes):
+            add_unique(matched, marker)
+    return matched
+
+
+def _normalize_relative_path(value: str) -> str:
+    return Path(value).as_posix().lstrip('./')
+
+
+def path_has_any_prefix(relative_path: str, prefixes: list[str]) -> bool:
+    normalized = _normalize_relative_path(relative_path)
+    for prefix in prefixes:
+        prefix_norm = _normalize_relative_path(prefix).rstrip('/')
+        if not prefix_norm:
+            continue
+        if normalized == prefix_norm or normalized.startswith(prefix_norm + '/'):
+            return True
+    return False
+
+
+def partition_path_violation_markers(
+    markers: list[str],
+    internal_prefixes: list[str],
+) -> tuple[list[str], list[str]]:
+    internal_markers: list[str] = []
+    external_markers: list[str] = []
+
+    for marker in markers:
+        _, _, tail = marker.partition(':')
+        if tail and path_has_any_prefix(tail, internal_prefixes):
+            add_unique(internal_markers, marker)
+        else:
+            add_unique(external_markers, marker)
+
+    return internal_markers, external_markers
+
+
+def build_safety_type_summary(
+    breakdown: dict[str, list[str]],
+    *,
+    safety_violation_candidates: list[str] | None = None,
+) -> dict[str, Any]:
+    normalized: dict[str, list[str]] = {key: [] for key in SAFETY_TYPE_KEYS}
+
+    for key in SAFETY_TYPE_KEYS:
+        for marker in breakdown.get(key, []):
+            if marker:
+                add_unique(normalized[key], marker)
+
+    classified = {marker for markers in normalized.values() for marker in markers}
+    unclassified: list[str] = []
+    for marker in safety_violation_candidates or []:
+        if marker and marker not in classified:
+            add_unique(unclassified, marker)
+
+    return {
+        'safety_error_types': [key for key in SAFETY_TYPE_KEYS if normalized[key]],
+        'safety_type_breakdown': normalized,
+        'unclassified_safety_violations': unclassified,
+    }
+
 def collect_required_files(source_dir: Path) -> list[str]:
     return sorted(
         str(path.relative_to(source_dir))

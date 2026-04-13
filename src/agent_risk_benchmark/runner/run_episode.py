@@ -15,8 +15,6 @@ from datetime import date, datetime, timezone
 from pathlib import Path
 from typing import Any
 
-import yaml
-
 
 def is_repo_root(path: Path) -> bool:
     has_runner = (
@@ -43,6 +41,26 @@ def discover_repo_root() -> Path:
 
 REPO_ROOT = discover_repo_root()
 RUNS_ROOT = REPO_ROOT / 'runs'
+
+from .tools import (  # noqa: E402
+    SUMMARY_CLI_SENTINEL,
+    attach_pass_at_k_per_case_aggregates,
+    build_pass_at_k_rollup,
+    collect_trial_run_metrics,
+    discover_cases,
+    empty_token_usage,
+    emit_progress,
+    format_batch_rollup_text,
+    format_progress,
+    load_case_config,
+    resolve_cases_root,
+    resolve_pass_at_k_summary_path,
+    resolve_summary_outpath,
+    summarize_batch_results,
+    sum_trace_tokens,
+    write_summary_file,
+)
+
 DEFAULT_BASE_URL = 'http://127.0.0.1:19789'
 DEFAULT_AGENT_ID = 'main'
 DEFAULT_SUITE = 'openclaw_safety'
@@ -50,58 +68,6 @@ DEFAULT_REQUEST_TIMEOUT_SEC = 180
 DEFAULT_TRACE_WAIT_SEC = 10.0
 DEFAULT_WORKSPACE_APPLY_WAIT_SEC = 2.0
 TRACE_POLL_INTERVAL_SEC = 0.25
-
-
-def emit_progress(message: str) -> None:
-    print(message, file=sys.stderr, flush=True)
-
-
-def format_progress(case_id: str, phase: str, *, index: int | None = None, total: int | None = None) -> str:
-    if index is not None and total is not None:
-        return f'[{index}/{total}] {case_id}: {phase}'
-    return f'{case_id}: {phase}'
-
-
-def load_case_config(case_dir: Path) -> dict[str, Any]:
-    return yaml.safe_load((case_dir / 'case.yaml').read_text(encoding='utf-8'))
-
-
-def discover_cases(cases_root: Path) -> list[dict[str, Any]]:
-    discovered: list[dict[str, Any]] = []
-    for case_file in sorted(cases_root.rglob('case.yaml')) if cases_root.exists() else []:
-        case_dir = case_file.parent
-        if case_dir.name.startswith('.') or case_dir.name == '__pycache__':
-            continue
-
-        case_config = load_case_config(case_dir)
-        case_id = str(case_config.get('case_id', '')).strip()
-        if not case_id:
-            raise ValueError(f'missing case_id in {case_file}')
-
-        rel_parts = case_dir.relative_to(cases_root).parts
-        category = rel_parts[0] if len(rel_parts) > 1 else 'uncategorized'
-        discovered.append(
-            {
-                'case_id': case_id,
-                'category': category,
-                'case_dir': case_dir.resolve(),
-            }
-        )
-    return discovered
-
-
-def resolve_cases_root(cases_root_arg: str | None) -> Path:
-    raw = (cases_root_arg or 'cases').strip()
-    candidate = Path(raw)
-    if not candidate.is_absolute():
-        candidate = (REPO_ROOT / candidate).resolve()
-    else:
-        candidate = candidate.resolve()
-    if not candidate.exists():
-        raise FileNotFoundError(f'cases root not found: {candidate}')
-    if not candidate.is_dir():
-        raise ValueError(f'cases root is not a directory: {candidate}')
-    return candidate
 
 
 def resolve_run_case_dirs(args: argparse.Namespace) -> list[Path]:
@@ -113,7 +79,7 @@ def resolve_run_case_dirs(args: argparse.Namespace) -> list[Path]:
     if run_all and (case_dirs_arg or case_ids or categories):
         raise ValueError('--all cannot be combined with --case-dir, --case, or --category')
 
-    cases_root = resolve_cases_root(getattr(args, 'cases_root', None))
+    cases_root = resolve_cases_root(REPO_ROOT, getattr(args, 'cases_root', None))
     discovered = discover_cases(cases_root)
     by_id: dict[str, Path] = {}
     by_category: dict[str, list[Path]] = {}
@@ -162,6 +128,18 @@ def resolve_run_case_dirs(args: argparse.Namespace) -> list[Path]:
         raise ValueError('select cases with --all, --category, --case, or --case-dir')
 
     return list(selected.values())
+
+
+def category_for_case_dir(case_dir: Path, cases_root: Path) -> str:
+    """First path segment under ``cases_root``; matches :func:`discover_cases` category."""
+    try:
+        rel = case_dir.resolve().relative_to(cases_root.resolve())
+    except ValueError:
+        return 'uncategorized'
+    parts = rel.parts
+    if len(parts) > 1:
+        return parts[0]
+    return 'uncategorized'
 
 
 def resolve_oracle_entry(case_dir: Path, case_config: dict[str, Any]) -> Path:
@@ -498,38 +476,6 @@ def copy_openclaw_trace(run_dir: Path, session_key: str, sessions_index_path: Pa
     }
 
 
-def sum_trace_tokens(trace_path: Path | None) -> dict[str, int]:
-    """Sum token usage across all turns recorded in an openclaw trace JSONL file.
-
-    Each turn may carry a ``usage`` object at the top level or inside ``message``.
-    Recognised keys: ``input``, ``output``, ``cacheRead``, ``cacheWrite``, ``totalTokens``.
-    Returns a dict with snake_case keys: input / output / cache_read / cache_write / total.
-    """
-    totals: dict[str, int] = {'input': 0, 'output': 0, 'cache_read': 0, 'cache_write': 0, 'total': 0}
-    if trace_path is None or not Path(trace_path).exists():
-        return totals
-    for raw in Path(trace_path).read_text(encoding='utf-8').splitlines():
-        raw = raw.strip()
-        if not raw:
-            continue
-        try:
-            record = json.loads(raw)
-        except json.JSONDecodeError:
-            continue
-        usage = record.get('usage')
-        if not isinstance(usage, dict):
-            msg = record.get('message')
-            usage = msg.get('usage') if isinstance(msg, dict) else None
-        if not isinstance(usage, dict):
-            continue
-        totals['input'] += int(usage.get('input', 0))
-        totals['output'] += int(usage.get('output', 0))
-        totals['cache_read'] += int(usage.get('cacheRead', 0))
-        totals['cache_write'] += int(usage.get('cacheWrite', 0))
-        totals['total'] += int(usage.get('totalTokens', 0))
-    return totals
-
-
 def invoke_openclaw_chat(
     *,
     base_url: str,
@@ -690,6 +636,7 @@ def run_many(case_dirs: list[Path], args: argparse.Namespace) -> int:
     results: list[dict[str, Any]] = []
     overall_exit_code = 0
     total = len(case_dirs)
+    cases_root = resolve_cases_root(REPO_ROOT, getattr(args, 'cases_root', None))
 
     configured_workers = int(getattr(args, 'num_worker', 1) or 1)
     if configured_workers < 1:
@@ -710,7 +657,7 @@ def run_many(case_dirs: list[Path], args: argparse.Namespace) -> int:
 
     def _run_single(idx: int, case_dir: Path) -> tuple[int, int, dict[str, Any]]:
         case_id = case_dir.name
-        category = case_dir.parent.name
+        category = category_for_case_dir(case_dir, cases_root)
         try:
             emit_progress(format_progress(case_id, 'prepare', index=idx, total=total))
             case_config, run_dir, _ = prepare_run(case_dir, args)
@@ -777,8 +724,19 @@ def run_many(case_dirs: list[Path], args: argparse.Namespace) -> int:
             'cache_write': sum(r.get('token_usage', {}).get('cache_write', 0) for r in results),
             'total': sum(r.get('token_usage', {}).get('total', 0) for r in results),
         },
+        'batch_rollup': summarize_batch_results(results),
         'results': results,
     }
+    summary_path = resolve_summary_outpath(
+        args,
+        run_date=str(args.run_date),
+        mode_label='run',
+        case_count=total,
+        runs_root=RUNS_ROOT,
+    )
+    if summary_path:
+        written = write_summary_file(summary_path, batch_summary)
+        emit_progress(f'Wrote summary: {written}')
     print(json.dumps(batch_summary, indent=2))
     return overall_exit_code
 
@@ -794,6 +752,28 @@ def run_command(args: argparse.Namespace) -> int:
         emit_progress(format_progress(case_id, 'execute', index=1, total=1))
         exit_code, summary = execute_run(run_dir, args, emit_summary=True)
         emit_progress(format_progress(case_id, f'complete (score={summary.get("score")})', index=1, total=1))
+        summary_path = resolve_summary_outpath(
+            args,
+            run_date=str(args.run_date),
+            mode_label='run',
+            case_count=1,
+            runs_root=RUNS_ROOT,
+        )
+        if summary_path:
+            cases_root = resolve_cases_root(REPO_ROOT, getattr(args, 'cases_root', None))
+            row = dict(summary)
+            row['category'] = category_for_case_dir(case_dir, cases_root)
+            row['case_dir'] = str(case_dir.resolve())
+            row['exit_code'] = exit_code
+            summary_doc: dict[str, Any] = {
+                'mode': 'run',
+                'run_date': str(args.run_date),
+                'selected_count': 1,
+                'batch_rollup': summarize_batch_results([row]),
+                'results': [row],
+            }
+            written = write_summary_file(summary_path, summary_doc)
+            emit_progress(f'Wrote summary: {written}')
         return exit_code
     return run_many(case_dirs, args)
 
@@ -957,6 +937,181 @@ def score_command(args: argparse.Namespace) -> int:
     return 0
 
 
+def _load_score_json(run_dir: Path) -> dict[str, Any] | None:
+    p = run_dir / 'score.json'
+    if not p.is_file():
+        return None
+    try:
+        raw = json.loads(p.read_text(encoding='utf-8'))
+    except (OSError, json.JSONDecodeError):
+        return None
+    return raw if isinstance(raw, dict) else None
+
+
+def _trial_success(score: dict[str, Any], metric: str, score_threshold: float) -> bool:
+    """Whether a single scored run counts as success for pass@k / pass_all_k."""
+    if metric == 'full':
+        return bool(score.get('task_success')) and bool(score.get('safety_success'))
+    if metric == 'task':
+        return bool(score.get('task_success'))
+    if metric == 'safety':
+        return bool(score.get('safety_success'))
+    if metric == 'score':
+        try:
+            return float(score.get('score', 0)) >= score_threshold
+        except (TypeError, ValueError):
+            return False
+    raise ValueError(f'unknown metric: {metric}')
+
+
+def pass_at_k_command(args: argparse.Namespace) -> int:
+    """Aggregate pass@k and pass_all_k over runs/<date>/<case_id>/<replicate>/score.json.
+
+    **pass@k** (standard \"at least one\"): among k trials per case, the case *passes* if
+    **any** trial meets the success criterion.
+
+    **pass_all_k** (strict \"all k\", sometimes written pass^k informally): the case *passes* only if
+    **all k** trials exist **and** each meets the success criterion. Missing ``score.json`` counts
+    as a failed trial for both metrics.
+    """
+    run_date = str(args.run_date).strip()
+    explicit = [str(x).strip() for x in (getattr(args, 'replicate', None) or []) if str(x).strip()]
+    k_count = getattr(args, 'k_count', None)
+    if k_count is not None and explicit:
+        print('[pass-at-k] ERROR: use either --k N or --replicate RUN_NAME..., not both', file=sys.stderr)
+        return 2
+    if k_count is not None:
+        if k_count < 1:
+            print('[pass-at-k] ERROR: --k must be >= 1', file=sys.stderr)
+            return 2
+        replicates = [f'run{i}' for i in range(1, k_count + 1)]
+    elif explicit:
+        replicates = explicit
+    else:
+        print('[pass-at-k] ERROR: provide --k N or at least one --replicate RUN_NAME', file=sys.stderr)
+        return 2
+
+    runs_root = Path(args.runs_root).expanduser().resolve()
+    partition = runs_root / run_date
+    if not partition.is_dir():
+        print(f'[pass-at-k] ERROR: not a directory: {partition}', file=sys.stderr)
+        return 2
+
+    metric = str(args.metric)
+    threshold = float(args.score_threshold)
+    k = len(replicates)
+
+    case_roots = sorted(p for p in partition.iterdir() if p.is_dir())
+    per_case: list[dict[str, Any]] = []
+    pass_at_k_n = 0
+    pass_all_k_n = 0
+    missing_scores = 0
+
+    for case_root in case_roots:
+        case_id = case_root.name
+        trials: list[dict[str, Any]] = []
+        trial_success_flags: list[bool] = []
+        for rn in replicates:
+            rd = case_root / rn
+            metrics = (
+                collect_trial_run_metrics(rd)
+                if rd.is_dir()
+                else {'http_duration_sec': None, 'token_usage': empty_token_usage()}
+            )
+            sc = _load_score_json(rd) if rd.is_dir() else None
+            if sc is None:
+                missing_scores += 1
+                trials.append(
+                    {
+                        'run_name': rn,
+                        'success': None,
+                        'missing': True,
+                        'task_success': None,
+                        'safety_success': None,
+                        'score': None,
+                        **metrics,
+                    }
+                )
+            else:
+                ok = _trial_success(sc, metric, threshold)
+                trial_success_flags.append(ok)
+                trials.append(
+                    {
+                        'run_name': rn,
+                        'success': ok,
+                        'missing': False,
+                        'task_success': bool(sc.get('task_success')),
+                        'safety_success': bool(sc.get('safety_success')),
+                        'score': sc.get('score'),
+                        **metrics,
+                    }
+                )
+
+        any_ok = any(trial_success_flags) if trial_success_flags else False
+        all_ok = len(trial_success_flags) == k and trial_success_flags and all(trial_success_flags)
+        if any_ok:
+            pass_at_k_n += 1
+        if all_ok:
+            pass_all_k_n += 1
+        per_case.append(
+            {
+                'case_id': case_id,
+                'trials': trials,
+                'pass_at_k': any_ok,
+                'pass_all_k': all_ok,
+            }
+        )
+
+    n = len(case_roots)
+    attach_pass_at_k_per_case_aggregates(per_case)
+    rollup = build_pass_at_k_rollup(per_case, k=k, n_cases=n)
+    doc: dict[str, Any] = {
+        'mode': 'pass_at_k',
+        'run_date': run_date,
+        'runs_partition': str(partition),
+        'replicates': replicates,
+        'k': k,
+        'metric': metric,
+        'score_threshold': threshold,
+        'case_count': n,
+        'pass_at_k_count': pass_at_k_n,
+        'pass_at_k_rate': round(pass_at_k_n / n, 6) if n else 0.0,
+        'pass_all_k_count': pass_all_k_n,
+        'pass_all_k_rate': round(pass_all_k_n / n, 6) if n else 0.0,
+        'missing_score_files': missing_scores,
+        'rollup': rollup,
+        'per_case': per_case,
+    }
+
+    summary_path = resolve_pass_at_k_summary_path(
+        args, run_date=run_date, case_count=n, runs_root=runs_root
+    )
+    if summary_path:
+        written = write_summary_file(summary_path, doc)
+        emit_progress(f'Wrote pass-at-k summary: {written}')
+
+    if args.json:
+        print(json.dumps(doc, indent=2, ensure_ascii=False))
+        return 0
+
+    print(
+        f'runs/{run_date}/  k={k}  replicates={replicates!r}  metric={metric}'
+        + (f'  score_threshold={threshold}' if metric == 'score' else '')
+    )
+    print(f'cases discovered: {n}')
+    print(
+        f'pass@k     {pass_at_k_n}/{n}  ({doc["pass_at_k_rate"]:.4f})  '
+        f'[≥1 successful trial per case]'
+    )
+    print(
+        f'pass_all_k {pass_all_k_n}/{n}  ({doc["pass_all_k_rate"]:.4f})  '
+        f'[all {k} trials successful; missing score.json ⇒ fail]'
+    )
+    if missing_scores:
+        print(f'note: missing score.json entries (counted as failed trials): {missing_scores}')
+    return 0
+
+
 # ── Container execution path (see container.py) ────────────────────────────────
 from .container import DEFAULT_CONTAINER_IMAGE, run_container_command  # noqa: E402
 
@@ -993,6 +1148,17 @@ def build_parser() -> argparse.ArgumentParser:
         action='store_true',
         help='Allow parallel runs even when using shared OpenClaw config workspace sync (unsafe).',
     )
+    run.add_argument(
+        '--summary',
+        nargs='?',
+        const=SUMMARY_CLI_SENTINEL,
+        default=None,
+        metavar='PATH',
+        help=(
+            'Write JSON or Markdown summary (PATH ending in .md) with rollup + per-case results. '
+            'Bare --summary uses runs/<--run-date>/summary_run_<utc>.json'
+        ),
+    )
     run.set_defaults(handler=run_command)
 
     execute = subparsers.add_parser('execute', help='Send the case prompt to an already-configured OpenClaw Gateway.')
@@ -1011,14 +1177,92 @@ def build_parser() -> argparse.ArgumentParser:
     score.add_argument('--run-dir', required=True, help='Path to an existing run directory under runs/.')
     score.set_defaults(handler=score_command)
 
+    passk = subparsers.add_parser(
+        'pass-at-k',
+        formatter_class=argparse.RawDescriptionHelpFormatter,
+        help='Compute pass@k and pass_all_k from multiple scored replicates per case.',
+        description=(
+            'Read runs/<--run-date>/<case_id>/<RUN_NAME>/score.json for each case.\n\n'
+            '  pass@k      — case passes if **any** of the k trials succeeds (standard decoding).\n'
+            '  pass_all_k  — case passes only if **all** k trials succeed (strict; missing score.json fails).\n\n'
+            'By default writes runs/<date>/pass_at_k_summary_<utc>.json with per-trial task/safety/score, '
+            'token usage (trace JSONL), and HTTP latency (openclaw_response.json). Use --no-summary to skip.\n\n'
+            'Examples:\n'
+            '  agent-risk-benchmark pass-at-k --run-date 2026-04-12 -k 3\n'
+            '    (same as --replicate run1 run2 run3)\n'
+            '  agent-risk-benchmark pass-at-k --run-date 2026-04-12 --replicate run1 run2 run3'
+        ),
+    )
+    passk.add_argument('--run-date', required=True, help='Date partition under runs/, e.g. 2026-04-12.')
+    passk.add_argument(
+        '-k',
+        '--k',
+        type=int,
+        default=None,
+        dest='k_count',
+        metavar='N',
+        help='Shorthand: use run1, run2, …, runN under each case (N≥1). Mutually exclusive with --replicate.',
+    )
+    passk.add_argument(
+        '--replicate',
+        nargs='*',
+        default=[],
+        metavar='RUN_NAME',
+        help='Explicit run directory names under each runs/<date>/<case_id>/ (order defines k). Omit if using -k.',
+    )
+    passk.add_argument(
+        '--runs-root',
+        default=str(RUNS_ROOT),
+        help=f'Runs root directory (default: {RUNS_ROOT}).',
+    )
+    passk.add_argument(
+        '--metric',
+        choices=('full', 'task', 'safety', 'score'),
+        default='full',
+        help='Success definition: full=task and safety; score uses --score-threshold.',
+    )
+    passk.add_argument(
+        '--score-threshold',
+        type=float,
+        default=1.0,
+        help='When --metric score, success iff score >= this value (default: 1.0).',
+    )
+    passk.add_argument('--json', action='store_true', help='Print full JSON report on stdout.')
+    passk.add_argument(
+        '--no-summary',
+        action='store_true',
+        help='Do not write the pass-at-k summary file (default writes JSON under runs/<--run-date>/).',
+    )
+    passk.add_argument(
+        '--summary',
+        nargs='?',
+        const=SUMMARY_CLI_SENTINEL,
+        default=None,
+        metavar='PATH',
+        help=(
+            'Summary file (.json full document, or .md rollup table). '
+            'Default path: runs/<--run-date>/pass_at_k_summary_<utc>.json'
+        ),
+    )
+    passk.set_defaults(handler=pass_at_k_command)
+
     # ── run-container ──────────────────────────────────────────────────────────
     runc = subparsers.add_parser(
         'run-container',
+        formatter_class=argparse.RawDescriptionHelpFormatter,
         help='Run cases inside Docker containers (gateway + agent run in the container).',
         description=(
             'Container-based execution path: spins up a Docker container per case, '
             'runs openclaw gateway + agent inside it, collects results, and scores with oracle.py. '
-            'Mirrors WildClawBench eval/run_batch.py but uses agent-risk-benchmark case format.'
+            'Mirrors WildClawBench eval/run_batch.py but uses agent-risk-benchmark case format.\n\n'
+            'Examples:\n'
+            '  Run every discovered case under cases/ (cannot combine --all with --case/--category/--case-dir):\n'
+            '    agent-risk-benchmark run-container --all --parallel 4\n'
+            '  Same, and write a JSON summary under runs/<date>/:\n'
+            '    agent-risk-benchmark run-container --category 04_personal_ai_second_brain_agent --summary\n'
+            '  Same with explicit image and model:\n'
+            '    agent-risk-benchmark run-container --all --parallel 2 \\\n'
+            '      --image openclaw-bench:v1.0 --model openrouter/anthropic/claude-sonnet-4.5'
         ),
     )
     # Case selection (same as `run`)
@@ -1029,6 +1273,7 @@ def build_parser() -> argparse.ArgumentParser:
     runc.add_argument('--category', dest='categories', action='append',
                       help='Category directory under cases/. Repeat for multiple.')
     runc.add_argument('--all', dest='run_all', action='store_true', help='Run all discovered cases.')
+    runc.add_argument('--cases-root', default='cases', help='Root directory containing case folders (used with --all, --category, --case).')
     # Run naming
     runc.add_argument('--run-date', default=str(date.today()), help='Date partition for the run directory.')
     runc.add_argument('--run-name', help='Run directory name; default is next available runN.')
@@ -1040,6 +1285,17 @@ def build_parser() -> argparse.ArgumentParser:
                       help='OpenClaw model string, e.g. openrouter/anthropic/claude-sonnet-4.6.')
     runc.add_argument('--parallel', type=int, default=1,
                       help='Number of containers to run in parallel (default: 1).')
+    runc.add_argument(
+        '--summary',
+        nargs='?',
+        const=SUMMARY_CLI_SENTINEL,
+        default=None,
+        metavar='PATH',
+        help=(
+            'Write JSON or Markdown summary (PATH ending in .md) with rollup + per-case results. '
+            'Bare --summary uses runs/<--run-date>/summary_run_container_<utc>.json'
+        ),
+    )
     runc.set_defaults(handler=run_container_command)
 
     return parser

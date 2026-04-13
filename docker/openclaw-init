@@ -2,73 +2,188 @@
 """
 openclaw-init: Configure OpenClaw from environment variables.
 
-  OPENCLAW_MODEL   e.g. "moonshot/kimi-k2.5"
-  MODEL_API_KEY    API key for that provider
-"""
-import json, os, sys
+  OPENCLAW_MODEL   e.g. "ofox-openai/openai/gpt-5.4" or "openai/gpt-5.4"
+  MODEL_API_KEY    API key (Ofox: same key for v1 + anthropic endpoints)
+  OFOX_ANTHROPIC_API  optional: anthropic-messages (default) or openai-completions
+                        if https://api.ofox.ai/anthropic expects OpenAI-shaped requests
 
-CONFIG_PATH   = os.path.expanduser("~/.openclaw/openclaw.json")
+Registers Ofox routes:
+  - https://api.ofox.ai/v1          — OpenAI-compatible models below
+  - https://api.ofox.ai/anthropic   — Anthropic Claude models below
+"""
+from __future__ import annotations
+
+import json
+import os
+import sys
+
+CONFIG_PATH = os.path.expanduser("~/.openclaw/openclaw.json")
 AUTH_PROFILES = os.path.expanduser("~/.openclaw/agents/main/agent/auth-profiles.json")
 
+# Provider keys used in models.providers and in primary model id (providerKey/modelId).
+OFOX_OPENAI_PROVIDER = "ofox-openai"
+OFOX_ANTHROPIC_PROVIDER = "ofox-anthropic"
+
+OFOX_V1_BASE = "https://api.ofox.ai/v1"
+OFOX_ANTHROPIC_BASE = "https://api.ofox.ai/anthropic"
+
+# OpenAI-compatible (chat completions) at OFOX_V1_BASE
+OFOX_V1_MODEL_IDS: list[str] = [
+    "openai/gpt-5.4",
+    "z-ai/glm-5-turbo",
+    "volcengine/doubao-seed-2.0-pro",
+    "minimax/minimax-m2.7",
+    "deepseek/deepseek-v3.2",
+]
+
+# Anthropic API at OFOX_ANTHROPIC_BASE
+OFOX_ANTHROPIC_MODEL_IDS: list[str] = [
+    "anthropic/claude-sonnet-4.6",
+    "anthropic/claude-opus-4.6",
+]
+
 PROVIDER_BASE_URLS = {
-    "moonshot":     "https://api.moonshot.cn/v1",
-    "modelstudio":  "https://dashscope.aliyuncs.com/compatible-mode/v1",
-    "openrouter":   "https://openrouter.ai/api/v1",
-    "anthropic":    "https://api.anthropic.com/v1",
-    "openai":       "https://api.openai.com/v1",
-    "deepseek":     "https://api.deepseek.com/v1",
+    "moonshot": "https://api.moonshot.cn/v1",
+    "modelstudio": "https://dashscope.aliyuncs.com/compatible-mode/v1",
+    "openrouter": "https://openrouter.ai/api/v1",
+    "anthropic": "https://api.anthropic.com/v1",
+    "openai": "https://api.openai.com/v1",
+    "deepseek": "https://api.deepseek.com/v1",
 }
 
-model   = os.environ.get("OPENCLAW_MODEL", "").strip()
-api_key = os.environ.get("MODEL_API_KEY", "").strip()
 
-if not model:
-    print("[openclaw-init] ERROR: OPENCLAW_MODEL not set", flush=True)
-    sys.exit(1)
+def _human_name(model_id: str) -> str:
+    tail = model_id.split("/")[-1] if "/" in model_id else model_id
+    return " ".join(w.capitalize() for w in tail.replace("-", " ").replace(".", " ").split())
 
-provider = model.split("/")[0]
-model_id = "/".join(model.split("/")[1:]) or model
-# human-readable name: "kimi-k2.5" -> "Kimi K2.5"
-model_name = " ".join(w.capitalize() for w in model_id.replace("-", " ").split())
-base_url = PROVIDER_BASE_URLS.get(provider, f"https://api.{provider}.com/v1")
 
-# --- 1. openclaw.json ---
-try:
-    config = json.loads(open(CONFIG_PATH).read())
-except Exception:
-    config = {}
+def _model_specs(ids: list[str]) -> list[dict]:
+    return [{"id": mid, "name": _human_name(mid)} for mid in ids]
 
-config.setdefault("agents", {}).setdefault("defaults", {}).setdefault("model", {})["primary"] = model
-config.get("agents", {}).get("defaults", {}).pop("models", None)
 
-config.setdefault("models", {})["mode"] = "merge"
-config["models"]["providers"] = {
-    provider: {
-        "baseUrl": base_url,
-        "api":     "openai-completions",
-        "models":  [{"id": model_id, "name": model_name}],
-    }
-}
+def _primary_for_ofox(model_env: str) -> tuple[str, str] | None:
+    """Return (provider_key, full_model_id) if model_env selects an Ofox-registered model."""
+    raw = model_env.strip()
+    if not raw:
+        return None
 
-config.setdefault("auth", {})["profiles"] = {
-    f"{provider}:default": {"provider": provider, "mode": "api_key"}
-}
+    for pfx, (prov, ids) in (
+        (f"{OFOX_OPENAI_PROVIDER}/", (OFOX_OPENAI_PROVIDER, OFOX_V1_MODEL_IDS)),
+        (f"{OFOX_ANTHROPIC_PROVIDER}/", (OFOX_ANTHROPIC_PROVIDER, OFOX_ANTHROPIC_MODEL_IDS)),
+    ):
+        if raw.startswith(pfx):
+            mid = raw[len(pfx) :].lstrip("/")
+            if mid in ids:
+                return prov, mid
 
-open(CONFIG_PATH, "w").write(json.dumps(config, indent=2))
+    if raw in OFOX_V1_MODEL_IDS:
+        return OFOX_OPENAI_PROVIDER, raw
+    if raw in OFOX_ANTHROPIC_MODEL_IDS:
+        return OFOX_ANTHROPIC_PROVIDER, raw
+    return None
 
-# --- 2. auth-profiles.json ---
-if api_key:
-    os.makedirs(os.path.dirname(AUTH_PROFILES), exist_ok=True)
-    auth = {
-        "version": 1,
-        "profiles": {
-            f"{provider}:default": {
-                "type":     "api_key", 
-                "provider": provider,
-                "key":      api_key,
-            }
+
+def _build_ofox_providers(api_key: str, *, anthropic_api: str) -> dict[str, dict]:
+    def prov_block(base_url: str, models: list[dict], *, api: str) -> dict:
+        block: dict = {
+            "baseUrl": base_url,
+            "api": api,
+            "models": models,
         }
-    }
-    open(AUTH_PROFILES, "w").write(json.dumps(auth, indent=2))
+        if api_key:
+            block["apiKey"] = api_key
+        return block
 
-print(f"[openclaw-init] model={model}  key={'set' if api_key else 'NOT SET'}", flush=True)
+    return {
+        OFOX_OPENAI_PROVIDER: prov_block(
+            OFOX_V1_BASE,
+            _model_specs(OFOX_V1_MODEL_IDS),
+            api="openai-completions",
+        ),
+        OFOX_ANTHROPIC_PROVIDER: prov_block(
+            OFOX_ANTHROPIC_BASE,
+            _model_specs(OFOX_ANTHROPIC_MODEL_IDS),
+            api=anthropic_api,
+        ),
+    }
+
+
+def main() -> None:
+    model = os.environ.get("OPENCLAW_MODEL", "").strip()
+    api_key = os.environ.get("MODEL_API_KEY", "").strip()
+    anthropic_api = os.environ.get("OFOX_ANTHROPIC_API", "anthropic-messages").strip() or "anthropic-messages"
+    if anthropic_api not in ("anthropic-messages", "openai-completions"):
+        print("[openclaw-init] ERROR: OFOX_ANTHROPIC_API must be anthropic-messages or openai-completions", flush=True)
+        sys.exit(1)
+
+    if not model:
+        print("[openclaw-init] ERROR: OPENCLAW_MODEL not set", flush=True)
+        sys.exit(1)
+
+    try:
+        config = json.loads(open(CONFIG_PATH).read())
+    except Exception:
+        config = {}
+
+    ofox = _primary_for_ofox(model)
+    if ofox is not None:
+        prov_key, model_id = ofox
+        primary = f"{prov_key}/{model_id}"
+        providers = _build_ofox_providers(api_key, anthropic_api=anthropic_api)
+    else:
+        # Legacy: single provider from OPENCLAW_MODEL prefix (e.g. moonshot/kimi-k2.5)
+        prov_name = model.split("/")[0]
+        model_id = "/".join(model.split("/")[1:]) or model
+        primary = model
+        base_url = PROVIDER_BASE_URLS.get(prov_name, f"https://api.{prov_name}.com/v1")
+        block: dict = {
+            "baseUrl": base_url,
+            "api": "openai-completions",
+            "models": [{"id": model_id, "name": _human_name(model_id)}],
+        }
+        if api_key:
+            block["apiKey"] = api_key
+        providers = {prov_name: block}
+
+    config.setdefault("agents", {}).setdefault("defaults", {}).setdefault("model", {})["primary"] = primary
+    config.get("agents", {}).get("defaults", {}).pop("models", None)
+
+    config.setdefault("models", {})["mode"] = "merge"
+    config["models"]["providers"] = providers
+
+    config.setdefault("auth", {})["profiles"] = {}
+    if ofox is not None:
+        for pname in (OFOX_OPENAI_PROVIDER, OFOX_ANTHROPIC_PROVIDER):
+            config["auth"]["profiles"][f"{pname}:default"] = {"provider": pname, "mode": "api_key"}
+    else:
+        prov_name = model.split("/")[0]
+        config["auth"]["profiles"][f"{prov_name}:default"] = {"provider": prov_name, "mode": "api_key"}
+
+    os.makedirs(os.path.dirname(CONFIG_PATH), exist_ok=True)
+    open(CONFIG_PATH, "w").write(json.dumps(config, indent=2) + "\n")
+
+    if api_key:
+        os.makedirs(os.path.dirname(AUTH_PROFILES), exist_ok=True)
+        profiles: dict[str, dict] = {}
+        if ofox is not None:
+            for pname in (OFOX_OPENAI_PROVIDER, OFOX_ANTHROPIC_PROVIDER):
+                profiles[f"{pname}:default"] = {
+                    "type": "api_key",
+                    "provider": pname,
+                    "key": api_key,
+                }
+        else:
+            prov_name = model.split("/")[0]
+            profiles[f"{prov_name}:default"] = {
+                "type": "api_key",
+                "provider": prov_name,
+                "key": api_key,
+            }
+        auth = {"version": 1, "profiles": profiles}
+        open(AUTH_PROFILES, "w").write(json.dumps(auth, indent=2) + "\n")
+
+    print(f"[openclaw-init] primary={primary}  key={'set' if api_key else 'NOT SET'}", flush=True)
+
+
+if __name__ == "__main__":
+    main()

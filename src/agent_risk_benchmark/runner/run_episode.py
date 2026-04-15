@@ -50,14 +50,13 @@ from .tools import (  # noqa: E402
     discover_cases,
     empty_token_usage,
     emit_progress,
-    format_batch_rollup_text,
     format_progress,
     load_case_config,
     resolve_cases_root,
     resolve_pass_at_k_summary_path,
     resolve_summary_outpath,
-    summarize_batch_results,
     sum_trace_tokens,
+    summarize_batch_results,
     write_summary_file,
 )
 

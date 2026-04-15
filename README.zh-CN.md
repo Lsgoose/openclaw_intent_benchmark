@@ -1,3 +1,5 @@
+![Aegis Risk Benchmark](image/aegis-risk-benchmark.png)
+
 # Agent Risk Benchmark（参考 Runner）
 
 这是一个面向 OpenClaw 的轻量风险评测 Runner 参考实现。
@@ -9,6 +11,7 @@
 - 支持分步执行（prepare / execute / score）
 - 并发执行时对共享 OpenClaw 配置进行安全保护
 - 每个 case 独立本地 oracle 评分
+- **`pass-at-k` 子命令**：在每 case **n** 次试次上汇总 **超几何 pass@k / pass^k**、离散通过率及 **rollup**；**`run-container`** 可用 **`--pass-trials`** 每 case 跑多次并在 **`--summary` JSON** 中嵌入相同的 **`pass_metrics`**（可选 Markdown 报告）
 
 ## 安装
 
@@ -112,6 +115,8 @@ agent-risk-benchmark run --category 02_content_creation_pipeline_agent --run-dat
 agent-risk-benchmark run --all --run-date 2026-04-03
 ```
 
+`run`（批量或单个 case）以及 `run-container` 可附加 `--summary`，将汇总（分类统计 + 逐 case 结果）写入文件；路径以 `.md` 结尾则输出 Markdown。只写 `--summary` 时默认落到 `runs/<run-date>/summary_<模式>_<utc>.json`。
+
 带 OpenClaw 参数示例：
 
 ```bash
@@ -144,6 +149,47 @@ agent-risk-benchmark score \
   --run-dir runs/2026-04-03/project_state_standup_001/run1
 ```
 
+### pass-at-k（超几何 pass@k / pass^k 与离散指标）
+
+在同一 **`--run-date`** 下，**`runs/<日期>/` 下每个一级子目录名 = 一个独立 case**（与 `case.yaml` 里的 `case_id` 一致），彼此不合并。例如 `cases/04_personal_ai_second_brain_agent/email_reply_meeting_action_ambiguity/` 对应 **`runs/<日期>/email_reply_meeting_action_ambiguity/`**；`email_reply_meeting_goal_ambiguity` 等同级目录各算 **另一个** case。
+
+对每个 case，在 **`runs/<日期>/<case_id>/<RUN_NAME>/`** 下读取 **`score.json`**（并结合 trace JSONL、`openclaw_response.json` 等）汇总指标。设 **n** = 试次目录个数（**`-k N`** → `run1`…`runN`，或 **`--replicate`** 列出的名字）；**c** = 满足 **`--metric`** 的成功次数。某槽位缺少 **`score.json`** 视为该次失败，但仍占 **n** 中的一个位置。
+
+| 输出项 | 含义 |
+|--------|------|
+| **超几何 pass@k** | `1 - C(n-c, k) / C(n, k)`，公式中的 **k** 为 **`--sample-k`**（默认 **k = n**）。 |
+| **超几何 pass^k** | `C(c, k) / C(n, k)`（同上 **k**）。 |
+| **离散 pass@k** | **c ≥ 1** 则该 case 计为通过。 |
+| **离散 pass_all_k** | **c = n**（在 `--metric` 下全部成功）则通过。 |
+
+成功判定由 **`--metric`** 控制：默认 **`full`**（`task_success` 且 `safety_success`）；也可 **`task` / `safety` / `score`**（`score` 时用 **`--score-threshold`**，默认 **`1.0`**）。
+
+**`-k N`** 与 **`--replicate`** 二选一，不要同时使用。
+
+```bash
+# n=3；未指定 --sample-k 时与 n 相同
+agent-risk-benchmark pass-at-k --run-date 2026-04-12 -k 3
+
+# n=10 次试次，公式里 k=5
+agent-risk-benchmark pass-at-k --run-date 2026-04-12 -k 10 --sample-k 5
+
+# 手写目录名
+agent-risk-benchmark pass-at-k --run-date 2026-04-12 --replicate run1 run2 run3
+
+# 在 JSON 里标注模型名
+agent-risk-benchmark pass-at-k --run-date 2026-04-12 -k 3 --model-label claude-sonnet-4
+
+# 完整 JSON（per_case、rollup：超几何均值、token、延迟、步数、task_progress 等）
+agent-risk-benchmark pass-at-k --run-date 2026-04-12 -k 3 --json
+
+# 不写默认落盘总结
+agent-risk-benchmark pass-at-k --run-date 2026-04-12 -k 3 --no-summary
+```
+
+**总结文件（默认开启）：** 写入 **`runs/<日期>/pass_at_k_summary_<utc>.json`**，含 **`mode`**、**`source`**、**`n_trials`**、**`sample_k`**、离散通过率、**`rollup`**（全体 trial 的 token 汇总、HTTP/execute 延迟均值、trace 行数作 **step**、各 case 超几何值的 **均值**、**`mean_task_progress`** 等）及 **`per_case`**（每次试次的 **`task_success`**、**`safety_success`**、**`score`**、**`token_usage`**、**`http_duration_sec`**、**`execute_duration_sec`**、**`trace_step_count`**、**`outcome_rates`** 等）。**`--summary PATH`** 自定义路径；**`.md`** 输出 Markdown 表。**`--no-summary`** 不写文件。**`--json`** 将完整文档打到标准输出（与写文件独立）。
+
+更多参数：`agent-risk-benchmark pass-at-k --help`。
+
 ### 容器化运行
 
 在隔离的 Docker 容器内运行 case（无需宿主机 OpenClaw gateway）。
@@ -159,7 +205,7 @@ agent-risk-benchmark run-container \
   --case email_reply_meeting_full_explicit \
   --case email_reply_meeting_goal_ambiguity \
   --parallel 7 \
-  --image openclaw-bench:v1.0 \
+  --image openclaw-bench:v2.0 \
   --model openrouter/anthropic/claude-sonnet-4-5
 ```
 
@@ -169,7 +215,7 @@ agent-risk-benchmark run-container \
 agent-risk-benchmark run-container \
   --category 04_personal_ai_second_brain_agent \
   --parallel 4 \
-  --image openclaw-bench:v1.0
+  --image openclaw-bench:v2.0
 ```
 
 跑全部 case：
@@ -184,60 +230,61 @@ agent-risk-benchmark run-container \
 
 | 参数 | 默认值 | 说明 |
 |---|---|---|
-| `--image` | `environment.json` → `openclaw-bench:v1.0` | Docker 镜像名 |
+| `--image` | `environment.json` → `openclaw-bench:v2.0` | Docker 镜像名 |
 | `--model` | `environment.json` → `openclaw:main` | OpenClaw 模型名 |
 | `--parallel` | `1` | 同时运行的容器数量 |
 | `--run-date` | 今天 | 运行结果的日期分区 |
+| `--summary` | 不写文件 | 写入 JSON/Markdown 汇总；仅 `--summary` 时默认 `runs/<run-date>/summary_run_container_<utc>.json` |
+
+**Pass 指标（`run-container`）：** 使用 **`--pass-trials N`** 时，每个 case 顺序跑 **`run1`…`runN`**（目录在 `runs/<run-date>/<case_id>/` 下），跑完后用与 **`pass-at-k`** 相同的逻辑生成 **`pass_metrics`**，并嵌在 **`--summary` 的 JSON** 里。相关参数：**`--pass-sample-k`**、**`--pass-metric`**、**`--pass-score-threshold`**（语义与 `pass-at-k` 的 `--metric` / `--score-threshold` 一致）。当 **`--pass-trials > 1`** 时，默认另存 Markdown：**`runs/<run-date>/pass_metrics_run_container_<utc>.md`**；可用 **`--no-pass-doc`** 关闭自动写出，或用 **`--pass-doc 路径.md`** 指定文件。若 **`--pass-trials` 为 1**，仍会计算并写入 **`pass_metrics`**；需要单独 Markdown 时请显式加 **`--pass-doc`**。
+
+```bash
+# 每 case 跑 3 次 + 默认 pass 报告 md + summary JSON（含 pass_metrics）
+agent-risk-benchmark run-container \
+  --category 01_information_intelligence_agent \
+  --pass-trials 3 \
+  --model openrouter/anthropic/claude-sonnet-4.5 \
+  --summary
+```
 
 每个容器内部运行独立的 OpenClaw gateway，天然隔离，并行始终安全。
 
 ### environment.json
 
-在仓库根目录放置 `environment.json`，可以为 `run-container` 设置默认值，避免每次重复传 CLI 参数：
+**`docker/openclaw-init`**（镜像内为 `/usr/local/bin/openclaw-init`）：在 gateway 启动前根据 `OPENCLAW_MODEL` / `MODEL_API_KEY` 生成 OpenClaw 配置，避免把密钥打进镜像。
+
+在仓库根目录放 `environment.json`，给 `run-container` 提供默认配置。**`model`** 填下表中的完整模型 id；**`model_api_key`** 填对应平台的密钥（Ofox 下列模型共用一个 key 即可）。
 
 ```json
 {
   "container_image": "openclaw-bench:v2.0",
-  "model": "modelstudio/qwen3.5-plus",
-  "model_api_key": "sk-YOUR_API_KEY_HERE"
+  "model": "openai/gpt-5.4",
+  "model_api_key": "sk-YOUR_KEY"
 }
 ```
 
-| 字段 | 说明 |
+| 字段 | 作用 |
 |---|---|
-| `container_image` | 未指定 `--image` 时使用的 Docker 镜像名 |
-| `model` | 注入容器的模型名，格式为 `provider/model-id`。未设置时回退到 `default_model` |
-| `default_model` | `model` 未设置时的兜底模型 |
-| `model_api_key` | 运行时注入每个容器的 API Key，同时以 `MOONSHOT_API_KEY`、`OPENROUTER_API_KEY`、`MODEL_API_KEY` 三个环境变量传入。**不会写入镜像** |
+| `container_image` | 未传 `--image` 时使用的镜像 |
+| `model` | 传入容器作为 `OPENCLAW_MODEL`（须与下表一致，或为 `前缀/model-id` 的 legacy 写法） |
+| `default_model` | 未设置 `model` 时的兜底 |
+| `model_api_key` | 运行时注入为 `MODEL_API_KEY` 等，**不会写入镜像** |
 
-> **注意：** `environment.json` 已加入 `.gitignore`，避免 key 被误提交。
+**模型 id 与 Base URL 对应**（与 `docker/openclaw-init` 保持一致）：
 
-### openclaw-init
+| `model` | Base URL |
+|---|---|
+| `openai/gpt-5.4` | `https://api.ofox.ai/v1` |
+| `z-ai/glm-5-turbo` | `https://api.ofox.ai/v1` |
+| `volcengine/doubao-seed-2.0-pro` | `https://api.ofox.ai/v1` |
+| `minimax/minimax-m2.7` | `https://api.ofox.ai/v1` |
+| `deepseek/deepseek-v3.2` | `https://api.ofox.ai/v1` |
+| `anthropic/claude-sonnet-4.6` | `https://api.ofox.ai/anthropic` |
+| `anthropic/claude-opus-4.6` | `https://api.ofox.ai/anthropic` |
+| `moonshot/kimi-k2.5` | `https://api.moonshot.cn/v1` |
+| `modelstudio/qwen3.5-plus` | `https://dashscope.aliyuncs.com/compatible-mode/v1` |
 
-`docker/openclaw-init` 是安装在镜像 `/usr/local/bin/openclaw-init` 的 Python 脚本，在每个容器启动后、gateway 运行前执行一次，从运行时环境变量写入 OpenClaw 配置，使镜像本身**不含任何密钥**。
-
-执行流程：
-
-1. 读取 `OPENCLAW_MODEL`（如 `modelstudio/qwen3.5-plus`）和 `MODEL_API_KEY`
-2. 写入 `~/.openclaw/openclaw.json`，设置主模型及对应 provider 的 `baseUrl`
-3. 写入 `~/.openclaw/agents/main/agent/auth-profiles.json`，存储 API Key
-
-目前已验证的 provider：
-
-| Provider 前缀 | 模型示例 | Base URL |
-|---|---|---|
-| `moonshot` | `moonshot/kimi-k2.5` | `https://api.moonshot.cn/v1` |
-| `modelstudio` | `modelstudio/qwen3.5-plus` | `https://dashscope.aliyuncs.com/compatible-mode/v1` |
-
-将更新后的 `openclaw-init` 打入已有镜像：
-
-```bash
-chmod +x docker/openclaw-init
-docker create --name initpatch openclaw-bench:v2.0
-docker cp docker/openclaw-init initpatch:/usr/local/bin/openclaw-init
-docker commit initpatch openclaw-bench:v2.0
-docker rm initpatch
-```
+> **注意：** `environment.json` 已 gitignore；下表须与 `docker/openclaw-init` 保持同步。
 
 ## 并发安全说明
 

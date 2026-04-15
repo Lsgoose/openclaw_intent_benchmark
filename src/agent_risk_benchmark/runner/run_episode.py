@@ -44,20 +44,17 @@ RUNS_ROOT = REPO_ROOT / 'runs'
 
 from .tools import (  # noqa: E402
     SUMMARY_CLI_SENTINEL,
-    attach_pass_at_k_per_case_aggregates,
-    build_pass_at_k_rollup,
-    collect_trial_run_metrics,
+    build_pass_metrics_document,
     discover_cases,
-    empty_token_usage,
     emit_progress,
-    format_batch_rollup_text,
+    empty_token_usage,
     format_progress,
     load_case_config,
     resolve_cases_root,
     resolve_pass_at_k_summary_path,
     resolve_summary_outpath,
-    summarize_batch_results,
     sum_trace_tokens,
+    summarize_batch_results,
     write_summary_file,
 )
 
@@ -908,6 +905,11 @@ def execute_run(run_dir: Path, args: argparse.Namespace, *, emit_summary: bool =
     emit_progress(format_progress(str(metadata['case_id']), 'score'))
     score = evaluate_run(case_dir, run_dir)
     execute_elapsed = round(time.time() - execute_started, 3)
+    update_metadata(
+        run_dir,
+        execute_duration_sec=execute_elapsed,
+        http_duration_sec=invocation['duration_sec'],
+    )
     summary = {
         'case_id': metadata['case_id'],
         'run_dir': str(run_dir),
@@ -937,42 +939,19 @@ def score_command(args: argparse.Namespace) -> int:
     return 0
 
 
-def _load_score_json(run_dir: Path) -> dict[str, Any] | None:
-    p = run_dir / 'score.json'
-    if not p.is_file():
-        return None
-    try:
-        raw = json.loads(p.read_text(encoding='utf-8'))
-    except (OSError, json.JSONDecodeError):
-        return None
-    return raw if isinstance(raw, dict) else None
-
-
-def _trial_success(score: dict[str, Any], metric: str, score_threshold: float) -> bool:
-    """Whether a single scored run counts as success for pass@k / pass_all_k."""
-    if metric == 'full':
-        return bool(score.get('task_success')) and bool(score.get('safety_success'))
-    if metric == 'task':
-        return bool(score.get('task_success'))
-    if metric == 'safety':
-        return bool(score.get('safety_success'))
-    if metric == 'score':
-        try:
-            return float(score.get('score', 0)) >= score_threshold
-        except (TypeError, ValueError):
-            return False
-    raise ValueError(f'unknown metric: {metric}')
-
-
 def pass_at_k_command(args: argparse.Namespace) -> int:
-    """Aggregate pass@k and pass_all_k over runs/<date>/<case_id>/<replicate>/score.json.
+    """Aggregate pass@k / pass^k (hypergeometric) and discrete metrics over scored replicates.
 
-    **pass@k** (standard \"at least one\"): among k trials per case, the case *passes* if
-    **any** trial meets the success criterion.
+    Each case has **n** trial directories (``--k N`` → ``run1``…``runN``, or ``--replicate``).
+    Let **c** = number of trials that meet ``--metric`` (missing ``score.json`` ⇒ failure).
 
-    **pass_all_k** (strict \"all k\", sometimes written pass^k informally): the case *passes* only if
-    **all k** trials exist **and** each meets the success criterion. Missing ``score.json`` counts
-    as a failed trial for both metrics.
+    **Hypergeometric estimators** (draw ``sample_k`` without replacement from the n outcomes):
+
+    - ``pass@k`` = 1 - C(n-c, sample_k) / C(n, sample_k)
+    - ``pass^k`` = C(c, sample_k) / C(n, sample_k)
+
+    Default ``--sample-k`` equals **n** (same as number of replicates). Discrete: **≥1** success
+    and **all n** successes.
     """
     run_date = str(args.run_date).strip()
     explicit = [str(x).strip() for x in (getattr(args, 'replicate', None) or []) if str(x).strip()]
@@ -999,92 +978,35 @@ def pass_at_k_command(args: argparse.Namespace) -> int:
 
     metric = str(args.metric)
     threshold = float(args.score_threshold)
-    k = len(replicates)
-
+    sample_k_raw = getattr(args, 'sample_k', None)
     case_roots = sorted(p for p in partition.iterdir() if p.is_dir())
-    per_case: list[dict[str, Any]] = []
-    pass_at_k_n = 0
-    pass_all_k_n = 0
-    missing_scores = 0
-
-    for case_root in case_roots:
-        case_id = case_root.name
-        trials: list[dict[str, Any]] = []
-        trial_success_flags: list[bool] = []
-        for rn in replicates:
-            rd = case_root / rn
-            metrics = (
-                collect_trial_run_metrics(rd)
-                if rd.is_dir()
-                else {'http_duration_sec': None, 'token_usage': empty_token_usage()}
-            )
-            sc = _load_score_json(rd) if rd.is_dir() else None
-            if sc is None:
-                missing_scores += 1
-                trials.append(
-                    {
-                        'run_name': rn,
-                        'success': None,
-                        'missing': True,
-                        'task_success': None,
-                        'safety_success': None,
-                        'score': None,
-                        **metrics,
-                    }
-                )
-            else:
-                ok = _trial_success(sc, metric, threshold)
-                trial_success_flags.append(ok)
-                trials.append(
-                    {
-                        'run_name': rn,
-                        'success': ok,
-                        'missing': False,
-                        'task_success': bool(sc.get('task_success')),
-                        'safety_success': bool(sc.get('safety_success')),
-                        'score': sc.get('score'),
-                        **metrics,
-                    }
-                )
-
-        any_ok = any(trial_success_flags) if trial_success_flags else False
-        all_ok = len(trial_success_flags) == k and trial_success_flags and all(trial_success_flags)
-        if any_ok:
-            pass_at_k_n += 1
-        if all_ok:
-            pass_all_k_n += 1
-        per_case.append(
-            {
-                'case_id': case_id,
-                'trials': trials,
-                'pass_at_k': any_ok,
-                'pass_all_k': all_ok,
-            }
+    model_label = getattr(args, 'model_label', None)
+    try:
+        doc = build_pass_metrics_document(
+            run_date=run_date,
+            runs_partition=partition,
+            replicates=replicates,
+            case_roots=case_roots,
+            metric=metric,
+            score_threshold=threshold,
+            sample_k=int(sample_k_raw) if sample_k_raw is not None else None,
+            model_label=str(model_label).strip() if model_label else None,
+            source='pass_at_k_cli',
         )
+    except ValueError as exc:
+        print(f'[pass-at-k] ERROR: {exc}', file=sys.stderr)
+        return 2
 
-    n = len(case_roots)
-    attach_pass_at_k_per_case_aggregates(per_case)
-    rollup = build_pass_at_k_rollup(per_case, k=k, n_cases=n)
-    doc: dict[str, Any] = {
-        'mode': 'pass_at_k',
-        'run_date': run_date,
-        'runs_partition': str(partition),
-        'replicates': replicates,
-        'k': k,
-        'metric': metric,
-        'score_threshold': threshold,
-        'case_count': n,
-        'pass_at_k_count': pass_at_k_n,
-        'pass_at_k_rate': round(pass_at_k_n / n, 6) if n else 0.0,
-        'pass_all_k_count': pass_all_k_n,
-        'pass_all_k_rate': round(pass_all_k_n / n, 6) if n else 0.0,
-        'missing_score_files': missing_scores,
-        'rollup': rollup,
-        'per_case': per_case,
-    }
+    n_cases = int(doc.get('case_count') or 0)
+    n_trials = int(doc.get('n_trials') or 0)
+    sample_k = int(doc.get('sample_k') or 0)
+    rollup = doc.get('rollup') or {}
+    pass_at_k_n = int(doc.get('pass_at_k_count') or 0)
+    pass_all_k_n = int(doc.get('pass_all_k_count') or 0)
+    missing_scores = int(doc.get('missing_score_files') or 0)
 
     summary_path = resolve_pass_at_k_summary_path(
-        args, run_date=run_date, case_count=n, runs_root=runs_root
+        args, run_date=run_date, case_count=n_cases, runs_root=runs_root
     )
     if summary_path:
         written = write_summary_file(summary_path, doc)
@@ -1095,17 +1017,25 @@ def pass_at_k_command(args: argparse.Namespace) -> int:
         return 0
 
     print(
-        f'runs/{run_date}/  k={k}  replicates={replicates!r}  metric={metric}'
+        f'runs/{run_date}/  n={n_trials}  sample_k={sample_k}  replicates={replicates!r}  metric={metric}'
         + (f'  score_threshold={threshold}' if metric == 'score' else '')
     )
-    print(f'cases discovered: {n}')
+    if model_label:
+        print(f'model_label: {model_label}')
+    print(f'cases discovered: {n_cases}')
+    rh = rollup.get('mean_pass_at_k_hypergeom')
+    rhp = rollup.get('mean_pass_pow_k_hypergeom')
+    rh_s = f'{rh:.4f}' if rh is not None else '—'
+    rhp_s = f'{rhp:.4f}' if rhp is not None else '—'
+    print(f'mean pass@k (hypergeom, mean over cases): {rh_s}')
+    print(f'mean pass^k (hypergeom, mean over cases): {rhp_s}')
     print(
-        f'pass@k     {pass_at_k_n}/{n}  ({doc["pass_at_k_rate"]:.4f})  '
+        f'pass@k (discrete)     {pass_at_k_n}/{n_cases}  ({doc["pass_at_k_rate"]:.4f})  '
         f'[≥1 successful trial per case]'
     )
     print(
-        f'pass_all_k {pass_all_k_n}/{n}  ({doc["pass_all_k_rate"]:.4f})  '
-        f'[all {k} trials successful; missing score.json ⇒ fail]'
+        f'pass_all_k (discrete) {pass_all_k_n}/{n_cases}  ({doc["pass_all_k_rate"]:.4f})  '
+        f'[all {n_trials} trials successful; missing score.json ⇒ fail]'
     )
     if missing_scores:
         print(f'note: missing score.json entries (counted as failed trials): {missing_scores}')
@@ -1180,16 +1110,17 @@ def build_parser() -> argparse.ArgumentParser:
     passk = subparsers.add_parser(
         'pass-at-k',
         formatter_class=argparse.RawDescriptionHelpFormatter,
-        help='Compute pass@k and pass_all_k from multiple scored replicates per case.',
+        help='Compute pass@k / pass^k (hypergeometric) and discrete metrics from scored replicates.',
         description=(
             'Read runs/<--run-date>/<case_id>/<RUN_NAME>/score.json for each case.\n\n'
-            '  pass@k      — case passes if **any** of the k trials succeeds (standard decoding).\n'
-            '  pass_all_k  — case passes only if **all** k trials succeed (strict; missing score.json fails).\n\n'
-            'By default writes runs/<date>/pass_at_k_summary_<utc>.json with per-trial task/safety/score, '
-            'token usage (trace JSONL), and HTTP latency (openclaw_response.json). Use --no-summary to skip.\n\n'
+            'Let **n** = number of trial dirs (`-k N` → run1…runN, or `--replicate`), '
+            '**c** = successes under `--metric`. Hypergeometric:\n'
+            '  pass@k = 1 - C(n-c, sample_k) / C(n, sample_k) ;  pass^k = C(c, sample_k) / C(n, sample_k)\n'
+            'Default `--sample-k` equals **n**. Discrete: pass@k if c≥1; pass_all_k if c=n.\n\n'
+            'Summary JSON includes per-trial tokens (trace JSONL), HTTP/execute latency, trace step counts, '
+            'per-case outcome_rates, and rollup means for the run (use `--model-label` for one model per file).\n\n'
             'Examples:\n'
-            '  agent-risk-benchmark pass-at-k --run-date 2026-04-12 -k 3\n'
-            '    (same as --replicate run1 run2 run3)\n'
+            '  agent-risk-benchmark pass-at-k --run-date 2026-04-12 -k 10 --sample-k 5\n'
             '  agent-risk-benchmark pass-at-k --run-date 2026-04-12 --replicate run1 run2 run3'
         ),
     )
@@ -1201,14 +1132,30 @@ def build_parser() -> argparse.ArgumentParser:
         default=None,
         dest='k_count',
         metavar='N',
-        help='Shorthand: use run1, run2, …, runN under each case (N≥1). Mutually exclusive with --replicate.',
+        help='Use run1, run2, …, runN under each case (n trials). Mutually exclusive with --replicate.',
+    )
+    passk.add_argument(
+        '--sample-k',
+        type=int,
+        default=None,
+        metavar='K',
+        dest='sample_k',
+        help=(
+            'k in the hypergeometric formulas (must be ≤ n trials). '
+            'Default: same as n (number of replicates).'
+        ),
     )
     passk.add_argument(
         '--replicate',
         nargs='*',
         default=[],
         metavar='RUN_NAME',
-        help='Explicit run directory names under each runs/<date>/<case_id>/ (order defines k). Omit if using -k.',
+        help='Explicit run directory names under each runs/<date>/<case_id>/ (order defines n). Omit if using -k.',
+    )
+    passk.add_argument(
+        '--model-label',
+        default=None,
+        help='Optional model name stored in the JSON summary for this run partition.',
     )
     passk.add_argument(
         '--runs-root',
@@ -1262,7 +1209,10 @@ def build_parser() -> argparse.ArgumentParser:
             '    agent-risk-benchmark run-container --category 04_personal_ai_second_brain_agent --summary\n'
             '  Same with explicit image and model:\n'
             '    agent-risk-benchmark run-container --all --parallel 2 \\\n'
-            '      --image openclaw-bench:v1.0 --model openrouter/anthropic/claude-sonnet-4.5'
+            '      --image openclaw-bench:v1.0 --model openrouter/anthropic/claude-sonnet-4.5\n'
+            '  Pass@k / pass^k (3 trials per case, auto pass_metrics_*.md under runs/<date>/):\n'
+            '    agent-risk-benchmark run-container --category 01_information_intelligence_agent \\\n'
+            '      --pass-trials 3 --model openrouter/anthropic/claude-sonnet-4.5'
         ),
     )
     # Case selection (same as `run`)
@@ -1285,6 +1235,44 @@ def build_parser() -> argparse.ArgumentParser:
                       help='OpenClaw model string, e.g. openrouter/anthropic/claude-sonnet-4.6.')
     runc.add_argument('--parallel', type=int, default=1,
                       help='Number of containers to run in parallel (default: 1).')
+    runc.add_argument(
+        '--pass-trials',
+        type=int,
+        default=1,
+        help='Replicates per case as run1…runN for pass@k / pass^k metrics (default: 1).',
+    )
+    runc.add_argument(
+        '--pass-sample-k',
+        type=int,
+        default=None,
+        help='Hypergeometric k in pass formulas (default: same as --pass-trials).',
+    )
+    runc.add_argument(
+        '--pass-metric',
+        choices=('full', 'task', 'safety', 'score'),
+        default='full',
+        help='Success definition for pass metrics (same as pass-at-k --metric).',
+    )
+    runc.add_argument(
+        '--pass-score-threshold',
+        type=float,
+        default=1.0,
+        help='When --pass-metric score, success if oracle score ≥ this value.',
+    )
+    runc.add_argument(
+        '--pass-doc',
+        default=None,
+        metavar='PATH',
+        help=(
+            'Write pass-metrics Markdown to PATH. If omitted and --pass-trials>1, '
+            'writes runs/<--run-date>/pass_metrics_run_container_<utc>.md unless --no-pass-doc.'
+        ),
+    )
+    runc.add_argument(
+        '--no-pass-doc',
+        action='store_true',
+        help='With --pass-trials>1, do not auto-write the pass metrics Markdown file.',
+    )
     runc.add_argument(
         '--summary',
         nargs='?',

@@ -16,6 +16,7 @@ import subprocess
 import sys
 import time
 from concurrent.futures import ThreadPoolExecutor, as_completed
+from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
 
@@ -332,9 +333,11 @@ def run_container_command(args: Any) -> int:
         resolve_run_case_dirs,
     )
     from .tools import (  # noqa: PLC0415
+        build_pass_metrics_document,
         emit_progress,
         format_batch_rollup_text,
         format_progress,
+        load_case_config,
         resolve_cases_root,
         resolve_summary_outpath,
         summarize_batch_results,
@@ -356,6 +359,7 @@ def run_container_command(args: Any) -> int:
     results: list[dict[str, Any]] = []
     batch_started = time.time()
     overall_exit = 0
+    pass_trials = max(1, int(getattr(args, 'pass_trials', 1) or 1))
 
     # On Ctrl-C / SIGTERM, clean up any leftover risk-bench-* containers
     def _cleanup_on_exit(signum, frame):  # noqa: ANN001
@@ -371,30 +375,64 @@ def run_container_command(args: Any) -> int:
 
     def _run_one(idx_case: tuple[int, Path]) -> dict[str, Any]:
         idx, case_dir = idx_case
-        case_id = case_dir.name
-        emit_progress(format_progress(case_id, 'prepare', index=idx, total=total))
-        _case_config, run_dir = materialize_run(case_dir, run_date, getattr(args, 'run_name', None))
-        result = container_run_case(
-            case_dir, run_dir,
-            image=ctr['image'],
-            model=ctr['model'],
-            model_api_key=ctr.get('model_api_key', ''),
-            run_idx=idx,
-            run_total=total,
+        cfg = load_case_config(case_dir)
+        case_id_key = str(cfg['case_id'])
+        emit_progress(format_progress(case_id_key, 'prepare', index=idx, total=total))
+        trial_paths: list[Path] = []
+        trial_results: list[dict[str, Any]] = []
+        if pass_trials > 1:
+            for tr in range(1, pass_trials + 1):
+                _cc, run_dir = materialize_run(case_dir, run_date, f'run{tr}')
+                result = container_run_case(
+                    case_dir, run_dir,
+                    image=ctr['image'],
+                    model=ctr['model'],
+                    model_api_key=ctr.get('model_api_key', ''),
+                    run_idx=idx,
+                    run_total=total,
+                )
+                trial_paths.append(Path(result['run_dir']))
+                trial_results.append(result)
+        else:
+            _cc, run_dir = materialize_run(case_dir, run_date, getattr(args, 'run_name', None))
+            result = container_run_case(
+                case_dir, run_dir,
+                image=ctr['image'],
+                model=ctr['model'],
+                model_api_key=ctr.get('model_api_key', ''),
+                run_idx=idx,
+                run_total=total,
+            )
+            trial_paths.append(Path(result['run_dir']))
+            trial_results.append(result)
+        for r in trial_results:
+            r['category'] = category_for_case_dir(case_dir, cases_root)
+            r['case_dir'] = str(case_dir.resolve())
+        last = trial_results[-1]
+        emit_progress(
+            format_progress(
+                str(last.get('case_id', case_id_key)),
+                f'complete ({len(trial_results)} trial(s); last score={last.get("score")})',
+                index=idx,
+                total=total,
+            )
         )
-        result['category'] = category_for_case_dir(case_dir, cases_root)
-        result['case_dir'] = str(case_dir.resolve())
-        emit_progress(format_progress(case_id, f'complete (score={result.get("score")})', index=idx, total=total))
-        return result
+        return {'case_id': case_id_key, 'trial_paths': trial_paths, 'trial_results': trial_results}
 
     indexed = list(enumerate(case_dirs, start=1))
+    blobs: list[dict[str, Any]] = []
     if ctr['parallel'] == 1:
-        results = [_run_one(ic) for ic in indexed]
+        blobs = [_run_one(ic) for ic in indexed]
     else:
         with ThreadPoolExecutor(max_workers=ctr['parallel']) as pool:
             futures = {pool.submit(_run_one, ic): ic for ic in indexed}
             for fut in as_completed(futures):
-                results.append(fut.result())
+                blobs.append(fut.result())
+
+    case_run_paths: dict[str, list[Path]] = {}
+    for b in blobs:
+        case_run_paths[b['case_id']] = b['trial_paths']
+        results.extend(b['trial_results'])
 
     batch_elapsed = round(time.time() - batch_started, 3)
 
@@ -423,6 +461,21 @@ def run_container_command(args: Any) -> int:
     # ── Batch summary (by category + overall) ──────────────────────────────────
     rollups = summarize_batch_results(results)
 
+    pm_doc: dict[str, Any] | None = None
+    try:
+        pm_doc = build_pass_metrics_document(
+            run_date=str(run_date),
+            runs_partition=RUNS_ROOT / str(run_date),
+            case_run_paths=case_run_paths,
+            metric=str(getattr(args, 'pass_metric', 'full')),
+            score_threshold=float(getattr(args, 'pass_score_threshold', 1.0)),
+            sample_k=getattr(args, 'pass_sample_k', None),
+            model_label=str(ctr['model']).strip() if ctr.get('model') else None,
+            source='run_container',
+        )
+    except ValueError as exc:
+        emit_progress(f'[run-container] pass metrics skipped: {exc}')
+
     batch_doc: dict[str, Any] = {
         'mode': 'run_container',
         'run_date': run_date,
@@ -430,10 +483,29 @@ def run_container_command(args: Any) -> int:
         'container_image': ctr['image'],
         'model': ctr['model'],
         'parallel': ctr['parallel'],
+        'pass_trials': pass_trials,
         'wall_clock_sec': batch_elapsed,
         'batch_rollup': rollups,
         'results': results,
     }
+    if pm_doc is not None:
+        batch_doc['pass_metrics'] = pm_doc
+
+    pass_doc_path = getattr(args, 'pass_doc', None)
+    no_pass_doc = bool(getattr(args, 'no_pass_doc', False))
+    if pm_doc and int(pm_doc.get('case_count') or 0) > 0:
+        write_pass_md = False
+        target: Path | None = None
+        if pass_doc_path:
+            target = Path(str(pass_doc_path)).expanduser().resolve()
+            write_pass_md = True
+        elif pass_trials > 1 and not no_pass_doc:
+            ts = datetime.now(timezone.utc).strftime('%Y%m%dT%H%M%SZ')
+            target = (RUNS_ROOT / str(run_date) / f'pass_metrics_run_container_{ts}.md').resolve()
+            write_pass_md = True
+        if write_pass_md and target is not None:
+            written_pass = write_summary_file(target, pm_doc)
+            emit_progress(f'Wrote pass metrics document: {written_pass}')
     summary_path = resolve_summary_outpath(
         args,
         run_date=str(run_date),
@@ -448,6 +520,16 @@ def run_container_command(args: Any) -> int:
     print()
     print(f"image={ctr['image']}  model={ctr['model'] or 'openclaw:main'}  wall_clock_sec={batch_elapsed}")
     print(format_batch_rollup_text(rollups))
+    if pm_doc and pm_doc.get('rollup'):
+        pr = pm_doc['rollup']
+        m1 = pr.get('mean_pass_at_k_hypergeom')
+        m2 = pr.get('mean_pass_pow_k_hypergeom')
+        m1s = f'{m1:.4f}' if m1 is not None else '—'
+        m2s = f'{m2:.4f}' if m2 is not None else '—'
+        print(
+            f'pass_metrics (hypergeom, mean over cases): pass@k={m1s}  pass^k={m2s}  '
+            f'(pass_trials={pass_trials}, sample_k={pm_doc.get("sample_k")})'
+        )
 
     errors = rollups['overall']['error_count']
     if errors:

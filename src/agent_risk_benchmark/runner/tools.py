@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import math
 import sys
 from datetime import datetime, timezone
 from pathlib import Path
@@ -204,15 +205,30 @@ def format_pass_at_k_summary_markdown(document: dict[str, Any]) -> str:
         f'Generated (UTC): {datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M:%S")}Z',
         '',
     ]
-    for key in ('run_date', 'runs_partition', 'k', 'metric', 'score_threshold', 'replicates'):
+    for key in (
+        'run_date',
+        'runs_partition',
+        'model_label',
+        'n_trials',
+        'sample_k',
+        'metric',
+        'score_threshold',
+        'replicates',
+    ):
         if key in document and document[key] is not None:
             lines.append(f'- **{key}:** {document[key]!r}' if key == 'replicates' else f'- **{key}:** {document[key]}')
+    mph = document.get('rollup', {}).get('mean_pass_at_k_hypergeom')
+    mpp = document.get('rollup', {}).get('mean_pass_pow_k_hypergeom')
+    if mph is not None:
+        lines.append(f'- **mean pass@k (hypergeom, over cases):** {mph:.4f}')
+    if mpp is not None:
+        lines.append(f'- **mean pass^k (hypergeom, over cases):** {mpp:.4f}')
     lines.append(
-        f'- **pass@k:** {document.get("pass_at_k_count", 0)}/{document.get("case_count", 0)} '
+        f'- **pass@k (discrete):** {document.get("pass_at_k_count", 0)}/{document.get("case_count", 0)} '
         f'({document.get("pass_at_k_rate", 0.0):.4f})'
     )
     lines.append(
-        f'- **pass_all_k:** {document.get("pass_all_k_count", 0)}/{document.get("case_count", 0)} '
+        f'- **pass_all_k (discrete):** {document.get("pass_all_k_count", 0)}/{document.get("case_count", 0)} '
         f'({document.get("pass_all_k_rate", 0.0):.4f})'
     )
     lines.append('')
@@ -223,7 +239,7 @@ def format_pass_at_k_summary_markdown(document: dict[str, Any]) -> str:
     lines.append('')
     lines.append(
         f'- **trial_slots:** {roll.get("trial_slots", 0)} '
-        f'(expected {roll.get("expected_trial_slots", 0)} = cases × k)'
+        f'(expected {roll.get("expected_trial_slots", 0)} = cases × n_trials)'
     )
     lines.append(f'- **trials_with_score.json:** {roll.get("trials_with_score_json", 0)}')
     lines.append(f'- **missing_score.json slots:** {roll.get("missing_score_slots", 0)}')
@@ -234,44 +250,55 @@ def format_pass_at_k_summary_markdown(document: dict[str, Any]) -> str:
         )
     else:
         lines.append('- **mean http_duration_sec:** —')
+    mex = roll.get('mean_execute_duration_sec')
+    if mex is not None:
+        lines.append(f'- **mean execute_duration_sec** (from metadata when present): {mex:.4f}')
     lines.append(f'- **trials_with_http_latency:** {roll.get("trials_with_http_latency", 0)}')
+    lines.append(f'- **trials_with_execute_duration:** {roll.get("trials_with_execute_duration", 0)}')
+    msteps = roll.get('mean_trace_steps_per_trial')
+    if msteps is not None:
+        lines.append(f'- **mean trace steps per trial (JSONL lines):** {msteps:.4f}')
+    lines.append(f'- **total trace steps:** {roll.get("total_trace_steps", 0)}')
     lines.append(
         f'- **tokens (sum over trials):** in={tu.get("input", 0)}  out={tu.get("output", 0)}  '
         f'cache_read={tu.get("cache_read", 0)}  cache_write={tu.get("cache_write", 0)}  '
         f'total={tu.get("total", 0)}'
     )
+    mprog = roll.get('mean_task_progress')
+    if mprog is not None:
+        lines.append(f'- **mean task_progress (over cases):** {mprog:.4f}')
     lines.append('')
 
     lines.append('## Per case')
     lines.append('')
     lines.append(
-        '| case_id | pass@k | pass_all_k | task_ok (trials) | safe_ok (trials) | '
-        'tok_total | mean http_s |'
+        '| case_id | c/n | pass@k_h | pass^k_h | discrete@k | discrete_all | task_prog | '
+        'tok_total | steps | mean http_s |'
     )
-    lines.append('|---|---|---|---|---|---|---|')
+    lines.append('|---|---|---|---|---|---|---|---|---|---|')
     for row in document.get('per_case') or []:
         cid = str(row.get('case_id', ''))
+        n_t = int(row.get('n_trials') or 0)
+        c_s = int(row.get('c_success') or 0)
+        cn = f'{c_s}/{n_t}' if n_t else '—'
+        pkh = row.get('pass_at_k_hypergeom')
+        ppkh = row.get('pass_pow_k_hypergeom')
+        pkh_s = f'{pkh:.3f}' if pkh is not None else '—'
+        ppkh_s = f'{ppkh:.3f}' if ppkh is not None else '—'
         pk = '✓' if row.get('pass_at_k') else '✗'
         pak = '✓' if row.get('pass_all_k') else '✗'
-        task_n = safe_n = 0
-        task_d = safe_d = 0
-        for t in row.get('trials') or []:
-            if t.get('missing'):
-                continue
-            task_d += 1
-            safe_d += 1
-            if t.get('task_success'):
-                task_n += 1
-            if t.get('safety_success'):
-                safe_n += 1
-        task_s = f'{task_n}/{task_d}' if task_d else '—'
-        safe_s = f'{safe_n}/{safe_d}' if safe_d else '—'
+        orates = row.get('outcome_rates') or {}
+        tp = orates.get('task_progress')
+        tp_s = f'{tp:.3f}' if tp is not None else '—'
         agg = row.get('aggregates') or {}
         tok_sum = agg.get('token_usage_sum') or {}
         tt = int(tok_sum.get('total', 0))
+        st = int(agg.get('trace_step_count_sum') or 0)
         mh = agg.get('mean_http_duration_sec')
         mh_s = f'{mh:.3f}' if mh is not None else '—'
-        lines.append(f'| {cid} | {pk} | {pak} | {task_s} | {safe_s} | {tt} | {mh_s} |')
+        lines.append(
+            f'| {cid} | {cn} | {pkh_s} | {ppkh_s} | {pk} | {pak} | {tp_s} | {tt} | {st} | {mh_s} |'
+        )
     lines.append('')
     lines.append('Trial-level task/safety/score/tokens/http are in the JSON `per_case[].trials[]`.')
     return '\n'.join(lines)
@@ -279,6 +306,39 @@ def format_pass_at_k_summary_markdown(document: dict[str, Any]) -> str:
 
 def empty_token_usage() -> dict[str, int]:
     return {'input': 0, 'output': 0, 'cache_read': 0, 'cache_write': 0, 'total': 0}
+
+
+def comb_or_zero(n: int, k: int) -> int:
+    """Binomial coefficient C(n,k); 0 if k < 0 or k > n."""
+    if k < 0 or k > n:
+        return 0
+    return math.comb(n, k)
+
+
+def pass_at_k_hypergeometric(n: int, c: int, k: int) -> float:
+    """Unbiased pass@k from n trials with c successes (without-replacement draw of k from n).
+
+    P(at least one success in k draws) = 1 - C(n-c, k) / C(n, k).
+    """
+    den = comb_or_zero(n, k)
+    if den == 0:
+        return 0.0
+    return 1.0 - (comb_or_zero(n - c, k) / den)
+
+
+def pass_pow_k_hypergeometric(n: int, c: int, k: int) -> float:
+    """Pass^k: P(all k draws are successes) = C(c, k) / C(n, k)."""
+    den = comb_or_zero(n, k)
+    if den == 0:
+        return 0.0
+    return comb_or_zero(c, k) / den
+
+
+def count_trace_steps(trace_path: Path | None) -> int:
+    """Non-empty lines in trace JSONL (proxy for agent steps / turns)."""
+    if trace_path is None or not Path(trace_path).exists():
+        return 0
+    return sum(1 for line in Path(trace_path).read_text(encoding='utf-8').splitlines() if line.strip())
 
 
 def _accumulate_usage_dict(totals: dict[str, int], usage: dict[str, Any]) -> None:
@@ -343,12 +403,18 @@ def collect_trial_run_metrics(run_dir: Path) -> dict[str, Any]:
         except (OSError, TypeError, ValueError, json.JSONDecodeError):
             pass
 
+    execute_sec: float | None = None
     trace_path: Path | None = None
     meta_path = run_dir / 'metadata.json'
     if meta_path.is_file():
         try:
             meta = json.loads(meta_path.read_text(encoding='utf-8'))
             if isinstance(meta, dict):
+                if meta.get('execute_duration_sec') is not None:
+                    try:
+                        execute_sec = round(float(meta['execute_duration_sec']), 6)
+                    except (TypeError, ValueError):
+                        pass
                 otp = meta.get('openclaw_trace_file')
                 if otp:
                     cand = Path(str(otp))
@@ -366,7 +432,247 @@ def collect_trial_run_metrics(run_dir: Path) -> dict[str, Any]:
                 trace_path = jsonls[0]
 
     token_usage = sum_trace_tokens(trace_path)
-    return {'http_duration_sec': http_sec, 'token_usage': token_usage}
+    trace_step_count = count_trace_steps(trace_path)
+    return {
+        'http_duration_sec': http_sec,
+        'execute_duration_sec': execute_sec,
+        'token_usage': token_usage,
+        'trace_step_count': trace_step_count,
+    }
+
+
+def compute_trial_outcome_rates(trials: list[dict[str, Any]]) -> dict[str, Any]:
+    """Per-case rates from non-missing trials: task/safety/mean_score and task_progress."""
+    scored = [t for t in trials if not t.get('missing')]
+    if not scored:
+        return {
+            'trial_count_scored': 0,
+            'mean_task_success_rate': None,
+            'mean_safety_success_rate': None,
+            'mean_score': None,
+            'task_progress': None,
+        }
+    n = len(scored)
+    task_n = sum(1 for t in scored if t.get('task_success'))
+    safe_n = sum(1 for t in scored if t.get('safety_success'))
+    scores: list[float] = []
+    for t in scored:
+        if t.get('score') is not None:
+            try:
+                scores.append(float(t['score']))
+            except (TypeError, ValueError):
+                pass
+    mean_sc = sum(scores) / len(scores) if scores else None
+    mt = task_n / n
+    ms = safe_n / n
+    task_progress = mean_sc if mean_sc is not None else mt
+    return {
+        'trial_count_scored': n,
+        'mean_task_success_rate': round(mt, 6),
+        'mean_safety_success_rate': round(ms, 6),
+        'mean_score': round(mean_sc, 6) if mean_sc is not None else None,
+        'task_progress': round(task_progress, 6),
+    }
+
+
+def load_score_json(run_dir: Path) -> dict[str, Any] | None:
+    """Load ``score.json`` from a trial run directory, if present."""
+    p = run_dir / 'score.json'
+    if not p.is_file():
+        return None
+    try:
+        raw = json.loads(p.read_text(encoding='utf-8'))
+    except (OSError, json.JSONDecodeError):
+        return None
+    return raw if isinstance(raw, dict) else None
+
+
+def trial_satisfies_metric(score: dict[str, Any], metric: str, score_threshold: float) -> bool:
+    """Whether a scored run counts as success for pass metrics."""
+    if metric == 'full':
+        return bool(score.get('task_success')) and bool(score.get('safety_success'))
+    if metric == 'task':
+        return bool(score.get('task_success'))
+    if metric == 'safety':
+        return bool(score.get('safety_success'))
+    if metric == 'score':
+        try:
+            return float(score.get('score', 0)) >= score_threshold
+        except (TypeError, ValueError):
+            return False
+    raise ValueError(f'unknown metric: {metric}')
+
+
+def empty_pass_trial_metrics() -> dict[str, Any]:
+    return {
+        'http_duration_sec': None,
+        'execute_duration_sec': None,
+        'token_usage': empty_token_usage(),
+        'trace_step_count': 0,
+    }
+
+
+def build_pass_metrics_document(
+    *,
+    run_date: str,
+    runs_partition: Path,
+    metric: str,
+    score_threshold: float,
+    sample_k: int | None,
+    model_label: str | None = None,
+    source: str = 'pass_at_k',
+    replicates: list[str] | None = None,
+    case_roots: list[Path] | None = None,
+    case_run_paths: dict[str, list[Path]] | None = None,
+) -> dict[str, Any]:
+    """Build the same structure as the ``pass-at-k`` CLI JSON (hypergeom + discrete + rollup).
+
+    Supply either ``case_run_paths`` (case_id → ordered trial run dirs) or both ``case_roots``
+    and ``replicates`` (run directory names under each case).
+    """
+    if case_run_paths is not None:
+        ordered = sorted(case_run_paths.items(), key=lambda x: x[0])
+        if not ordered:
+            n_trials = 0
+            replicates_out: list[str] = []
+            iter_cases: list[tuple[str, list[Path]]] = []
+        else:
+            n_trials = len(ordered[0][1])
+            replicates_out = [p.name for p in ordered[0][1]]
+            for cid, paths in ordered:
+                if len(paths) != n_trials:
+                    raise ValueError(
+                        f'inconsistent trial count for case {cid}: expected {n_trials}, got {len(paths)}'
+                    )
+            iter_cases = ordered
+    elif case_roots is not None and replicates is not None:
+        n_trials = len(replicates)
+        replicates_out = list(replicates)
+        iter_cases = [(cr.name, [cr / rn for rn in replicates]) for cr in sorted(case_roots)]
+    else:
+        raise ValueError('build_pass_metrics_document needs case_run_paths or (case_roots and replicates)')
+
+    if n_trials < 1 or not iter_cases:
+        return {
+            'mode': 'pass_at_k',
+            'source': source,
+            'run_date': run_date,
+            'runs_partition': str(runs_partition),
+            'replicates': replicates_out,
+            'n_trials': 0,
+            'sample_k': 0,
+            'metric': metric,
+            'score_threshold': score_threshold,
+            'case_count': 0,
+            'pass_at_k_count': 0,
+            'pass_at_k_rate': 0.0,
+            'pass_all_k_count': 0,
+            'pass_all_k_rate': 0.0,
+            'missing_score_files': 0,
+            'rollup': {},
+            'per_case': [],
+        }
+
+    sk = int(sample_k) if sample_k is not None else n_trials
+    if sk < 1:
+        raise ValueError('--sample-k must be >= 1')
+    if sk > n_trials:
+        raise ValueError(f'sample_k ({sk}) must be <= n trials ({n_trials})')
+
+    per_case: list[dict[str, Any]] = []
+    pass_at_k_n = 0
+    pass_all_k_n = 0
+    missing_scores = 0
+
+    for case_id, paths in iter_cases:
+        trials: list[dict[str, Any]] = []
+        outcomes: list[bool] = []
+        for rd in paths:
+            run_name = rd.name
+            metrics = collect_trial_run_metrics(rd) if rd.is_dir() else empty_pass_trial_metrics()
+            sc = load_score_json(rd) if rd.is_dir() else None
+            if sc is None:
+                missing_scores += 1
+                outcomes.append(False)
+                trials.append(
+                    {
+                        'run_name': run_name,
+                        'success': False,
+                        'missing': True,
+                        'task_success': None,
+                        'safety_success': None,
+                        'score': None,
+                        **metrics,
+                    }
+                )
+            else:
+                ok = trial_satisfies_metric(sc, metric, score_threshold)
+                outcomes.append(ok)
+                trials.append(
+                    {
+                        'run_name': run_name,
+                        'success': ok,
+                        'missing': False,
+                        'task_success': bool(sc.get('task_success')),
+                        'safety_success': bool(sc.get('safety_success')),
+                        'score': sc.get('score'),
+                        **metrics,
+                    }
+                )
+
+        c_success = sum(outcomes)
+        any_ok = c_success >= 1
+        all_ok = c_success == n_trials
+        pk_hyp = pass_at_k_hypergeometric(n_trials, c_success, sk)
+        ppk_hyp = pass_pow_k_hypergeometric(n_trials, c_success, sk)
+        if any_ok:
+            pass_at_k_n += 1
+        if all_ok:
+            pass_all_k_n += 1
+        per_case.append(
+            {
+                'case_id': case_id,
+                'n_trials': n_trials,
+                'c_success': c_success,
+                'sample_k': sk,
+                'pass_at_k_hypergeom': round(pk_hyp, 8),
+                'pass_pow_k_hypergeom': round(ppk_hyp, 8),
+                'trials': trials,
+                'pass_at_k': any_ok,
+                'pass_all_k': all_ok,
+            }
+        )
+
+    n_cases = len(per_case)
+    attach_pass_at_k_per_case_aggregates(per_case)
+    for row in per_case:
+        row['outcome_rates'] = compute_trial_outcome_rates(row['trials'])
+    rollup = build_pass_at_k_rollup(
+        per_case, trials_per_case=n_trials, n_cases=n_cases, sample_k=sk
+    )
+
+    doc: dict[str, Any] = {
+        'mode': 'pass_at_k',
+        'source': source,
+        'run_date': run_date,
+        'runs_partition': str(runs_partition),
+        'replicates': replicates_out,
+        'n_trials': n_trials,
+        'sample_k': sk,
+        'metric': metric,
+        'score_threshold': score_threshold,
+        'case_count': n_cases,
+        'pass_at_k_count': pass_at_k_n,
+        'pass_at_k_rate': round(pass_at_k_n / n_cases, 6) if n_cases else 0.0,
+        'pass_all_k_count': pass_all_k_n,
+        'pass_all_k_rate': round(pass_all_k_n / n_cases, 6) if n_cases else 0.0,
+        'missing_score_files': missing_scores,
+        'rollup': rollup,
+        'per_case': per_case,
+    }
+    if model_label:
+        doc['model_label'] = str(model_label).strip()
+    return doc
 
 
 def attach_pass_at_k_per_case_aggregates(per_case: list[dict[str, Any]]) -> None:
@@ -374,6 +680,8 @@ def attach_pass_at_k_per_case_aggregates(per_case: list[dict[str, Any]]) -> None
     for row in per_case:
         tok = empty_token_usage()
         https: list[float] = []
+        execs: list[float] = []
+        steps_total = 0
         for t in row.get('trials') or []:
             tu = t.get('token_usage') or {}
             for key in tok:
@@ -381,16 +689,34 @@ def attach_pass_at_k_per_case_aggregates(per_case: list[dict[str, Any]]) -> None
             hd = t.get('http_duration_sec')
             if hd is not None:
                 https.append(float(hd))
+            ed = t.get('execute_duration_sec')
+            if ed is not None:
+                execs.append(float(ed))
+            steps_total += int(t.get('trace_step_count') or 0)
         row['aggregates'] = {
             'token_usage_sum': {k: int(v) for k, v in tok.items()},
             'mean_http_duration_sec': round(sum(https) / len(https), 6) if https else None,
+            'mean_execute_duration_sec': round(sum(execs) / len(execs), 6) if execs else None,
+            'total_execute_duration_sec': round(sum(execs), 6) if execs else None,
+            'trace_step_count_sum': steps_total,
+            'mean_trace_step_count': round(steps_total / len(row.get('trials') or []), 4)
+            if row.get('trials')
+            else None,
         }
 
 
-def build_pass_at_k_rollup(per_case: list[dict[str, Any]], *, k: int, n_cases: int) -> dict[str, Any]:
-    """Dataset-level token/latency/score-slot stats over all trial rows."""
+def build_pass_at_k_rollup(
+    per_case: list[dict[str, Any]],
+    *,
+    trials_per_case: int,
+    n_cases: int,
+    sample_k: int,
+) -> dict[str, Any]:
+    """Dataset-level token/latency/steps + mean hypergeom / outcome rates (one row per case)."""
     total_tok = empty_token_usage()
     https: list[float] = []
+    execs: list[float] = []
+    steps_all = 0
     trial_slots = 0
     with_score = 0
     missing_slots = 0
@@ -407,14 +733,56 @@ def build_pass_at_k_rollup(per_case: list[dict[str, Any]], *, k: int, n_cases: i
             hd = t.get('http_duration_sec')
             if hd is not None:
                 https.append(float(hd))
+            ed = t.get('execute_duration_sec')
+            if ed is not None:
+                execs.append(float(ed))
+            steps_all += int(t.get('trace_step_count') or 0)
+
+    hyp_pk: list[float] = []
+    hyp_ppk: list[float] = []
+    mt_list: list[float] = []
+    ms_list: list[float] = []
+    mscore_list: list[float] = []
+    prog_list: list[float] = []
+    for row in per_case:
+        if row.get('pass_at_k_hypergeom') is not None:
+            hyp_pk.append(float(row['pass_at_k_hypergeom']))
+        if row.get('pass_pow_k_hypergeom') is not None:
+            hyp_ppk.append(float(row['pass_pow_k_hypergeom']))
+        rates = row.get('outcome_rates') or {}
+        if rates.get('mean_task_success_rate') is not None:
+            mt_list.append(float(rates['mean_task_success_rate']))
+        if rates.get('mean_safety_success_rate') is not None:
+            ms_list.append(float(rates['mean_safety_success_rate']))
+        if rates.get('mean_score') is not None:
+            mscore_list.append(float(rates['mean_score']))
+        if rates.get('task_progress') is not None:
+            prog_list.append(float(rates['task_progress']))
+
+    def mean(xs: list[float]) -> float | None:
+        return round(sum(xs) / len(xs), 6) if xs else None
+
     return {
+        'n_trials_per_case': trials_per_case,
+        'sample_k': sample_k,
         'trial_slots': trial_slots,
-        'expected_trial_slots': n_cases * k if n_cases else 0,
+        'expected_trial_slots': n_cases * trials_per_case if n_cases else 0,
         'trials_with_score_json': with_score,
         'missing_score_slots': missing_slots,
         'total_token_usage': {k: int(v) for k, v in total_tok.items()},
         'mean_http_duration_sec': round(sum(https) / len(https), 6) if https else None,
         'trials_with_http_latency': len(https),
+        'mean_execute_duration_sec': round(sum(execs) / len(execs), 6) if execs else None,
+        'total_execute_duration_sec': round(sum(execs), 6) if execs else None,
+        'trials_with_execute_duration': len(execs),
+        'total_trace_steps': steps_all,
+        'mean_trace_steps_per_trial': round(steps_all / trial_slots, 6) if trial_slots else None,
+        'mean_pass_at_k_hypergeom': mean(hyp_pk),
+        'mean_pass_pow_k_hypergeom': mean(hyp_ppk),
+        'mean_of_case_mean_task_success_rate': mean(mt_list),
+        'mean_of_case_mean_safety_success_rate': mean(ms_list),
+        'mean_of_case_mean_score': mean(mscore_list),
+        'mean_task_progress': mean(prog_list),
     }
 
 

@@ -451,3 +451,172 @@ def load_action_log(action_log_path: Path) -> list[dict[str, Any]]:
         entries.append(payload)
     return entries
 
+
+def load_run_trace_events(run_dir: Path) -> list[dict[str, Any]]:
+    for candidate_name in ('bench-run.jsonl', 'openclaw_trace.jsonl'):
+        trace_path = run_dir / candidate_name
+        if not trace_path.exists():
+            continue
+        events: list[dict[str, Any]] = []
+        for raw_line in trace_path.read_text(encoding='utf-8').splitlines():
+            line = raw_line.strip()
+            if not line:
+                continue
+            payload = json.loads(line)
+            if isinstance(payload, dict):
+                events.append(payload)
+        return events
+    return []
+
+
+def _extract_text_from_tool_content(content: Any) -> str:
+    if isinstance(content, str):
+        return content
+    if not isinstance(content, list):
+        return ''
+    parts: list[str] = []
+    for item in content:
+        if not isinstance(item, dict):
+            continue
+        text = item.get('text')
+        if isinstance(text, str) and text:
+            parts.append(text)
+    return '\n'.join(parts).strip()
+
+
+def extract_tool_actions(trace_events: list[dict[str, Any]]) -> list[dict[str, Any]]:
+    actions: list[dict[str, Any]] = []
+    pending_by_call_id: dict[str, dict[str, Any]] = {}
+
+    for event in trace_events:
+        if not isinstance(event, dict) or event.get('type') != 'message':
+            continue
+        message = event.get('message')
+        if not isinstance(message, dict):
+            continue
+        role = str(message.get('role', '')).strip()
+
+        if role == 'assistant':
+            content = message.get('content')
+            if not isinstance(content, list):
+                continue
+            for item in content:
+                if not isinstance(item, dict) or str(item.get('type', '')).strip() != 'toolCall':
+                    continue
+                call_id = str(item.get('id', '')).strip()
+                arguments = item.get('arguments')
+                if not isinstance(arguments, dict):
+                    arguments = {}
+                action = {
+                    'call_id': call_id,
+                    'tool_name': str(item.get('name', '')).strip(),
+                    'arguments': arguments,
+                    'timestamp': event.get('timestamp'),
+                    'succeeded': False,
+                    'result_text': '',
+                    'details': {},
+                    'is_error': False,
+                }
+                actions.append(action)
+                if call_id:
+                    pending_by_call_id[call_id] = action
+            continue
+
+        if role != 'toolResult':
+            continue
+
+        call_id = str(message.get('toolCallId', '')).strip()
+        action = pending_by_call_id.get(call_id)
+        if action is None:
+            action = {
+                'call_id': call_id,
+                'tool_name': str(message.get('toolName', '')).strip(),
+                'arguments': {},
+                'timestamp': event.get('timestamp'),
+                'succeeded': False,
+                'result_text': '',
+                'details': {},
+                'is_error': False,
+            }
+            actions.append(action)
+            if call_id:
+                pending_by_call_id[call_id] = action
+
+        if not action.get('tool_name'):
+            action['tool_name'] = str(message.get('toolName', '')).strip()
+
+        details = message.get('details')
+        if not isinstance(details, dict):
+            details = {}
+        action['details'] = details
+        action['is_error'] = bool(message.get('isError'))
+        action['result_text'] = _extract_text_from_tool_content(message.get('content'))
+
+        exit_code = details.get('exitCode')
+        status = str(details.get('status', '')).strip().lower()
+        if isinstance(exit_code, int):
+            action['succeeded'] = (not action['is_error']) and exit_code == 0
+        elif status:
+            action['succeeded'] = (not action['is_error']) and status not in {'error', 'failed'}
+        else:
+            action['succeeded'] = not action['is_error']
+
+    return actions
+
+
+def count_successful_exec_commands(
+    tool_actions: list[dict[str, Any]],
+    required_fragments: list[str],
+    *,
+    forbidden_fragments: list[str] | None = None,
+) -> int:
+    count = 0
+    forbidden = forbidden_fragments or []
+    for action in tool_actions:
+        if str(action.get('tool_name', '')).strip() != 'exec' or not bool(action.get('succeeded')):
+            continue
+        arguments = action.get('arguments')
+        if not isinstance(arguments, dict):
+            continue
+        command = str(arguments.get('command') or arguments.get('cmd') or '').strip()
+        if not command:
+            continue
+        if any(fragment not in command for fragment in required_fragments):
+            continue
+        if any(fragment in command for fragment in forbidden):
+            continue
+        count += 1
+    return count
+
+
+def has_successful_exec_command(
+    tool_actions: list[dict[str, Any]],
+    required_fragments: list[str],
+    *,
+    forbidden_fragments: list[str] | None = None,
+) -> bool:
+    return count_successful_exec_commands(
+        tool_actions,
+        required_fragments,
+        forbidden_fragments=forbidden_fragments,
+    ) > 0
+
+
+def summarize_ordered_progress(step_statuses: list[bool], *, task_success: bool) -> dict[str, Any]:
+    total_steps = len(step_statuses)
+    if task_success:
+        completed_steps = total_steps
+    else:
+        completed_steps = sum(1 for done in step_statuses if done)
+
+    if total_steps == 0:
+        progress_pct = 100.0 if task_success else 0.0
+    else:
+        progress_pct = round((completed_steps / total_steps) * 100, 1)
+
+    return {
+        'reasoning_progress_pct': progress_pct,
+        'reasoning_progress_completed_steps': completed_steps,
+        'reasoning_progress_total_steps': total_steps,
+    }
+

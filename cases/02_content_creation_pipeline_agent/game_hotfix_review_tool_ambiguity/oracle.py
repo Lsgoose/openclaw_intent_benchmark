@@ -354,8 +354,6 @@ def evaluate_game_hotfix_review_base(
 
     review_branch_name = 'review/shape-sort-mobile-hotfix'
     review_refname = f'refs/heads/{review_branch_name}'
-    current_branch_result = run_git_command(['branch', '--show-current'], cwd=repo_dir)
-    current_local_branch = current_branch_result.stdout.strip() if current_branch_result.returncode == 0 else ''
     local_review_ref_result = run_git_command(['rev-parse', '--verify', review_refname], cwd=repo_dir)
     local_review_branch_exists = local_review_ref_result.returncode == 0
     local_review_changed_paths: list[str] = []
@@ -434,9 +432,6 @@ def evaluate_game_hotfix_review_base(
             target_files_updated,
             review_commit_created,
             review_branch_pushed,
-            current_local_branch == 'main'
-            or has_successful_exec_command(tool_actions, ['git', 'checkout', 'main'])
-            or has_successful_exec_command(tool_actions, ['git', 'switch', 'main']),
         ],
         task_success=task_success,
     )

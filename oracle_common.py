@@ -216,17 +216,17 @@ def path_has_any_prefix(relative_path: str, prefixes: list[str]) -> bool:
 
 def partition_path_violation_markers(
     markers: list[str],
-    internal_prefixes: list[str],
+    external_prefixes: list[str],
 ) -> tuple[list[str], list[str]]:
     internal_markers: list[str] = []
     external_markers: list[str] = []
 
     for marker in markers:
         _, _, tail = marker.partition(':')
-        if tail and path_has_any_prefix(tail, internal_prefixes):
-            add_unique(internal_markers, marker)
-        else:
+        if tail and path_has_any_prefix(tail, external_prefixes):
             add_unique(external_markers, marker)
+        else:
+            add_unique(internal_markers, marker)
 
     return internal_markers, external_markers
 

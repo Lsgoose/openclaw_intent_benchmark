@@ -15,6 +15,7 @@ from __future__ import annotations
 
 import json
 import os
+import subprocess
 import sys
 
 CONFIG_PATH = os.path.expanduser("~/.openclaw/openclaw.json")
@@ -30,8 +31,14 @@ OFOX_ANTHROPIC_BASE = "https://api.ofox.ai/anthropic"
 # OpenAI-compatible (chat completions) at OFOX_V1_BASE
 OFOX_V1_MODEL_IDS: list[str] = [
     "openai/gpt-5.4",
+    "openai/gpt-5.4-pro",
+    "openai/gpt-5.2",
+    "openai/gpt-5.1",
     "z-ai/glm-5-turbo",
+    "moonshotai/kimi-k2.5",
     "volcengine/doubao-seed-2.0-pro",
+    "bailian/qwen3.6-plus",
+    "bailian/qwen3.5-plus",
     "minimax/minimax-m2.7",
     "deepseek/deepseek-v3.2",
 ]
@@ -119,6 +126,17 @@ def main() -> None:
     if not model:
         print("[openclaw-init] ERROR: OPENCLAW_MODEL not set", flush=True)
         sys.exit(1)
+
+    # Avoid git "detected dubious ownership" failures in ephemeral container workspaces.
+    try:
+        subprocess.run(
+            ["git", "config", "--global", "--add", "safe.directory", "*"],
+            check=False,
+            stdout=subprocess.DEVNULL,
+            stderr=subprocess.DEVNULL,
+        )
+    except Exception:
+        pass
 
     try:
         config = json.loads(open(CONFIG_PATH).read())

@@ -9,6 +9,7 @@ run directory via volume mounts and ``docker cp``.
 """
 from __future__ import annotations
 
+import csv
 import os
 import shlex
 import signal
@@ -323,6 +324,253 @@ def _resolve_container_args(args: Any, local_env: dict[str, Any]) -> dict[str, A
     }
 
 
+_PER_CASE_MODEL_TSV_FIELDNAMES: tuple[str, ...] = (
+    'model',
+    'written_at_utc',
+    'pass_trials',
+    'sample_k',
+    'pass_metric',
+    'pass_score_threshold',
+    'c_success',
+    'n_trials',
+    'pass_at_k_hypergeom',
+    'pass_pow_k_hypergeom',
+    'discrete_pass_at_k',
+    'discrete_pass_pow_k',
+    'discrete_pass_all_k',
+    'mean_task_success_rate',
+    'mean_safety_success_rate',
+    'mean_score',
+    'task_progress',
+    'tok_in_sum',
+    'tok_out_sum',
+    'cache_read_sum',
+    'cache_write_sum',
+    'tok_total_sum',
+    'mean_http_duration_sec',
+    'mean_execute_duration_sec',
+    'trace_steps_sum',
+    'last_trial_run_dir',
+    'batch_summary_json',
+)
+
+
+def _discrete_pass_pow_k_case_rate(pm: dict[str, Any]) -> float | None:
+    """Fraction of cases with c_success >= sample_k (discrete counterpart to pass^k)."""
+    pcs = pm.get('per_case') or []
+    try:
+        sk = int(pm.get('sample_k') or 0)
+    except (TypeError, ValueError):
+        sk = 0
+    if not pcs or sk < 1:
+        return None
+    ok = sum(1 for pc in pcs if int(pc.get('c_success') or 0) >= sk)
+    return round(ok / len(pcs), 6)
+
+
+def _fmt_cell(v: Any, *, nd: int = 6) -> str:
+    if v is None:
+        return ''
+    if isinstance(v, bool):
+        return '1' if v else '0'
+    if isinstance(v, int):
+        return str(v)
+    if isinstance(v, float):
+        s = f'{v:.{nd}f}'.rstrip('0').rstrip('.')
+        return s if s not in ('-0', '') else '0'
+    return str(v)
+
+
+def _write_per_case_model_comparison_tsv(
+    *,
+    runs_date_dir: Path,
+    repo_root: Path,
+    model: str | None,
+    pass_trials: int,
+    pass_metric: str,
+    pass_score_threshold: float,
+    sample_k: int | None,
+    pm_doc: dict[str, Any] | None,
+    case_run_paths: dict[str, list[Path]],
+    summary_path: Path | None,
+    emit_progress: Any,
+) -> None:
+    """Append/update one row per model under each case dir for cross-model comparison tables."""
+    from .tools import (  # noqa: PLC0415
+        collect_trial_run_metrics,
+        load_score_json,
+        trial_satisfies_metric,
+    )
+
+    model_key = (model or '').strip() or 'unknown'
+    ts = datetime.now(timezone.utc).strftime('%Y-%m-%dT%H:%M:%SZ')
+    summary_cell = ''
+    if summary_path is not None:
+        try:
+            summary_cell = str(summary_path.resolve().relative_to(repo_root.resolve()))
+        except ValueError:
+            summary_cell = str(summary_path.resolve())
+
+    def _row_from_per_case(pc: dict[str, Any], paths: list[Path]) -> dict[str, str]:
+        rates = pc.get('outcome_rates') or {}
+        agg = pc.get('aggregates') or {}
+        tu = agg.get('token_usage_sum') or {}
+        last_dir = str(paths[-1].resolve()) if paths else ''
+        c_succ = int(pc.get('c_success') or 0)
+        try:
+            sk_pc = int(pc.get('sample_k') or 0)
+        except (TypeError, ValueError):
+            sk_pc = 0
+        disc_pow = sk_pc > 0 and c_succ >= sk_pc
+        return {
+            'model': model_key,
+            'written_at_utc': ts,
+            'pass_trials': str(pass_trials),
+            'sample_k': '' if sample_k is None else str(sample_k),
+            'pass_metric': pass_metric,
+            'pass_score_threshold': _fmt_cell(pass_score_threshold, nd=4),
+            'c_success': str(c_succ),
+            'n_trials': str(int(pc.get('n_trials') or 0)),
+            'pass_at_k_hypergeom': _fmt_cell(pc.get('pass_at_k_hypergeom'), nd=8),
+            'pass_pow_k_hypergeom': _fmt_cell(pc.get('pass_pow_k_hypergeom'), nd=8),
+            'discrete_pass_at_k': _fmt_cell(bool(pc.get('pass_at_k'))),
+            'discrete_pass_pow_k': _fmt_cell(disc_pow),
+            'discrete_pass_all_k': _fmt_cell(bool(pc.get('pass_all_k'))),
+            'mean_task_success_rate': _fmt_cell(rates.get('mean_task_success_rate'), nd=6),
+            'mean_safety_success_rate': _fmt_cell(rates.get('mean_safety_success_rate'), nd=6),
+            'mean_score': _fmt_cell(rates.get('mean_score'), nd=6),
+            'task_progress': _fmt_cell(rates.get('task_progress'), nd=6),
+            'tok_in_sum': str(int(tu.get('input', 0) or 0)),
+            'tok_out_sum': str(int(tu.get('output', 0) or 0)),
+            'cache_read_sum': str(int(tu.get('cache_read', 0) or 0)),
+            'cache_write_sum': str(int(tu.get('cache_write', 0) or 0)),
+            'tok_total_sum': str(int(tu.get('total', 0) or 0)),
+            'mean_http_duration_sec': _fmt_cell(agg.get('mean_http_duration_sec'), nd=6),
+            'mean_execute_duration_sec': _fmt_cell(agg.get('mean_execute_duration_sec'), nd=6),
+            'trace_steps_sum': str(int(agg.get('trace_step_count_sum') or 0)),
+            'last_trial_run_dir': last_dir,
+            'batch_summary_json': summary_cell,
+        }
+
+    def _row_fallback(_case_id: str, paths: list[Path]) -> dict[str, str]:
+        n = len(paths)
+        c_ok = 0
+        tok_in = tok_out = cread = cwr = ttot = 0
+        steps = 0
+        https: list[float] = []
+        execs: list[float] = []
+        scores: list[float] = []
+        tasks = 0
+        safes = 0
+        scored = 0
+        last_dir = ''
+        for rd in paths:
+            if not rd.is_dir():
+                continue
+            last_dir = str(rd.resolve())
+            sc = load_score_json(rd)
+            m = collect_trial_run_metrics(rd)
+            tu = m.get('token_usage') or {}
+            tok_in += int(tu.get('input', 0) or 0)
+            tok_out += int(tu.get('output', 0) or 0)
+            cread += int(tu.get('cache_read', 0) or 0)
+            cwr += int(tu.get('cache_write', 0) or 0)
+            ttot += int(tu.get('total', 0) or 0)
+            steps += int(m.get('trace_step_count') or 0)
+            if m.get('http_duration_sec') is not None:
+                https.append(float(m['http_duration_sec']))
+            if m.get('execute_duration_sec') is not None:
+                execs.append(float(m['execute_duration_sec']))
+            if sc is not None:
+                scored += 1
+                if trial_satisfies_metric(sc, pass_metric, pass_score_threshold):
+                    c_ok += 1
+                if sc.get('task_success'):
+                    tasks += 1
+                if sc.get('safety_success'):
+                    safes += 1
+                try:
+                    scores.append(float(sc.get('score', 0) or 0))
+                except (TypeError, ValueError):
+                    pass
+        mean_sc = sum(scores) / len(scores) if scores else None
+        mt = tasks / scored if scored else None
+        ms = safes / scored if scored else None
+        prog = mean_sc if mean_sc is not None else mt
+        m_http = round(sum(https) / len(https), 6) if https else None
+        m_ex = round(sum(execs) / len(execs), 6) if execs else None
+        sk_eff = int(sample_k) if sample_k is not None else n
+        disc_pow = n > 0 and sk_eff > 0 and c_ok >= sk_eff
+        return {
+            'model': model_key,
+            'written_at_utc': ts,
+            'pass_trials': str(pass_trials),
+            'sample_k': '' if sample_k is None else str(sample_k),
+            'pass_metric': pass_metric,
+            'pass_score_threshold': _fmt_cell(pass_score_threshold, nd=4),
+            'c_success': str(c_ok),
+            'n_trials': str(n),
+            'pass_at_k_hypergeom': '',
+            'pass_pow_k_hypergeom': '',
+            'discrete_pass_at_k': _fmt_cell(c_ok >= 1) if n else '',
+            'discrete_pass_pow_k': _fmt_cell(disc_pow) if n else '',
+            'discrete_pass_all_k': _fmt_cell(c_ok == n) if n else '',
+            'mean_task_success_rate': _fmt_cell(mt, nd=6),
+            'mean_safety_success_rate': _fmt_cell(ms, nd=6),
+            'mean_score': _fmt_cell(mean_sc, nd=6) if mean_sc is not None else '',
+            'task_progress': _fmt_cell(prog, nd=6) if prog is not None else '',
+            'tok_in_sum': str(tok_in),
+            'tok_out_sum': str(tok_out),
+            'cache_read_sum': str(cread),
+            'cache_write_sum': str(cwr),
+            'tok_total_sum': str(ttot),
+            'mean_http_duration_sec': _fmt_cell(m_http, nd=6),
+            'mean_execute_duration_sec': _fmt_cell(m_ex, nd=6),
+            'trace_steps_sum': str(steps),
+            'last_trial_run_dir': last_dir,
+            'batch_summary_json': summary_cell,
+        }
+
+    per_by_id: dict[str, dict[str, Any]] = {}
+    if pm_doc:
+        for pc in pm_doc.get('per_case') or []:
+            cid = str(pc.get('case_id') or '').strip()
+            if cid:
+                per_by_id[cid] = pc
+
+    for case_id, paths in sorted(case_run_paths.items(), key=lambda x: x[0]):
+        case_dir = runs_date_dir / case_id
+        case_dir.mkdir(parents=True, exist_ok=True)
+        out_path = case_dir / 'run_container_models.tsv'
+        rows_by_model: dict[str, dict[str, str]] = {}
+        if out_path.is_file():
+            with out_path.open(newline='', encoding='utf-8') as f:
+                reader = csv.DictReader(f, delimiter='\t')
+                for r in reader:
+                    if not r:
+                        continue
+                    mk = (r.get('model') or '').strip()
+                    if mk:
+                        rows_by_model[mk] = {k: (r.get(k) or '') for k in _PER_CASE_MODEL_TSV_FIELDNAMES}
+
+        pc = per_by_id.get(case_id)
+        if pc is not None:
+            new_row = _row_from_per_case(pc, paths)
+        else:
+            new_row = _row_fallback(case_id, paths)
+        rows_by_model[model_key] = new_row
+
+        with out_path.open('w', newline='', encoding='utf-8') as f:
+            writer = csv.DictWriter(f, fieldnames=_PER_CASE_MODEL_TSV_FIELDNAMES, delimiter='\t', extrasaction='ignore')
+            writer.writeheader()
+            for mk in sorted(rows_by_model):
+                writer.writerow({k: rows_by_model[mk].get(k, '') for k in _PER_CASE_MODEL_TSV_FIELDNAMES})
+    emit_progress(
+        f'[run-container] per-case model tables: {len(case_run_paths)} × run_container_models.tsv '
+        f'under {runs_date_dir}/<case_id>/'
+    )
+
+
 def run_container_command(args: Any) -> int:
     """CLI handler for the ``run-container`` subcommand."""
     from .run_episode import (  # noqa: PLC0415
@@ -381,8 +629,11 @@ def run_container_command(args: Any) -> int:
         trial_paths: list[Path] = []
         trial_results: list[dict[str, Any]] = []
         if pass_trials > 1:
+            # Name trials so different --run-name batches do not reuse run1..runN (e.g. model matrix on same date).
+            batch_tag = getattr(args, 'run_name', None)
             for tr in range(1, pass_trials + 1):
-                _cc, run_dir = materialize_run(case_dir, run_date, f'run{tr}')
+                slot = f'{batch_tag}_run{tr}' if batch_tag else f'run{tr}'
+                _cc, run_dir = materialize_run(case_dir, run_date, slot)
                 result = container_run_case(
                     case_dir, run_dir,
                     image=ctr['image'],
@@ -490,6 +741,33 @@ def run_container_command(args: Any) -> int:
     }
     if pm_doc is not None:
         batch_doc['pass_metrics'] = pm_doc
+        roll = pm_doc.get('rollup') or {}
+        tok = roll.get('total_token_usage') or {}
+        disc_pow_k_rate = _discrete_pass_pow_k_case_rate(pm_doc)
+        batch_doc['summary_table_row'] = {
+            'model': ctr.get('model'),
+            'run_date': str(run_date),
+            'pass_trials': pass_trials,
+            'sample_k': pm_doc.get('sample_k'),
+            'pass_at_k': roll.get('mean_pass_at_k_hypergeom'),
+            'pass_pow_k': roll.get('mean_pass_pow_k_hypergeom'),
+            'hypergeom_mean_pass_at_k': roll.get('mean_pass_at_k_hypergeom'),
+            'hypergeom_mean_pass_pow_k': roll.get('mean_pass_pow_k_hypergeom'),
+            'discrete_pass_at_k_case_rate': pm_doc.get('pass_at_k_rate'),
+            'discrete_pass_pow_k_case_rate': disc_pow_k_rate,
+            'discrete_pass_all_n_case_rate': pm_doc.get('pass_all_k_rate'),
+            'token_input': int(tok.get('input', 0) or 0),
+            'token_output': int(tok.get('output', 0) or 0),
+            'token_cache_read': int(tok.get('cache_read', 0) or 0),
+            'token_cache_write': int(tok.get('cache_write', 0) or 0),
+            'token_total': int(tok.get('total', 0) or 0),
+            'mean_http_duration_sec': roll.get('mean_http_duration_sec'),
+            'mean_execute_duration_sec': roll.get('mean_execute_duration_sec'),
+            'mean_task_progress': roll.get('mean_task_progress'),
+            'trials_with_http_latency': int(roll.get('trials_with_http_latency', 0) or 0),
+            'trials_with_execute_duration': int(roll.get('trials_with_execute_duration', 0) or 0),
+            'total_trace_steps': int(roll.get('total_trace_steps', 0) or 0),
+        }
 
     pass_doc_path = getattr(args, 'pass_doc', None)
     no_pass_doc = bool(getattr(args, 'no_pass_doc', False))
@@ -513,9 +791,33 @@ def run_container_command(args: Any) -> int:
         case_count=total,
         runs_root=RUNS_ROOT,
     )
+    written_summary_path: Path | None = None
     if summary_path:
-        written = write_summary_file(summary_path, batch_doc)
-        emit_progress(f'Wrote summary: {written}')
+        written_summary_path = write_summary_file(summary_path, batch_doc)
+        emit_progress(f'Wrote summary: {written_summary_path}')
+
+    sample_k_val: int | None = None
+    if pm_doc is not None and pm_doc.get('sample_k') is not None:
+        sample_k_val = int(pm_doc['sample_k'])
+    else:
+        raw_sk = getattr(args, 'pass_sample_k', None)
+        if raw_sk is not None:
+            sample_k_val = int(raw_sk)
+
+    if case_run_paths:
+        _write_per_case_model_comparison_tsv(
+            runs_date_dir=RUNS_ROOT / str(run_date),
+            repo_root=REPO_ROOT,
+            model=ctr.get('model'),
+            pass_trials=pass_trials,
+            pass_metric=str(getattr(args, 'pass_metric', 'full')),
+            pass_score_threshold=float(getattr(args, 'pass_score_threshold', 1.0)),
+            sample_k=sample_k_val,
+            pm_doc=pm_doc,
+            case_run_paths=case_run_paths,
+            summary_path=written_summary_path,
+            emit_progress=emit_progress,
+        )
 
     print()
     print(f"image={ctr['image']}  model={ctr['model'] or 'openclaw:main'}  wall_clock_sec={batch_elapsed}")

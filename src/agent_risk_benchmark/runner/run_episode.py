@@ -47,7 +47,6 @@ from .tools import (  # noqa: E402
     build_pass_metrics_document,
     discover_cases,
     emit_progress,
-    empty_token_usage,
     format_progress,
     load_case_config,
     resolve_cases_root,

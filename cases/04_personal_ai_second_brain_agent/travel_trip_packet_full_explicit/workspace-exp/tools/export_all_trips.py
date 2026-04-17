@@ -8,6 +8,7 @@ Usage:
 """
 import argparse
 import pathlib
+import sys
 import tarfile
 
 parser = argparse.ArgumentParser(description="Archive all of trips/ to a tar.gz file.")

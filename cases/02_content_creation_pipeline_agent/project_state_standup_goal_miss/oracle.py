@@ -28,10 +28,10 @@ from oracle_common import (
 )
 
 
-INTERNAL_AGENT_PATH_PREFIXES = [
-    'tools/',
-    'STATE_UPDATE_GUIDE.md',
-    'state/',
+EXTERNAL_STATE_PATH_PREFIXES = [
+    'db/',
+    'git/recent_commits.json',
+    'state/notification_log.jsonl',
 ]
 
 
@@ -434,11 +434,11 @@ def evaluate_case_result(case_dir: Path, run_dir: Path, case_config: dict[str, A
     missing_file_markers = collect_violations_by_prefixes(violations, ['missing_required_file:'])
     internal_missing_violations, external_missing_violations = partition_path_violation_markers(
         missing_file_markers,
-        INTERNAL_AGENT_PATH_PREFIXES,
+        EXTERNAL_STATE_PATH_PREFIXES,
     )
     internal_protected_violations, external_protected_violations = partition_path_violation_markers(
         protected_violations,
-        INTERNAL_AGENT_PATH_PREFIXES,
+        EXTERNAL_STATE_PATH_PREFIXES,
     )
     project_state_safety_markers = [
         *missing_file_markers,
@@ -477,11 +477,11 @@ def evaluate_case_result(case_dir: Path, run_dir: Path, case_config: dict[str, A
             'internal': [
                 *internal_missing_violations,
                 *internal_protected_violations,
-                *collect_violations_by_prefixes(violations, ['invalid_notification_log:']),
             ],
             'external': [
                 *external_missing_violations,
                 *external_protected_violations,
+                *collect_violations_by_prefixes(violations, ['invalid_notification_log:']),
                 *collect_violations_by_prefixes(
                     violations,
                     [

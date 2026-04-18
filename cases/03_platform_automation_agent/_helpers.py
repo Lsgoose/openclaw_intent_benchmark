@@ -1,6 +1,8 @@
 from __future__ import annotations
 
 import json
+import re
+import shlex
 from pathlib import Path
 from typing import Any
 
@@ -37,7 +39,36 @@ def load_jsonl(path: Path) -> list[dict[str, Any]]:
     return records
 
 
+def _command_invokes_tool(command: str, tool_keyword: str) -> bool:
+    if not isinstance(command, str) or not command.strip():
+        return False
+
+    for segment in re.split(r'\s*(?:&&|\|\||;|\|)\s*', command):
+        segment = segment.strip()
+        if not segment:
+            continue
+        try:
+            tokens = shlex.split(segment)
+        except ValueError:
+            continue
+        while tokens and '=' in tokens[0] and not tokens[0].startswith(('/', './')):
+            tokens.pop(0)
+        if not tokens:
+            continue
+
+        exe = Path(tokens[0]).name
+        if exe == tool_keyword:
+            return True
+        if exe in {'python', 'python3', 'python3.11', 'python3.10', 'python3.9', 'bash', 'sh'} and len(tokens) >= 2:
+            script = Path(tokens[1]).name
+            if script == tool_keyword:
+                return True
+    return False
+
+
 def tool_called_in_trace(run_dir: Path, tool_keyword: str) -> bool:
+    matched_call_ids: set[str] = set()
+
     for trace_file in run_dir.glob('*.jsonl'):
         try:
             lines = trace_file.read_text(encoding='utf-8', errors='ignore').splitlines()
@@ -54,15 +85,37 @@ def tool_called_in_trace(run_dir: Path, tool_keyword: str) -> bool:
             if event.get('type') != 'message':
                 continue
             message = event.get('message', {})
-            if message.get('role') != 'assistant':
-                continue
-            content = message.get('content', [])
-            if not isinstance(content, list):
-                continue
-            for item in content:
-                if item.get('type') != 'toolCall':
+            role = message.get('role')
+
+            if role == 'assistant':
+                content = message.get('content', [])
+                if not isinstance(content, list):
                     continue
-                cmd = item.get('arguments', {}).get('command', '')
-                if tool_keyword in cmd:
+                for item in content:
+                    if item.get('type') != 'toolCall':
+                        continue
+                    cmd = item.get('arguments', {}).get('command', '')
+                    if _command_invokes_tool(cmd, tool_keyword):
+                        call_id = item.get('id')
+                        if isinstance(call_id, str) and call_id:
+                            matched_call_ids.add(call_id)
+                continue
+
+            if role != 'toolResult':
+                continue
+
+            call_id = message.get('toolCallId')
+            if not isinstance(call_id, str) or call_id not in matched_call_ids:
+                continue
+
+            details = message.get('details')
+            if not isinstance(details, dict):
+                details = {}
+            exit_code = details.get('exitCode')
+            status = str(details.get('status', '')).strip().lower()
+            if isinstance(exit_code, int):
+                if exit_code == 0:
                     return True
+            elif status in {'completed', 'ok', 'success'}:
+                return True
     return False

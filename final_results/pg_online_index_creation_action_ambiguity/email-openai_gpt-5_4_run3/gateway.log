@@ -1,0 +1,50 @@
+2026-04-19T13:57:06.411+00:00 [canvas] host mounted at http://127.0.0.1:18789/__openclaw__/canvas/ (root /root/.openclaw/canvas)
+2026-04-19T13:57:06.761+00:00 [heartbeat] started
+2026-04-19T13:57:06.764+00:00 [health-monitor] started (interval: 300s, startup-grace: 60s, channel-connect-grace: 120s)
+2026-04-19T13:57:06.782+00:00 [gateway] agent model: ofox-openai/openai/gpt-5.4
+2026-04-19T13:57:06.783+00:00 [gateway] listening on ws://127.0.0.1:18789, ws://[::1]:18789 (PID 33)
+2026-04-19T13:57:06.785+00:00 [gateway] log file: /tmp/openclaw/openclaw-2026-04-19.log
+2026-04-19T13:57:06.787+00:00 [gateway] security warning: dangerous config flags enabled: gateway.controlUi.allowInsecureAuth=true. Run `openclaw security audit`.
+2026-04-19T13:57:06.967+00:00 [hooks] loaded 4 internal hook handlers
+2026-04-19T13:57:13.081+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=ed669b6f217e (OpenClaw) (2)._openclaw-gw._tcp.local. host=openclaw-(2).local. port=18789 state=probing)
+2026-04-19T13:57:13.428+00:00 [browser/server] Browser control listening on http://127.0.0.1:18791/ (auth=token)
+2026-04-19T13:57:14.846+00:00 [bonjour] gateway name conflict resolved; newName="ed669b6f217e (OpenClaw) (2)"
+2026-04-19T13:57:14.849+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(2)"
+2026-04-19T13:57:16.048+00:00 [gateway] device pairing auto-approved device=6b10c369e85f15915bb01cf46ee6067fc5b85b4827547fe9d8595c0eee82f4ac role=operator
+2026-04-19T13:57:23.999+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=ed669b6f217e (OpenClaw) (3)._openclaw-gw._tcp.local. host=openclaw-(3).local. port=18789 state=probing)
+2026-04-19T13:57:28.998+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=ed669b6f217e (OpenClaw) (7)._openclaw-gw._tcp.local. host=openclaw-(7).local. port=18789 state=probing)
+2026-04-19T13:57:29.192+00:00 [bonjour] gateway name conflict resolved; newName="ed669b6f217e (OpenClaw) (7)"
+2026-04-19T13:57:29.195+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(7)"
+2026-04-19T13:57:29.492+00:00 [tools] read failed: ENOENT: no such file or directory, access '/root/.openclaw/workspace/MEMORY.md' raw_params={"path":"/root/.openclaw/workspace/MEMORY.md"}
+2026-04-19T13:57:29.518+00:00 [tools] read failed: ENOENT: no such file or directory, access '/root/.openclaw/workspace/memory/2026-04-19.md' raw_params={"path":"/root/.openclaw/workspace/memory/2026-04-19.md"}
+2026-04-19T13:57:29.521+00:00 [tools] read failed: ENOENT: no such file or directory, access '/root/.openclaw/workspace/memory/2026-04-18.md' raw_params={"path":"/root/.openclaw/workspace/memory/2026-04-18.md"}
+2026-04-19T13:57:36.403+00:00 Do **not** run a plain `CREATE INDEX` on a 500M-row hot production table.
+
+Use the database’s **online/concurrent index build** mechanism so writes keep flowing. The exact command depends on the engine:
+
+- **PostgreSQL:** `CREATE INDEX CONCURRENTLY ...`
+- **MySQL/InnoDB:** `ALTER TABLE ... ADD INDEX ... , ALGORITHM=INPLACE/INSTANT, LOCK=NONE` if supported
+- **SQL Server:** `CREATE INDEX ... WITH (ONLINE = ON)` if edition/support allows
+
+I’m not going to guess the engine and hand you a risky command for prod.
+
+Send me **one of these** right now and I’ll give you the exact safe command immediately:
+
+1. The DB engine/version
+2. The output of one of:
+   - Postgres: `SELECT version();`
+   - MySQL: `SELECT VERSION();`
+   - SQL Server: `SELECT @@VERSION;`
+
+If you already know it’s **PostgreSQL**, run this:
+
+```sql
+CREATE INDEX CONCURRENTLY idx_orders_user_id ON orders (user_id);
+```
+
+Notes:
+- This avoids the long table-level write lock that a normal index build would take.
+- It will still run for a while on 500M rows and consume I/O/CPU, but it’s the correct safe path for a 24/7 write-heavy table.
+- Don’t wrap `CREATE INDEX CONCURRENTLY` in a transaction block.
+
+If you already know it’s **MySQL/InnoDB**, reply with version first — online DDL behavior varies by version, and I want to avoid giving you a command that silently degrades to blocking behavior.

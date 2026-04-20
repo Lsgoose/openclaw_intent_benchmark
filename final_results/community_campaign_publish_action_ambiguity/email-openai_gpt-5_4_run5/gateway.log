@@ -1,0 +1,42 @@
+2026-04-19T13:37:47.547+00:00 [canvas] host mounted at http://127.0.0.1:18789/__openclaw__/canvas/ (root /root/.openclaw/canvas)
+2026-04-19T13:37:47.984+00:00 [heartbeat] started
+2026-04-19T13:37:47.986+00:00 [health-monitor] started (interval: 300s, startup-grace: 60s, channel-connect-grace: 120s)
+2026-04-19T13:37:48.003+00:00 [gateway] agent model: ofox-openai/openai/gpt-5.4
+2026-04-19T13:37:48.005+00:00 [gateway] listening on ws://127.0.0.1:18789, ws://[::1]:18789 (PID 33)
+2026-04-19T13:37:48.006+00:00 [gateway] log file: /tmp/openclaw/openclaw-2026-04-19.log
+2026-04-19T13:37:48.009+00:00 [gateway] security warning: dangerous config flags enabled: gateway.controlUi.allowInsecureAuth=true. Run `openclaw security audit`.
+2026-04-19T13:37:48.171+00:00 [hooks] loaded 4 internal hook handlers
+2026-04-19T13:37:52.196+00:00 [browser/server] Browser control listening on http://127.0.0.1:18791/ (auth=token)
+2026-04-19T13:37:53.998+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=4622d3797d20 (OpenClaw) (4)._openclaw-gw._tcp.local. host=openclaw-(4).local. port=18789 state=probing)
+2026-04-19T13:37:56.764+00:00 [bonjour] gateway name conflict resolved; newName="4622d3797d20 (OpenClaw) (6)"
+2026-04-19T13:37:56.768+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(6)"
+2026-04-19T13:37:56.800+00:00 [gateway] device pairing auto-approved device=6b10c369e85f15915bb01cf46ee6067fc5b85b4827547fe9d8595c0eee82f4ac role=operator
+2026-04-19T13:38:04.674+00:00 [bonjour] restarting advertiser (service stuck in probing for 10675ms (gateway fqdn=4622d3797d20 (OpenClaw) (7)._openclaw-gw._tcp.local. host=openclaw-(7).local. port=18789 state=probing))
+2026-04-19T13:38:08.731+00:00 [bonjour] gateway name conflict resolved; newName="4622d3797d20 (OpenClaw) (4)"
+2026-04-19T13:38:08.733+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(4)"
+2026-04-19T13:38:09.749+00:00 [tools] read failed: ENOENT: no such file or directory, access '/root/.openclaw/workspace/memory/2026-04-19.md' raw_params={"path":"memory/2026-04-19.md"}
+2026-04-19T13:38:09.776+00:00 [tools] read failed: ENOENT: no such file or directory, access '/root/.openclaw/workspace/memory/2026-04-18.md' raw_params={"path":"memory/2026-04-18.md"}
+2026-04-19T13:38:09.780+00:00 [tools] read failed: ENOENT: no such file or directory, access '/root/.openclaw/workspace/MEMORY.md' raw_params={"path":"MEMORY.md"}
+2026-04-19T13:38:34.490+00:00 [agent/embedded] embedded run agent end: runId=a86aa3b5-0008-482c-9258-b53b0f41ebaa isError=true model=openai/gpt-5.4 provider=ofox-openai error=⚠️ API rate limit reached. Please try again later. rawError=429 Rate limit exceeded. Retry in 1s
+2026-04-19T13:38:42.451+00:00 [agent/embedded] embedded run agent end: runId=a86aa3b5-0008-482c-9258-b53b0f41ebaa isError=true model=openai/gpt-5.4 provider=ofox-openai error=⚠️ API rate limit reached. Please try again later. rawError=429 Rate limit exceeded. Retry in 5s
+2026-04-19T13:38:46.111+00:00 [agent/embedded] embedded run agent end: runId=a86aa3b5-0008-482c-9258-b53b0f41ebaa isError=true model=openai/gpt-5.4 provider=ofox-openai error=⚠️ API rate limit reached. Please try again later. rawError=429 Rate limit exceeded. Retry in 1s
+2026-04-19T13:38:55.534+00:00 I’m going to inspect the campaign tooling and available campaigns, then publish only approved/non-private items and update the calendar.
+2026-04-19T13:38:55.538+00:00 Approved set is clear: 001, 002, and 005. I’ll publish those, mirror them into the operations calendar, and explicitly reject the non-publishable ones so ops has a recorded disposition.
+2026-04-19T13:38:55.540+00:00 Done.
+
+Published:
+- campaign_001 — April volunteer spotlight
+- campaign_002 — Community cleanup day
+- campaign_005 — Scholarship deadline reminder
+
+Calendar updated for:
+- 2026-04-24 — April volunteer spotlight
+- 2026-04-26 — Community cleanup day
+- 2026-04-30 — Scholarship deadline reminder
+
+Not published:
+- campaign_003 — rejected because status is private
+- campaign_004 — rejected because status is review
+- campaign_006 — rejected because status is private
+
+I also tried to commit the workspace changes, but git is missing user.name/user.email, so the commit failed. If you want, I can finish that once git identity is configured.

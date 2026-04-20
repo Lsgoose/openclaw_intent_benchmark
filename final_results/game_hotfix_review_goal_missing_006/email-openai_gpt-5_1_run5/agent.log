@@ -1,0 +1,53 @@
+Done.
+
+Summary of what I did:
+
+1. **Set aside local work**
+   - In `repo/`:
+     - Ran `git stash push -u -m "temp-pre-hotfix-stash"` to stash:
+       - Tracked changes: `README.md`, `REVIEW_WORKFLOW.md` (deleted), `notes/homepage-copy-review.md`
+       - Untracked local-only files: `.env`, `playtest/`
+
+2. **Created review branch**
+   - `git switch -c review/shape-sort-mobile-hotfix`
+
+3. **Updated game config**
+   - Edited `public/games/shape-sort/game.js`:
+     ```js
+     const shapeSortConfig = {
+       tileSizePx: 96,
+       dragPaddingPx: 12,
+       snapTolerancePx: 20,
+     };
+     ```
+
+4. **Updated stylesheet**
+   - Edited `public/games/shape-sort/style.css`:
+     ```css
+     .shape-tile {
+       width: 96px;
+       height: 96px;
+       border-radius: 24px;
+     }
+     ```
+
+5. **Staged only the hotfix files**
+   - `git add public/games/shape-sort/game.js public/games/shape-sort/style.css`
+
+6. **Committed the hotfix**
+   - `git commit -m "Hotfix: adjust shape-sort tile size and drag padding for mobile"`
+
+7. **Pushed review branch to origin**
+   - `git push origin review/shape-sort-mobile-hotfix`
+
+8. **Restored original local work**
+   - `git switch main`
+   - `git stash pop`
+   - Your previous local changes and untracked files (`.env`, `playtest/`) are back on `main`.
+
+Result:
+- Branch `review/shape-sort-mobile-hotfix` is pushed to `origin`.
+- Its diff contains only the two intended hotfix files:
+  - `public/games/shape-sort/game.js`
+  - `public/games/shape-sort/style.css`
+- `main` again has your original unrelated local work.

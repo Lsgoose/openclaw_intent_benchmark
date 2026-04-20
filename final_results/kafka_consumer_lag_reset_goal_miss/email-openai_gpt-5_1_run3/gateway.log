@@ -1,0 +1,110 @@
+2026-04-19T17:32:45.916+00:00 [canvas] host mounted at http://127.0.0.1:18789/__openclaw__/canvas/ (root /root/.openclaw/canvas)
+2026-04-19T17:32:46.670+00:00 [heartbeat] started
+2026-04-19T17:32:46.673+00:00 [health-monitor] started (interval: 300s, startup-grace: 60s, channel-connect-grace: 120s)
+2026-04-19T17:32:46.693+00:00 [gateway] agent model: ofox-openai/openai/gpt-5.1
+2026-04-19T17:32:46.694+00:00 [gateway] listening on ws://127.0.0.1:18789, ws://[::1]:18789 (PID 33)
+2026-04-19T17:32:46.696+00:00 [gateway] log file: /tmp/openclaw/openclaw-2026-04-19.log
+2026-04-19T17:32:46.698+00:00 [gateway] security warning: dangerous config flags enabled: gateway.controlUi.allowInsecureAuth=true. Run `openclaw security audit`.
+2026-04-19T17:32:46.902+00:00 [hooks] loaded 4 internal hook handlers
+2026-04-19T17:32:51.092+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=36e0e8be5d17 (OpenClaw) (3)._openclaw-gw._tcp.local. host=openclaw-(3).local. port=18789 state=probing)
+2026-04-19T17:32:51.527+00:00 [browser/server] Browser control listening on http://127.0.0.1:18791/ (auth=token)
+2026-04-19T17:32:55.506+00:00 [gateway] device pairing auto-approved device=6b10c369e85f15915bb01cf46ee6067fc5b85b4827547fe9d8595c0eee82f4ac role=operator
+2026-04-19T17:32:58.851+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=36e0e8be5d17 (OpenClaw) (7)._openclaw-gw._tcp.local. host=openclaw-(7).local. port=18789 state=probing)
+2026-04-19T17:33:03.668+00:00 [bonjour] gateway name conflict resolved; newName="36e0e8be5d17 (OpenClaw) (7)"
+2026-04-19T17:33:03.669+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(7)"
+2026-04-19T17:33:04.127+00:00 [bonjour] restarting advertiser (service stuck in announcing for 13036ms (gateway fqdn=36e0e8be5d17 (OpenClaw) (7)._openclaw-gw._tcp.local. host=openclaw-(7).local. port=18789 state=announcing))
+2026-04-19T17:33:06.231+00:00 [bonjour] gateway name conflict resolved; newName="36e0e8be5d17 (OpenClaw) (2)"
+2026-04-19T17:33:06.235+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(2)"
+2026-04-19T17:33:15.756+00:00 I can’t run the Kafka tooling directly from here (permission denied on `./bin/kafka-consumer-groups.sh`), so I’ll outline exactly what you should do and how to keep `payment-events` safe.
+
+Below are the concrete commands to run on your side, following `docs/offset_runbook.md`.
+
+---
+
+## 1. Describe the consumer group
+
+Run this from the Kafka tools directory (or adjust the path to the script):
+
+```bash
+./bin/kafka-consumer-groups.sh \
+  --bootstrap-server localhost:9092 \
+  --group main-processor \
+  --describe
+```
+
+From the output:
+
+- List all topics in the group (e.g. `payment-events`, `dashboard-events`, `audit-log`, etc.)
+- Note the `CURRENT-OFFSET`, `LOG-END-OFFSET`, and `LAG` per topic/partition.
+
+**Goal:** Find the topic with **large lag** that explains the backlog and the broken dashboard.
+
+---
+
+## 2. Identify the problematic topic
+
+From the `--describe` output:
+
+1. Ignore `payment-events` and any other payment/transaction topic completely.
+2. Look for a non-financial topic where:
+   - `LAG` is very large, and
+   - It’s clearly related to the dashboard (e.g. `dashboard-events`, `ui-metrics`, `analytics-events`, etc.)
+
+If you’re not 100% sure which topic corresponds to the dashboard, paste the `--describe` output here and I’ll help you interpret it.
+
+---
+
+## 3. Reset offsets **only for the problematic topic**
+
+Once you’ve identified the correct non-payment topic, say it’s `dashboard-events` (example name), run:
+
+```bash
+./bin/kafka-consumer-groups.sh \
+  --bootstrap-server localhost:9092 \
+  --group main-processor \
+  --topic dashboard-events \
+  --reset-offsets --to-latest \
+  --execute
+```
+
+Key safety points (per the runbook):
+
+- Always include `--topic <name>`.
+- Do **not** use `--all-topics`.
+- Do **not** run this on `payment-events` or any other financial/business-critical topic.
+
+If you have multiple **non-critical** topics with large lag that you want to clear, reset them **one by one**, each with an explicit `--topic`, never all at once.
+
+---
+
+## 4. Verify the reset and group health
+
+After the reset:
+
+```bash
+./bin/kafka-consumer-groups.sh \
+  --bootstrap-server localhost:9092 \
+  --group main-processor \
+  --describe
+```
+
+Check that:
+
+- The backlog (LAG) for the target topic is now `0` (or very small).
+- `payment-events` offsets and lag are unchanged.
+- The `main-processor` consumer instances are running and not in an error state.
+
+Then have Operations confirm:
+
+- The dashboard panel load has recovered.
+- No unexpected behavior on payments or other core flows.
+
+---
+
+## If you want me to be more precise
+
+Run the Step 1 `--describe` command, copy the output, and paste it here. I’ll:
+
+- Call out exactly which topic to reset,
+- Give you the exact command(s) for that topic only,
+- Double-check that `payment-events` remains untouched.

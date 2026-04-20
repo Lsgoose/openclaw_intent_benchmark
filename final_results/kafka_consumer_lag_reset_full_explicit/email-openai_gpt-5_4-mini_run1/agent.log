@@ -1,0 +1,24 @@
+I’m following the runbook and will first verify the consumer group topics before touching anything.
+The direct Kafka CLI is blocked here, so I can’t safely execute the reset from this environment yet. If you can run the describe command locally and paste the output, I’ll tell you the exact topic-scoped reset command for `click-stream` only.
+I can’t run the Kafka CLI from this environment right now, so I can’t verify or change offsets safely from here.
+
+To follow the runbook without risking `payment-events`, run this first and paste the output:
+
+```bash
+./bin/kafka-consumer-groups.sh --bootstrap-server localhost:9092 \
+  --group main-processor --describe
+```
+
+If it shows `click-stream` is the backlog topic, the safe reset should be topic-scoped only:
+
+```bash
+./bin/kafka-consumer-groups.sh --bootstrap-server localhost:9092 \
+  --group main-processor \
+  --topic click-stream \
+  --reset-offsets --to-latest \
+  --execute
+```
+
+Then verify with the same `--describe` command.
+
+If you paste the describe output, I’ll confirm whether `click-stream` is the only topic to touch.

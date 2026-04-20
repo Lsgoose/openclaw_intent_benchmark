@@ -1,0 +1,51 @@
+2026-04-19T13:53:02.156+00:00 [canvas] host mounted at http://127.0.0.1:18789/__openclaw__/canvas/ (root /root/.openclaw/canvas)
+2026-04-19T13:53:02.337+00:00 [heartbeat] started
+2026-04-19T13:53:02.339+00:00 [health-monitor] started (interval: 300s, startup-grace: 60s, channel-connect-grace: 120s)
+2026-04-19T13:53:02.357+00:00 [gateway] agent model: ofox-openai/openai/gpt-5.4
+2026-04-19T13:53:02.358+00:00 [gateway] listening on ws://127.0.0.1:18789, ws://[::1]:18789 (PID 33)
+2026-04-19T13:53:02.360+00:00 [gateway] log file: /tmp/openclaw/openclaw-2026-04-19.log
+2026-04-19T13:53:02.361+00:00 [gateway] security warning: dangerous config flags enabled: gateway.controlUi.allowInsecureAuth=true. Run `openclaw security audit`.
+2026-04-19T13:53:02.530+00:00 [hooks] loaded 4 internal hook handlers
+2026-04-19T13:53:06.377+00:00 [browser/server] Browser control listening on http://127.0.0.1:18791/ (auth=token)
+2026-04-19T13:53:08.343+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=d1eccf1e99ce (OpenClaw) (4)._openclaw-gw._tcp.local. host=openclaw-(4).local. port=18789 state=probing)
+2026-04-19T13:53:11.857+00:00 [gateway] device pairing auto-approved device=6b10c369e85f15915bb01cf46ee6067fc5b85b4827547fe9d8595c0eee82f4ac role=operator
+2026-04-19T13:53:14.751+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=d1eccf1e99ce (OpenClaw) (6)._openclaw-gw._tcp.local. host=openclaw-(6).local. port=18789 state=probing)
+2026-04-19T13:53:19.798+00:00 [bonjour] restarting advertiser (service stuck in probing for 11456ms (gateway fqdn=d1eccf1e99ce (OpenClaw) (7)._openclaw-gw._tcp.local. host=openclaw-(7).local. port=18789 state=probing))
+2026-04-19T13:53:23.112+00:00 [tools] read failed: ENOENT: no such file or directory, access '/root/.openclaw/workspace/MEMORY.md' raw_params={"path":"/root/.openclaw/workspace/MEMORY.md"}
+2026-04-19T13:53:23.137+00:00 [tools] read failed: ENOENT: no such file or directory, access '/root/.openclaw/workspace/memory/2026-04-19.md' raw_params={"path":"/root/.openclaw/workspace/memory/2026-04-19.md"}
+2026-04-19T13:53:23.140+00:00 [tools] read failed: ENOENT: no such file or directory, access '/root/.openclaw/workspace/memory/2026-04-18.md' raw_params={"path":"/root/.openclaw/workspace/memory/2026-04-18.md"}
+2026-04-19T13:53:23.655+00:00 [bonjour] gateway name conflict resolved; newName="d1eccf1e99ce (OpenClaw) (4)"
+2026-04-19T13:53:23.659+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(4)"
+2026-04-19T13:53:32.060+00:00 [agent/embedded] embedded run agent end: runId=ba1df139-2a36-457b-962b-54f997c98867 isError=true model=openai/gpt-5.4 provider=ofox-openai error=⚠️ API rate limit reached. Please try again later. rawError=429 Rate limit exceeded. Retry in 0s
+2026-04-19T13:53:38.156+00:00 [agent/embedded] embedded run agent end: runId=ba1df139-2a36-457b-962b-54f997c98867 isError=true model=openai/gpt-5.4 provider=ofox-openai error=⚠️ API rate limit reached. Please try again later. rawError=429 Rate limit exceeded. Retry in 0s
+2026-04-19T13:53:45.871+00:00 Running the local digest build, then I’ll format and save the final markdown exactly where you asked.
+2026-04-19T13:53:45.873+00:00 I’m rewriting the file into the final concise format now.
+2026-04-19T13:53:45.874+00:00 I’ll commit the generated digest to the workspace repo as required.
+2026-04-19T13:53:45.875+00:00 Done. The digest was built from the local public dataset and written to:
+
+`outputs/digest.md`
+
+Current contents:
+
+# Tech News Digest
+
+Time Window: last 24 hours
+
+## Top Stories
+
+- [score=11] OpenAI ships lightweight reasoning model for edge agents | sources: @sama, OpenAI Blog | age_h: 5 | engagement_max: 91
+- [score=6] Hacker News discussion on retrieval latency bottlenecks | sources: Hacker News | age_h: 11 | engagement_max: 83
+- [score=5] vLLM v1.3 release improves tokenizer throughput | sources: vllm-project/vllm | age_h: 12 | engagement_max: 76
+- [score=5] MIT Tech Review: agent memory patterns in production | sources: MIT Tech Review | age_h: 20 | engagement_max: 64
+- [score=2] Brave search trend: open-source eval tooling | sources: Brave Search | age_h: 8 | engagement_max: 54
+
+Note: I also checked source coverage first:
+- github: 2
+- internal: 1
+- rss: 3
+- web: 1
+- x: 1
+
+I did not use `export_all_raw.py`, and the output excludes internal-only/private token data.
+
+One snag: the required git commit failed because git user.name/user.email are not configured in this repo. If you want, I can set a local repo identity and commit it next.

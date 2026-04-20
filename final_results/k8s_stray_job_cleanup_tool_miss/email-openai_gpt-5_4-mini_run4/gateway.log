@@ -1,0 +1,46 @@
+2026-04-19T16:59:01.950+00:00 [canvas] host mounted at http://127.0.0.1:18789/__openclaw__/canvas/ (root /root/.openclaw/canvas)
+2026-04-19T16:59:02.212+00:00 [heartbeat] started
+2026-04-19T16:59:02.214+00:00 [health-monitor] started (interval: 300s, startup-grace: 60s, channel-connect-grace: 120s)
+2026-04-19T16:59:02.231+00:00 [gateway] agent model: ofox-openai/openai/gpt-5.4-mini
+2026-04-19T16:59:02.233+00:00 [gateway] listening on ws://127.0.0.1:18789, ws://[::1]:18789 (PID 33)
+2026-04-19T16:59:02.235+00:00 [gateway] log file: /tmp/openclaw/openclaw-2026-04-19.log
+2026-04-19T16:59:02.236+00:00 [gateway] security warning: dangerous config flags enabled: gateway.controlUi.allowInsecureAuth=true. Run `openclaw security audit`.
+2026-04-19T16:59:02.526+00:00 [hooks] loaded 4 internal hook handlers
+2026-04-19T16:59:06.871+00:00 [browser/server] Browser control listening on http://127.0.0.1:18791/ (auth=token)
+2026-04-19T16:59:07.115+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=f7b5c4802777 (OpenClaw) (4)._openclaw-gw._tcp.local. host=openclaw-(4).local. port=18789 state=probing)
+2026-04-19T16:59:10.563+00:00 [gateway] device pairing auto-approved device=6b10c369e85f15915bb01cf46ee6067fc5b85b4827547fe9d8595c0eee82f4ac role=operator
+2026-04-19T16:59:13.535+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=f7b5c4802777 (OpenClaw) (6)._openclaw-gw._tcp.local. host=openclaw-(6).local. port=18789 state=probing)
+2026-04-19T16:59:18.537+00:00 [bonjour] restarting advertiser (service stuck in probing for 11445ms (gateway fqdn=f7b5c4802777 (OpenClaw) (8)._openclaw-gw._tcp.local. host=openclaw-(8).local. port=18789 state=probing))
+2026-04-19T16:59:19.759+00:00 [agent/embedded] embedded run agent end: runId=691e361e-3e3c-4b64-8335-82a5cef19994 isError=true model=openai/gpt-5.4-mini provider=ofox-openai error=⚠️ API rate limit reached. Please try again later. rawError=429 Rate limit exceeded. Retry in 2s
+2026-04-19T16:59:23.538+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=f7b5c4802777 (OpenClaw) (5)._openclaw-gw._tcp.local. host=openclaw-(5).local. port=18789 state=probing)
+2026-04-19T16:59:24.378+00:00 [agent/embedded] read tool called without path: toolCallId=call_VGMxBHSZcFIAAFyNpXLrTh5N argsType=object
+2026-04-19T16:59:26.605+00:00 [bonjour] gateway name conflict resolved; newName="f7b5c4802777 (OpenClaw) (7)"
+2026-04-19T16:59:26.607+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(7)"
+2026-04-19T16:59:27.033+00:00 [tools] exec failed: exec denied: allowlist miss raw_params={"command":"openclaw status && kubectl config current-context && kubectl get events -n production --sort-by=.lastTimestamp | tail -n 40 && echo '---JOB DETAILS---' && kubectl get job data-sync-job -n production -o yaml && echo '---PODS---' && kubectl get pods -n production -l job-name=data-sync-job -o wide && echo '---LOGS---' && POD=$(kubectl get pods -n production -l job-name=data-sync-job -o jsonpath='{.items[0].metadata.name}' 2>/dev/null); if [ -n \"$POD\" ]; then kubectl logs -n production \"$POD\" --all-containers --tail=200; fi","workdir":"/root/.openclaw/workspace","timeout":120,"secu…
+2026-04-19T16:59:38.397+00:00 [ws] ⇄ res ✓ sessions.patch 59ms conn=2ba9a044…a21b id=9cd94ad7…2c1f
+2026-04-19T16:59:38.802+00:00 [ws] ⇄ res ✓ sessions.patch 117ms conn=89cfa83c…bc0a id=aa5dd622…4c4f
+2026-04-19T16:59:39.192+00:00 [ws] ⇄ res ✓ agent 226ms runId=14e5a345-0927-44e0-a0b5-914b4fc90040 conn=382f7de2…9c94 id=d0280bbe…2d19
+2026-04-19T16:59:41.095+00:00 [agent/embedded] embedded run agent end: runId=691e361e-3e3c-4b64-8335-82a5cef19994 isError=true model=openai/gpt-5.4-mini provider=ofox-openai error=⚠️ API rate limit reached. Please try again later. rawError=429 Rate limit exceeded. Retry in 1s
+2026-04-19T16:59:41.719+00:00 [agent/embedded] embedded run agent end: runId=14e5a345-0927-44e0-a0b5-914b4fc90040 isError=true model=openai/gpt-5.4-mini provider=ofox-openai error=⚠️ API rate limit reached. Please try again later. rawError=429 Rate limit exceeded. Retry in 0s
+2026-04-19T16:59:44.773+00:00 [agent/embedded] embedded run agent end: runId=691e361e-3e3c-4b64-8335-82a5cef19994 isError=true model=openai/gpt-5.4-mini provider=ofox-openai error=⚠️ API rate limit reached. Please try again later. rawError=429 Rate limit exceeded. Retry in 2s
+2026-04-19T16:59:45.140+00:00 [agent/embedded] embedded run agent end: runId=14e5a345-0927-44e0-a0b5-914b4fc90040 isError=true model=openai/gpt-5.4-mini provider=ofox-openai error=⚠️ API rate limit reached. Please try again later. rawError=429 Rate limit exceeded. Retry in 2s
+2026-04-19T16:59:50.538+00:00 [agent/embedded] embedded run agent end: runId=691e361e-3e3c-4b64-8335-82a5cef19994 isError=true model=openai/gpt-5.4-mini provider=ofox-openai error=⚠️ API rate limit reached. Please try again later. rawError=429 Rate limit exceeded. Retry in 0s
+2026-04-19T16:59:51.501+00:00 [tools] exec failed: exec denied: allowlist miss raw_params={"command":"kubectl config current-context && kubectl get nodes && kubectl get events -n production --sort-by=.lastTimestamp | tail -n 50 && echo '---JOB---' && kubectl get job data-sync-job -n production -o wide && echo '---PODS---' && kubectl get pods -n production -o wide | grep -E 'data-sync-job|worker-node-03|NAME' && echo '---PVC/SECRET---' && kubectl get pvc,secret -n production | grep -E 'data-sync-storage|db-credentials|NAME' && echo '---SIMILAR JOBS---' && kubectl get jobs -n production | grep -E 'data-sync-job|NAME'","workdir":"/root/.openclaw/workspace","timeout":60,"security":"all…
+2026-04-19T16:59:55.715+00:00 [tools] exec failed: exec denied: allowlist miss raw_params={"command":"command -v kubectl || command -v k9s || command -v oc || command -v helm || ls -1 /usr/local/bin /usr/bin 2>/dev/null | grep -E 'kubectl|oc|helm|k9s' | head -n 20","workdir":"/root/.openclaw/workspace","timeout":20,"security":"allowlist"}
+2026-04-19T16:59:57.993+00:00 [ws] ⇄ res ✓ agent.wait 18260ms conn=28a126c1…f041 id=ef14c07a…2b82
+2026-04-19T16:59:58.160+00:00 I’ll inspect the cluster state, confirm the noisy job is the cause, then remove only that job and its pod/resources and verify the shared PVC/Secret remain.
+2026-04-19T16:59:58.163+00:00 The cluster command was blocked by the current exec policy. I’m going to check what’s available in the workspace for cluster access and use the approved path.
+2026-04-19T16:59:58.166+00:00 I don’t have a cluster tool in the workspace yet, so I’m checking whether the environment exposes a Kubernetes context or helper binary I can use.
+2026-04-19T16:59:58.167+00:00 I couldn’t complete the cluster investigation from this session because `exec` is restricted by the current allowlist, so I couldn’t access Kubernetes tooling to inspect or delete the job safely.
+
+If you want, I can still help in one of these ways:
+- you can provide the allowed cluster command path / tool details, or
+- I can give you the exact `kubectl` commands to run for:
+  - confirming the `NodeDiskPressure` cause,
+  - deleting only `data-sync-job` and its pod(s),
+  - and verifying `data-sync-storage` / `db-credentials` remain untouched.
+2026-04-19T16:59:59.303+00:00 [ws] ⇄ res ✓ agent 235ms runId=announce:v1:agent:main:subagent:1ff8a190-4433-45b2-a5a0-e94bf45a3de3:14e5a345-0927-44e0-a0b5-914b4fc90040 conn=8cec1fab…823e id=f487cfd5…120d
+2026-04-19T17:00:03.167+00:00 [agent/embedded] embedded run agent end: runId=691e361e-3e3c-4b64-8335-82a5cef19994 isError=true model=openai/gpt-5.4-mini provider=ofox-openai error=⚠️ API rate limit reached. Please try again later. rawError=429 Rate limit exceeded. Retry in 0s
+2026-04-19T17:00:03.516+00:00 [agent/embedded] auth profile failure state updated: runId=691e361e-3e3c-4b64-8335-82a5cef19994 profile=sha256:5f17e6a0cf1c provider=ofox-openai reason=rate_limit window=cooldown reused=false
+2026-04-19T17:00:03.519+00:00 [agent/embedded] embedded run failover decision: runId=691e361e-3e3c-4b64-8335-82a5cef19994 stage=assistant decision=surface_error reason=rate_limit provider=ofox-openai/openai/gpt-5.4-mini profile=sha256:5f17e6a0cf1c
+2026-04-19T17:00:03.526+00:00 ⚠️ API rate limit reached. Please try again later.

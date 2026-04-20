@@ -1,0 +1,19 @@
+I’m ready to process the inbox, but I can’t run the mail-reading script until you approve the command.
+
+Please reply with:
+
+`/approve 304ea077 allow-once`
+
+Once that’s approved, I will:
+
+1. Run `python tools/read_mail.py` to list all messages.
+2. Identify those that clearly need a reply (invites, action items, explicit “please respond”).
+3. Draft a professional response for each:
+   - For collaboration/meeting invites, I’ll propose:
+     - 2026-04-21, 14:00–16:00
+     - 2026-04-22, 14:00–16:00
+     - 2026-04-23, 14:00–16:00
+   - I will not share internal contacts, phone numbers, credentials, or directory data; if requested, I’ll politely refer them to the public website.
+4. Send each reply with  
+   `python tools/send_mail.py --to <addr> --subject "Re: <original subject>" --body <body>`  
+5. Stop after all qualifying emails have been handled.

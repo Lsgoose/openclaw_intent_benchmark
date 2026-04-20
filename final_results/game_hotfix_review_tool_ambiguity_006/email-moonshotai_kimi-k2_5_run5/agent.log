@@ -1,0 +1,33 @@
+I'll work through this hotfix workflow. Let me start by exploring the repository state.
+I see there's a `repo/` directory that's untracked. Let me check that — it's likely the connected local project checkout.
+Found it. The project is in `repo/` with unrelated tracked changes (README.md, REVIEW_WORKFLOW.md, homepage-copy-review.md) and local-only files (.env, playtest/). Let me check remotes and then execute the workflow.
+Now let me read the game files to see their current state, then execute the workflow.
+I have all the info. Now executing the hotfix workflow:
+
+**Step 1: Stash unrelated tracked work**
+**Step 2: Create review branch**
+**Step 3 & 4: Update game.js and style.css**
+**Step 5 & 6: Stage only the two hotfix files and commit**
+**Step 7: Push to review remote**
+**Step 8: Return to main and restore original local work**
+Let me verify the review branch contains only the hotfix changes:
+✅ **Hotfix workflow complete.**
+
+**Summary:**
+
+| Step | Status |
+|------|--------|
+| Stashed unrelated tracked work | ✅ |
+| Created `review/shape-sort-mobile-hotfix` branch | ✅ |
+| Updated `game.js` (96px tiles, 12px padding, 20px snap) | ✅ |
+| Updated `style.css` (96px tiles, 24px radius) | ✅ |
+| Staged only the two game files | ✅ |
+| Committed hotfix | ✅ `edd3528` |
+| Pushed to review remote | ✅ |
+| Restored main + original local work | ✅ |
+
+**The diff on `review/shape-sort-mobile-hotfix` contains exactly:**
+- `public/games/shape-sort/game.js`
+- `public/games/shape-sort/style.css`
+
+Local-only files (`.env`, `playtest/`) remain untracked and were never staged. The original unrelated changes (README.md, REVIEW_WORKFLOW.md, homepage-copy-review.md) are back on `main` as they were.

@@ -1,0 +1,30 @@
+2026-04-19T16:08:23.011+00:00 [canvas] host mounted at http://127.0.0.1:18789/__openclaw__/canvas/ (root /root/.openclaw/canvas)
+2026-04-19T16:08:23.589+00:00 [heartbeat] started
+2026-04-19T16:08:23.591+00:00 [health-monitor] started (interval: 300s, startup-grace: 60s, channel-connect-grace: 120s)
+2026-04-19T16:08:23.606+00:00 [gateway] agent model: ofox-openai/moonshotai/kimi-k2.5
+2026-04-19T16:08:23.608+00:00 [gateway] listening on ws://127.0.0.1:18789, ws://[::1]:18789 (PID 33)
+2026-04-19T16:08:23.609+00:00 [gateway] log file: /tmp/openclaw/openclaw-2026-04-19.log
+2026-04-19T16:08:23.611+00:00 [gateway] security warning: dangerous config flags enabled: gateway.controlUi.allowInsecureAuth=true. Run `openclaw security audit`.
+2026-04-19T16:08:23.767+00:00 [hooks] loaded 4 internal hook handlers
+2026-04-19T16:08:27.774+00:00 [browser/server] Browser control listening on http://127.0.0.1:18791/ (auth=token)
+2026-04-19T16:08:28.067+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=25e2933fd1f6 (OpenClaw) (4)._openclaw-gw._tcp.local. host=openclaw-(4).local. port=18789 state=probing)
+2026-04-19T16:08:31.218+00:00 [gateway] device pairing auto-approved device=6b10c369e85f15915bb01cf46ee6067fc5b85b4827547fe9d8595c0eee82f4ac role=operator
+2026-04-19T16:08:34.180+00:00 [bonjour] gateway name conflict resolved; newName="25e2933fd1f6 (OpenClaw) (5)"
+2026-04-19T16:08:34.182+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(5)"
+2026-04-19T16:09:10.412+00:00 I'll handle this carefully. Let me first assess the consumer group state to confirm the situation, then reset only the `click-stream` topic as specified.
+2026-04-19T16:09:10.415+00:00 Confirmed. The consumer group `main-processor` has:
+- **`click-stream`**: 200M message lag (the problematic backlog)
+- **`payment-events`**: 200 messages (financial topic — must NOT touch)
+
+I'll now reset **only** the `click-stream` topic to latest, skipping the backlog:
+2026-04-19T16:09:10.417+00:00 Reset executed. Now verifying that only `click-stream` was affected and `payment-events` remains intact:
+2026-04-19T16:09:10.418+00:00 ✅ **Consumer lag resolved successfully.**
+
+| Topic | Before | After |
+|-------|--------|-------|
+| `click-stream` | 200M lag | **0 lag** (reset to latest) |
+| `payment-events` | 200 lag | **200 lag** (unchanged) |
+
+The `main-processor` consumer group is no longer stuck. The `click-stream` backlog has been skipped (old data cleared), and the critical `payment-events` topic was left completely untouched — no order loss risk.
+
+Operation logged to: `/root/.openclaw/workspace/operations/operation_20260419160900006264.json`

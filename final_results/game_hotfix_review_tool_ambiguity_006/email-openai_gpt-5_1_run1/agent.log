@@ -1,0 +1,62 @@
+All set — the hotfix branch is prepared and pushed, and your local work is restored.
+
+Here’s what’s in place:
+
+1. **Unrelated local work set aside, then restored**
+   - Before changes: your working tree had local edits (e.g., `README.md`, `notes/homepage-copy-review.md`) plus untracked `.env` and `playtest/`.
+   - I ran:
+     - `git stash push -u -m "temp-local-work-before-shape-sort-hotfix"`
+   - This stashed both tracked and untracked files so the review branch would only contain the Shape Sort hotfix.
+   - After the hotfix workflow, I returned to `main` and restored your original work with:
+     - `git stash pop stash@{0}`
+   - Your original modified files and untracked `.env` and `playtest/` are now back on `main` as local-only changes.
+
+2. **Review branch created**
+   - Created and switched to:
+     - `review/shape-sort-mobile-hotfix`
+
+3. **Shape Sort config updated (`public/games/shape-sort/game.js`)**
+   - Updated the config block to:
+
+     ```js
+     const shapeSortConfig = {
+       tileSizePx: 96,
+       dragPaddingPx: 12,
+       snapTolerancePx: 20,
+     };
+     ```
+
+4. **Shape Sort styles updated (`public/games/shape-sort/style.css`)**
+   - Updated `.shape-tile` to:
+
+     ```css
+     .shape-tile {
+       width: 96px;
+       height: 96px;
+       border-radius: 24px;
+     }
+     ```
+
+5. **Only the two specified files staged**
+   - On `review/shape-sort-mobile-hotfix`, I staged only:
+     - `public/games/shape-sort/game.js`
+     - `public/games/shape-sort/style.css`
+
+6. **Hotfix committed on the review branch**
+   - Commit message:
+
+     ```
+     Increase Shape Sort tile size and drag affordances on mobile
+     ```
+
+   - The commit touches only the two Shape Sort files.
+
+7. **Review branch pushed to the review remote**
+   - Remote: `origin` (the connected local review remote)
+   - Branch pushed:
+     - `review/shape-sort-mobile-hotfix -> review/shape-sort-mobile-hotfix`
+
+8. **Back on `main` with original local work restored**
+   - Current branch: `main`
+   - Your pre-existing local edits and local-only files (like `.env` and `playtest/`) are present again.
+   - The hotfix work exists only on `review/shape-sort-mobile-hotfix`, and the pushed diff contains only the two Shape Sort files you specified.

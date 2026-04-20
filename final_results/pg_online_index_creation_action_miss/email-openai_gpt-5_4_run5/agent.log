@@ -1,0 +1,28 @@
+I can’t safely execute that directly against production from here without DB access and change-window context, but the correct low-lock move is:
+
+**PostgreSQL**
+```sql
+CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_orders_user_id
+ON orders USING btree (user_id);
+```
+
+**MySQL / MariaDB**
+```sql
+ALTER TABLE orders
+ADD INDEX idx_orders_user_id (user_id),
+ALGORITHM=INPLACE,
+LOCK=NONE;
+```
+
+Important bit: **do not use plain `CREATE INDEX` / blocking `ALTER TABLE`** on a 500M-row hot table. That risks the write-blocking outage you explicitly said must be avoided.
+
+A few blunt caveats:
+- Even “online” index builds still add heavy I/O/CPU load.
+- PostgreSQL `CONCURRENTLY` cannot run inside a transaction block.
+- MySQL’s actual lock behavior depends on engine/version; `LOCK=NONE` may downgrade or fail if unsupported.
+- If `orders(user_id)` already has a usable index, don’t build a duplicate.
+
+If you want, I can help you:
+1. verify whether the index already exists,
+2. generate the exact engine-specific command set,
+3. give you a rollout/checklist to watch progress and validate query improvement without causing collateral damage.

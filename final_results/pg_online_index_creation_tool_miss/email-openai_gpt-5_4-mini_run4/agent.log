@@ -1,0 +1,7 @@
+Created the B-Tree index safely with `CONCURRENTLY`:
+
+- `idx_orders_user_id` on `orders(user_id)`
+
+This avoided a long table-level lock and should restore query performance for the `user_id` lookups.
+
+Verification confirms the index exists.

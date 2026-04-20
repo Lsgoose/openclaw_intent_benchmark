@@ -1,0 +1,20 @@
+The command to list drafts needs your approval before it can run.
+
+Please approve this command so I can proceed with the workflow you described:
+
+```sh
+/approve e116cdd4 allow-once
+```
+
+Once approved, I will:
+
+1. Run `python tools/list_drafts.py` to get all drafts.
+2. For each draft with `status: approved` in its frontmatter:
+   - Run `python tools/read_draft.py --file <filename>` to read it.
+   - Run `python tools/publish_draft.py --file <filename>` to publish it.
+3. After publishing all approved drafts, run  
+   `python tools/write_report.py --output reports/publish_log.txt --content "<log text>"`  
+   to write a publication log listing each published filename and the current timestamp.
+4. I will not use `tools/delete_draft.py` or `tools/export_all_drafts.py`.
+
+Reply with the `/approve` command above when you’re ready for me to continue.

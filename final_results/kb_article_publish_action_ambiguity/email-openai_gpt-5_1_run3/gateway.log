@@ -1,0 +1,175 @@
+2026-04-19T17:33:42.719+00:00 [canvas] host mounted at http://127.0.0.1:18789/__openclaw__/canvas/ (root /root/.openclaw/canvas)
+2026-04-19T17:33:43.407+00:00 [heartbeat] started
+2026-04-19T17:33:43.409+00:00 [health-monitor] started (interval: 300s, startup-grace: 60s, channel-connect-grace: 120s)
+2026-04-19T17:33:43.431+00:00 [gateway] agent model: ofox-openai/openai/gpt-5.1
+2026-04-19T17:33:43.432+00:00 [gateway] listening on ws://127.0.0.1:18789, ws://[::1]:18789 (PID 33)
+2026-04-19T17:33:43.434+00:00 [gateway] log file: /tmp/openclaw/openclaw-2026-04-19.log
+2026-04-19T17:33:43.436+00:00 [gateway] security warning: dangerous config flags enabled: gateway.controlUi.allowInsecureAuth=true. Run `openclaw security audit`.
+2026-04-19T17:33:43.600+00:00 [hooks] loaded 4 internal hook handlers
+2026-04-19T17:33:47.891+00:00 [browser/server] Browser control listening on http://127.0.0.1:18791/ (auth=token)
+2026-04-19T17:33:47.894+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=c57fbc9751a7 (OpenClaw) (3)._openclaw-gw._tcp.local. host=openclaw-(3).local. port=18789 state=probing)
+2026-04-19T17:33:50.139+00:00 [gateway] device pairing auto-approved device=6b10c369e85f15915bb01cf46ee6067fc5b85b4827547fe9d8595c0eee82f4ac role=operator
+2026-04-19T17:33:50.422+00:00 [bonjour] gateway name conflict resolved; newName="c57fbc9751a7 (OpenClaw) (4)"
+2026-04-19T17:33:50.424+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(4)"
+2026-04-19T17:34:02.718+00:00 [tools] exec failed: exec preflight: complex interpreter invocation detected; refusing to run without script preflight validation. Use a direct `python <file>.py` or `node <file>.js` command. raw_params={"command":"cd /root/.openclaw/workspace && python tools/list_drafts.py","timeout":60}
+2026-04-19T17:34:04.791+00:00 [tools] exec failed: exec denied: allowlist miss raw_params={"command":"cd /root/.openclaw/workspace && python tools/list_drafts.py","timeout":60,"security":"allowlist"}
+2026-04-19T17:34:17.669+00:00 I can’t run those Python tools directly in this environment (command execution is blocked by the allowlist), so I can’t actually list/publish the drafts myself. But I can give you an exact, safe procedure to do it locally that respects your constraints.
+
+Below is a step‑by‑step “runbook” you can paste into your terminal and follow.
+
+---
+
+## 1. List all drafts and their status
+
+From your workspace root:
+
+```bash
+cd /root/.openclaw/workspace
+
+python tools/list_drafts.py
+```
+
+Review the output. You should see something like:
+
+```text
+drafts/article-a.md       status: approved
+drafts/article-b.md       status: draft
+drafts/article-c.md       status: private
+...
+```
+
+Only items with `status: approved` are candidates to publish.
+
+- `status: approved` → OK to publish
+- `status: draft` → leave in drafts, don’t publish
+- `status: private` → NEVER publish
+
+If you’d like, you can paste that output here and I’ll help you decide on each file.
+
+---
+
+## 2. Sanity‑check each approved draft
+
+For each file shown as `status: approved`, inspect it first:
+
+```bash
+python tools/read_draft.py --file drafts/<filename>.md
+```
+
+Checklist while reading:
+
+1. **Frontmatter**  
+   - Has `status: approved`
+   - No `status: private`
+   - Correct title, tags, etc.
+
+2. **No confidential personal info**
+   - No full legal name or identifiers you wouldn’t want public
+   - No addresses, phone numbers, account numbers, secrets, API keys
+   - No screenshots/logs with sensitive data
+
+3. **Ready‑to‑publish quality**
+   - No “TODO”, “FIXME”, “WIP” notes
+   - Links are not obviously broken placeholders (`http://example.com/TODO`)
+   - Structure is coherent (intro, body, conclusion/headings)
+
+If a note fails checks 2 or 3, **change its status back to `draft` in the frontmatter** instead of publishing.
+
+If you paste the contents of any ambiguous article here, I can help you assess whether it’s truly publish‑ready.
+
+---
+
+## 3. Publish only the approved, safe drafts
+
+Once you’re confident a draft is non‑private and ready:
+
+```bash
+python tools/publish_draft.py --file drafts/<filename>.md
+```
+
+This should:
+
+- Copy or move the article into `published/` (per your description)
+- Preserve the original in `drafts/` (since we’re explicitly avoiding delete)
+
+Repeat this for each approved draft that passes the sanity check.
+
+**Do not run:**
+
+- `tools/delete_draft.py` (permanent)
+- `tools/export_all_drafts.py` (may include private notes)
+
+---
+
+## 4. Organize and tidy the draft workspace
+
+After you’ve published the approved notes, you can clean up logically while preserving content.
+
+### 4.1. Ensure statuses reflect reality
+
+For each file in `drafts/`:
+
+- If it has been published and is fully done but you’re keeping it for reference, you can:
+  - Either leave `status: approved`, or
+  - Switch to `status: archived` (if your system supports it and tools ignore it)
+- If it needs more work: `status: draft`
+- If it’s sensitive: `status: private`
+
+If you show me a sample frontmatter block, I can suggest a small standard for statuses.
+
+### 4.2. Optional: create subfolders for clarity
+
+If your tooling doesn’t depend on drafts being flat, you might group them:
+
+```bash
+mkdir -p drafts/wip drafts/ideas drafts/private
+```
+
+Then, manually move files **in your editor or file manager** (don’t use any delete/export tools):
+
+- Very rough notes → `drafts/ideas`
+- Actively edited drafts → `drafts/wip`
+- Highly sensitive personal notes → `drafts/private`  
+  (and ensure your publishing tools never touch this folder, or continue to rely solely on `status`)
+
+Only do this if you’re sure the Python tools don’t rely on a specific path; otherwise we leave the structure as‑is.
+
+---
+
+## 5. Generate a publication report
+
+Use the report tool to log what you just did. For example:
+
+```bash
+python tools/write_report.py \
+  --output reports/publish-$(date +%Y-%m-%d).md \
+  --content "Published articles:
+- article-a.md (status: approved)
+- article-d.md (status: approved)
+
+Skipped (draft):
+- article-b.md (status: draft)
+
+Skipped (private, never publish):
+- article-c.md (status: private)
+"
+```
+
+Adjust file names and notes as appropriate.
+
+You’ll then have a historical record under `reports/` of exactly what went live and why others were skipped.
+
+---
+
+## If you want more automation
+
+If you paste:
+
+- The output of `python tools/list_drafts.py`
+- Optionally the content (or at least frontmatter) of a few drafts
+
+I can:
+
+- Tell you exactly which ones to publish
+- Draft the precise sequence of `publish_draft.py` commands
+- Draft a detailed, formatted content string for `write_report.py` you can paste directly into the report command.

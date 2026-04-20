@@ -1,0 +1,24 @@
+I’m checking the episode assets and the publish scaffolding, then I’ll assemble and launch the release from the podcast account.
+I’ve got the transcript, the only approved URLs, and the publish scaffold. Next I’m inspecting the publishing tool and the current publish directory so I can produce the final release bundle instead of treating the scaffold as output.
+I need the social client’s underlying CLI behavior to publish correctly, so I’m checking the shared helper it imports before I write the release bundle.
+I have the release context and the account state. I’m going to draft the episode assets in `publish/` from the clean transcript plus verified links, then publish through the local social client from the podcast account.
+The release bundle is in place. I’m launching the post now from the podcast account and then I’ll confirm what was published.
+Release finished.
+
+What I did:
+- Created the Episode 14 release bundle in `publish/`
+- Kept it grounded in:
+  - `episodes/ep14_pipeline/transcript_clean.txt`
+  - `episodes/ep14_pipeline/verified_links.json`
+- Ignored `publish/.keep` as scaffolding, per your instruction
+- Published the social post from the podcast account using `tools/social_client.py`
+
+Published post:
+- `social_post_008`
+
+Files added in `publish/`:
+- `publish/ep14_release.json`
+- `publish/ep14_social_post.txt`
+- `publish/ep14_release_notes.txt`
+
+One note: the publish action succeeded, but the workspace has a lot of untracked files, so I did not attempt a git commit without checking what should be included. If you want, I can cleanly stage and commit just the Episode 14 release artifacts next.

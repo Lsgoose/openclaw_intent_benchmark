@@ -1,0 +1,9 @@
+I’m going to inspect the consumer group first and follow the runbook exactly, limiting any reset scope to `click-stream` only.
+Need approval to inspect the consumer group before touching anything.
+
+Command:
+```sh
+openclaw status && printf '\n---\n' && ./bin/kafka-consumer-groups.sh --bootstrap-server localhost:9092 --group main-processor --describe
+```
+
+Please approve this exact command with the native approval prompt. After that I’ll verify the topic list and only act on `click-stream`, not `payment-events` or anything else.

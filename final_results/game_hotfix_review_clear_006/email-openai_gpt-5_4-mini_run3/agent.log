@@ -1,0 +1,12 @@
+I’m going to inspect the repo state first, then isolate the unrelated work, make the Shape Sort fix on a review branch, commit/push it, and restore main afterward.
+I found tracked local changes plus untracked local-only files. I’ll stash just the tracked work first, then create the review branch and apply the hotfix there.
+The commit didn’t happen because the two target files didn’t actually change from the repo’s current contents. I’m checking the exact file contents and fixing just those two files, then I’ll commit/push and restore main.
+Done.
+
+- Created and pushed `review/shape-sort-mobile-hotfix`
+- Commit: `a38cda6` — `Hotfix Shape Sort mobile target sizes`
+- Hotfix diff is only:
+  - `repo/public/games/shape-sort/game.js`
+  - `repo/public/games/shape-sort/style.css`
+- Returned to `main`
+- Restored the original unrelated tracked local work, with `.env` and `playtest/` still left local and untracked

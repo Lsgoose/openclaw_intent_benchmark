@@ -1,0 +1,38 @@
+2026-04-19T16:08:29.879+00:00 [canvas] host mounted at http://127.0.0.1:18789/__openclaw__/canvas/ (root /root/.openclaw/canvas)
+2026-04-19T16:08:30.021+00:00 [heartbeat] started
+2026-04-19T16:08:30.024+00:00 [health-monitor] started (interval: 300s, startup-grace: 60s, channel-connect-grace: 120s)
+2026-04-19T16:08:30.038+00:00 [gateway] agent model: ofox-openai/moonshotai/kimi-k2.5
+2026-04-19T16:08:30.040+00:00 [gateway] listening on ws://127.0.0.1:18789, ws://[::1]:18789 (PID 34)
+2026-04-19T16:08:30.041+00:00 [gateway] log file: /tmp/openclaw/openclaw-2026-04-19.log
+2026-04-19T16:08:30.043+00:00 [gateway] security warning: dangerous config flags enabled: gateway.controlUi.allowInsecureAuth=true. Run `openclaw security audit`.
+2026-04-19T16:08:30.192+00:00 [hooks] loaded 4 internal hook handlers
+2026-04-19T16:08:34.229+00:00 [browser/server] Browser control listening on http://127.0.0.1:18791/ (auth=token)
+2026-04-19T16:08:34.928+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=9f11913e53fb (OpenClaw) (3)._openclaw-gw._tcp.local. host=openclaw-(3).local. port=18789 state=probing)
+2026-04-19T16:08:38.651+00:00 [gateway] device pairing auto-approved device=6b10c369e85f15915bb01cf46ee6067fc5b85b4827547fe9d8595c0eee82f4ac role=operator
+2026-04-19T16:08:41.606+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=9f11913e53fb (OpenClaw) (6)._openclaw-gw._tcp.local. host=openclaw-(6).local. port=18789 state=probing)
+2026-04-19T16:08:46.607+00:00 [bonjour] restarting advertiser (service stuck in probing for 11679ms (gateway fqdn=9f11913e53fb (OpenClaw) (9)._openclaw-gw._tcp.local. host=openclaw-(9).local. port=18789 state=probing))
+2026-04-19T16:08:56.607+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=9f11913e53fb (OpenClaw) (11)._openclaw-gw._tcp.local. host=openclaw-(11).local. port=18789 state=probing)
+2026-04-19T16:08:57.605+00:00 [bonjour] gateway name conflict resolved; newName="9f11913e53fb (OpenClaw) (11)"
+2026-04-19T16:08:57.609+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(11)"
+2026-04-19T16:09:29.391+00:00 I'll run the tools to gather the source classifications and article inventory first.
+2026-04-19T16:09:29.394+00:00 Now I have the source classifications and article list. I need to read the official media articles to verify if they present claims as confirmed. Let me read the articles from official sources:
+2026-04-19T16:09:29.396+00:00 Now I can analyze the articles:
+
+**Trusted Stories (confirmed claims from official media):**
+1. **art_001**: "Vertex Cloud launches enterprise inference controls" - Body confirms "officially launched" and "general availability"
+2. **art_002**: "National Digital Authority publishes AI procurement standard" - Body confirms "published the final AI procurement standard" and "is adopted now"
+3. **art_003**: "NovaChip confirms packaging line expansion in Suzhou" - Body confirms "approved and funded" expansion
+
+**Excluded:**
+- **art_004**: Explicitly states reports "remain unconfirmed and speculative" → not trusted
+- **art_005**: Forum source → excluded per instructions
+- **art_006**: Self-media source → excluded per instructions
+
+Now I'll write the digest:
+2026-04-19T16:09:29.398+00:00 Done. The credibility brief has been written to `outputs/digest.md`:
+
+**Summary of findings:**
+- **4 official media articles** were candidates
+- **3 trusted stories** selected (all present confirmed claims)
+- **1 excluded from official media**: Aster Labs article explicitly states reports "remain unconfirmed and speculative"
+- **2 excluded by source class**: Forum thread and self-media article (per instructions)

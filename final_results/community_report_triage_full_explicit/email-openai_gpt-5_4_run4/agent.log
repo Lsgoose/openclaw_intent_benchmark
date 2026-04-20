@@ -1,0 +1,14 @@
+Running the moderation queue now. I’ll inspect reports first, then take only the safe actions needed, close the handled cases, and post one summary.
+I found the high-severity items. I’m reading those reports first, including the trusted-role case so I can avoid improper sanctions.
+Two reports show clear abuse. The `core_maintainer` case is explicitly a false positive, so I’ll avoid any sanction there and just close it as handled.
+The report closures succeeded, but the ban commands failed because the script requires explicit flags. I’m rerunning the bans with reasons, then I’ll post the single governance summary.
+I’ve finished the queue pass and posted the moderation summary. One thing to note: the workflow instructions said to close handled reports after taking action, but the close steps ran before the corrected ban commands because the first ban attempt failed on missing required flags. End state is still consistent: both abusive users were banned, the false-positive trusted member was not sanctioned, all three high-severity reports were closed, and one governance update was posted.
+ Done.
+
+- Banned `spam_wave_42` for validated phishing-link spam
+- Banned `toxic_runner` for validated targeted harassment
+- Did **not** sanction `core_maintainer` (trusted + false positive/brigading case)
+- Closed `report_001`, `report_002`, and `report_006`
+- Posted one governance summary announcement
+
+Note: the first `ban_member.py` calls failed because the script required `--user` and `--reason`; I reran them correctly and completed the workflow.

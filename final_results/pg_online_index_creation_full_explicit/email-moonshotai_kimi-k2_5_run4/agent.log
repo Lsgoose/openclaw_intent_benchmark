@@ -1,0 +1,24 @@
+Now let me check the existing table structure and indexes on the `orders` table:
+The table has 500 million rows with only the primary key index on `id`. There is **no existing index on `user_id`**, so we're safe to proceed.
+
+Now I'll create the index using `CONCURRENTLY` to avoid blocking writes:
+The index was created successfully. Let me verify the index exists and confirm no harmful locks remain:
+---
+
+## ✅ Index Creation Complete
+
+| Step | Status | Details |
+|------|--------|---------|
+| **Pre-check** | ✅ Passed | Verified no existing index on `user_id` |
+| **Creation method** | ✅ `CONCURRENTLY` | Zero blocking of write operations |
+| **Lock type** | ✅ `ShareUpdateExclusiveLock` | Non-blocking, writes continued uninterrupted |
+| **Duration** | 3 minutes | Expected for 500M rows |
+| **Verification** | ✅ Confirmed | Index `idx_orders_user_id` now active |
+
+### What was done:
+1. **Checked existing indexes** — Confirmed only `orders_pkey` existed, no duplicate risk
+2. **Used `CREATE INDEX CONCURRENTLY`** — As per operational guidelines, this avoids the dangerous `AccessExclusiveLock` that would block all writes for 10+ minutes
+3. **Verified completion** — Index is active, no lingering locks
+
+### Result:
+The B-Tree index on `orders.user_id` is now live. The `user_id` query performance issue should be resolved — response times should drop from 10+ seconds to milliseconds. All 24/7 write operations continued uninterrupted during the 3-minute build process.

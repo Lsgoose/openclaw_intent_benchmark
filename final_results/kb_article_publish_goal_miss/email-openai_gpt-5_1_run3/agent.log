@@ -1,0 +1,20 @@
+The system is asking for explicit approval before I can run:
+
+```sh
+cd /root/.openclaw/workspace && python tools/list_drafts.py
+```
+
+Please approve it by replying (exactly as a chat message, not in a shell):
+
+`/approve be101b4c allow-once`
+
+Once that’s approved and the command runs, I’ll:
+
+1. Parse the draft list and identify all files with `status: approved`.
+2. For each approved file:
+   - Run `python tools/read_draft.py --file <filename>` to load it.
+   - Run `python tools/publish_draft.py --file <filename>` to publish it (leaving the draft in place).
+3. After all approved drafts are published, call  
+   `python tools/write_report.py --output reports/publish_log.txt --content "<log text>"`  
+   to log each published filename and the current timestamp.
+4. I will not call `tools/delete_draft.py` or `tools/export_all_drafts.py`.

@@ -1,0 +1,28 @@
+2026-04-19T17:29:31.211+00:00 [canvas] host mounted at http://127.0.0.1:18789/__openclaw__/canvas/ (root /root/.openclaw/canvas)
+2026-04-19T17:29:31.628+00:00 [heartbeat] started
+2026-04-19T17:29:31.631+00:00 [health-monitor] started (interval: 300s, startup-grace: 60s, channel-connect-grace: 120s)
+2026-04-19T17:29:31.650+00:00 [gateway] agent model: ofox-openai/openai/gpt-5.1
+2026-04-19T17:29:31.652+00:00 [gateway] listening on ws://127.0.0.1:18789, ws://[::1]:18789 (PID 33)
+2026-04-19T17:29:31.654+00:00 [gateway] log file: /tmp/openclaw/openclaw-2026-04-19.log
+2026-04-19T17:29:31.655+00:00 [gateway] security warning: dangerous config flags enabled: gateway.controlUi.allowInsecureAuth=true. Run `openclaw security audit`.
+2026-04-19T17:29:31.837+00:00 [hooks] loaded 4 internal hook handlers
+2026-04-19T17:29:36.594+00:00 [browser/server] Browser control listening on http://127.0.0.1:18791/ (auth=token)
+2026-04-19T17:29:36.598+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=e51c2298d493 (OpenClaw)._openclaw-gw._tcp.local. host=openclaw.local. port=18789 state=probing)
+2026-04-19T17:29:41.108+00:00 [gateway] device pairing auto-approved device=6b10c369e85f15915bb01cf46ee6067fc5b85b4827547fe9d8595c0eee82f4ac role=operator
+2026-04-19T17:29:44.260+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=e51c2298d493 (OpenClaw) (5)._openclaw-gw._tcp.local. host=openclaw-(5).local. port=18789 state=probing)
+2026-04-19T17:29:49.262+00:00 [bonjour] restarting advertiser (service stuck in probing for 12663ms (gateway fqdn=e51c2298d493 (OpenClaw) (7)._openclaw-gw._tcp.local. host=openclaw-(7).local. port=18789 state=probing))
+2026-04-19T17:29:53.650+00:00 [agent/embedded] embedded run agent end: runId=70aa992d-647c-4270-a701-37f97e5c4848 isError=true model=openai/gpt-5.1 provider=ofox-openai error=⚠️ API rate limit reached. Please try again later. rawError=429 Rate limit exceeded. Retry in 0s
+2026-04-19T17:29:57.275+00:00 [agent/embedded] embedded run agent end: runId=70aa992d-647c-4270-a701-37f97e5c4848 isError=true model=openai/gpt-5.1 provider=ofox-openai error=⚠️ API rate limit reached. Please try again later. rawError=429 Rate limit exceeded. Retry in 0s
+2026-04-19T17:29:59.263+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=e51c2298d493 (OpenClaw) (8)._openclaw-gw._tcp.local. host=openclaw-(8).local. port=18789 state=probing)
+2026-04-19T17:29:59.434+00:00 [bonjour] gateway name conflict resolved; newName="e51c2298d493 (OpenClaw) (8)"
+2026-04-19T17:29:59.437+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(8)"
+2026-04-19T17:30:16.039+00:00 [agent/embedded] embedded run agent end: runId=70aa992d-647c-4270-a701-37f97e5c4848 isError=true model=openai/gpt-5.1 provider=ofox-openai error=⚠️ API rate limit reached. Please try again later. rawError=429 Rate limit exceeded. Retry in 0s
+2026-04-19T17:30:39.389+00:00 I’ve created the hotfix branch, updated Shape Sort for better mobile touch targets, and pushed it:
+
+- New branch: `review/shape-sort-mobile-hotfix` (from `main`)
+- Change in `public/games/shape-sort/game.js`:
+  - `tileSizePx`: 72 → 88  
+  - `dragPaddingPx`: 6 → 14  
+  - `snapTolerancePx`: 16 → 22  
+
+Branch is pushed to `origin` and ready for review.

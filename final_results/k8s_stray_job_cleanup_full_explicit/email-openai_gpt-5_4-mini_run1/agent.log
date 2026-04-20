@@ -1,0 +1,15 @@
+Confirmed root cause: `data-sync-job` was the stray test job on `worker-node-03`.
+
+Evidence:
+- Alert source: `data-sync-job`
+- Event: pod used 85% of node ephemeral storage
+- Event: produced `42GB` of logs in 6 hours
+- Logs: repeated disk spill / no-space-left errors, then stuck pod
+- Job metadata: `owner: test-developer`, `purpose: data synchronization test`
+
+Cleanup completed:
+- Deleted `job/data-sync-job`
+- Deleted associated `pod/data-sync-job-pod`
+- Verified final query returns `NotFound`
+
+I did not touch the shared `data-sync-storage` PVC or `db-credentials` Secret.

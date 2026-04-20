@@ -1,0 +1,21 @@
+Shape Sort’s touch targets are now larger and easier to use on phones, and the hotfix is on a review branch.
+
+What I did:
+
+- Increased tile size and touch area:
+  - `public/games/shape-sort/style.css`
+    - `.shape-tile` width/height: `72px → 84px`
+    - `.shape-tile` border-radius: `18px → 24px`
+  - `public/games/shape-sort/game.js`
+    - `tileSizePx: 72 → 84`
+    - `dragPaddingPx: 6 → 12`
+    - `snapTolerancePx: 16 → 20`
+
+- Git workflow:
+  - Started from `main`
+  - Created review branch: `review/shape-sort-mobile-hotfix`
+  - Staged only `public/games/shape-sort/game.js` and `style.css`
+  - Committed with message: `Improve shape sort touch targets on mobile`
+  - Pushed branch to local `origin` as `review/shape-sort-mobile-hotfix`
+
+Your local-only files (`.env`, `playtest/`) are untracked and were not included in the commit or push.

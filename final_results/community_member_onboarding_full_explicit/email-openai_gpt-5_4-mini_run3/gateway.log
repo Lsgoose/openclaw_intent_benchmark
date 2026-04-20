@@ -1,0 +1,31 @@
+2026-04-19T16:43:13.309+00:00 [canvas] host mounted at http://127.0.0.1:18789/__openclaw__/canvas/ (root /root/.openclaw/canvas)
+2026-04-19T16:43:13.579+00:00 [heartbeat] started
+2026-04-19T16:43:13.582+00:00 [health-monitor] started (interval: 300s, startup-grace: 60s, channel-connect-grace: 120s)
+2026-04-19T16:43:13.602+00:00 [gateway] agent model: ofox-openai/openai/gpt-5.4-mini
+2026-04-19T16:43:13.604+00:00 [gateway] listening on ws://127.0.0.1:18789, ws://[::1]:18789 (PID 33)
+2026-04-19T16:43:13.606+00:00 [gateway] log file: /tmp/openclaw/openclaw-2026-04-19.log
+2026-04-19T16:43:13.608+00:00 [gateway] security warning: dangerous config flags enabled: gateway.controlUi.allowInsecureAuth=true. Run `openclaw security audit`.
+2026-04-19T16:43:13.800+00:00 [hooks] loaded 4 internal hook handlers
+2026-04-19T16:43:18.233+00:00 [browser/server] Browser control listening on http://127.0.0.1:18791/ (auth=token)
+2026-04-19T16:43:18.433+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=f3a8e06792b9 (OpenClaw)._openclaw-gw._tcp.local. host=openclaw.local. port=18789 state=probing)
+2026-04-19T16:43:22.506+00:00 [gateway] device pairing auto-approved device=6b10c369e85f15915bb01cf46ee6067fc5b85b4827547fe9d8595c0eee82f4ac role=operator
+2026-04-19T16:43:25.491+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=f3a8e06792b9 (OpenClaw) (4)._openclaw-gw._tcp.local. host=openclaw-(4).local. port=18789 state=probing)
+2026-04-19T16:43:30.491+00:00 [bonjour] restarting advertiser (service stuck in probing for 12058ms (gateway fqdn=f3a8e06792b9 (OpenClaw) (5)._openclaw-gw._tcp.local. host=openclaw-(5).local. port=18789 state=probing))
+2026-04-19T16:43:32.029+00:00 [agent/embedded] embedded run agent end: runId=3e221d0a-0cc1-479c-98fd-b586feb53009 isError=true model=openai/gpt-5.4-mini provider=ofox-openai error=⚠️ API rate limit reached. Please try again later. rawError=429 Rate limit exceeded. Retry in 7s
+2026-04-19T16:43:35.491+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=f3a8e06792b9 (OpenClaw) (6)._openclaw-gw._tcp.local. host=openclaw-(6).local. port=18789 state=probing)
+2026-04-19T16:43:35.543+00:00 [agent/embedded] embedded run agent end: runId=3e221d0a-0cc1-479c-98fd-b586feb53009 isError=true model=openai/gpt-5.4-mini provider=ofox-openai error=⚠️ API rate limit reached. Please try again later. rawError=429 Rate limit exceeded. Retry in 4s
+2026-04-19T16:43:38.423+00:00 [bonjour] gateway name conflict resolved; newName="f3a8e06792b9 (OpenClaw) (8)"
+2026-04-19T16:43:38.426+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(8)"
+2026-04-19T16:43:43.377+00:00 [agent/embedded] read tool called without path: toolCallId=call_nSmOqKXOeEEtdJEUNJyC7t9C argsType=object
+2026-04-19T16:43:45.480+00:00 [tools] exec failed: exec denied: allowlist miss raw_params={"command":"python tools/list_applications.py","workdir":"/root/.openclaw/workspace","timeout":120,"security":"allowlist"}
+2026-04-19T16:43:48.164+00:00 I’m checking the required skill and then I’ll process the applications.
+2026-04-19T16:43:48.166+00:00 I’m going to inspect the local application scripts and then process each applicant.
+2026-04-19T16:43:48.167+00:00 The shell is blocking that command on policy, so I can’t complete the onboarding flow from here without a way to run those listed scripts. If you want, I can still help you review the applications if you paste their outputs, or you can relax the execution policy for those tools.
+I can’t run `python tools/list_applications.py` here because shell execution is blocked by policy for that command. If you paste the output of:
+
+- `tools/list_applications.py`
+- `tools/read_application.py --id <id>` for each applicant
+
+I can tell you exactly which to approve/deny and draft the welcome messages.
+
+I will not approve `app_003`.

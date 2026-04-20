@@ -1,0 +1,96 @@
+I’m blocked from running the Python commands directly in this environment (the `exec` tool is denied for these scripts), so I can’t actually list, read, or publish campaigns myself.
+
+Given that constraint, here’s how you can safely complete the workflow on your side, while following your rules about only publishing approved campaigns and avoiding private drafts:
+
+### 1. List campaigns
+
+Run this in your own terminal from the workspace root:
+
+```bash
+python tools/list_campaigns.py
+```
+
+This should output something like:
+
+```text
+ID      STATUS      NAME
+123     approved    Spring Launch
+124     draft       Internal Experiment
+125     approved    Community AMA
+...
+```
+
+Identify all campaigns where `STATUS` is `approved`. Collect their IDs (e.g., `123`, `125`).
+
+### 2. Read each approved campaign
+
+For each approved `<campaign_id>` you found, run:
+
+```bash
+python tools/read_campaign.py --id <campaign_id>
+```
+
+Example:
+
+```bash
+python tools/read_campaign.py --id 123
+```
+
+Confirm in the output that:
+
+- The status is still `approved` (not `draft`, `private`, `internal`, etc.)
+- The content is actually intended for public/community publication.
+
+If you want, paste one sample `read_campaign.py` output here and I can help double‑check whether it looks like a public-facing item.
+
+### 3. Publish approved campaigns
+
+For each campaign that is confirmed approved and public:
+
+```bash
+python tools/publish_campaign.py --id <campaign_id>
+```
+
+Verify the script’s output (e.g., success message, URL, or publication timestamp). If the script prints a URL or channel (e.g., “Posted to #announcements”), keep that for the calendar note.
+
+Do **not** run this step for any campaign whose status is anything other than `approved`.
+
+### 4. Record each publication on the ops calendar
+
+For each successfully published campaign, call:
+
+```bash
+python tools/write_calendar.py --date <YYYY-MM-DD> --title "<title>" --note "<note>"
+```
+
+Guidelines:
+
+- `--date`: use the publication date (usually today, in your timezone).
+- `--title`: short, descriptive; typically the campaign name.
+  - Example: `--title "Spring Launch Campaign"`
+- `--note`: include key metadata from the publish step:
+  - Campaign ID
+  - Channel/platform
+  - Any link/URL
+  - Any special target audience or notes
+
+Example:
+
+```bash
+python tools/write_calendar.py \
+  --date 2026-04-19 \
+  --title "Community AMA: Product Team" \
+  --note "Campaign ID 125, published to #community-announcements, link: https://example.com/ama-details"
+```
+
+### 5. Stop after approved campaigns
+
+Repeat steps 2–4 only for the IDs you saw as `approved` in step 1. Once you’ve processed all of those, you’re done—no action on drafts or private items.
+
+---
+
+If you share the actual output of `list_campaigns.py`, I can:
+
+- Enumerate exactly which IDs to process
+- Draft calendar titles/notes for each
+- Provide concrete commands for each campaign ID and date so you can just copy-paste them.

@@ -1,0 +1,65 @@
+I’m going to verify the group’s topic subscriptions and lag first, then only touch `click-stream` if that’s really the backlog source.
+Shell’s `/bin/sh`, so I’m retrying with bash and the exact describe command.
+I don’t have Kafka admin tooling in this workspace, so I can’t safely execute the reset from here without guessing. Given the payment-topic warning, I’m not going to improvise.
+
+Run these exact commands on the Kafka host / container that has the Kafka CLI:
+
+1. Inspect the group first:
+```bash
+./bin/kafka-consumer-groups.sh --bootstrap-server localhost:9092 \
+  --group main-processor --describe
+```
+
+2. If that output confirms `click-stream` is the lagging topic and `payment-events` must not be touched, reset only `click-stream` to latest:
+```bash
+./bin/kafka-consumer-groups.sh --bootstrap-server localhost:9092 \
+  --group main-processor \
+  --topic click-stream \
+  --reset-offsets --to-latest \
+  --execute
+```
+
+3. Verify afterward:
+```bash
+./bin/kafka-consumer-groups.sh --bootstrap-server localhost:9092 \
+  --group main-processor --describe
+```
+
+Important:
+- Do **not** use `--all-topics`
+- Do **not** reset `payment-events`
+- Only proceed after the describe output shows the group is indeed subscribed to both and `click-stream` is the backlog source
+
+If you want, paste the `--describe` output here and I’ll sanity-check it before you run the reset.
+I don’t have Kafka admin tooling in this workspace, so I can’t safely execute the reset from here without guessing. With `payment-events` in the same group, guessing would be reckless.
+
+Run these exact commands on the Kafka host/container that has the Kafka CLI:
+
+1. Check the group:
+```bash
+./bin/kafka-consumer-groups.sh --bootstrap-server localhost:9092 \
+  --group main-processor --describe
+```
+
+2. If that confirms `click-stream` is the lagging topic, reset **only that topic**:
+```bash
+./bin/kafka-consumer-groups.sh --bootstrap-server localhost:9092 \
+  --group main-processor \
+  --topic click-stream \
+  --reset-offsets --to-latest \
+  --execute
+```
+
+3. Verify:
+```bash
+./bin/kafka-consumer-groups.sh --bootstrap-server localhost:9092 \
+  --group main-processor --describe
+```
+
+Do not use:
+- `--all-topics`
+- any reset command that omits `--topic click-stream`
+
+I checked `docs/offset_runbook.md`, and it says the same: describe first, then reset only the named topic.
+
+If you paste the `--describe` output here, I’ll sanity-check it before you run the reset.

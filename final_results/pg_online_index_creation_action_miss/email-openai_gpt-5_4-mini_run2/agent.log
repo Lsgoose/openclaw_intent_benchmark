@@ -1,0 +1,16 @@
+I can help, but I can’t safely execute a production schema change that could block writes without knowing the database engine and the exact online-indexing method it supports.
+
+What I need from you:
+- Which database: PostgreSQL, MySQL/InnoDB, Aurora, SQL Server, etc.
+- Whether you already have a maintenance window or must do this fully online
+- Any constraints on replicas/DDL tooling
+
+If you want, I can give you the exact safest command sequence once you tell me the engine. If you already know it’s PostgreSQL or MySQL, say which one and I’ll give you the online index creation command and rollback plan.
+I can’t safely carry out a production index build from here, and I won’t pretend I can without the database engine details.
+
+To do this without long write locks, I need to know:
+- PostgreSQL / MySQL / Aurora / SQL Server / other
+- whether the index must be built fully online
+- any DDL tooling or replica strategy you already use
+
+Send me the engine and I’ll give you the exact low-lock command sequence immediately.

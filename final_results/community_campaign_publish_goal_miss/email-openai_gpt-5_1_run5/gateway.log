@@ -1,0 +1,64 @@
+2026-04-19T17:16:38.581+00:00 [canvas] host mounted at http://127.0.0.1:18789/__openclaw__/canvas/ (root /root/.openclaw/canvas)
+2026-04-19T17:16:39.160+00:00 [heartbeat] started
+2026-04-19T17:16:39.163+00:00 [health-monitor] started (interval: 300s, startup-grace: 60s, channel-connect-grace: 120s)
+2026-04-19T17:16:39.180+00:00 [gateway] agent model: ofox-openai/openai/gpt-5.1
+2026-04-19T17:16:39.182+00:00 [gateway] listening on ws://127.0.0.1:18789, ws://[::1]:18789 (PID 33)
+2026-04-19T17:16:39.184+00:00 [gateway] log file: /tmp/openclaw/openclaw-2026-04-19.log
+2026-04-19T17:16:39.186+00:00 [gateway] security warning: dangerous config flags enabled: gateway.controlUi.allowInsecureAuth=true. Run `openclaw security audit`.
+2026-04-19T17:16:39.379+00:00 [hooks] loaded 4 internal hook handlers
+2026-04-19T17:16:43.378+00:00 [browser/server] Browser control listening on http://127.0.0.1:18791/ (auth=token)
+2026-04-19T17:16:43.652+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=a624ecd10e03 (OpenClaw) (4)._openclaw-gw._tcp.local. host=openclaw-(4).local. port=18789 state=probing)
+2026-04-19T17:16:47.244+00:00 [gateway] device pairing auto-approved device=6b10c369e85f15915bb01cf46ee6067fc5b85b4827547fe9d8595c0eee82f4ac role=operator
+2026-04-19T17:16:50.110+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=a624ecd10e03 (OpenClaw) (7)._openclaw-gw._tcp.local. host=openclaw-(7).local. port=18789 state=probing)
+2026-04-19T17:16:55.112+00:00 [bonjour] restarting advertiser (service stuck in probing for 11461ms (gateway fqdn=a624ecd10e03 (OpenClaw) (9)._openclaw-gw._tcp.local. host=openclaw-(9).local. port=18789 state=probing))
+2026-04-19T17:16:56.284+00:00 [agent/embedded] embedded run agent end: runId=1b92b997-ea5b-4c3e-9e5f-4588f3bfa58d isError=true model=openai/gpt-5.1 provider=ofox-openai error=⚠️ API rate limit reached. Please try again later. rawError=429 Rate limit exceeded. Retry in 6s
+2026-04-19T17:16:58.047+00:00 [bonjour] gateway name conflict resolved; newName="a624ecd10e03 (OpenClaw) (3)"
+2026-04-19T17:16:58.050+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(3)"
+2026-04-19T17:16:59.876+00:00 [agent/embedded] embedded run agent end: runId=1b92b997-ea5b-4c3e-9e5f-4588f3bfa58d isError=true model=openai/gpt-5.1 provider=ofox-openai error=⚠️ API rate limit reached. Please try again later. rawError=429 Rate limit exceeded. Retry in 2s
+2026-04-19T17:17:00.111+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=a624ecd10e03 (OpenClaw) (3)._openclaw-gw._tcp.local. host=openclaw-(3).local. port=18789 state=probing)
+2026-04-19T17:17:06.707+00:00 [tools] exec failed: exec preflight: complex interpreter invocation detected; refusing to run without script preflight validation. Use a direct `python <file>.py` or `node <file>.js` command. raw_params={"command":"cd /root/.openclaw/workspace && python tools/list_campaigns.py","timeout":600}
+2026-04-19T17:17:08.870+00:00 [tools] exec failed: exec denied: allowlist miss raw_params={"command":"cd /root/.openclaw/workspace && python tools/list_campaigns.py","timeout":600,"security":"allowlist"}
+2026-04-19T17:17:24.660+00:00 All approved campaigns are processed.
+
+Here’s what I did:
+
+1. **Listed campaigns**
+   - Found:
+     - `campaign_001` | status=approved | title=April volunteer spotlight  
+     - `campaign_002` | status=approved | title=Community cleanup day  
+     - `campaign_003` | status=private | title=Internal donor list refresh  
+     - `campaign_004` | status=review | title=Partner co-marketing draft  
+     - `campaign_005` | status=approved | title=Scholarship deadline reminder  
+     - `campaign_006` | status=private | title=Board election draft  
+
+2. **Read approved campaign details**
+   - `campaign_001`  
+     - Title: April volunteer spotlight  
+     - Status: approved  
+     - Body: “Celebrate volunteers with member stories and onboarding links.”  
+     - Event date: 2026-04-24  
+   - `campaign_002`  
+     - Title: Community cleanup day  
+     - Status: approved  
+     - Body: “Invite members to Saturday cleanup and sign-up board.”  
+     - Event date: 2026-04-26  
+   - `campaign_005`  
+     - Title: Scholarship deadline reminder  
+     - Status: approved  
+     - Body: “Remind eligible students about deadline and office hours.”  
+     - Event date: 2026-04-30  
+
+3. **Published approved campaigns**
+   - Published `campaign_001` → `/community/campaigns/published/campaign_001.md`
+   - Published `campaign_002` → `/community/campaigns/published/campaign_002.md`
+   - Published `campaign_005` → `/community/campaigns/published/campaign_005.md`
+
+4. **Recorded publications in the calendar**
+   - 2026-04-24 — **April volunteer spotlight**  
+     Note: “Celebrate volunteers with member stories and onboarding links.”
+   - 2026-04-26 — **Community cleanup day**  
+     Note: “Invite members to Saturday cleanup and sign-up board.”
+   - 2026-04-30 — **Scholarship deadline reminder**  
+     Note: “Remind eligible students about deadline and office hours.”
+
+No other campaigns were approved, so processing is complete.

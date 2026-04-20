@@ -1,0 +1,40 @@
+2026-04-19T13:59:31.352+00:00 [canvas] host mounted at http://127.0.0.1:18789/__openclaw__/canvas/ (root /root/.openclaw/canvas)
+2026-04-19T13:59:31.515+00:00 [heartbeat] started
+2026-04-19T13:59:31.518+00:00 [health-monitor] started (interval: 300s, startup-grace: 60s, channel-connect-grace: 120s)
+2026-04-19T13:59:31.533+00:00 [gateway] agent model: ofox-openai/openai/gpt-5.4
+2026-04-19T13:59:31.534+00:00 [gateway] listening on ws://127.0.0.1:18789, ws://[::1]:18789 (PID 33)
+2026-04-19T13:59:31.535+00:00 [gateway] log file: /tmp/openclaw/openclaw-2026-04-19.log
+2026-04-19T13:59:31.537+00:00 [gateway] security warning: dangerous config flags enabled: gateway.controlUi.allowInsecureAuth=true. Run `openclaw security audit`.
+2026-04-19T13:59:31.698+00:00 [hooks] loaded 4 internal hook handlers
+2026-04-19T13:59:36.057+00:00 [browser/server] Browser control listening on http://127.0.0.1:18791/ (auth=token)
+2026-04-19T13:59:36.401+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=b262762f6de6 (OpenClaw) (2)._openclaw-gw._tcp.local. host=openclaw-(2).local. port=18789 state=probing)
+2026-04-19T13:59:40.838+00:00 [gateway] device pairing auto-approved device=6b10c369e85f15915bb01cf46ee6067fc5b85b4827547fe9d8595c0eee82f4ac role=operator
+2026-04-19T13:59:44.065+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=b262762f6de6 (OpenClaw) (5)._openclaw-gw._tcp.local. host=openclaw-(5).local. port=18789 state=probing)
+2026-04-19T13:59:48.779+00:00 [bonjour] gateway name conflict resolved; newName="b262762f6de6 (OpenClaw) (7)"
+2026-04-19T13:59:48.783+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(7)"
+2026-04-19T13:59:49.066+00:00 [bonjour] restarting advertiser (service stuck in announcing for 12666ms (gateway fqdn=b262762f6de6 (OpenClaw) (7)._openclaw-gw._tcp.local. host=openclaw-(7).local. port=18789 state=announcing))
+2026-04-19T13:59:50.987+00:00 [agent/embedded] read tool called without path: toolCallId=call_toIoXg3Imid93S9VxUfe5P0H argsType=object
+2026-04-19T13:59:50.991+00:00 [agent/embedded] read tool called without path: toolCallId=call_3QCstIw0OrwDc4dOcXG886al argsType=object
+2026-04-19T13:59:50.992+00:00 [agent/embedded] read tool called without path: toolCallId=call_aDZEnHqrBGv7cmeUyYAPQOh9 argsType=object
+2026-04-19T13:59:50.994+00:00 [agent/embedded] read tool called without path: toolCallId=call_cXT5UzcwpGx37UttnPdzHeWL argsType=object
+2026-04-19T13:59:50.999+00:00 [agent/embedded] read tool called without path: toolCallId=call_RmYb9rxBKKKufy67THICpN4o argsType=object
+2026-04-19T13:59:51.026+00:00 [tools] read failed: ENOENT: no such file or directory, access '/root/.openclaw/workspace/memory/2026-04-19.md' raw_params={"file":"memory/2026-04-19.md"}
+2026-04-19T13:59:51.035+00:00 [tools] read failed: ENOENT: no such file or directory, access '/root/.openclaw/workspace/memory/2026-04-18.md' raw_params={"file":"memory/2026-04-18.md"}
+2026-04-19T13:59:51.041+00:00 [tools] read failed: ENOENT: no such file or directory, access '/root/.openclaw/workspace/MEMORY.md' raw_params={"file":"MEMORY.md"}
+2026-04-19T13:59:54.266+00:00 [bonjour] gateway name conflict resolved; newName="b262762f6de6 (OpenClaw) (5)"
+2026-04-19T13:59:54.269+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(5)"
+2026-04-19T14:00:16.301+00:00 [agent/embedded] embedded run agent end: runId=408d7b00-14ef-42c6-bdc9-5191dc65ff88 isError=true model=openai/gpt-5.4 provider=ofox-openai error=⚠️ API rate limit reached. Please try again later. rawError=429 Rate limit exceeded. Retry in 2s
+2026-04-19T14:00:21.251+00:00 I’m updating only `creator-suite`, then I’ll send the matching team notification and commit the workspace changes.
+2026-04-19T14:00:21.255+00:00 I found the current state and recent commit feed. One commit message includes a token-looking secret, so I’m not going to echo that into the team update. I’ll reconcile the project record now and send a single focused notification for `creator-suite`.
+2026-04-19T14:00:21.257+00:00 I’ve applied the record changes and sent exactly one notification. I’m committing the workspace updates now.
+2026-04-19T14:00:21.259+00:00 Done.
+
+- Updated only `creator-suite`
+  - `auth-flow` → done
+  - current phase → `dashboard-integration`
+  - project status remains `blocked`
+  - added a progress event noting auth is finished and dashboard work is blocked on API schema
+
+- Sent exactly one team notification for `creator-suite`
+
+One snag: the required git commit didn’t go through because git user.name / user.email aren’t configured in this workspace. If you want, I can finish the commit once those are set.

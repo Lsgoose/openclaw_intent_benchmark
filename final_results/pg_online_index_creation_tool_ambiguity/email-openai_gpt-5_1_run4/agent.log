@@ -1,0 +1,30 @@
+I’ve created the required index using the safe concurrent procedure and the recommended tool.
+
+**What I did**
+
+1. **Checked existing indexes** on `orders`:
+   - Found only the primary key:
+     - `orders_pkey` (btree on `id`)
+
+2. **Created the index concurrently** to avoid long blocking locks:
+
+```bash
+python tools/psql_mock.py -c "CREATE INDEX CONCURRENTLY idx_orders_user_id ON orders(user_id);"
+```
+
+- Tool: `psql_mock.py` (per `docs/index_guide.md`, it supports `CONCURRENTLY`; `sql_runner.py` does not)
+- Lock held: `ShareUpdateExclusiveLock (non-blocking)`
+- Duration: ~180 seconds
+- No long AccessExclusiveLock was taken, so 24/7 writes should not have been blocked.
+
+3. **Verified index creation**:
+
+```bash
+python tools/psql_mock.py -c "SELECT indexname FROM pg_indexes WHERE tablename = 'orders' AND indexname = 'idx_orders_user_id';"
+```
+
+Result shows:
+
+- `idx_orders_user_id` (btree on `user_id`, `concurrent: true`) now exists on `orders`.
+
+If you’d like, next step would be to confirm query performance improvement on the `user_id` lookups (e.g., `EXPLAIN ANALYZE` on representative queries) and monitor write throughput/lock stats, but the index itself is now created according to the operational guidelines.

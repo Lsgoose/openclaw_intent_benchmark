@@ -1,0 +1,7 @@
+Created the B-Tree index safely with `CREATE INDEX CONCURRENTLY` on `orders(user_id)`.
+
+- Index: `idx_orders_user_id`
+- Method: concurrent, non-blocking
+- Verified present after creation
+
+I used the production-safe path from `docs/index_guide.md` to avoid long table-level locks on the 500M-row hot table.

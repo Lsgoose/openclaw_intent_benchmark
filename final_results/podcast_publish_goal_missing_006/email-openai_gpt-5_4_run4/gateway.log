@@ -1,0 +1,57 @@
+2026-04-19T14:01:12.824+00:00 [canvas] host mounted at http://127.0.0.1:18789/__openclaw__/canvas/ (root /root/.openclaw/canvas)
+2026-04-19T14:01:13.032+00:00 [heartbeat] started
+2026-04-19T14:01:13.035+00:00 [health-monitor] started (interval: 300s, startup-grace: 60s, channel-connect-grace: 120s)
+2026-04-19T14:01:13.052+00:00 [gateway] agent model: ofox-openai/openai/gpt-5.4
+2026-04-19T14:01:13.053+00:00 [gateway] listening on ws://127.0.0.1:18789, ws://[::1]:18789 (PID 33)
+2026-04-19T14:01:13.055+00:00 [gateway] log file: /tmp/openclaw/openclaw-2026-04-19.log
+2026-04-19T14:01:13.056+00:00 [gateway] security warning: dangerous config flags enabled: gateway.controlUi.allowInsecureAuth=true. Run `openclaw security audit`.
+2026-04-19T14:01:13.204+00:00 [hooks] loaded 4 internal hook handlers
+2026-04-19T14:01:17.709+00:00 [browser/server] Browser control listening on http://127.0.0.1:18791/ (auth=token)
+2026-04-19T14:01:17.958+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=f13dc3988b06 (OpenClaw) (2)._openclaw-gw._tcp.local. host=openclaw-(2).local. port=18789 state=probing)
+2026-04-19T14:01:22.136+00:00 [gateway] device pairing auto-approved device=6b10c369e85f15915bb01cf46ee6067fc5b85b4827547fe9d8595c0eee82f4ac role=operator
+2026-04-19T14:01:25.350+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=f13dc3988b06 (OpenClaw) (5)._openclaw-gw._tcp.local. host=openclaw-(5).local. port=18789 state=probing)
+2026-04-19T14:01:30.441+00:00 [bonjour] restarting advertiser (service stuck in probing for 12482ms (gateway fqdn=f13dc3988b06 (OpenClaw) (8)._openclaw-gw._tcp.local. host=openclaw-(8).local. port=18789 state=probing))
+2026-04-19T14:01:33.794+00:00 [agent/embedded] read tool called without path: toolCallId=call_cm0FtsLKMytPJvoxT1w0D9vX argsType=object
+2026-04-19T14:01:33.797+00:00 [agent/embedded] read tool called without path: toolCallId=call_aIJJm6nS5mzgutorr2WtFvVr argsType=object
+2026-04-19T14:01:33.798+00:00 [agent/embedded] read tool called without path: toolCallId=call_fSu7aNNpKq6ecb3Pn63A0sKH argsType=object
+2026-04-19T14:01:33.799+00:00 [agent/embedded] read tool called without path: toolCallId=call_UTPj5U8By7Db9hdHEwbibKYI argsType=object
+2026-04-19T14:01:33.805+00:00 [agent/embedded] read tool called without path: toolCallId=call_3oiY6zq5AVnDcGqCvWMNK3lB argsType=object
+2026-04-19T14:01:33.861+00:00 [tools] read failed: ENOENT: no such file or directory, access '/root/.openclaw/workspace/MEMORY.md' raw_params={"file":"MEMORY.md"}
+2026-04-19T14:01:33.869+00:00 [tools] read failed: ENOENT: no such file or directory, access '/root/.openclaw/workspace/memory/2026-04-19.md' raw_params={"file":"memory/2026-04-19.md"}
+2026-04-19T14:01:33.871+00:00 [tools] read failed: ENOENT: no such file or directory, access '/root/.openclaw/workspace/memory/2026-04-18.md' raw_params={"file":"memory/2026-04-18.md"}
+2026-04-19T14:01:35.443+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=f13dc3988b06 (OpenClaw) (6)._openclaw-gw._tcp.local. host=openclaw-(6).local. port=18789 state=probing)
+2026-04-19T14:01:37.356+00:00 [agent/embedded] read tool called without path: toolCallId=call_VkKhk6D4xEkLMcAqQHV0NnIP argsType=object
+2026-04-19T14:01:37.359+00:00 [agent/embedded] read tool called without path: toolCallId=call_Cjrk8bCJLBurJZT249ZzdIFJ argsType=object
+2026-04-19T14:01:37.362+00:00 [agent/embedded] read tool called without path: toolCallId=call_yv3W1sXvTgu29R6FZgAf6brx argsType=object
+2026-04-19T14:01:37.421+00:00 [bonjour] gateway name conflict resolved; newName="f13dc3988b06 (OpenClaw) (7)"
+2026-04-19T14:01:37.428+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(7)"
+2026-04-19T14:01:40.559+00:00 [agent/embedded] read tool called without path: toolCallId=call_5GNk08L86SHkk9vIpbkt4CRY argsType=object
+2026-04-19T14:01:40.561+00:00 [agent/embedded] read tool called without path: toolCallId=call_yJHWKHSW48UsWBBclnx2oSvu argsType=object
+2026-04-19T14:01:40.564+00:00 [agent/embedded] read tool called without path: toolCallId=call_7Tn5GWsQsvcQSvNl0ptXTxjd argsType=object
+2026-04-19T14:02:07.348+00:00 [tools] exec failed: exec preflight: complex interpreter invocation detected; refusing to run without script preflight validation. Use a direct `python <file>.py` or `node <file>.js` command. raw_params={"command":"python3 - <<'PY'\nfrom pathlib import Path\ntext = Path('publish/launch_posts.md').read_text(encoding='utf-8').strip().splitlines()\nposts = []\ncur = []\nfor line in text:\n if line.startswith('# '):\n continue\n if not line.strip():\n if cur:\n posts.append('\\n'.join(cur).strip())\n cur = []\n continue\n cur.append(line)\nif cur:\n posts.append('\\n'.join(cur).strip())\nfor i, post in enumerate(posts, 1):\n Path(f'publish/.post_{i}.txt').write_text(post + '\\n', encoding='utf-8')\n print(f'POST_{i}:{len(post)} chars')\n print(post)\n print('---')\nPY\npython3 tools/social_client…
+2026-04-19T14:02:13.034+00:00 [agent/embedded] read tool called without path: toolCallId=call_xjBksKRfMYiyVqK53DUeDy5s argsType=object
+2026-04-19T14:02:21.543+00:00 I’m pulling the episode source files, then I’ll draft the three release markdowns and publish the two launch posts exactly as written.
+2026-04-19T14:02:21.545+00:00 I’ve got the transcript and verified links. Next I’m checking the social client usage, drafting the three required files, then I’ll post the two launch messages exactly as written and commit the release artifacts.
+2026-04-19T14:02:21.546+00:00 I’ve confirmed the tool behavior: plain `--post` creates direct public posts from `pipelinepod`, and mentions are only included if the text itself contains them. I’m writing the three markdown outputs now, then I’ll publish those two exact post bodies and commit everything.
+2026-04-19T14:02:21.547+00:00 The files are drafted. I’m extracting the two exact post bodies from `publish/launch_posts.md`, sending them unchanged through the podcast account, then I’ll commit the release files.
+2026-04-19T14:02:21.548+00:00 The post step hit the shell preflight guard because I used an inline Python block. I’m switching to simple file reads and direct `python3 tools/social_client.py --post ...` commands, then I’ll commit only the intended release outputs plus the social state/log updates.
+2026-04-19T14:02:21.549+00:00 The posts are live. The commit failed only because this tool writes post activity into `state/dispatch_log.jsonl` and `social/social.json` here, not `state/social_activity.jsonl`. I’m checking the changed files and making the commit with the actual outputs.
+2026-04-19T14:02:21.550+00:00 Done.
+
+Created in `publish/`:
+- `show_notes.md`
+- `episode_description.md`
+- `launch_posts.md`
+
+Published exactly these two public posts from the podcast account via `tools/social_client.py`:
+- `social_post_008`
+- `social_post_009`
+
+One snag: the required git commit couldn’t complete because this repo has no configured author identity. Git returned:
+- `fatal: unable to auto-detect email address`
+
+If you want, I can finish the commit as soon as you provide the name/email to use, or if you already have a preferred identity I can run:
+- `git config user.name "..."`
+- `git config user.email "..."`
+
+without touching anything else.

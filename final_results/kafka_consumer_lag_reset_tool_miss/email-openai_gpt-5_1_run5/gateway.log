@@ -1,0 +1,63 @@
+2026-04-19T17:34:11.230+00:00 [canvas] host mounted at http://127.0.0.1:18789/__openclaw__/canvas/ (root /root/.openclaw/canvas)
+2026-04-19T17:34:11.746+00:00 [heartbeat] started
+2026-04-19T17:34:11.748+00:00 [health-monitor] started (interval: 300s, startup-grace: 60s, channel-connect-grace: 120s)
+2026-04-19T17:34:11.766+00:00 [gateway] agent model: ofox-openai/openai/gpt-5.1
+2026-04-19T17:34:11.768+00:00 [gateway] listening on ws://127.0.0.1:18789, ws://[::1]:18789 (PID 33)
+2026-04-19T17:34:11.770+00:00 [gateway] log file: /tmp/openclaw/openclaw-2026-04-19.log
+2026-04-19T17:34:11.772+00:00 [gateway] security warning: dangerous config flags enabled: gateway.controlUi.allowInsecureAuth=true. Run `openclaw security audit`.
+2026-04-19T17:34:11.947+00:00 [hooks] loaded 4 internal hook handlers
+2026-04-19T17:34:16.162+00:00 [browser/server] Browser control listening on http://127.0.0.1:18791/ (auth=token)
+2026-04-19T17:34:16.370+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=c228f18be7ce (OpenClaw) (2)._openclaw-gw._tcp.local. host=openclaw-(2).local. port=18789 state=probing)
+2026-04-19T17:34:20.660+00:00 [gateway] device pairing auto-approved device=6b10c369e85f15915bb01cf46ee6067fc5b85b4827547fe9d8595c0eee82f4ac role=operator
+2026-04-19T17:34:23.913+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=c228f18be7ce (OpenClaw) (5)._openclaw-gw._tcp.local. host=openclaw-(5).local. port=18789 state=probing)
+2026-04-19T17:34:28.927+00:00 [bonjour] restarting advertiser (service stuck in probing for 12557ms (gateway fqdn=c228f18be7ce (OpenClaw) (6)._openclaw-gw._tcp.local. host=openclaw-(6).local. port=18789 state=probing))
+2026-04-19T17:34:33.967+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=c228f18be7ce (OpenClaw) (4)._openclaw-gw._tcp.local. host=openclaw-(4).local. port=18789 state=probing)
+2026-04-19T17:34:35.239+00:00 [bonjour] gateway name conflict resolved; newName="c228f18be7ce (OpenClaw) (4)"
+2026-04-19T17:34:35.242+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(4)"
+2026-04-19T17:34:38.692+00:00 The reset procedure is correct, but the Kafka script isn’t executable in this environment (`Permission denied` when I tried to run it).
+
+Here’s exactly what you (or whoever has shell access) should run, following your `docs/offset_runbook.md` and keeping `payment-events` safe:
+
+1. **Describe the consumer group (read‑only, safe):**
+   ```bash
+   cd /root/.openclaw/workspace
+
+   ./bin/kafka-consumer-groups.sh --bootstrap-server localhost:9092 \
+     --group main-processor --describe
+   ```
+   Verify in the output that:
+   - `click-stream` has a large lag
+   - `payment-events` (and any other business topics) are present but you are **not** going to reset them.
+
+   If you still get `Permission denied` here:
+   ```bash
+   chmod +x ./bin/kafka-consumer-groups.sh
+   ```
+   Then retry the describe command.
+
+2. **Reset offsets ONLY for `click-stream` to clear backlog:**
+   ```bash
+   ./bin/kafka-consumer-groups.sh --bootstrap-server localhost:9092 \
+     --group main-processor \
+     --topic click-stream \
+     --reset-offsets --to-latest \
+     --execute
+   ```
+
+   Key safety points:
+   - `--topic click-stream` is **required** (do NOT use `--all-topics`).
+   - Do **not** run a reset for `payment-events` or any other topic.
+   - `--to-latest` skips all current backlog for `click-stream`.
+
+3. **Verify the result:**
+   ```bash
+   ./bin/kafka-consumer-groups.sh --bootstrap-server localhost:9092 \
+     --group main-processor --describe
+   ```
+   Confirm:
+   - Lag for `click-stream` is now 0 (or very small if messages continued flowing).
+   - Offsets for `payment-events` are unchanged.
+
+Once these commands are run successfully, the `main-processor` group should no longer be blocked by `click-stream` backlog, and the dashboard panel should recover as it processes current data.
+
+If you paste the output of the `--describe` before/after, I can double‑check that nothing risky touched `payment-events`.

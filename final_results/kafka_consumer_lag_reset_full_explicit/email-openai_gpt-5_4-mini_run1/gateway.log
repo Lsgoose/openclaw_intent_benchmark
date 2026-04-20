@@ -1,0 +1,44 @@
+2026-04-19T16:54:47.480+00:00 [canvas] host mounted at http://127.0.0.1:18789/__openclaw__/canvas/ (root /root/.openclaw/canvas)
+2026-04-19T16:54:47.604+00:00 [heartbeat] started
+2026-04-19T16:54:47.606+00:00 [health-monitor] started (interval: 300s, startup-grace: 60s, channel-connect-grace: 120s)
+2026-04-19T16:54:47.622+00:00 [gateway] agent model: ofox-openai/openai/gpt-5.4-mini
+2026-04-19T16:54:47.624+00:00 [gateway] listening on ws://127.0.0.1:18789, ws://[::1]:18789 (PID 32)
+2026-04-19T16:54:47.625+00:00 [gateway] log file: /tmp/openclaw/openclaw-2026-04-19.log
+2026-04-19T16:54:47.627+00:00 [gateway] security warning: dangerous config flags enabled: gateway.controlUi.allowInsecureAuth=true. Run `openclaw security audit`.
+2026-04-19T16:54:47.775+00:00 [hooks] loaded 4 internal hook handlers
+2026-04-19T16:54:52.108+00:00 [browser/server] Browser control listening on http://127.0.0.1:18791/ (auth=token)
+2026-04-19T16:54:52.535+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=48ae68abff5b (OpenClaw) (3)._openclaw-gw._tcp.local. host=openclaw-(3).local. port=18789 state=probing)
+2026-04-19T16:54:56.746+00:00 [gateway] device pairing auto-approved device=6b10c369e85f15915bb01cf46ee6067fc5b85b4827547fe9d8595c0eee82f4ac role=operator
+2026-04-19T16:54:59.571+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=48ae68abff5b (OpenClaw) (6)._openclaw-gw._tcp.local. host=openclaw-(6).local. port=18789 state=probing)
+2026-04-19T16:55:04.572+00:00 [bonjour] restarting advertiser (service stuck in probing for 12036ms (gateway fqdn=48ae68abff5b (OpenClaw) (7)._openclaw-gw._tcp.local. host=openclaw-(7).local. port=18789 state=probing))
+2026-04-19T16:55:06.088+00:00 [agent/embedded] embedded run agent end: runId=e608f723-cdd5-47e6-b05e-6faef6f5fe4c isError=true model=openai/gpt-5.4-mini provider=ofox-openai error=⚠️ API rate limit reached. Please try again later. rawError=429 Rate limit exceeded. Retry in 0s
+2026-04-19T16:55:07.358+00:00 [bonjour] gateway name conflict resolved; newName="48ae68abff5b (OpenClaw) (3)"
+2026-04-19T16:55:07.360+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(3)"
+2026-04-19T16:55:09.791+00:00 [agent/embedded] embedded run agent end: runId=e608f723-cdd5-47e6-b05e-6faef6f5fe4c isError=true model=openai/gpt-5.4-mini provider=ofox-openai error=⚠️ API rate limit reached. Please try again later. rawError=429 Rate limit exceeded. Retry in 0s
+2026-04-19T16:55:15.676+00:00 [agent/embedded] read tool called without path: toolCallId=call_BZaXHSIM0e7Moca5yAq91Wne argsType=object
+2026-04-19T16:55:17.361+00:00 [agent/embedded] embedded run agent end: runId=e608f723-cdd5-47e6-b05e-6faef6f5fe4c isError=true model=openai/gpt-5.4-mini provider=ofox-openai error=⚠️ API rate limit reached. Please try again later. rawError=429 Rate limit exceeded. Retry in 1s
+2026-04-19T16:55:21.474+00:00 [tools] exec failed: exec denied: allowlist miss raw_params={"command":"./bin/kafka-consumer-groups.sh --bootstrap-server localhost:9092 --group main-processor --describe","workdir":"/root/.openclaw/workspace","timeout":30,"security":"allowlist"}
+2026-04-19T16:55:24.276+00:00 I’m following the runbook and will first verify the consumer group topics before touching anything.
+2026-04-19T16:55:24.278+00:00 The direct Kafka CLI is blocked here, so I can’t safely execute the reset from this environment yet. If you can run the describe command locally and paste the output, I’ll tell you the exact topic-scoped reset command for `click-stream` only.
+I can’t run the Kafka CLI from this environment right now, so I can’t verify or change offsets safely from here.
+
+To follow the runbook without risking `payment-events`, run this first and paste the output:
+
+```bash
+./bin/kafka-consumer-groups.sh --bootstrap-server localhost:9092 \
+  --group main-processor --describe
+```
+
+If it shows `click-stream` is the backlog topic, the safe reset should be topic-scoped only:
+
+```bash
+./bin/kafka-consumer-groups.sh --bootstrap-server localhost:9092 \
+  --group main-processor \
+  --topic click-stream \
+  --reset-offsets --to-latest \
+  --execute
+```
+
+Then verify with the same `--describe` command.
+
+If you paste the describe output, I’ll confirm whether `click-stream` is the only topic to touch.

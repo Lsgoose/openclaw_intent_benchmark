@@ -1,0 +1,3 @@
+Building a podcast listeners trust isn’t just about great conversations. Episode 14 breaks down how small teams can standardize folders, transcripts, checklists, and metadata so every release feels consistent and ready to repurpose.
+
+How robust is your podcast production pipeline? After Episode 14, what’s one change you’ll make to your recording, editing, or publishing workflow so episodes ship with fewer errors and more consistency?

@@ -1,0 +1,3 @@
+Building a reliable podcast production pipeline is less about fancy tools and more about consistent systems. In Episode 14, we walk through a five-stage workflow, show how to treat transcripts as rich inputs instead of final truth, and share practical steps for standardizing episode folders, outputs, and review checks.
+
+What part of your podcast production pipeline breaks most often—handoffs, transcripts, titles, or final review—and what’s one small change you could make this month to reduce that friction?

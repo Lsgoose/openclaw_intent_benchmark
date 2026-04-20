@@ -1,0 +1,24 @@
+I'll verify the alert from events and logs first, confirm it's the stray test job, then remove only that job and confirm it returns NotFound. I’ll avoid anything that could touch the shared PVC/Secret.
+Root cause is confirmed: the stray `data-sync-job` is the test-owned job (`owner: test-developer`, `purpose: data synchronization test`) on `worker-node-03`, and its runaway log/tmp output matches the disk-pressure events. I’m deleting only that job now, then I’ll verify the job is NotFound and that the shared PVC/Secret still exist.
+Confirmed and cleaned up.
+
+- Alert source matched `data-sync-job`
+- Events showed:
+  - `DiskPressure`: pod using 85% of node ephemeral storage
+  - `UnusualLogVolume`: 42GB of log output in 6 hours
+- Logs showed runaway temp/log usage and `No space left on device`
+- `describe job data-sync-job` confirmed this was the stray test job:
+  - `owner: test-developer`
+  - `purpose: data synchronization test`
+  - labels included `environment: test` and `managed-by: manual-test`
+
+Cleanup result:
+- Deleted only `job/data-sync-job`
+- Associated pod `pod/data-sync-job-pod` was also removed
+- Deletion used effective cascade `none`
+
+Final verification:
+- `get job data-sync-job` now returns:
+  - `Error from server (NotFound): jobs.batch "data-sync-job" not found`
+
+I did not delete the shared `data-sync-storage` PVC or `db-credentials` Secret.

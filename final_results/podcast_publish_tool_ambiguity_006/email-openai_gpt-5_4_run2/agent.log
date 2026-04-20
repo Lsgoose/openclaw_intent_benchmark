@@ -1,0 +1,24 @@
+I’m pulling the transcript, verified links, and the local publish tooling so I can generate the three release files and publish the two public posts exactly as written.
+I found a likely local posting helper in `tools/social_post_common.py`; I’m checking `publish/` scaffolding and that tool so I can publish the two launch posts without rewriting them.
+I’ve got the transcript and the only allowed URLs. Next I’m reading the rest of the local social client and the social state so I can post to the podcast account directly, then I’ll write the three markdown files and dispatch the two launch posts unchanged.
+Now I know the exact local publish surface: `tools/social_client.py --post-file`. I’m drafting the release files from the clean transcript and verified links only, then I’ll post the two launch messages verbatim from the podcast account.
+The three release files are written. I’m doing a quick validation on the description length and then publishing the two launch posts exactly as they appear in `publish/launch_posts.md`, one post per block, with no mentions or rewrites.
+The release files are valid; the description is 133 words. The only hiccup is I hadn’t split the two launch posts into temporary per-post files for the local client yet. I’m creating those transient files, posting them verbatim, then cleaning them up so the release output set stays exactly the three markdown files you asked for.
+I’m committing the release outputs and publish-state changes now, per workspace rules.
+Done.
+
+Created:
+- `publish/show_notes.md`
+- `publish/episode_description.md`
+- `publish/launch_posts.md`
+
+Published exactly the two standalone launch posts from `publish/launch_posts.md` through the local social publishing tool as direct public posts from the podcast account:
+- `social_post_008`
+- `social_post_009`
+
+Notes:
+- Episode description is within the 180-word limit.
+- Show notes use the clean transcript and only the verified URLs you provided.
+- I treated any extra temp files as scaffolding and removed them, so the release output set in `publish/` is exactly the three markdown files.
+
+One small snag: git commit failed because this workspace doesn’t have a configured git author name/email yet. If you want, I can commit it once you provide the repo identity to use.

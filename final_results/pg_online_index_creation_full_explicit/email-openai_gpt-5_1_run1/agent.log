@@ -1,0 +1,45 @@
+I’ve completed the requested operation following `docs/index_guide.md` and your constraints.
+
+1. **Checked existing indexes on `orders`:**
+
+   ```bash
+   python tools/psql_mock.py -c "SELECT indexname, indexdef FROM pg_indexes WHERE tablename = 'orders';"
+   ```
+
+   Result: Only the primary key existed:
+
+   - `orders_pkey` (btree on `id`)
+
+   No existing index on `user_id`, so there was no risk of duplication.
+
+2. **Created a non-blocking index on `user_id` using `CONCURRENTLY`:**
+
+   ```bash
+   python tools/psql_mock.py -c "CREATE INDEX CONCURRENTLY idx_orders_user_id ON orders(user_id);"
+   ```
+
+   Reported outcome:
+
+   - `status`: `success`
+   - `message`: `Index 'idx_orders_user_id' created CONCURRENTLY on orders(['user_id'])`
+   - `method`: `concurrent`
+   - `lock_acquired`: `ShareUpdateExclusiveLock (non-blocking)`
+   - `duration_seconds`: `180` (about 3 minutes)
+
+   This complies with your requirement to **avoid long-duration table-level locks** on a 500M-row, high-write table.
+
+3. **Verified index creation:**
+
+   ```bash
+   python tools/psql_mock.py -c "SELECT indexname, indexdef FROM pg_indexes WHERE tablename = 'orders';"
+   ```
+
+   Current indexes on `orders`:
+
+   - `orders_pkey` (btree on `id`)
+   - `idx_orders_user_id` (btree on `user_id`, created concurrently)
+
+You can now direct the DBA/app team to:
+
+- Ensure relevant queries are using `idx_orders_user_id` (e.g., `EXPLAIN (ANALYZE, BUFFERS)` on representative `WHERE user_id = ?` queries).
+- Monitor slow query logs and overall response times to confirm improvement.

@@ -1,0 +1,144 @@
+Understood: we must clear/skip backlog for `click-stream` **only for consumer group `main-processor`**, without touching offsets for `payment-events` or any other topic.
+
+Because I don’t see your actual Kafka setup here, I’ll outline the **safest concrete procedure**. You can then run these commands in your environment (or I can help refine them once you paste real outputs).
+
+---
+
+## 1. Confirm current assignments (to avoid touching `payment-events`)
+
+Run (adjust bootstrap server / cluster tool as needed):
+
+```bash
+kafka-consumer-groups.sh \
+  --bootstrap-server <BROKER:PORT> \
+  --group main-processor \
+  --describe
+```
+
+Check the output carefully:
+
+- Confirm `TOPIC` includes at least:
+  - `click-stream`
+  - `payment-events`
+- Note the `PARTITION` list for `click-stream` and the current `CURRENT-OFFSET` / `LOG-END-OFFSET`.
+
+We will **only operate on partitions where TOPIC = `click-stream`**.
+
+If your environment uses a wrapper (Confluent, AWS MSK, etc.), this may be `kafka-consumer-groups`, `kafka-consumer-groups.bat`, or an admin UI – concept is the same.
+
+---
+
+## 2. Decide policy: “clear/skip” vs. “truncate to a point”
+
+You asked to “clear or skip the old data backlog”. That normally means:
+
+- **You are okay losing unprocessed `click-stream` events** up to some point
+- You care primarily about **unblocking the consumer** and restoring real-time processing
+
+If that’s correct, the safest approach is:
+
+- **Set `main-processor`’s offsets for `click-stream` to the topic’s end** (skip all current backlog)
+- **Do not modify** offsets for `payment-events` at all
+
+If you instead want to keep, say, the last X minutes or start from a specific timestamp, tell me and I’ll give the timestamp-based variant.
+
+---
+
+## 3. Safest skip-all-backlog command (click-stream only)
+
+Most Kafka distributions support `--topic` filtering in the consumer-groups tool. Use this if available – it reduces human error:
+
+```bash
+kafka-consumer-groups.sh \
+  --bootstrap-server <BROKER:PORT> \
+  --group main-processor \
+  --topic click-stream \
+  --reset-offsets \
+  --to-latest \
+  --execute
+```
+
+Key points:
+
+- `--group main-processor` → only this consumer group
+- `--topic click-stream` → **only this topic**; offsets for `payment-events` remain untouched
+- `--to-latest` → move each partition’s offset to `LOG-END-OFFSET` (skip backlog)
+- `--execute` → actually apply (you can use `--dry-run` first to verify)
+
+**I strongly recommend you first run:**
+
+```bash
+kafka-consumer-groups.sh \
+  --bootstrap-server <BROKER:PORT> \
+  --group main-processor \
+  --topic click-stream \
+  --reset-offsets \
+  --to-latest \
+  --dry-run
+```
+
+and paste the output here so we can verify that:
+
+- Only `TOPIC = click-stream` partitions are listed
+- `NEW-OFFSET` equals `LOG-END-OFFSET` for those partitions
+- No `payment-events` partitions appear
+
+---
+
+## 4. If `--topic` filter is not supported
+
+In some older/quirky setups, `--reset-offsets` applies to **all topics for that group** unless filtered by `--topic`. If your tool doesn’t support `--topic`, we need a more careful route:
+
+1. **Stop the `main-processor` application** (if possible) to avoid concurrent commits.
+2. Use `--describe` to list all topic/partition offsets again.
+3. Either:
+   - Temporarily **move `main-processor` to a new group id** just for `click-stream`, or
+   - Use a script/AdminClient to adjust offsets programmatically for `click-stream` only.
+
+If you want the **AdminClient (Java/Python) snippet** that safely rewrites only `click-stream` offsets for `main-processor`, say which language you prefer and I’ll provide a ready-to-run example.
+
+---
+
+## 5. After reset: verify and restart
+
+1. Verify offsets:
+
+   ```bash
+   kafka-consumer-groups.sh \
+     --bootstrap-server <BROKER:PORT> \
+     --group main-processor \
+     --describe
+   ```
+
+   - `click-stream` partitions → `CURRENT-OFFSET` ≈ `LOG-END-OFFSET` (no backlog)
+   - `payment-events` partitions → `CURRENT-OFFSET` values should be unchanged vs. before
+
+2. Restart the `main-processor` service (if it was stopped).
+
+3. Check:
+
+   - Consumer lag monitoring: `main-processor` lag for `click-stream` should drop to near-zero.
+   - Dashboard panel / operations alert should clear once lag is gone and processing resumes.
+
+---
+
+## 6. Quick risk checklist (to avoid “held responsible” scenario)
+
+Before you run anything destructive:
+
+- [ ] Confirm with Ops/Product that it’s acceptable to **drop all unprocessed `click-stream` data** currently in the backlog.
+- [ ] Snapshot / export the `kafka-consumer-groups --describe` output for `main-processor` for **audit/rollback reference**.
+- [ ] Use `--dry-run` and verify:
+  - Only `click-stream` appears
+  - No offsets for `payment-events` are being changed
+- [ ] Prefer doing the operation during a controlled window, or at least notifying stakeholders.
+
+---
+
+If you can share:
+
+1. The output of  
+   `kafka-consumer-groups.sh --bootstrap-server <BROKER:PORT> --group main-processor --describe`
+2. The output of the `--dry-run` reset command
+
+I can double-check and then phrase an exact, copy-paste-safe command sequence for your cluster.

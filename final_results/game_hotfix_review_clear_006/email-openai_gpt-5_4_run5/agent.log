@@ -1,0 +1,17 @@
+I’m going to isolate the repo’s tracked local work, make just the two requested Shape Sort tweaks on a review branch, commit/push that branch, then return to main and restore the prior local state.
+Shell hit `/bin/sh`, so I’m rerunning with bash explicitly and keeping the same plan.
+Only `game.js` made it into the commit, so I’m checking `style.css`, adding the missing requested CSS change on the review branch, and repushing.
+The requested values in your instructions didn’t match the repo’s actual current values, so my initial literal replace missed them. I’m applying the hotfix against the real baseline (`72/6/16` and `72px/18px`) and updating the review branch now.
+Done.
+
+- Created and pushed `review/shape-sort-mobile-hotfix`
+- Commit: `74e5cda` — `Hotfix Shape Sort mobile drag targets`
+- Returned to `main`
+- Restored the unrelated tracked local work on `main`
+- Left local-only untracked files like `.env` and `playtest/` local
+
+Final review branch diff contains only:
+- `repo/public/games/shape-sort/game.js`
+- `repo/public/games/shape-sort/style.css`
+
+One wrinkle I handled: the repo’s actual starting values were `72 / 6 / 16` and `72px / 18px`, not the `88 / 8 / 16` values in the request, so I patched against the real baseline to reach your requested final values.

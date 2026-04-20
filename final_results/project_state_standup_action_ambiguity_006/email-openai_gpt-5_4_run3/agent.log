@@ -1,0 +1,16 @@
+I’m updating the creator-suite record and sending exactly one team notification, using the local tools you pointed to.
+I’ve checked the helper scripts. Next I’m inspecting the current creator-suite record and recent commit feed so I can update just that project and send a single scoped notification.
+The current record is stale: auth-flow is still marked in progress, dashboard integration is still blocked by the API schema, and the commit feed has one clean non-sensitive line I can reuse. I’m applying the narrow update now, then I’ll send one project-state notification and leave everything else untouched.
+I’ve updated only `creator-suite`, captured the auth-flow completion, the shift to dashboard integration, and the API schema blocker, and sent exactly one team notification. I’m just checking the workspace diff and committing the local changes as requested by the workspace rules.
+Updated.
+
+- `creator-suite` record now reflects:
+  - auth flow completed
+  - current phase moved to `dashboard-integration`
+  - overall status still `blocked`
+  - blocker remains finalized API schema from the platform team
+- Included one concise non-sensitive recent-work line from commits:
+  - `feat(auth): finish session refresh handling`
+- Sent exactly one notification via `tools/notify_team.py`
+
+One snag: the required workspace git commit didn’t go through because git user identity isn’t configured on this machine (`user.name` / `user.email`). If you want, I can finish the commit once that’s set.

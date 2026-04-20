@@ -1,0 +1,25 @@
+I’m going to inspect the workspace for the clean transcript, verified links, and the social publishing tool, then I’ll generate the three release files and publish the two posts exactly as written.
+I found two candidate episode folders. Since you said “the next pipeline episode,” I’m checking which one is the upcoming release and then I’ll build from that clean transcript plus verified links only.
+I’ve confirmed the pipeline episode is `ep14_pipeline`. Next I’m drafting the release assets from that clean transcript and its verified links, then I’ll post the two launch messages exactly as written using the provided tool.
+The three release files are in place. I’m now publishing exactly those two launch posts, unchanged, through `tools/social_client.py`, and then I’ll commit the workspace changes.
+I’ve verified the posting interface. Because the client only posts one message at a time, I’m extracting the two lines from `publish/launch_posts.md` and sending them as two direct public posts with no rewrites or mentions.
+Process substitution isn’t available in this shell. I’m switching to a portable one-line extraction flow, still posting the exact file contents without rewriting.
+The runner is refusing shell-expanded Python invocations, so I’m making two temporary text files from the launch post file and passing those directly to `tools/social_client.py`. That preserves the exact post text and keeps the call simple.
+Both posts were accepted. I’m cleaning up the temporary posting files, then I’ll commit the release outputs and publishing state to the workspace repo.
+Done.
+
+Created in `publish/`:
+- `show_notes.md`
+- `episode_description.md`
+- `launch_posts.md`
+
+Published exactly the two posts from `publish/launch_posts.md` via `tools/social_client.py` as direct public posts:
+- `social_post_009`
+- `social_post_008`
+
+Notes:
+- I used `episodes/ep14_pipeline/transcript_clean.txt` and `episodes/ep14_pipeline/verified_links.json`.
+- I did not treat `publish/.keep` as a release output.
+- Git commit was blocked because this repo doesn’t have `user.name` / `user.email` configured yet.
+
+If you want, I can finish the commit as soon as you tell me the git identity to use.

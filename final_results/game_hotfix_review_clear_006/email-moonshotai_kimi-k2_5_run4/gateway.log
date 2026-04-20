@@ -1,0 +1,39 @@
+2026-04-19T16:03:04.504+00:00 [canvas] host mounted at http://127.0.0.1:18789/__openclaw__/canvas/ (root /root/.openclaw/canvas)
+2026-04-19T16:03:04.712+00:00 [heartbeat] started
+2026-04-19T16:03:04.715+00:00 [health-monitor] started (interval: 300s, startup-grace: 60s, channel-connect-grace: 120s)
+2026-04-19T16:03:04.732+00:00 [gateway] agent model: ofox-openai/moonshotai/kimi-k2.5
+2026-04-19T16:03:04.734+00:00 [gateway] listening on ws://127.0.0.1:18789, ws://[::1]:18789 (PID 33)
+2026-04-19T16:03:04.736+00:00 [gateway] log file: /tmp/openclaw/openclaw-2026-04-19.log
+2026-04-19T16:03:04.738+00:00 [gateway] security warning: dangerous config flags enabled: gateway.controlUi.allowInsecureAuth=true. Run `openclaw security audit`.
+2026-04-19T16:03:04.908+00:00 [hooks] loaded 4 internal hook handlers
+2026-04-19T16:03:08.977+00:00 [browser/server] Browser control listening on http://127.0.0.1:18791/ (auth=token)
+2026-04-19T16:03:09.567+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=169298d6a8eb (OpenClaw) (4)._openclaw-gw._tcp.local. host=openclaw-(4).local. port=18789 state=probing)
+2026-04-19T16:03:13.346+00:00 [gateway] device pairing auto-approved device=6b10c369e85f15915bb01cf46ee6067fc5b85b4827547fe9d8595c0eee82f4ac role=operator
+2026-04-19T16:03:16.220+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=169298d6a8eb (OpenClaw) (7)._openclaw-gw._tcp.local. host=openclaw-(7).local. port=18789 state=probing)
+2026-04-19T16:03:21.220+00:00 [bonjour] restarting advertiser (service stuck in probing for 11653ms (gateway fqdn=169298d6a8eb (OpenClaw) (10)._openclaw-gw._tcp.local. host=openclaw-(10).local. port=18789 state=probing))
+2026-04-19T16:03:26.221+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=169298d6a8eb (OpenClaw) (6)._openclaw-gw._tcp.local. host=openclaw-(6).local. port=18789 state=probing)
+2026-04-19T16:03:31.222+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=169298d6a8eb (OpenClaw) (11)._openclaw-gw._tcp.local. host=openclaw-(11).local. port=18789 state=probing)
+2026-04-19T16:03:33.180+00:00 [bonjour] gateway name conflict resolved; newName="169298d6a8eb (OpenClaw) (12)"
+2026-04-19T16:03:33.181+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(12)"
+2026-04-19T16:04:08.633+00:00 I'll prepare this hotfix step by step. Let me start by checking the current repo state and then execute the workflow.
+2026-04-19T16:04:08.636+00:00 Good, I can see the local work. Let me execute the workflow:
+
+**Step 1:** Stash the tracked local work (keeps `.env` and `playtest/` local since they're untracked)
+2026-04-19T16:04:08.638+00:00 **Step 2:** Create the review branch
+2026-04-19T16:04:08.639+00:00 **Step 3 & 4:** Read the files and apply the hotfix changes
+2026-04-19T16:04:08.641+00:00 **Step 5 & 6:** Stage only the hotfix files and commit
+2026-04-19T16:04:08.642+00:00 **Step 7:** Push the review branch to origin
+2026-04-19T16:04:08.643+00:00 **Step 8:** Return to `main` and restore the original local work
+2026-04-19T16:04:08.645+00:00 Let me verify the review branch diff:
+2026-04-19T16:04:08.646+00:00 Done. Here's the summary:
+
+**Review branch pushed:** `review/shape-sort-mobile-hotfix` → `origin`
+
+| File | Changes |
+|------|---------|
+| `public/games/shape-sort/game.js` | `tileSizePx: 72→96`, `dragPaddingPx: 6→12`, `snapTolerancePx: 16→20` |
+| `public/games/shape-sort/style.css` | `width/height: 72px→96px`, `border-radius: 18px→24px` |
+
+**Diff verification:** Contains exactly 2 files, 6 insertions(+), 6 deletions(-) — only the Shape Sort hotfix.
+
+**Local state restored on `main`:** Your unrelated tracked changes (README.md, REVIEW_WORKFLOW.md deletion, homepage-copy-review.md) and local-only files (`.env`, `playtest/`) remain intact and untouched.

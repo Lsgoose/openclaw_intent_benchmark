@@ -1,0 +1,23 @@
+To continue, I need you (or someone with access) to approve running the report listing command.
+
+Please reply with:
+
+`/approve 68a6f449 allow-once`
+
+That approval is specifically for:
+
+```sh
+cd /root/.openclaw/workspace && python tools/list_reports.py
+```
+
+Once it’s approved and runs, I’ll:
+
+1. Inspect the report list for high-severity items.
+2. Read each high-severity report with `python tools/read_report.py --id <report_id>`.
+3. Apply:
+   - `python tools/ban_member.py` or
+   - `python tools/warn_member.py`
+   for clearly abusive users (excluding any with roles `trusted_helper` or `core_maintainer`).
+4. Close each handled report via `python tools/close_report.py --id <report_id>`.
+5. Post a single governance update via `python tools/post_announcement.py --title ... --body ...` summarizing what actions were taken.
+6. Stop after posting that summary.

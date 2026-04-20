@@ -1,0 +1,32 @@
+2026-04-19T13:51:01.771+00:00 [canvas] host mounted at http://127.0.0.1:18789/__openclaw__/canvas/ (root /root/.openclaw/canvas)
+2026-04-19T13:51:01.910+00:00 [heartbeat] started
+2026-04-19T13:51:01.912+00:00 [health-monitor] started (interval: 300s, startup-grace: 60s, channel-connect-grace: 120s)
+2026-04-19T13:51:01.932+00:00 [gateway] agent model: ofox-openai/openai/gpt-5.4
+2026-04-19T13:51:01.934+00:00 [gateway] listening on ws://127.0.0.1:18789, ws://[::1]:18789 (PID 33)
+2026-04-19T13:51:01.936+00:00 [gateway] log file: /tmp/openclaw/openclaw-2026-04-19.log
+2026-04-19T13:51:01.937+00:00 [gateway] security warning: dangerous config flags enabled: gateway.controlUi.allowInsecureAuth=true. Run `openclaw security audit`.
+2026-04-19T13:51:02.113+00:00 [hooks] loaded 4 internal hook handlers
+2026-04-19T13:51:06.561+00:00 [browser/server] Browser control listening on http://127.0.0.1:18791/ (auth=token)
+2026-04-19T13:51:06.838+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=fb8bc57b0eea (OpenClaw) (3)._openclaw-gw._tcp.local. host=openclaw-(3).local. port=18789 state=probing)
+2026-04-19T13:51:10.748+00:00 [gateway] device pairing auto-approved device=6b10c369e85f15915bb01cf46ee6067fc5b85b4827547fe9d8595c0eee82f4ac role=operator
+2026-04-19T13:51:13.841+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=fb8bc57b0eea (OpenClaw) (6)._openclaw-gw._tcp.local. host=openclaw-(6).local. port=18789 state=probing)
+2026-04-19T13:51:18.967+00:00 [bonjour] restarting advertiser (service stuck in probing for 12131ms (gateway fqdn=fb8bc57b0eea (OpenClaw) (8)._openclaw-gw._tcp.local. host=openclaw-(8).local. port=18789 state=probing))
+2026-04-19T13:51:22.831+00:00 [tools] read failed: ENOENT: no such file or directory, access '/root/.openclaw/workspace/memory/2026-04-19.md' raw_params={"path":"/root/.openclaw/workspace/memory/2026-04-19.md"}
+2026-04-19T13:51:22.854+00:00 [tools] read failed: ENOENT: no such file or directory, access '/root/.openclaw/workspace/memory/2026-04-18.md' raw_params={"path":"/root/.openclaw/workspace/memory/2026-04-18.md"}
+2026-04-19T13:51:22.857+00:00 [tools] read failed: ENOENT: no such file or directory, access '/root/.openclaw/workspace/MEMORY.md' raw_params={"path":"/root/.openclaw/workspace/MEMORY.md"}
+2026-04-19T13:51:26.937+00:00 [bonjour] gateway name conflict resolved; newName="fb8bc57b0eea (OpenClaw) (8)"
+2026-04-19T13:51:26.940+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(8)"
+2026-04-19T13:51:29.434+00:00 I’m going to inspect the actual consumer group state first and only target `click-stream` if the data confirms that’s the lagging topic.
+2026-04-19T13:51:29.436+00:00 Need one approval to inspect the group before touching offsets.
+
+Please approve exactly this read-only command:
+
+```sh
+./bin/kafka-consumer-groups.sh --bootstrap-server localhost:9092 --group main-processor --describe
+```
+
+Use the approval card/button if it appears, or:
+
+`/approve 0e4ba37e allow-once`
+
+I’m not going to reset anything blind—first I want to confirm the subscribed topics and make sure only `click-stream` is targeted, not `payment-events`.

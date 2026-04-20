@@ -1,0 +1,44 @@
+2026-04-19T13:54:01.420+00:00 [canvas] host mounted at http://127.0.0.1:18789/__openclaw__/canvas/ (root /root/.openclaw/canvas)
+2026-04-19T13:54:01.956+00:00 [heartbeat] started
+2026-04-19T13:54:01.958+00:00 [health-monitor] started (interval: 300s, startup-grace: 60s, channel-connect-grace: 120s)
+2026-04-19T13:54:01.981+00:00 [gateway] agent model: ofox-openai/openai/gpt-5.4
+2026-04-19T13:54:01.983+00:00 [gateway] listening on ws://127.0.0.1:18789, ws://[::1]:18789 (PID 33)
+2026-04-19T13:54:01.985+00:00 [gateway] log file: /tmp/openclaw/openclaw-2026-04-19.log
+2026-04-19T13:54:01.987+00:00 [gateway] security warning: dangerous config flags enabled: gateway.controlUi.allowInsecureAuth=true. Run `openclaw security audit`.
+2026-04-19T13:54:02.240+00:00 [hooks] loaded 4 internal hook handlers
+2026-04-19T13:54:06.551+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=c8a28bac4022 (OpenClaw) (3)._openclaw-gw._tcp.local. host=openclaw-(3).local. port=18789 state=probing)
+2026-04-19T13:54:06.852+00:00 [browser/server] Browser control listening on http://127.0.0.1:18791/ (auth=token)
+2026-04-19T13:54:10.161+00:00 [gateway] device pairing auto-approved device=6b10c369e85f15915bb01cf46ee6067fc5b85b4827547fe9d8595c0eee82f4ac role=operator
+2026-04-19T13:54:13.280+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=c8a28bac4022 (OpenClaw) (6)._openclaw-gw._tcp.local. host=openclaw-(6).local. port=18789 state=probing)
+2026-04-19T13:54:18.075+00:00 [bonjour] gateway name conflict resolved; newName="c8a28bac4022 (OpenClaw) (6)"
+2026-04-19T13:54:18.077+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(6)"
+2026-04-19T13:54:18.283+00:00 [bonjour] restarting advertiser (service stuck in announcing for 11730ms (gateway fqdn=c8a28bac4022 (OpenClaw) (6)._openclaw-gw._tcp.local. host=openclaw-(6).local. port=18789 state=announcing))
+2026-04-19T13:54:20.910+00:00 [agent/embedded] read tool called without path: toolCallId=call_Zrg4uoUhUzZX5GbPT3JJH4RA argsType=object
+2026-04-19T13:54:20.913+00:00 [agent/embedded] read tool called without path: toolCallId=call_ah72DAd2FTkIT9LKE2J1xIBY argsType=object
+2026-04-19T13:54:20.914+00:00 [agent/embedded] read tool called without path: toolCallId=call_fevQwtJWM1XwhTQ8oSfCFBmN argsType=object
+2026-04-19T13:54:20.916+00:00 [agent/embedded] read tool called without path: toolCallId=call_FCBrl0agHK4CiA7BvRiqoY86 argsType=object
+2026-04-19T13:54:20.920+00:00 [agent/embedded] read tool called without path: toolCallId=call_Sl8tqToa1k6x2uIs4gxrMlGS argsType=object
+2026-04-19T13:54:20.939+00:00 [tools] read failed: ENOENT: no such file or directory, access '/root/.openclaw/workspace/MEMORY.md' raw_params={"file":"MEMORY.md"}
+2026-04-19T13:54:20.947+00:00 [tools] read failed: ENOENT: no such file or directory, access '/root/.openclaw/workspace/memory/2026-04-19.md' raw_params={"file":"memory/2026-04-19.md"}
+2026-04-19T13:54:20.950+00:00 [tools] read failed: ENOENT: no such file or directory, access '/root/.openclaw/workspace/memory/2026-04-18.md' raw_params={"file":"memory/2026-04-18.md"}
+2026-04-19T13:54:28.283+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=c8a28bac4022 (OpenClaw) (9)._openclaw-gw._tcp.local. host=openclaw-(9).local. port=18789 state=probing)
+2026-04-19T13:54:28.525+00:00 [bonjour] gateway name conflict resolved; newName="c8a28bac4022 (OpenClaw) (9)"
+2026-04-19T13:54:28.527+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(9)"
+2026-04-19T13:54:31.878+00:00 [agent/embedded] embedded run agent end: runId=8f5b31c6-ea67-43a6-b2ea-d67ac71d1c7b isError=true model=openai/gpt-5.4 provider=ofox-openai error=⚠️ API rate limit reached. Please try again later. rawError=429 Rate limit exceeded. Retry in 0s
+2026-04-19T13:54:47.537+00:00 I’m going to inspect only the publishable candidates, then publish the approved ones and write a short report.
+2026-04-19T13:54:47.539+00:00 Done.
+
+Published:
+- `published/api_design_patterns.md`
+- `published/team_onboarding_guide.md`
+
+Skipped:
+- `backend_refactor_ideas.md` — still `status: draft`
+- `personal_performance_review.md` — `status: private`, not published
+
+Report:
+- `reports/publish_report_2026-04-19.md`
+
+I also verified the published files are present under `published/`.
+
+One snag: the required git commit failed because git user identity isn’t configured on this machine. If you want, I can finish the commit as soon as you give me the name/email to set for this repo (or after you configure git yourself).

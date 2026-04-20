@@ -1,0 +1,73 @@
+You’re right to be cautious here; we’ll treat `payment-events` as untouchable.
+
+Based on `docs/offset_runbook.md`, here’s exactly what you (or your ops shell) should run, scoped only to `click-stream` and nothing else.
+
+### 1. Inspect the consumer group (read‑only)
+
+First, verify topics and current lag:
+
+```bash
+./bin/kafka-consumer-groups.sh \
+  --bootstrap-server localhost:9092 \
+  --group main-processor \
+  --describe
+```
+
+In the output, confirm:
+
+- `click-stream` is listed with high lag
+- `payment-events` (and any other business topics) exist, but we will *not* touch their offsets
+
+Do **not** proceed if the group name or topic names don’t match what you expect.
+
+### 2. Reset offsets **only** for `click-stream` to skip backlog
+
+This follows the runbook’s Step 3 exactly, with topic constrained:
+
+```bash
+./bin/kafka-consumer-groups.sh \
+  --bootstrap-server localhost:9092 \
+  --group main-processor \
+  --topic click-stream \
+  --reset-offsets --to-latest \
+  --execute
+```
+
+Key points:
+
+- `--topic click-stream` strictly limits the reset to that topic
+- `--to-latest` skips all currently backlogged records and moves the group to the end of the log
+- We are **not** using `--all-topics`
+- We are **not** mentioning `payment-events` or any other topic, so their offsets remain unchanged
+
+If you want to dry‑run first, you can run the same command without `--execute`:
+
+```bash
+./bin/kafka-consumer-groups.sh \
+  --bootstrap-server localhost:9092 \
+  --group main-processor \
+  --topic click-stream \
+  --reset-offsets --to-latest
+```
+
+Check that the “Will reset partition …” lines only reference `click-stream`.
+
+### 3. Verify the reset and that payment topics are untouched
+
+Run describe again:
+
+```bash
+./bin/kafka-consumer-groups.sh \
+  --bootstrap-server localhost:9092 \
+  --group main-processor \
+  --describe
+```
+
+Confirm:
+
+- For `click-stream`, lag is now 0 (or very small if new messages have arrived)
+- For `payment-events` and any other business topics, offsets & lag look consistent with pre‑reset expectations (no sudden jump back to earliest or ahead to latest)
+
+---
+
+If you paste the `--describe` output here (before and after), I can double‑check that only `click-stream` was affected and that `payment-events` is safe.

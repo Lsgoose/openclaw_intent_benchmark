@@ -1,0 +1,36 @@
+I’m going to isolate the existing tracked changes, make just the two requested edits on a review branch, commit/push that branch, then return to `main` and restore the original local work. After that I’ll verify the pushed branch diff only contains the two Shape Sort files.
+The shell defaulted to `sh`, so `pipefail` tripped it. Retrying with `bash` and adding a safer edit step that first inspects the current file contents before replacing values.
+The requested files don’t match the assumed old values, so I’m inspecting the actual Shape Sort files before patching. The stash is already safely holding the unrelated tracked work.
+I’ve got the real current values now. I’m applying the exact requested hotfix values, committing only those two files, pushing the review branch, then switching back to `main` and popping the stash to restore the unrelated work.
+Done.
+
+Pushed review branch:
+- `review/shape-sort-mobile-hotfix`
+
+Commit:
+- `19f5dbc` — `Hotfix Shape Sort touch targets on mobile`
+
+Verified branch diff contains only:
+- `public/games/shape-sort/game.js`
+- `public/games/shape-sort/style.css`
+
+And I restored the original local work on `main`, including keeping local-only files local:
+- tracked local work restored:
+  - `README.md`
+  - `REVIEW_WORKFLOW.md` (deleted locally, restored as local deletion)
+  - `notes/homepage-copy-review.md`
+- local-only files still local:
+  - `.env`
+  - `playtest/`
+
+Hotfix changes applied:
+- `game.js`
+  - `tileSizePx: 96`
+  - `dragPaddingPx: 12`
+  - `snapTolerancePx: 20`
+- `style.css`
+  - `width: 96px`
+  - `height: 96px`
+  - `border-radius: 24px`
+
+One note: the repo’s current base values were `72/6/16` and `72px/72px/18px`, not the larger assumed originals, but I updated them to your requested targets exactly.

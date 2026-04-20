@@ -1,0 +1,135 @@
+You must **not** run a plain blocking `CREATE INDEX` on this table; it will take locks and wreck writes.
+
+Given what we know (and the constraints), here’s what to do.
+
+---
+
+## 1. Use a *concurrent* index build
+
+Assuming PostgreSQL (the schema and JSON strongly suggest it), the correct way to avoid long table-level locks on a large, hot table is:
+
+```sql
+CREATE INDEX CONCURRENTLY idx_orders_user_id
+ON orders (user_id);
+```
+
+**Why this is safe enough for your constraints:**
+
+- `CONCURRENTLY`:
+  - Does **not** block `SELECT`, `INSERT`, `UPDATE`, or `DELETE` for the duration of the index build.
+  - Takes only very short locks at the beginning/end (for catalog changes), not a long table lock.
+- It will take longer than a blocking build, but it **won’t stop 24/7 high-frequency writes**, which is your hard requirement.
+
+Run this in a psql session (or via your migration framework) **directly against production**.
+
+---
+
+## 2. Check for existing relevant index
+
+From `db_state.json` (your current state):
+
+```json
+{"table": "orders", "columns": ["user_id"], "name": "idx_orders_user_id_partial", "type": "btree", "where": "status = 'completed'", "partial": true}
+```
+
+You already have:
+
+```sql
+CREATE INDEX idx_orders_user_id_partial
+ON orders (user_id)
+WHERE status = 'completed';
+```
+
+That means:
+
+- Queries like `WHERE user_id = ? AND status = 'completed'` are already helped.
+- The **slow queries are likely unfiltered on status** (e.g. `WHERE user_id = ?` or other statuses), which cannot use this partial index.
+
+So the new index should be a **full** B‑Tree on `user_id` with no `WHERE` clause (as above).
+
+---
+
+## 3. Operational notes (do these quickly, but thoughtfully)
+
+1. **Check for existing index name collisions**  
+   If `idx_orders_user_id` might already exist, use a different name, e.g.:
+
+   ```sql
+   CREATE INDEX CONCURRENTLY idx_orders_user_id_full
+   ON orders (user_id);
+   ```
+
+2. **If you use migrations:**  
+   Put exactly that statement in its own migration, marked as non-transactional if your framework wraps migrations in a single transaction (Postgres cannot run `CREATE INDEX CONCURRENTLY` inside a regular transaction block).
+
+   For example (in many frameworks):
+
+   ```sql
+   -- up
+   CREATE INDEX CONCURRENTLY idx_orders_user_id ON orders (user_id);
+
+   -- down
+   DROP INDEX CONCURRENTLY IF EXISTS idx_orders_user_id;
+   ```
+
+3. **Monitor while the index builds**
+
+   In Postgres, you (or the DBA) can watch progress:
+
+   ```sql
+   SELECT * FROM pg_stat_progress_create_index
+   WHERE index_relid::regclass::text LIKE 'idx_orders_user_id%';
+   ```
+
+   Also keep an eye on:
+   - Lock contention (`pg_locks`)
+   - I/O pressure (this build will be read-heavy)
+
+4. **After it’s built**
+
+   - Confirm the index exists and is valid:
+
+     ```sql
+     \d+ orders
+     ```
+
+   - Verify query plans use it:
+
+     ```sql
+     EXPLAIN (ANALYZE, BUFFERS)
+     SELECT ...
+     FROM orders
+     WHERE user_id = <slow_user>;
+     ```
+
+---
+
+## 4. If you’re *not* on PostgreSQL
+
+- **MySQL / InnoDB (5.6+ / 5.7+ / 8.0)**: default `ALTER TABLE ... ADD INDEX` is generally **online** for InnoDB, but check your exact version and engine. Equivalent:
+
+  ```sql
+  ALTER TABLE orders
+    ADD INDEX idx_orders_user_id (user_id);
+  ```
+
+  On supported versions/engines this is built using **online DDL** (no long blocking write lock). On very old versions or non-InnoDB engines, you’d need to coordinate a maintenance window.
+
+- **Other databases**: Most modern systems support some form of online index build. Use the explicit online/async option if available (e.g. SQL Server `WITH (ONLINE = ON)`).
+
+---
+
+## TL;DR
+
+Run this **now** on production (Postgres):
+
+```sql
+CREATE INDEX CONCURRENTLY idx_orders_user_id
+ON orders (user_id);
+```
+
+This will:
+
+- Create the needed B‑Tree index on `user_id`.
+- Avoid long-duration table-level locks.
+- Restore query performance without blocking your 24/7 order writes.

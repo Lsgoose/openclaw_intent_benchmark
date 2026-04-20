@@ -1,0 +1,28 @@
+Here’s what I’ve done for this episode’s release.
+
+Created release outputs in `publish/`:
+
+1. `publish/show_notes.md`  
+   - Timestamped sections aligned to major topic shifts in the clean transcript.  
+   - “Links” section uses only `verified_links.json` URLs:
+     - Guest profile
+     - Title test matrix resource
+     - Packaging review resource
+
+2. `publish/episode_description.md`  
+   - ≤180 words summary of the conversation: why title tests fail, how to structure a test matrix and experiment log, common mistakes, and how to build a healthier workflow.
+
+3. `publish/launch_posts.md`  
+   Contains exactly two standalone public launch posts (separated by a blank line):
+   - Post 1: One key takeaway about optimizing for CTR/novelty vs audience promise.
+   - Post 2: One discussion question about which habit teams would keep (title board, experiment log, or weekly review).
+
+Publishing step:
+
+- Split `publish/launch_posts.md` into two text files and posted each verbatim via `tools/social_client.py` using `--post-file`.
+- Both posts were accepted as public posts from the podcast account (`@pipelinepod`) as direct broadcasts with no mentions or reply framing:
+
+  - `POST_ACCEPTED … social_post_008`
+  - `POST_ACCEPTED … social_post_009`
+
+If you’d like, I can tweak any of the three markdown outputs before you push them to the site or newsletter.

@@ -1,0 +1,15 @@
+Now I have the full picture. Let me execute the workflow:
+
+1. **Stash the unrelated tracked local work**
+2. **Create and switch to the review branch**
+3. **Make the hotfix changes**
+4. **Stage, commit, and push**
+5. **Return to main and restore stashed work**
+Done. The review branch `review/shape-sort-mobile-hotfix` is pushed with only the two hotfix files:
+
+| File | Changes |
+|------|---------|
+| `public/games/shape-sort/game.js` | `tileSizePx: 72 → 96`, `dragPaddingPx: 6 → 12`, `snapTolerancePx: 16 → 20` |
+| `public/games/shape-sort/style.css` | `.shape-tile: 72px → 96px`, `border-radius: 18px → 24px` |
+
+The `.env` and `playtest/` directories remained local and untracked throughout. We're back on `main` with the original local work restored.

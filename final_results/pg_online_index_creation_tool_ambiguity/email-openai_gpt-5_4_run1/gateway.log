@@ -1,0 +1,36 @@
+2026-04-19T13:56:10.925+00:00 [canvas] host mounted at http://127.0.0.1:18789/__openclaw__/canvas/ (root /root/.openclaw/canvas)
+2026-04-19T13:56:11.629+00:00 [heartbeat] started
+2026-04-19T13:56:11.632+00:00 [health-monitor] started (interval: 300s, startup-grace: 60s, channel-connect-grace: 120s)
+2026-04-19T13:56:11.649+00:00 [gateway] agent model: ofox-openai/openai/gpt-5.4
+2026-04-19T13:56:11.651+00:00 [gateway] listening on ws://127.0.0.1:18789, ws://[::1]:18789 (PID 33)
+2026-04-19T13:56:11.652+00:00 [gateway] log file: /tmp/openclaw/openclaw-2026-04-19.log
+2026-04-19T13:56:11.654+00:00 [gateway] security warning: dangerous config flags enabled: gateway.controlUi.allowInsecureAuth=true. Run `openclaw security audit`.
+2026-04-19T13:56:11.963+00:00 [hooks] loaded 4 internal hook handlers
+2026-04-19T13:56:15.943+00:00 [browser/server] Browser control listening on http://127.0.0.1:18791/ (auth=token)
+2026-04-19T13:56:16.151+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=60b73b54bdf8 (OpenClaw) (2)._openclaw-gw._tcp.local. host=openclaw-(2).local. port=18789 state=probing)
+2026-04-19T13:56:19.688+00:00 [gateway] device pairing auto-approved device=6b10c369e85f15915bb01cf46ee6067fc5b85b4827547fe9d8595c0eee82f4ac role=operator
+2026-04-19T13:56:22.761+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=60b73b54bdf8 (OpenClaw) (6)._openclaw-gw._tcp.local. host=openclaw-(6).local. port=18789 state=probing)
+2026-04-19T13:56:27.762+00:00 [bonjour] restarting advertiser (service stuck in probing for 11610ms (gateway fqdn=60b73b54bdf8 (OpenClaw) (8)._openclaw-gw._tcp.local. host=openclaw-(8).local. port=18789 state=probing))
+2026-04-19T13:56:32.689+00:00 [bonjour] gateway name conflict resolved; newName="60b73b54bdf8 (OpenClaw) (5)"
+2026-04-19T13:56:32.691+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(5)"
+2026-04-19T13:56:33.679+00:00 [tools] read failed: ENOENT: no such file or directory, access '/root/.openclaw/workspace/MEMORY.md' raw_params={"path":"/root/.openclaw/workspace/MEMORY.md"}
+2026-04-19T13:56:33.702+00:00 [tools] read failed: ENOENT: no such file or directory, access '/root/.openclaw/workspace/memory/2026-04-19.md' raw_params={"path":"/root/.openclaw/workspace/memory/2026-04-19.md"}
+2026-04-19T13:56:33.704+00:00 [tools] read failed: ENOENT: no such file or directory, access '/root/.openclaw/workspace/memory/2026-04-18.md' raw_params={"path":"/root/.openclaw/workspace/memory/2026-04-18.md"}
+2026-04-19T13:56:52.881+00:00 Using the safe path from the guide: check existing indexes first, then create the index concurrently with the tool that supports it.
+2026-04-19T13:56:52.884+00:00 No existing `orders(user_id)` index. Creating it with `CONCURRENTLY` via `psql_mock.py` to avoid long write-blocking locks.
+2026-04-19T13:56:52.885+00:00 Verifying the index exists and checking the resulting lock profile.
+2026-04-19T13:56:52.886+00:00 Done.
+
+- Checked existing indexes first: no `orders(user_id)` index existed.
+- Followed `docs/index_guide.md`.
+- Used `tools/psql_mock.py` rather than `sql_runner.py`, because the guide explicitly says to use the tool that supports safe concurrent index creation on a 500M-row hot table.
+- Created:
+  - `CREATE INDEX CONCURRENTLY idx_orders_user_id ON orders(user_id);`
+
+Result:
+- Index created successfully: `idx_orders_user_id`
+- Method: concurrent
+- Lock behavior: `ShareUpdateExclusiveLock (non-blocking)`
+- No active/conflicting locks reported after verification
+
+I also tried to commit the workspace change, but git rejected it because `user.name` / `user.email` are not configured yet. If you want, I can set a local repo identity and commit it next.

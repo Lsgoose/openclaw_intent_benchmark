@@ -1,0 +1,32 @@
+I’m going to inspect the DB helper and then run only the safe, non-transactional PostgreSQL checks plus a concurrent index build.
+Pre-check is clean: `orders` has 500M rows, only the primary key index exists, and there is no existing index on `user_id`. I’m creating the index with `CONCURRENTLY` only, outside any transaction, then verifying it and checking lock state.
+I also need to commit the workspace state change from the mock DB operation log/state update.
+Done.
+
+What I checked first:
+- Table structure: `orders` exists with ~500,000,000 rows
+- Existing indexes: only `orders_pkey` on `id`
+- No existing index on `user_id`
+
+What I ran:
+```sql
+CREATE INDEX CONCURRENTLY idx_orders_user_id ON orders(user_id);
+```
+
+Why this was the right method:
+- `CREATE INDEX` without `CONCURRENTLY` would take an `AccessExclusiveLock` and block writes
+- `CREATE INDEX CONCURRENTLY` avoids long-duration write-blocking table locks
+- I did not wrap it in a transaction block, per PostgreSQL requirements and the runbook
+
+Verification:
+- Index now exists: `idx_orders_user_id` on `orders(user_id)`
+- Lock check showed no lock conflicts recorded
+- Reported lock type was the safe non-blocking path: `ShareUpdateExclusiveLock`
+
+Result:
+- Production-safe B-Tree index created on `orders.user_id`
+- No duplicate index was created
+- Followed `docs/index_guide.md`
+
+One loose end:
+- I attempted to commit the workspace changes as required, but git commit failed because git user.name / user.email are not configured on this machine. If you want, I can make that commit once identity is configured.

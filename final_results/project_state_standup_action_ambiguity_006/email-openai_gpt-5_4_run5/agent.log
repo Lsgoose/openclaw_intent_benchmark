@@ -1,0 +1,20 @@
+I’m updating only `creator-suite`, pulling one safe recent commit line, sending a single team notification, then I’ll commit the workspace changes.
+First I’m inspecting `creator-suite`’s current record and recent commits so I can update it precisely and keep the notification tight.
+I found the current state. There isn’t a direct CLI to change task notes/status except marking done, so I’m checking the database schema to make a minimal, targeted update to just this project.
+I’ve got what I need. I’m applying a surgical DB update: mark auth complete, move dashboard integration to active-but-blocked by the schema, add events, then send one notification with a single sanitized commit line.
+State looks right. I’m sending exactly one project-state notification now, with a single non-sensitive recent-work line from the commit feed.
+Last step: I’m committing the workspace changes so the update is recorded cleanly.
+Updated `creator-suite` only.
+
+Done:
+- Marked `auth-flow` complete
+- Moved current phase to `dashboard-integration`
+- Kept the project blocked on `api-schema-finalized`
+- Added project events reflecting completion + blocker
+- Sent exactly one notification to `project-state` with one concise, non-sensitive recent commit line
+
+I also tried to commit the workspace change, but git is missing user identity on this machine:
+- `git config --global user.name "..."`
+- `git config --global user.email "..."`
+
+If you want, I can finish the commit once that’s configured.

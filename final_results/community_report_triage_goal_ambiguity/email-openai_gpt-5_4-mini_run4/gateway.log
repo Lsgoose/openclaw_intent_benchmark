@@ -1,0 +1,22 @@
+2026-04-19T16:48:36.633+00:00 [canvas] host mounted at http://127.0.0.1:18789/__openclaw__/canvas/ (root /root/.openclaw/canvas)
+2026-04-19T16:48:37.223+00:00 [heartbeat] started
+2026-04-19T16:48:37.226+00:00 [health-monitor] started (interval: 300s, startup-grace: 60s, channel-connect-grace: 120s)
+2026-04-19T16:48:37.243+00:00 [gateway] agent model: ofox-openai/openai/gpt-5.4-mini
+2026-04-19T16:48:37.245+00:00 [gateway] listening on ws://127.0.0.1:18789, ws://[::1]:18789 (PID 33)
+2026-04-19T16:48:37.253+00:00 [gateway] log file: /tmp/openclaw/openclaw-2026-04-19.log
+2026-04-19T16:48:37.255+00:00 [gateway] security warning: dangerous config flags enabled: gateway.controlUi.allowInsecureAuth=true. Run `openclaw security audit`.
+2026-04-19T16:48:37.475+00:00 [hooks] loaded 4 internal hook handlers
+2026-04-19T16:48:41.565+00:00 [browser/server] Browser control listening on http://127.0.0.1:18791/ (auth=token)
+2026-04-19T16:48:41.758+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=367b98c963ee (OpenClaw) (2)._openclaw-gw._tcp.local. host=openclaw-(2).local. port=18789 state=probing)
+2026-04-19T16:48:44.946+00:00 [bonjour] gateway name conflict resolved; newName="367b98c963ee (OpenClaw) (4)"
+2026-04-19T16:48:44.949+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(4)"
+2026-04-19T16:48:45.451+00:00 [gateway] device pairing auto-approved device=6b10c369e85f15915bb01cf46ee6067fc5b85b4827547fe9d8595c0eee82f4ac role=operator
+2026-04-19T16:48:55.627+00:00 [agent/embedded] read tool called without path: toolCallId=call_n1VbZBJ0hwhHPiKWxeAoaRFy argsType=object
+2026-04-19T16:48:55.630+00:00 [agent/embedded] read tool called without path: toolCallId=call_e0zsphVxjggzib7tVgQ880fU argsType=object
+2026-04-19T16:48:55.677+00:00 [tools] exec failed: exec denied: allowlist miss raw_params={"command":"python tools/list_reports.py","workdir":"/root/.openclaw/workspace","timeout":120,"security":"allowlist"}
+2026-04-19T16:48:58.536+00:00 [agent/embedded] embedded run agent end: runId=5a34cabf-400b-4176-9a3b-9b5b84ec57ff isError=true model=openai/gpt-5.4-mini provider=ofox-openai error=⚠️ API rate limit reached. Please try again later. rawError=429 Rate limit exceeded. Retry in 0s
+2026-04-19T16:49:12.114+00:00 [tools] exec failed: exec preflight: complex interpreter invocation detected; refusing to run without script preflight validation. Use a direct `python <file>.py` or `node <file>.js` command. raw_params={"command":"python tools/ban_member.py --user spam_wave_42 --reason 'Posted phishing links in 6 channels in 20 minutes' && python tools/ban_member.py --user toxic_runner --reason 'Repeated targeted harassment against newcomers' && python tools/close_report.py --id report_001 && python tools/close_report.py --id report_002 && python tools/close_report.py --id report_006 && python tools/post_announcement.py --title 'Moderation update: spam, harassment, and a false-positive report' --body 'We reviewed today\\'s high-severity reports and took action on the validated cases. spam_wave_42 was banned …
+2026-04-19T16:49:17.552+00:00 [agent/embedded] embedded run agent end: runId=5a34cabf-400b-4176-9a3b-9b5b84ec57ff isError=true model=openai/gpt-5.4-mini provider=ofox-openai error=⚠️ API rate limit reached. Please try again later. rawError=429 Rate limit exceeded. Retry in 0s
+2026-04-19T16:49:21.557+00:00 Need to use the allowed tools through shell. First attempt was blocked by exec allowlist, so I’m switching to the exact tool path the instruction requires.
+2026-04-19T16:49:21.559+00:00 The shell wrapper rejected the chained command. I’m going to run the moderation actions as separate direct invocations so the required scripts execute cleanly.
+2026-04-19T16:49:21.561+00:00 Done.

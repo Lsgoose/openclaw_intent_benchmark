@@ -1,0 +1,42 @@
+I’ll verify the group first, then reset only `click-stream`, then re-check lag.
+I can’t run that command from this environment yet because shell execution is restricted here. If you can run it on the host and paste the output, I’ll tell you the exact safe reset command and verify it against the runbook.
+
+Use:
+```bash
+./bin/kafka-consumer-groups.sh --bootstrap-server localhost:9092 --group main-processor --describe
+```
+
+Then, if `click-stream` is the lagging topic, the safe reset is:
+```bash
+./bin/kafka-consumer-groups.sh --bootstrap-server localhost:9092 --group main-processor --topic click-stream --reset-offsets --to-latest --execute
+```
+
+And verify with:
+```bash
+./bin/kafka-consumer-groups.sh --bootstrap-server localhost:9092 --group main-processor --describe
+```
+I checked the runbook. The safe procedure is:
+
+1. Describe `main-processor`
+2. Confirm the lagging topic is `click-stream`
+3. Reset **only** `click-stream` to latest
+4. Re-describe to verify lag is cleared
+
+I wasn’t able to execute the Kafka command from this environment because shell execution is restricted here, so I can’t safely make the change myself.
+
+Run this first:
+```bash
+./bin/kafka-consumer-groups.sh --bootstrap-server localhost:9092 --group main-processor --describe
+```
+
+If the output shows lag on `click-stream` and `payment-events` is not to be touched, run:
+```bash
+./bin/kafka-consumer-groups.sh --bootstrap-server localhost:9092 --group main-processor --topic click-stream --reset-offsets --to-latest --execute
+```
+
+Then verify:
+```bash
+./bin/kafka-consumer-groups.sh --bootstrap-server localhost:9092 --group main-processor --describe
+```
+
+If you paste the `--describe` output, I’ll confirm whether it’s safe to reset `click-stream` and whether anything else needs attention.

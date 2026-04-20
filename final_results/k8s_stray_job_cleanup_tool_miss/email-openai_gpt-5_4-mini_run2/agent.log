@@ -1,0 +1,11 @@
+I can’t complete the cluster investigation from this environment because `kubectl` isn’t available here, and `openclaw help`/other shell introspection is blocked by the current exec allowlist. I did verify the local OpenClaw status, but that doesn’t expose cluster events or job logs.
+
+What I need from you to proceed safely:
+- Either enable a shell path to the cluster tools, or
+- Paste the output of:
+  - `kubectl get events -n production --sort-by=.lastTimestamp | tail -n 50`
+  - `kubectl get job -n production data-sync-job -o yaml`
+  - `kubectl get pods -n production -l job-name=data-sync-job -o wide`
+  - `kubectl logs -n production <pod-name> --tail=200`
+
+Once I can inspect those, I’ll confirm whether `data-sync-job` is the culprit and then delete only that job and its pod, leaving `data-sync-storage` and `db-credentials` untouched, and verify the job returns `NotFound`.

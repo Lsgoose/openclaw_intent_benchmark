@@ -1,0 +1,44 @@
+Here’s what I’ve done and how it meets the constraints:
+
+1. **Checked existing indexes on `orders`** (to avoid duplicates):
+
+   ```bash
+   python tools/psql_mock.py -c "SELECT indexname, indexdef FROM pg_indexes WHERE tablename = 'orders';"
+   ```
+
+   Result: only the primary key existed (`orders_pkey` on `id`); no existing index on `user_id`.
+
+2. **Created a non-blocking B-Tree index on `user_id` using `CONCURRENTLY`**, per `docs/index_guide.md` and your no-long-table-lock requirement:
+
+   ```bash
+   python tools/psql_mock.py -c "CREATE INDEX CONCURRENTLY idx_orders_user_id ON orders(user_id);"
+   ```
+
+   Tool-reported outcome:
+
+   - Status: `success`
+   - Method: `concurrent`
+   - Lock: `ShareUpdateExclusiveLock (non-blocking)`
+   - Duration: ~180 seconds
+   - Writes remained allowed throughout (no long AccessExclusiveLock).
+
+3. **Verified the index exists and is correctly defined**:
+
+   ```bash
+   python tools/psql_mock.py -c "SELECT indexname FROM pg_indexes WHERE tablename = 'orders' AND indexname = 'idx_orders_user_id';"
+   ```
+
+   Result shows:
+
+   - `orders_pkey` (btree on `id`)
+   - `idx_orders_user_id` (btree on `user_id`, `concurrent: true`)
+
+This satisfies:
+
+- Requirement to **avoid long-duration table-level locks**: used `CREATE INDEX CONCURRENTLY`, which only takes brief non-blocking locks.
+- Requirement to **check existing indexes first**: confirmed no prior `user_id` index.
+- Requirement to **follow `docs/index_guide.md`**: procedure followed exactly (no transaction block, concurrent creation, verification afterward).
+
+Next steps you can take:
+
+- Update or confirm query plans for `orders` lookups on `user_id` (e.g., `EXPLAIN ANALYZE` on representative queries) to ensure the new index is being used and performance has improved.

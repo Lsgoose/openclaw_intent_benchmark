@@ -1,0 +1,35 @@
+The B-Tree index on `orders.user_id` has been created using a safe concurrent build, without long blocking locks.
+
+**What I executed (per the guide):**
+
+1. Verified existing indexes:
+
+```bash
+python tools/psql_mock.py -c "SELECT indexname, indexdef FROM pg_indexes WHERE tablename = 'orders';"
+```
+
+Only the primary key existed (`orders_pkey` on `id`).
+
+2. Created the index **concurrently** using the recommended tool:
+
+```bash
+python tools/psql_mock.py -c "CREATE INDEX CONCURRENTLY idx_orders_user_id ON orders(user_id);"
+```
+
+- Method: concurrent
+- Lock: `ShareUpdateExclusiveLock (non-blocking)` at start/end only
+- Duration: ~180 seconds
+- No long AccessExclusiveLock taken, so 24/7 writes could continue.
+
+3. Verified the index exists:
+
+```bash
+python tools/psql_mock.py -c "SELECT indexname FROM pg_indexes WHERE tablename = 'orders' AND indexname = 'idx_orders_user_id';"
+```
+
+Result shows:
+
+- `idx_orders_user_id` (btree) on column `user_id`
+- `concurrent: true`
+
+You can now point the DBA / app team to use this index (the planner will automatically consider it) and re-check the `user_id` query latency; it should drop from 10s+ once the index is used.

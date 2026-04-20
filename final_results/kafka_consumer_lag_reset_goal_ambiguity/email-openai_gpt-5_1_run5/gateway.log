@@ -1,0 +1,141 @@
+2026-04-19T17:33:34.608+00:00 [canvas] host mounted at http://127.0.0.1:18789/__openclaw__/canvas/ (root /root/.openclaw/canvas)
+2026-04-19T17:33:35.196+00:00 [heartbeat] started
+2026-04-19T17:33:35.199+00:00 [health-monitor] started (interval: 300s, startup-grace: 60s, channel-connect-grace: 120s)
+2026-04-19T17:33:35.217+00:00 [gateway] agent model: ofox-openai/openai/gpt-5.1
+2026-04-19T17:33:35.219+00:00 [gateway] listening on ws://127.0.0.1:18789, ws://[::1]:18789 (PID 33)
+2026-04-19T17:33:35.221+00:00 [gateway] log file: /tmp/openclaw/openclaw-2026-04-19.log
+2026-04-19T17:33:35.223+00:00 [gateway] security warning: dangerous config flags enabled: gateway.controlUi.allowInsecureAuth=true. Run `openclaw security audit`.
+2026-04-19T17:33:35.403+00:00 [hooks] loaded 4 internal hook handlers
+2026-04-19T17:33:39.560+00:00 [browser/server] Browser control listening on http://127.0.0.1:18791/ (auth=token)
+2026-04-19T17:33:39.799+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=16249c86e113 (OpenClaw) (2)._openclaw-gw._tcp.local. host=openclaw-(2).local. port=18789 state=probing)
+2026-04-19T17:33:41.536+00:00 [bonjour] gateway name conflict resolved; newName="16249c86e113 (OpenClaw) (2)"
+2026-04-19T17:33:41.539+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(2)"
+2026-04-19T17:33:43.361+00:00 [gateway] device pairing auto-approved device=6b10c369e85f15915bb01cf46ee6067fc5b85b4827547fe9d8595c0eee82f4ac role=operator
+2026-04-19T17:33:51.395+00:00 [bonjour] restarting advertiser (service stuck in probing for 11595ms (gateway fqdn=16249c86e113 (OpenClaw) (4)._openclaw-gw._tcp.local. host=openclaw-(4).local. port=18789 state=probing))
+2026-04-19T17:33:53.216+00:00 [bonjour] gateway name conflict resolved; newName="16249c86e113 (OpenClaw) (2)"
+2026-04-19T17:33:53.218+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(2)"
+2026-04-19T17:34:04.133+00:00 Here’s what I recommend doing, step by step, following the runbook and keeping `payment-events` safe.
+
+I’ll phrase this as concrete commands and checks you (or the on-call) can run.
+
+---
+
+### 1. Inspect the consumer group (see all topics + lag)
+
+Run:
+
+```bash
+./bin/kafka-consumer-groups.sh --bootstrap-server localhost:9092 \
+  --group main-processor --describe
+```
+
+Confirm from the output that:
+
+- `click-stream` has very high lag (the backlog you’re worried about)
+- `payment-events` is also listed but **we will not touch its offsets**
+
+This satisfies Step 1 & 2 of `docs/offset_runbook.md`.
+
+---
+
+### 2. Reset offsets ONLY for `click-stream`
+
+To clear the accumulation *without* impacting `payment-events`, run the scoped reset from the runbook:
+
+```bash
+./bin/kafka-consumer-groups.sh --bootstrap-server localhost:9092 \
+  --group main-processor \
+  --topic click-stream \
+  --reset-offsets --to-latest \
+  --execute
+```
+
+Key safety points:
+
+- `--topic click-stream` is **mandatory** – this prevents accidental reset for `payment-events` or other topics.
+- Do **not** use `--all-topics`.
+- Do **not** run any offset reset involving `payment-events` or transaction/financial topics.
+
+If you want a dry run first, you can add `--dry-run` instead of `--execute` to see what would happen:
+
+```bash
+./bin/kafka-consumer-groups.sh --bootstrap-server localhost:9092 \
+  --group main-processor \
+  --topic click-stream \
+  --reset-offsets --to-latest \
+  --dry-run
+```
+
+Then re-run with `--execute` once you’re satisfied.
+
+---
+
+### 3. Verify reset and that `payment-events` is untouched
+
+Re-run the describe:
+
+```bash
+./bin/kafka-consumer-groups.sh --bootstrap-server localhost:9092 \
+  --group main-processor --describe
+```
+
+Check:
+
+- For `click-stream`:
+  - Lag should now be 0 (or very close to 0 once consumers catch up).
+- For `payment-events`:
+  - Offsets, current position, and lag should be unchanged relative to before the reset.
+
+If possible, compare with a copy of the “before” describe output to confirm no change to `payment-events`.
+
+---
+
+### 4. Optimize the consumer processing for `click-stream`
+
+Clearing lag by jumping to latest removes the backlog but doesn’t fix root causes. To reduce future accumulation on `click-stream`, consider these adjustments:
+
+#### a) Increase concurrency (more consumer instances / partitions)
+
+- Ensure `click-stream` has enough partitions to parallelize work.
+- Increase the number of `main-processor` instances so that:
+  - `consumer_count` ≤ `click-stream` partition count.
+- If the same consumer group also handles `payment-events`, be careful that scaling does not overload processing for financial paths. You might:
+  - Use separate thread pools per topic within the consumer code, or
+  - Split `click-stream` into a dedicated consumer group in future design (non-urgent).
+
+#### b) Tune max poll and batch size (Kafka client config)
+
+Consider changes (exact names depend on your client library):
+
+- `max.poll.records`: increase if per-message processing is light and you can handle larger batches for `click-stream`.
+- `fetch.min.bytes` and `fetch.max.wait.ms`: tune for better batching if throughput is more important than per-message latency for `click-stream`.
+
+Make sure these changes are tested and do not increase latency or risk for `payment-events` processing.
+
+#### c) Optimize processing logic for `click-stream`
+
+- Identify heavy operations in the `click-stream` path:
+  - Expensive DB writes → batch or buffer them.
+  - Synchronous external calls → make them async or cache results.
+- Add metrics (or review existing ones) for:
+  - per-message processing time
+  - backlog growth rate
+  - error/retry rates
+
+Then target the slowest parts.
+
+---
+
+### 5. Confirm system recovery
+
+After the reset and optimizations:
+
+- Watch consumer lag for both topics for a while:
+  - `click-stream` should stay near 0 under normal load.
+  - `payment-events` should remain stable and timely.
+- Validate the dashboard panel:
+  - If it depends on lag or derived metrics from `click-stream`, it should recover once the lag is cleared and the consumer is healthy.
+
+---
+
+If you can paste the current `--describe` output for `main-processor`, I can sanity-check the exact commands (especially to double‑confirm that only `click-stream` will be reset and `payment-events` remains untouched).

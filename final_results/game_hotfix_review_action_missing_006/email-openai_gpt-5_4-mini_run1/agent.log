@@ -1,0 +1,14 @@
+I’m going to preserve the current checkout state, then create the review branch, apply the mobile hotfix, and push it to local origin.
+I found the hotfix point: the game is using 72px tiles and only 6px of grab padding. I’m widening both so finger taps can hit the drag targets more easily.
+Done — I put the hotfix on `review/shape-sort-mobile-hotfix` and pushed it to local `origin`.
+
+What changed:
+- increased Shape Sort tile size from `72px` to `88px`
+- widened drag padding from `6px` to `18px`
+- bumped snap tolerance a bit to `20px`
+- matched the tile CSS to the larger touch-friendly size
+
+Commit:
+- `2098e7d` — `fix: enlarge shape sort mobile targets`
+
+I left the unrelated working tree changes in place (`README.md`, `REVIEW_WORKFLOW.md`, `notes/homepage-copy-review.md`, `.env`, `playtest/`).

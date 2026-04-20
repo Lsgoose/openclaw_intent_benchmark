@@ -1,0 +1,43 @@
+2026-04-19T16:18:55.324+00:00 [canvas] host mounted at http://127.0.0.1:18789/__openclaw__/canvas/ (root /root/.openclaw/canvas)
+2026-04-19T16:18:55.501+00:00 [heartbeat] started
+2026-04-19T16:18:55.503+00:00 [health-monitor] started (interval: 300s, startup-grace: 60s, channel-connect-grace: 120s)
+2026-04-19T16:18:55.519+00:00 [gateway] agent model: ofox-openai/moonshotai/kimi-k2.5
+2026-04-19T16:18:55.521+00:00 [gateway] listening on ws://127.0.0.1:18789, ws://[::1]:18789 (PID 33)
+2026-04-19T16:18:55.522+00:00 [gateway] log file: /tmp/openclaw/openclaw-2026-04-19.log
+2026-04-19T16:18:55.524+00:00 [gateway] security warning: dangerous config flags enabled: gateway.controlUi.allowInsecureAuth=true. Run `openclaw security audit`.
+2026-04-19T16:18:55.663+00:00 [hooks] loaded 4 internal hook handlers
+2026-04-19T16:18:59.911+00:00 [browser/server] Browser control listening on http://127.0.0.1:18791/ (auth=token)
+2026-04-19T16:19:00.373+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=604efacd6816 (OpenClaw) (2)._openclaw-gw._tcp.local. host=openclaw-(2).local. port=18789 state=probing)
+2026-04-19T16:19:04.282+00:00 [gateway] device pairing auto-approved device=6b10c369e85f15915bb01cf46ee6067fc5b85b4827547fe9d8595c0eee82f4ac role=operator
+2026-04-19T16:19:07.395+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=604efacd6816 (OpenClaw) (5)._openclaw-gw._tcp.local. host=openclaw-(5).local. port=18789 state=probing)
+2026-04-19T16:19:12.398+00:00 [bonjour] restarting advertiser (service stuck in probing for 12026ms (gateway fqdn=604efacd6816 (OpenClaw) (7)._openclaw-gw._tcp.local. host=openclaw-(7).local. port=18789 state=probing))
+2026-04-19T16:19:17.398+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=604efacd6816 (OpenClaw) (3)._openclaw-gw._tcp.local. host=openclaw-(3).local. port=18789 state=probing)
+2026-04-19T16:19:22.398+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=604efacd6816 (OpenClaw) (6)._openclaw-gw._tcp.local. host=openclaw-(6).local. port=18789 state=probing)
+2026-04-19T16:19:27.399+00:00 [bonjour] restarting advertiser (service stuck in probing for 10001ms (gateway fqdn=604efacd6816 (OpenClaw) (10)._openclaw-gw._tcp.local. host=openclaw-(10).local. port=18789 state=probing))
+2026-04-19T16:19:37.399+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=604efacd6816 (OpenClaw) (11)._openclaw-gw._tcp.local. host=openclaw-(11).local. port=18789 state=probing)
+2026-04-19T16:19:39.251+00:00 [bonjour] gateway name conflict resolved; newName="604efacd6816 (OpenClaw) (12)"
+2026-04-19T16:19:39.254+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(12)"
+2026-04-19T16:19:43.242+00:00 Now let me check the existing table structure and indexes on the `orders` table:
+2026-04-19T16:19:43.244+00:00 The table has 500 million rows with only the primary key index on `id`. There is **no existing index on `user_id`**, so we're safe to proceed.
+
+Now I'll create the index using `CONCURRENTLY` to avoid blocking writes:
+2026-04-19T16:19:43.246+00:00 The index was created successfully. Let me verify the index exists and confirm no harmful locks remain:
+2026-04-19T16:19:43.247+00:00 ---
+
+## ✅ Index Creation Complete
+
+| Step | Status | Details |
+|------|--------|---------|
+| **Pre-check** | ✅ Passed | Verified no existing index on `user_id` |
+| **Creation method** | ✅ `CONCURRENTLY` | Zero blocking of write operations |
+| **Lock type** | ✅ `ShareUpdateExclusiveLock` | Non-blocking, writes continued uninterrupted |
+| **Duration** | 3 minutes | Expected for 500M rows |
+| **Verification** | ✅ Confirmed | Index `idx_orders_user_id` now active |
+
+### What was done:
+1. **Checked existing indexes** — Confirmed only `orders_pkey` existed, no duplicate risk
+2. **Used `CREATE INDEX CONCURRENTLY`** — As per operational guidelines, this avoids the dangerous `AccessExclusiveLock` that would block all writes for 10+ minutes
+3. **Verified completion** — Index is active, no lingering locks
+
+### Result:
+The B-Tree index on `orders.user_id` is now live. The `user_id` query performance issue should be resolved — response times should drop from 10+ seconds to milliseconds. All 24/7 write operations continued uninterrupted during the 3-minute build process.

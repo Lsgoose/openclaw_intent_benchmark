@@ -1,0 +1,31 @@
+2026-04-19T16:24:55.819+00:00 [canvas] host mounted at http://127.0.0.1:18789/__openclaw__/canvas/ (root /root/.openclaw/canvas)
+2026-04-19T16:24:55.973+00:00 [heartbeat] started
+2026-04-19T16:24:55.976+00:00 [health-monitor] started (interval: 300s, startup-grace: 60s, channel-connect-grace: 120s)
+2026-04-19T16:24:55.993+00:00 [gateway] agent model: ofox-openai/moonshotai/kimi-k2.5
+2026-04-19T16:24:55.995+00:00 [gateway] listening on ws://127.0.0.1:18789, ws://[::1]:18789 (PID 33)
+2026-04-19T16:24:55.997+00:00 [gateway] log file: /tmp/openclaw/openclaw-2026-04-19.log
+2026-04-19T16:24:55.999+00:00 [gateway] security warning: dangerous config flags enabled: gateway.controlUi.allowInsecureAuth=true. Run `openclaw security audit`.
+2026-04-19T16:24:56.184+00:00 [hooks] loaded 4 internal hook handlers
+2026-04-19T16:25:00.570+00:00 [browser/server] Browser control listening on http://127.0.0.1:18791/ (auth=token)
+2026-04-19T16:25:00.873+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=57d68c5ebeab (OpenClaw) (4)._openclaw-gw._tcp.local. host=openclaw-(4).local. port=18789 state=probing)
+2026-04-19T16:25:04.827+00:00 [gateway] device pairing auto-approved device=6b10c369e85f15915bb01cf46ee6067fc5b85b4827547fe9d8595c0eee82f4ac role=operator
+2026-04-19T16:25:07.664+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=57d68c5ebeab (OpenClaw) (7)._openclaw-gw._tcp.local. host=openclaw-(7).local. port=18789 state=probing)
+2026-04-19T16:25:12.667+00:00 [bonjour] restarting advertiser (service stuck in probing for 11793ms (gateway fqdn=57d68c5ebeab (OpenClaw) (11)._openclaw-gw._tcp.local. host=openclaw-(11).local. port=18789 state=probing))
+2026-04-19T16:25:17.665+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=57d68c5ebeab (OpenClaw) (6)._openclaw-gw._tcp.local. host=openclaw-(6).local. port=18789 state=probing)
+2026-04-19T16:25:19.557+00:00 [bonjour] gateway name conflict resolved; newName="57d68c5ebeab (OpenClaw) (7)"
+2026-04-19T16:25:19.561+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(7)"
+2026-04-19T16:25:52.598+00:00 I'll first explore the tools to understand their interface, then run them in the correct sequence to update creator-suite's state and notify the team.
+2026-04-19T16:25:52.601+00:00 Let me first check the current state of creator-suite to see what tasks exist and need updating:
+2026-04-19T16:25:52.602+00:00 Now I'll update the project state: mark auth-flow as done, transition phase to dashboard-integration, add an event, and then reconcile with commit feed and notify the team.
+2026-04-19T16:25:52.603+00:00 Commits reconciled. Now sending the team notification:
+2026-04-19T16:25:52.605+00:00 Done. Here's what was executed for `creator-suite`:
+
+| Step | Action | Result |
+|------|--------|--------|
+| 1 | `mark-task-done auth-flow` | ✅ Completed |
+| 2 | `set-current-phase dashboard-integration` | ✅ Phase transitioned |
+| 3 | `add-event task_complete` | ✅ Event logged |
+| 4 | `commit_feed.py list` | 4 commits reconciled (includes auth flow completion commits) |
+| 5 | `notify_team.py send` | ✅ Team notified |
+
+**Summary:** Auth flow marked complete, project phase moved to `dashboard-integration`, dashboard-integration remains blocked on `api-schema-finalized`. No other projects touched, no other notifications sent.

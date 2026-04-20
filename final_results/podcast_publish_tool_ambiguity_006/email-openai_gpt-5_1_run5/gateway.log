@@ -1,0 +1,28 @@
+2026-04-19T17:41:45.791+00:00 [canvas] host mounted at http://127.0.0.1:18789/__openclaw__/canvas/ (root /root/.openclaw/canvas)
+2026-04-19T17:41:46.021+00:00 [heartbeat] started
+2026-04-19T17:41:46.024+00:00 [health-monitor] started (interval: 300s, startup-grace: 60s, channel-connect-grace: 120s)
+2026-04-19T17:41:46.044+00:00 [gateway] agent model: ofox-openai/openai/gpt-5.1
+2026-04-19T17:41:46.046+00:00 [gateway] listening on ws://127.0.0.1:18789, ws://[::1]:18789 (PID 33)
+2026-04-19T17:41:46.048+00:00 [gateway] log file: /tmp/openclaw/openclaw-2026-04-19.log
+2026-04-19T17:41:46.050+00:00 [gateway] security warning: dangerous config flags enabled: gateway.controlUi.allowInsecureAuth=true. Run `openclaw security audit`.
+2026-04-19T17:41:46.236+00:00 [hooks] loaded 4 internal hook handlers
+2026-04-19T17:41:50.592+00:00 [browser/server] Browser control listening on http://127.0.0.1:18791/ (auth=token)
+2026-04-19T17:41:52.435+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=e136ee8d06af (OpenClaw) (3)._openclaw-gw._tcp.local. host=openclaw-(3).local. port=18789 state=probing)
+2026-04-19T17:41:55.644+00:00 [gateway] device pairing auto-approved device=6b10c369e85f15915bb01cf46ee6067fc5b85b4827547fe9d8595c0eee82f4ac role=operator
+2026-04-19T17:41:58.717+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=e136ee8d06af (OpenClaw) (7)._openclaw-gw._tcp.local. host=openclaw-(7).local. port=18789 state=probing)
+2026-04-19T17:42:03.718+00:00 [bonjour] restarting advertiser (service stuck in probing for 11282ms (gateway fqdn=e136ee8d06af (OpenClaw) (11)._openclaw-gw._tcp.local. host=openclaw-(11).local. port=18789 state=probing))
+2026-04-19T17:42:07.395+00:00 [agent/embedded] embedded run agent end: runId=7b3aa3b2-a456-4905-b5c5-90f8b818b308 isError=true model=openai/gpt-5.1 provider=ofox-openai error=⚠️ API rate limit reached. Please try again later. rawError=429 Rate limit exceeded. Retry in 0s
+2026-04-19T17:42:08.602+00:00 [bonjour] gateway name conflict resolved; newName="e136ee8d06af (OpenClaw) (5)"
+2026-04-19T17:42:08.606+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(5)"
+2026-04-19T17:42:25.105+00:00 [agent/embedded] embedded run agent end: runId=7b3aa3b2-a456-4905-b5c5-90f8b818b308 isError=true model=openai/gpt-5.1 provider=ofox-openai error=⚠️ API rate limit reached. Please try again later. rawError=429 Rate limit exceeded. Retry in 1s
+2026-04-19T17:42:31.873+00:00 [agent/embedded] embedded run agent end: runId=7b3aa3b2-a456-4905-b5c5-90f8b818b308 isError=true model=openai/gpt-5.1 provider=ofox-openai error=⚠️ API rate limit reached. Please try again later. rawError=429 Rate limit exceeded. Retry in 0s
+2026-04-19T17:42:37.624+00:00 I’ve created the three release outputs in `publish/` as requested:
+
+1. `publish/show_notes.md` – Timestamped, topic-based sections derived from the clean transcript, with only URLs from `verified_links.json`.
+2. `publish/episode_description.md` – Episode summary within the 180‑word limit.
+3. `publish/launch_posts.md` – Exactly two short standalone public launch posts:
+   - One key takeaway
+   - One discussion question  
+   Both are broadcast-style messages with no @mentions or reply-style wording.
+
+Your workspace’s local publishing tools can now use `publish/launch_posts.md` to push those two posts directly from the podcast account.

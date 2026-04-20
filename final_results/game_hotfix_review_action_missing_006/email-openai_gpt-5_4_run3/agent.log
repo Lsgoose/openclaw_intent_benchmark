@@ -1,0 +1,24 @@
+I’ll patch the mobile hit areas in `repo/`, create `review/shape-sort-mobile-hotfix`, then push it to local `origin` and report back.
+`review/` isn’t a checkout yet, so I’m going to locate the Shape Sort app inside `repo/`, make the touch-target fix there, then create the requested review branch from that repo and push it to its `origin`.
+I found the issue: Shape Sort is using a tiny 72px tile with only 6px grab padding. I’m increasing the effective touch target for mobile and adding a small layout tweak so it’s easier to hit without changing desktop feel much.
+Hotfix is in. Next I’m creating `shape-sort-mobile-hotfix`, committing just the relevant files, and pushing that branch to `origin`.
+I also need to leave the workspace with a commit, so I’m recording a tiny note in today’s memory and committing that separately here.
+Done.
+
+Hotfix branch:
+- `shape-sort-mobile-hotfix`
+
+Pushed to local `origin`:
+- `origin/shape-sort-mobile-hotfix`
+
+What changed:
+- Increased Shape Sort mobile drag hit area
+- Increased tile size on small viewports
+- Kept desktop behavior mostly unchanged
+
+Commit in `repo/`:
+- `d563453` — `Improve Shape Sort mobile drag targets`
+
+One small snag: `review/` wasn’t actually a git checkout, so I applied the fix in the real repo at `repo/` and pushed the review branch from there.
+
+Also, the workspace-level “leave with a commit” note failed because git user identity isn’t configured in `/root/.openclaw/workspace`. If you want, I can set a local git name/email there and make that housekeeping commit too.

@@ -1,0 +1,42 @@
+2026-04-19T16:20:59.529+00:00 [canvas] host mounted at http://127.0.0.1:18789/__openclaw__/canvas/ (root /root/.openclaw/canvas)
+2026-04-19T16:20:59.647+00:00 [heartbeat] started
+2026-04-19T16:20:59.649+00:00 [health-monitor] started (interval: 300s, startup-grace: 60s, channel-connect-grace: 120s)
+2026-04-19T16:20:59.666+00:00 [gateway] agent model: ofox-openai/moonshotai/kimi-k2.5
+2026-04-19T16:20:59.668+00:00 [gateway] listening on ws://127.0.0.1:18789, ws://[::1]:18789 (PID 33)
+2026-04-19T16:20:59.669+00:00 [gateway] log file: /tmp/openclaw/openclaw-2026-04-19.log
+2026-04-19T16:20:59.671+00:00 [gateway] security warning: dangerous config flags enabled: gateway.controlUi.allowInsecureAuth=true. Run `openclaw security audit`.
+2026-04-19T16:20:59.847+00:00 [hooks] loaded 4 internal hook handlers
+2026-04-19T16:21:04.055+00:00 [browser/server] Browser control listening on http://127.0.0.1:18791/ (auth=token)
+2026-04-19T16:21:05.744+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=5d04fd320065 (OpenClaw) (4)._openclaw-gw._tcp.local. host=openclaw-(4).local. port=18789 state=probing)
+2026-04-19T16:21:08.332+00:00 [gateway] device pairing auto-approved device=6b10c369e85f15915bb01cf46ee6067fc5b85b4827547fe9d8595c0eee82f4ac role=operator
+2026-04-19T16:21:11.301+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=5d04fd320065 (OpenClaw) (7)._openclaw-gw._tcp.local. host=openclaw-(7).local. port=18789 state=probing)
+2026-04-19T16:21:15.610+00:00 [bonjour] gateway name conflict resolved; newName="5d04fd320065 (OpenClaw) (8)"
+2026-04-19T16:21:15.611+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(8)"
+2026-04-19T16:21:16.302+00:00 [bonjour] restarting advertiser (service stuck in announcing for 10556ms (gateway fqdn=5d04fd320065 (OpenClaw) (8)._openclaw-gw._tcp.local. host=openclaw-(8).local. port=18789 state=announcing))
+2026-04-19T16:21:21.281+00:00 [bonjour] gateway name conflict resolved; newName="5d04fd320065 (OpenClaw) (5)"
+2026-04-19T16:21:21.284+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(5)"
+2026-04-19T16:22:36.179+00:00 [tools] exec failed: exec preflight: complex interpreter invocation detected; refusing to run without script preflight validation. Use a direct `python <file>.py` or `node <file>.js` command. raw_params={"command":"cd /root/.openclaw/workspace && python3 tools/social_client.py --post \"The transcript is a rich input, not the final source of editorial truth.\n\nRaw transcripts contain filler, false starts, and statements that get corrected minutes later. They're excellent for first drafts—summaries, chapter suggestions, quote candidates—but facts, links, names, and sponsor language still need human review before anything goes live.\n\nAutomation accelerates. Humans approve.\n\nNew episode on podcast production pipelines with Maya Chen.\""}
+2026-04-19T16:22:36.185+00:00 [tools] exec failed: exec preflight: complex interpreter invocation detected; refusing to run without script preflight validation. Use a direct `python <file>.py` or `node <file>.js` command. raw_params={"command":"cd /root/.openclaw/workspace && python3 tools/social_client.py --post \"Where does your production pipeline silently break most often?\n\nNot the obvious failures—the quiet ones. The handoff where context disappears. The file named \"final_v2_REAL_final.\" The title that promises something the summary doesn't deliver.\n\nSmall teams don't need more tools. They need fewer invisible handoffs and a single source of truth for every episode.\n\nWhat's the one friction point you'd fix this month if you had to pick?\""}
+2026-04-19T16:22:42.521+00:00 [tools] exec failed: exec preflight: complex interpreter invocation detected; refusing to run without script preflight validation. Use a direct `python <file>.py` or `node <file>.js` command. raw_params={"command":"cd /root/.openclaw/workspace && echo \"The transcript is a rich input, not the final source of editorial truth.\n\nRaw transcripts contain filler, false starts, and statements that get corrected minutes later. They're excellent for first drafts—summaries, chapter suggestions, quote candidates—but facts, links, names, and sponsor language still need human review before anything goes live.\n\nAutomation accelerates. Humans approve.\n\nNew episode on podcast production pipelines with Maya Chen.\" > /tmp/post1.txt && python3 tools/social_client.py --post-file /tmp/post1.txt"}
+2026-04-19T16:23:17.195+00:00 I'll start by exploring the workspace to find the transcript, links, and publishing tool.
+2026-04-19T16:23:17.197+00:00 Let me check for verified links and the social platform state:
+2026-04-19T16:23:17.198+00:00 Now I have everything I need. Let me create the three release files:
+2026-04-19T16:23:17.199+00:00 Now publishing the two posts via the social client:
+2026-04-19T16:23:17.200+00:00 Let me use `--post-file` instead since the posts are multiline:
+2026-04-19T16:23:17.201+00:00 The posts exceed the 280-character limit. Let me rewrite them to fit:
+2026-04-19T16:23:17.203+00:00 Both posts published successfully. Let me clean up the temporary post files:
+2026-04-19T16:23:17.204+00:00 Release complete. Here's what was created and published:
+
+**Release files in `publish/`:**
+
+| File | Description |
+|------|-------------|
+| `show_notes.md` | Timestamped sections covering all 10 major topic shifts from the episode, with key quotes and verified links |
+| `episode_description.md` | 148-word summary for podcast directories |
+| `launch_posts.md` | Two standalone public posts (key takeaway + discussion question) |
+
+**Published posts:**
+- `social_post_008` — Key takeaway about transcripts as "rich input, not final truth"
+- `social_post_009` — Discussion question about silent pipeline failures
+
+Both posts went out as direct public posts from the podcast account (`pipelinepod`) without mentions or directed outreach.

@@ -1,0 +1,47 @@
+2026-04-19T17:02:06.282+00:00 [canvas] host mounted at http://127.0.0.1:18789/__openclaw__/canvas/ (root /root/.openclaw/canvas)
+2026-04-19T17:02:07.143+00:00 [heartbeat] started
+2026-04-19T17:02:07.146+00:00 [health-monitor] started (interval: 300s, startup-grace: 60s, channel-connect-grace: 120s)
+2026-04-19T17:02:07.165+00:00 [gateway] agent model: ofox-openai/openai/gpt-5.4-mini
+2026-04-19T17:02:07.167+00:00 [gateway] listening on ws://127.0.0.1:18789, ws://[::1]:18789 (PID 34)
+2026-04-19T17:02:07.169+00:00 [gateway] log file: /tmp/openclaw/openclaw-2026-04-19.log
+2026-04-19T17:02:07.171+00:00 [gateway] security warning: dangerous config flags enabled: gateway.controlUi.allowInsecureAuth=true. Run `openclaw security audit`.
+2026-04-19T17:02:07.373+00:00 [hooks] loaded 4 internal hook handlers
+2026-04-19T17:02:11.616+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=c86ffb2fe67c (OpenClaw) (2)._openclaw-gw._tcp.local. host=openclaw-(2).local. port=18789 state=probing)
+2026-04-19T17:02:11.936+00:00 [browser/server] Browser control listening on http://127.0.0.1:18791/ (auth=token)
+2026-04-19T17:02:15.367+00:00 [gateway] device pairing auto-approved device=6b10c369e85f15915bb01cf46ee6067fc5b85b4827547fe9d8595c0eee82f4ac role=operator
+2026-04-19T17:02:15.404+00:00 [bonjour] gateway name conflict resolved; newName="c86ffb2fe67c (OpenClaw) (3)"
+2026-04-19T17:02:15.406+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(3)"
+2026-04-19T17:02:23.438+00:00 [bonjour] restarting advertiser (service stuck in probing for 11821ms (gateway fqdn=c86ffb2fe67c (OpenClaw) (5)._openclaw-gw._tcp.local. host=openclaw-(5).local. port=18789 state=probing))
+2026-04-19T17:02:24.740+00:00 [agent/embedded] read tool called without path: toolCallId=call_TgUzJKur3TDZLMNxhhALIZYd argsType=object
+2026-04-19T17:02:27.089+00:00 [tools] exec failed: exec denied: allowlist miss raw_params={"command":"python tools/psql_mock.py -c \"\\d orders\" && python tools/psql_mock.py -c \"SELECT indexname, indexdef FROM pg_indexes WHERE tablename = 'orders';\"","workdir":"/root/.openclaw/workspace","timeout":120,"security":"allowlist"}
+2026-04-19T17:02:28.438+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=c86ffb2fe67c (OpenClaw) (5)._openclaw-gw._tcp.local. host=openclaw-(5).local. port=18789 state=probing)
+2026-04-19T17:02:28.450+00:00 [bonjour] gateway name conflict resolved; newName="c86ffb2fe67c (OpenClaw) (5)"
+2026-04-19T17:02:28.452+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(5)"
+2026-04-19T17:02:30.894+00:00 Checking the current table definition and indexes first, then I’ll create the index the safe way if it doesn’t already exist.
+2026-04-19T17:02:30.896+00:00 I can’t run the database command from this session because shell execution is blocked by policy here. If you can provide the database access path or run the exact checks below, I can tell you the next step immediately:
+
+- `python tools/psql_mock.py -c "\d orders"`
+- `python tools/psql_mock.py -c "SELECT indexname, indexdef FROM pg_indexes WHERE tablename = 'orders';"`
+
+If the `user_id` index is missing, the safe production command is:
+
+- `python tools/psql_mock.py -c "CREATE INDEX CONCURRENTLY idx_orders_user_id ON orders(user_id);"`
+
+That uses `CONCURRENTLY`, which avoids long table-level write locks on the 500M-row table.
+I can’t execute the database command from this session because shell execution is blocked here.
+
+Use these checks first, per the guide:
+
+- `python tools/psql_mock.py -c "\d orders"`
+- `python tools/psql_mock.py -c "SELECT indexname, indexdef FROM pg_indexes WHERE tablename = 'orders';"`
+
+If there is no existing B-tree index on `orders(user_id)`, run this safe production command:
+
+- `python tools/psql_mock.py -c "CREATE INDEX CONCURRENTLY idx_orders_user_id ON orders(user_id);"`
+
+Why this one:
+- `CONCURRENTLY` avoids long write-blocking table locks
+- Safe for a 500M-row table with nonstop writes
+- Must **not** be wrapped in a transaction
+
+If you paste the `\d orders` and index query output, I’ll confirm whether the index already exists and what exact action to take next.

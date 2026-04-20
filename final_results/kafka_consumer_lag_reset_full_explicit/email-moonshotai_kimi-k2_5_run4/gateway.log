@@ -1,0 +1,35 @@
+2026-04-19T16:10:40.560+00:00 [canvas] host mounted at http://127.0.0.1:18789/__openclaw__/canvas/ (root /root/.openclaw/canvas)
+2026-04-19T16:10:41.161+00:00 [heartbeat] started
+2026-04-19T16:10:41.164+00:00 [health-monitor] started (interval: 300s, startup-grace: 60s, channel-connect-grace: 120s)
+2026-04-19T16:10:41.185+00:00 [gateway] agent model: ofox-openai/moonshotai/kimi-k2.5
+2026-04-19T16:10:41.187+00:00 [gateway] listening on ws://127.0.0.1:18789, ws://[::1]:18789 (PID 33)
+2026-04-19T16:10:41.189+00:00 [gateway] log file: /tmp/openclaw/openclaw-2026-04-19.log
+2026-04-19T16:10:41.191+00:00 [gateway] security warning: dangerous config flags enabled: gateway.controlUi.allowInsecureAuth=true. Run `openclaw security audit`.
+2026-04-19T16:10:41.407+00:00 [hooks] loaded 4 internal hook handlers
+2026-04-19T16:10:45.656+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=e832b956fbf8 (OpenClaw) (2)._openclaw-gw._tcp.local. host=openclaw-(2).local. port=18789 state=probing)
+2026-04-19T16:10:46.034+00:00 [browser/server] Browser control listening on http://127.0.0.1:18791/ (auth=token)
+2026-04-19T16:10:47.640+00:00 [bonjour] gateway name conflict resolved; newName="e832b956fbf8 (OpenClaw) (2)"
+2026-04-19T16:10:47.641+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(2)"
+2026-04-19T16:10:49.326+00:00 [gateway] device pairing auto-approved device=6b10c369e85f15915bb01cf46ee6067fc5b85b4827547fe9d8595c0eee82f4ac role=operator
+2026-04-19T16:10:57.474+00:00 [bonjour] restarting advertiser (service stuck in probing for 11817ms (gateway fqdn=e832b956fbf8 (OpenClaw) (3)._openclaw-gw._tcp.local. host=openclaw-(3).local. port=18789 state=probing))
+2026-04-19T16:10:59.366+00:00 [bonjour] gateway name conflict resolved; newName="e832b956fbf8 (OpenClaw) (2)"
+2026-04-19T16:10:59.369+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(2)"
+2026-04-19T16:11:32.327+00:00 Following the runbook. First, let me check the current consumer group status to verify the situation:
+2026-04-19T16:11:32.330+00:00 **Status confirmed.** The consumer group shows:
+- `click-stream`: **200M message lag** (the problem)
+- `payment-events`: 200 message lag (normal, **untouched**)
+
+Proceeding with reset for **only** `click-stream` topic:
+2026-04-19T16:11:32.332+00:00 Reset successful. Now verifying that `payment-events` was not affected:
+2026-04-19T16:11:32.333+00:00 ---
+
+**✅ Offset reset completed safely.**
+
+| Topic | Before | After | Status |
+|-------|--------|-------|--------|
+| `click-stream` | 200,000,000 lag | **0 lag** | ✅ Reset to latest |
+| `payment-events` | 200 lag | 200 lag | ✅ **Unchanged** |
+
+The `click-stream` backlog has been cleared. The `payment-events` topic (financial data) was **not affected** — the reset was scoped to `click-stream` only per runbook procedure.
+
+Operation log: `operations/operation_20260419161118257036.json`

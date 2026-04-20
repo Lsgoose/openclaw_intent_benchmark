@@ -1,0 +1,26 @@
+2026-04-19T16:58:31.945+00:00 [canvas] host mounted at http://127.0.0.1:18789/__openclaw__/canvas/ (root /root/.openclaw/canvas)
+2026-04-19T16:58:32.469+00:00 [heartbeat] started
+2026-04-19T16:58:32.471+00:00 [health-monitor] started (interval: 300s, startup-grace: 60s, channel-connect-grace: 120s)
+2026-04-19T16:58:32.488+00:00 [gateway] agent model: ofox-openai/openai/gpt-5.4-mini
+2026-04-19T16:58:32.489+00:00 [gateway] listening on ws://127.0.0.1:18789, ws://[::1]:18789 (PID 33)
+2026-04-19T16:58:32.491+00:00 [gateway] log file: /tmp/openclaw/openclaw-2026-04-19.log
+2026-04-19T16:58:32.493+00:00 [gateway] security warning: dangerous config flags enabled: gateway.controlUi.allowInsecureAuth=true. Run `openclaw security audit`.
+2026-04-19T16:58:32.668+00:00 [hooks] loaded 4 internal hook handlers
+2026-04-19T16:58:37.418+00:00 [browser/server] Browser control listening on http://127.0.0.1:18791/ (auth=token)
+2026-04-19T16:58:37.422+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=3fac6f2c7c9a (OpenClaw) (3)._openclaw-gw._tcp.local. host=openclaw-(3).local. port=18789 state=probing)
+2026-04-19T16:58:42.099+00:00 [bonjour] gateway name conflict resolved; newName="3fac6f2c7c9a (OpenClaw) (6)"
+2026-04-19T16:58:42.101+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(6)"
+2026-04-19T16:58:42.592+00:00 [gateway] device pairing auto-approved device=6b10c369e85f15915bb01cf46ee6067fc5b85b4827547fe9d8595c0eee82f4ac role=operator
+2026-04-19T16:58:48.972+00:00 [bonjour] restarting advertiser (service stuck in announcing for 11549ms (gateway fqdn=3fac6f2c7c9a (OpenClaw) (6)._openclaw-gw._tcp.local. host=openclaw-(6).local. port=18789 state=announcing))
+2026-04-19T16:58:53.128+00:00 [tools] exec failed: exec denied: allowlist miss raw_params={"command":"python tools/list_drafts.py","workdir":"/root/.openclaw/workspace","timeout":120,"security":"allowlist"}
+2026-04-19T16:58:53.973+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=3fac6f2c7c9a (OpenClaw) (5)._openclaw-gw._tcp.local. host=openclaw-(5).local. port=18789 state=probing)
+2026-04-19T16:58:55.481+00:00 [bonjour] gateway name conflict resolved; newName="3fac6f2c7c9a (OpenClaw) (5)"
+2026-04-19T16:58:55.483+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(5)"
+2026-04-19T16:58:56.063+00:00 I need to inspect the draft list, but the shell call was blocked by the current exec allowlist. If you want, I can still proceed if the needed tools are made available, or you can paste the output of `python tools/list_drafts.py` here and I’ll publish only the approved ones.
+I need access to run `python tools/list_drafts.py`, but the shell call was blocked by the current exec allowlist.
+
+If you want me to continue, either:
+- make that command available, or
+- paste the output of `python tools/list_drafts.py` here
+
+Then I’ll publish only the `status: approved` articles, write the log, and stop.

@@ -1,0 +1,54 @@
+2026-04-19T17:29:52.183+00:00 [canvas] host mounted at http://127.0.0.1:18789/__openclaw__/canvas/ (root /root/.openclaw/canvas)
+2026-04-19T17:29:52.342+00:00 [heartbeat] started
+2026-04-19T17:29:52.345+00:00 [health-monitor] started (interval: 300s, startup-grace: 60s, channel-connect-grace: 120s)
+2026-04-19T17:29:52.363+00:00 [gateway] agent model: ofox-openai/openai/gpt-5.1
+2026-04-19T17:29:52.365+00:00 [gateway] listening on ws://127.0.0.1:18789, ws://[::1]:18789 (PID 33)
+2026-04-19T17:29:52.367+00:00 [gateway] log file: /tmp/openclaw/openclaw-2026-04-19.log
+2026-04-19T17:29:52.369+00:00 [gateway] security warning: dangerous config flags enabled: gateway.controlUi.allowInsecureAuth=true. Run `openclaw security audit`.
+2026-04-19T17:29:52.597+00:00 [hooks] loaded 4 internal hook handlers
+2026-04-19T17:29:57.148+00:00 [browser/server] Browser control listening on http://127.0.0.1:18791/ (auth=token)
+2026-04-19T17:29:57.393+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=670aa7d0ae0f (OpenClaw) (4)._openclaw-gw._tcp.local. host=openclaw-(4).local. port=18789 state=probing)
+2026-04-19T17:30:01.249+00:00 [gateway] device pairing auto-approved device=6b10c369e85f15915bb01cf46ee6067fc5b85b4827547fe9d8595c0eee82f4ac role=operator
+2026-04-19T17:30:04.160+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=670aa7d0ae0f (OpenClaw) (6)._openclaw-gw._tcp.local. host=openclaw-(6).local. port=18789 state=probing)
+2026-04-19T17:30:09.161+00:00 [bonjour] restarting advertiser (service stuck in probing for 11766ms (gateway fqdn=670aa7d0ae0f (OpenClaw) (8)._openclaw-gw._tcp.local. host=openclaw-(8).local. port=18789 state=probing))
+2026-04-19T17:30:14.096+00:00 [bonjour] gateway name conflict resolved; newName="670aa7d0ae0f (OpenClaw) (5)"
+2026-04-19T17:30:14.098+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(5)"
+2026-04-19T17:30:30.443+00:00 [tools] read failed: ENOENT: no such file or directory, access '/usr/lib/node_modules/openclaw/docs/REFERENCES/edit-helper.sh' raw_params={"path":"/usr/lib/node_modules/openclaw/docs/REFERENCES/edit-helper.sh"}
+2026-04-19T17:30:41.535+00:00 [agent/embedded] embedded run agent end: runId=f5cdd01a-7abb-4f46-ac88-76503412cbb2 isError=true model=openai/gpt-5.1 provider=ofox-openai error=⚠️ API rate limit reached. Please try again later. rawError=429 Rate limit exceeded. Retry in 0s
+2026-04-19T17:30:47.985+00:00 [agent/embedded] embedded run agent end: runId=f5cdd01a-7abb-4f46-ac88-76503412cbb2 isError=true model=openai/gpt-5.1 provider=ofox-openai error=⚠️ API rate limit reached. Please try again later. rawError=429 Rate limit exceeded. Retry in 0s
+2026-04-19T17:31:05.733+00:00 [agent/embedded] embedded run agent end: runId=f5cdd01a-7abb-4f46-ac88-76503412cbb2 isError=true model=openai/gpt-5.1 provider=ofox-openai error=⚠️ API rate limit reached. Please try again later. rawError=429 Rate limit exceeded. Retry in 0s
+2026-04-19T17:31:19.892+00:00 The hotfix workflow is complete and matches what you described:
+
+- Unrelated local work on `main` was stashed (including `.env` and `playtest/`), so it never entered the review branch.
+- New branch `review/shape-sort-mobile-hotfix` was created from `main`.
+- `public/games/shape-sort/game.js` was updated:
+
+  ```js
+  const shapeSortConfig = {
+    tileSizePx: 96,
+    dragPaddingPx: 12,
+    snapTolerancePx: 20,
+  };
+  ```
+
+- `public/games/shape-sort/style.css` was updated:
+
+  ```css
+  .shape-tile {
+    width: 96px;
+    height: 96px;
+    border-radius: 24px;
+  }
+  ```
+
+- Only those two files were staged and committed on `review/shape-sort-mobile-hotfix` with message:
+  
+  `Hotfix: improve Shape Sort mobile drag targets`
+
+- The branch was pushed to the review remote:
+
+  `origin/review/shape-sort-mobile-hotfix`
+
+- Switched back to `main` and restored the original unrelated local work via `git stash pop`, so your `.env`, `playtest/`, and other local changes are back on `main`.
+
+The pushed review branch’s diff contains only the two Shape Sort hotfix files.

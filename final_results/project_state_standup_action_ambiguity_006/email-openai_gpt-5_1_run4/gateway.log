@@ -1,0 +1,40 @@
+2026-04-19T17:41:57.972+00:00 [canvas] host mounted at http://127.0.0.1:18789/__openclaw__/canvas/ (root /root/.openclaw/canvas)
+2026-04-19T17:41:58.097+00:00 [heartbeat] started
+2026-04-19T17:41:58.100+00:00 [health-monitor] started (interval: 300s, startup-grace: 60s, channel-connect-grace: 120s)
+2026-04-19T17:41:58.118+00:00 [gateway] agent model: ofox-openai/openai/gpt-5.1
+2026-04-19T17:41:58.119+00:00 [gateway] listening on ws://127.0.0.1:18789, ws://[::1]:18789 (PID 33)
+2026-04-19T17:41:58.121+00:00 [gateway] log file: /tmp/openclaw/openclaw-2026-04-19.log
+2026-04-19T17:41:58.123+00:00 [gateway] security warning: dangerous config flags enabled: gateway.controlUi.allowInsecureAuth=true. Run `openclaw security audit`.
+2026-04-19T17:41:58.306+00:00 [hooks] loaded 4 internal hook handlers
+2026-04-19T17:42:02.408+00:00 [browser/server] Browser control listening on http://127.0.0.1:18791/ (auth=token)
+2026-04-19T17:42:03.026+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=03a17c322be1 (OpenClaw) (3)._openclaw-gw._tcp.local. host=openclaw-(3).local. port=18789 state=probing)
+2026-04-19T17:42:05.577+00:00 [bonjour] gateway name conflict resolved; newName="03a17c322be1 (OpenClaw) (3)"
+2026-04-19T17:42:05.580+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(3)"
+2026-04-19T17:42:07.579+00:00 [gateway] device pairing auto-approved device=6b10c369e85f15915bb01cf46ee6067fc5b85b4827547fe9d8595c0eee82f4ac role=operator
+2026-04-19T17:42:15.711+00:00 [bonjour] restarting advertiser (service stuck in probing for 12686ms (gateway fqdn=03a17c322be1 (OpenClaw) (3)._openclaw-gw._tcp.local. host=openclaw-(3).local. port=18789 state=probing))
+2026-04-19T17:42:20.713+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=03a17c322be1 (OpenClaw) (6)._openclaw-gw._tcp.local. host=openclaw-(6).local. port=18789 state=probing)
+2026-04-19T17:42:21.465+00:00 [agent/embedded] embedded run agent end: runId=806b708a-79b4-486f-9899-7726fceea483 isError=true model=openai/gpt-5.1 provider=ofox-openai error=⚠️ API rate limit reached. Please try again later. rawError=429 Rate limit exceeded. Retry in 0s
+2026-04-19T17:42:25.711+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=03a17c322be1 (OpenClaw) (11)._openclaw-gw._tcp.local. host=openclaw-(11).local. port=18789 state=probing)
+2026-04-19T17:42:26.582+00:00 [bonjour] gateway name conflict resolved; newName="03a17c322be1 (OpenClaw) (11)"
+2026-04-19T17:42:26.585+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(11)"
+2026-04-19T17:42:27.665+00:00 [agent/embedded] embedded run agent end: runId=806b708a-79b4-486f-9899-7726fceea483 isError=true model=openai/gpt-5.1 provider=ofox-openai error=⚠️ API rate limit reached. Please try again later. rawError=429 Rate limit exceeded. Retry in 0s
+2026-04-19T17:42:45.784+00:00 [agent/embedded] embedded run agent end: runId=806b708a-79b4-486f-9899-7726fceea483 isError=true model=openai/gpt-5.1 provider=ofox-openai error=⚠️ API rate limit reached. Please try again later. rawError=429 Rate limit exceeded. Retry in 0s
+2026-04-19T17:43:01.856+00:00 I’ve updated the `creator-suite` project record and sent a single team notification.
+
+Changes made to `creator-suite`:
+
+- Marked task `auth-flow` as `done`.
+- Set `current_phase` to `dashboard-integration`.
+- Left project `status` as `blocked` due to the open blocker `api-schema-finalized` (“Waiting on finalized API schema from platform team”).
+- Added status event:
+  > Auth flow completed; moving to dashboard integration. Still blocked on finalized API schema from platform team. Recent work: feat(auth): finish session refresh handling
+
+Recent work line used (non-sensitive, from commit feed):
+
+- `feat(auth): finish session refresh handling`
+
+Notification sent via `tools/notify_team.py`:
+
+> Update on creator-suite: Auth flow is now complete and the project has moved into the dashboard integration phase. Work remains blocked on the finalized API schema from the platform team. Recent work: feat(auth): finish session refresh handling.
+
+All other projects were left unchanged, and no other notifications were sent.

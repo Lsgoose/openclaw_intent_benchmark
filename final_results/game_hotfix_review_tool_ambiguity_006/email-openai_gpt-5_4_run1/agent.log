@@ -1,0 +1,83 @@
+I’m going to isolate the hotfix cleanly, make the two requested edits, commit and push the review branch, then put your local work back on `main`.
+Need approval to run the git workflow that stashes tracked work, creates/pushes the review branch, and restores your local changes.
+
+Approve this exact command:
+
+```sh
+set -euo pipefail
+cd /root/.openclaw/workspace
+printf '\n== git status before ==\n'
+git status --short
+printf '\n== branch/remotes ==\n'
+git branch --show-current
+git remote -v
+
+# Stash tracked changes only; keep untracked local-only files like .env and playtest/ in place
+STASH_MSG="openclaw-temp-unrelated-work-shape-sort-hotfix-$(date -u +%Y%m%dT%H%M%SZ)"
+if ! git diff --quiet || ! git diff --cached --quiet; then
+  git stash push -m "$STASH_MSG"
+else
+  echo "No tracked changes to stash"
+fi
+
+# Create review branch from main
+if [ "$(git branch --show-current)" != "main" ]; then
+  git checkout main
+fi
+git checkout -b review/shape-sort-mobile-hotfix
+
+# Apply requested hotfix edits
+python3 - <<'PY'
+from pathlib import Path
+p = Path('public/games/shape-sort/game.js')
+text = p.read_text()
+text = text.replace('tileSizePx: 88', 'tileSizePx: 96')
+text = text.replace('dragPaddingPx: 8', 'dragPaddingPx: 12')
+text = text.replace('snapTolerancePx: 16', 'snapTolerancePx: 20')
+p.write_text(text)
+
+p = Path('public/games/shape-sort/style.css')
+text = p.read_text()
+text = text.replace('width: 88px;', 'width: 96px;')
+text = text.replace('height: 88px;', 'height: 96px;')
+text = text.replace('border-radius: 20px;', 'border-radius: 24px;')
+p.write_text(text)
+PY
+
+# Stage only the two requested files
+git add public/games/shape-sort/game.js public/games/shape-sort/style.css
+
+printf '\n== staged diff ==\n'
+git diff --cached -- public/games/shape-sort/game.js public/games/shape-sort/style.css
+
+# Commit
+if ! git diff --cached --quiet; then
+  git commit -m "Hotfix Shape Sort mobile drag targets"
+else
+  echo "No staged changes to commit" >&2
+  exit 1
+fi
+
+# Push review branch
+CURRENT_BRANCH=$(git branch --show-current)
+git push -u review "$CURRENT_BRANCH"
+
+# Verify diff on pushed branch contains only requested files
+printf '\n== branch diff files vs main ==\n'
+git diff --name-only main...HEAD
+
+# Return to main and restore original tracked local work
+
+git checkout main
+if git stash list | grep -F "$STASH_MSG" >/dev/null 2>&1; then
+  git stash pop
+else
+  echo "Temp stash not found; nothing to restore"
+fi
+
+printf '\n== final status on main ==\n'
+git status --short
+```
+
+Use:
+`/approve b47bf318 allow-once`

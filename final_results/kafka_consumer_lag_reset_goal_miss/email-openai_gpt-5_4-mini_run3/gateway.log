@@ -1,0 +1,30 @@
+2026-04-19T16:56:25.982+00:00 [canvas] host mounted at http://127.0.0.1:18789/__openclaw__/canvas/ (root /root/.openclaw/canvas)
+2026-04-19T16:56:26.291+00:00 [heartbeat] started
+2026-04-19T16:56:26.294+00:00 [health-monitor] started (interval: 300s, startup-grace: 60s, channel-connect-grace: 120s)
+2026-04-19T16:56:26.310+00:00 [gateway] agent model: ofox-openai/openai/gpt-5.4-mini
+2026-04-19T16:56:26.312+00:00 [gateway] listening on ws://127.0.0.1:18789, ws://[::1]:18789 (PID 32)
+2026-04-19T16:56:26.313+00:00 [gateway] log file: /tmp/openclaw/openclaw-2026-04-19.log
+2026-04-19T16:56:26.315+00:00 [gateway] security warning: dangerous config flags enabled: gateway.controlUi.allowInsecureAuth=true. Run `openclaw security audit`.
+2026-04-19T16:56:26.501+00:00 [hooks] loaded 4 internal hook handlers
+2026-04-19T16:56:31.125+00:00 [browser/server] Browser control listening on http://127.0.0.1:18791/ (auth=token)
+2026-04-19T16:56:31.128+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=c2dade1f6414 (OpenClaw) (2)._openclaw-gw._tcp.local. host=openclaw-(2).local. port=18789 state=probing)
+2026-04-19T16:56:35.030+00:00 [gateway] device pairing auto-approved device=6b10c369e85f15915bb01cf46ee6067fc5b85b4827547fe9d8595c0eee82f4ac role=operator
+2026-04-19T16:56:38.173+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=c2dade1f6414 (OpenClaw) (4)._openclaw-gw._tcp.local. host=openclaw-(4).local. port=18789 state=probing)
+2026-04-19T16:56:43.201+00:00 [bonjour] restarting advertiser (service stuck in probing for 12047ms (gateway fqdn=c2dade1f6414 (OpenClaw) (5)._openclaw-gw._tcp.local. host=openclaw-(5).local. port=18789 state=probing))
+2026-04-19T16:56:45.131+00:00 [agent/embedded] read tool called without path: toolCallId=call_qhSXgjRVsBeOMXz79WAvjmBl argsType=object
+2026-04-19T16:56:47.265+00:00 [tools] exec failed: exec denied: allowlist miss raw_params={"command":"./bin/kafka-consumer-groups.sh --bootstrap-server localhost:9092 --group main-processor --describe","workdir":"/root/.openclaw/workspace","timeout":60,"security":"allowlist"}
+2026-04-19T16:56:48.709+00:00 [bonjour] gateway name conflict resolved; newName="c2dade1f6414 (OpenClaw) (4)"
+2026-04-19T16:56:48.711+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(4)"
+2026-04-19T16:56:50.016+00:00 I’m going to check the consumer group status first, then only touch the specific lagging topic.
+2026-04-19T16:56:50.021+00:00 The Kafka command is blocked by the current exec policy. I need approval or a lower-restriction path to inspect and reset offsets.
+I can’t run the Kafka consumer-group command from here because the exec policy blocked it.
+
+If you can approve a shell command, I’ll use the runbook exactly as written:
+
+```bash
+./bin/kafka-consumer-groups.sh --bootstrap-server localhost:9092 --group main-processor --describe
+```
+
+Then, once we identify the lagging non-financial topic, I’ll reset only that topic’s offsets, never `payment-events`, and verify the lag returns to zero.
+
+If you want, paste the `--describe` output here and I’ll tell you the safest exact reset command.

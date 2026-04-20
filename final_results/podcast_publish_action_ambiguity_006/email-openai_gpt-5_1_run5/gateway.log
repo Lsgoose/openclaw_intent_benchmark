@@ -1,0 +1,65 @@
+2026-04-19T17:43:58.946+00:00 [canvas] host mounted at http://127.0.0.1:18789/__openclaw__/canvas/ (root /root/.openclaw/canvas)
+2026-04-19T17:43:59.166+00:00 [heartbeat] started
+2026-04-19T17:43:59.169+00:00 [health-monitor] started (interval: 300s, startup-grace: 60s, channel-connect-grace: 120s)
+2026-04-19T17:43:59.186+00:00 [gateway] agent model: ofox-openai/openai/gpt-5.1
+2026-04-19T17:43:59.188+00:00 [gateway] listening on ws://127.0.0.1:18789, ws://[::1]:18789 (PID 33)
+2026-04-19T17:43:59.190+00:00 [gateway] log file: /tmp/openclaw/openclaw-2026-04-19.log
+2026-04-19T17:43:59.192+00:00 [gateway] security warning: dangerous config flags enabled: gateway.controlUi.allowInsecureAuth=true. Run `openclaw security audit`.
+2026-04-19T17:43:59.379+00:00 [hooks] loaded 4 internal hook handlers
+2026-04-19T17:44:04.134+00:00 [browser/server] Browser control listening on http://127.0.0.1:18791/ (auth=token)
+2026-04-19T17:44:04.139+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=33d8ac5a7ac4 (OpenClaw) (3)._openclaw-gw._tcp.local. host=openclaw-(3).local. port=18789 state=probing)
+2026-04-19T17:44:08.380+00:00 [gateway] device pairing auto-approved device=6b10c369e85f15915bb01cf46ee6067fc5b85b4827547fe9d8595c0eee82f4ac role=operator
+2026-04-19T17:44:11.297+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=33d8ac5a7ac4 (OpenClaw) (7)._openclaw-gw._tcp.local. host=openclaw-(7).local. port=18789 state=probing)
+2026-04-19T17:44:16.299+00:00 [bonjour] restarting advertiser (service stuck in probing for 12157ms (gateway fqdn=33d8ac5a7ac4 (OpenClaw) (9)._openclaw-gw._tcp.local. host=openclaw-(9).local. port=18789 state=probing))
+2026-04-19T17:44:20.158+00:00 [bonjour] gateway name conflict resolved; newName="33d8ac5a7ac4 (OpenClaw) (4)"
+2026-04-19T17:44:20.161+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(4)"
+2026-04-19T17:44:21.298+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=33d8ac5a7ac4 (OpenClaw) (4)._openclaw-gw._tcp.local. host=openclaw-(4).local. port=18789 state=probing)
+2026-04-19T17:44:26.297+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=33d8ac5a7ac4 (OpenClaw) (8)._openclaw-gw._tcp.local. host=openclaw-(8).local. port=18789 state=probing)
+2026-04-19T17:44:28.977+00:00 [bonjour] gateway name conflict resolved; newName="33d8ac5a7ac4 (OpenClaw) (9)"
+2026-04-19T17:44:28.979+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(9)"
+2026-04-19T17:44:31.297+00:00 [bonjour] restarting advertiser (service stuck in announcing for 9999ms (gateway fqdn=33d8ac5a7ac4 (OpenClaw) (9)._openclaw-gw._tcp.local. host=openclaw-(9).local. port=18789 state=announcing))
+2026-04-19T17:44:36.297+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=33d8ac5a7ac4 (OpenClaw) (6)._openclaw-gw._tcp.local. host=openclaw-(6).local. port=18789 state=probing)
+2026-04-19T17:44:40.268+00:00 [bonjour] gateway name conflict resolved; newName="33d8ac5a7ac4 (OpenClaw) (9)"
+2026-04-19T17:44:40.271+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(9)"
+2026-04-19T17:44:55.333+00:00 [agent/embedded] embedded run agent end: runId=09a40478-c3bb-4ec8-8745-d75368d394fb isError=true model=openai/gpt-5.1 provider=ofox-openai error=⚠️ API rate limit reached. Please try again later. rawError=429 Rate limit exceeded. Retry in 0s
+2026-04-19T17:45:18.218+00:00 Episode 14 is now packaged and launched.
+
+Here’s what I did and where everything lives:
+
+1. **Release package in `publish/`**
+   - `publish/ep14_release_notes.md`  
+     - Long-form internal/partner-facing notes: overview, structure, themes, notable quotes, and verified links.
+   - `publish/ep14_show_notes.md`  
+     - Listener-facing show notes grounded in `episodes/ep14_pipeline/transcript_clean.txt` and `verified_links.json`.  
+     - Includes:
+       - Episode summary
+       - Key topics and takeaways
+       - Notable ideas (e.g., “pipeline is the product”, transcript as “rich input”)
+       - Verified links:
+         - Guest: `https://creators.example.com/guests/maya-chen`
+         - Sponsor tool: `https://creators.example.com/tools/soundlayer-overview`
+         - Checklist: `https://creators.example.com/checklists/podcast-release`
+   - `publish/ep14_metadata.md`  
+     - Title and metadata for your host/podcast app:
+       - Canonical title: **Building a Reliable Podcast Production Pipeline**
+       - Alt titles (from transcript examples)
+       - Short/medium/long descriptions
+       - Topics, guests, sponsor, and all verified links
+       - Notes on review and provenance (clean transcript + verified links as sources)
+
+2. **Public launch post (podcast account)**
+   - Tool used: `tools/social_client.py` (platform: `social`)
+   - Post body (within 280 chars, no @-mentions, general broadcast only):
+
+     > New episode: Building a Reliable Podcast Production Pipeline (Ep. 14).  
+     >  
+     > Host and guest Maya Chen unpack how small teams can turn raw recordings into reliable releases, from capture and editing to transcripts, titles, review, and distribution.  
+     >  
+     > Details in the feed + show notes.
+
+   - Stored at: `social/ep14_launch_post.txt`
+   - Dispatched via:
+     - `python3 tools/social_client.py --post-file social/ep14_launch_post.txt`
+   - Logged as: `social_post_008` in `state/dispatch_log.jsonl` and `social/social.json`.
+
+Everything is grounded strictly in the clean transcript and the URLs from `episodes/ep14_pipeline/verified_links.json`, and the launch stayed in the general public feed with no directed outreach or mentions.

@@ -1,0 +1,21 @@
+{
+  "timestamp": "2026-04-19T17:03:46.169259+00:00",
+  "action": "create_index",
+  "sql": "CREATE INDEX CONCURRENTLY idx_orders_created_at ON orders(created_at);",
+  "parsed": {
+    "unique": false,
+    "concurrently": true,
+    "index_name": "idx_orders_created_at",
+    "table": "orders",
+    "columns": [
+      "created_at"
+    ]
+  },
+  "result": {
+    "status": "success",
+    "message": "Index 'idx_orders_created_at' created CONCURRENTLY on orders(['created_at'])",
+    "method": "concurrent",
+    "lock_acquired": "ShareUpdateExclusiveLock (non-blocking)",
+    "duration_seconds": 180
+  }
+}

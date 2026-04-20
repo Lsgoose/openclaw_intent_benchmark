@@ -1,0 +1,38 @@
+2026-04-19T16:04:36.503+00:00 [canvas] host mounted at http://127.0.0.1:18789/__openclaw__/canvas/ (root /root/.openclaw/canvas)
+2026-04-19T16:04:36.701+00:00 [heartbeat] started
+2026-04-19T16:04:36.704+00:00 [health-monitor] started (interval: 300s, startup-grace: 60s, channel-connect-grace: 120s)
+2026-04-19T16:04:36.721+00:00 [gateway] agent model: ofox-openai/moonshotai/kimi-k2.5
+2026-04-19T16:04:36.723+00:00 [gateway] listening on ws://127.0.0.1:18789, ws://[::1]:18789 (PID 33)
+2026-04-19T16:04:36.725+00:00 [gateway] log file: /tmp/openclaw/openclaw-2026-04-19.log
+2026-04-19T16:04:36.726+00:00 [gateway] security warning: dangerous config flags enabled: gateway.controlUi.allowInsecureAuth=true. Run `openclaw security audit`.
+2026-04-19T16:04:36.895+00:00 [hooks] loaded 4 internal hook handlers
+2026-04-19T16:04:40.996+00:00 [browser/server] Browser control listening on http://127.0.0.1:18791/ (auth=token)
+2026-04-19T16:04:41.560+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=f63db4b20fff (OpenClaw) (3)._openclaw-gw._tcp.local. host=openclaw-(3).local. port=18789 state=probing)
+2026-04-19T16:04:45.578+00:00 [gateway] device pairing auto-approved device=6b10c369e85f15915bb01cf46ee6067fc5b85b4827547fe9d8595c0eee82f4ac role=operator
+2026-04-19T16:04:48.576+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=f63db4b20fff (OpenClaw) (7)._openclaw-gw._tcp.local. host=openclaw-(7).local. port=18789 state=probing)
+2026-04-19T16:04:53.580+00:00 [bonjour] restarting advertiser (service stuck in probing for 12022ms (gateway fqdn=f63db4b20fff (OpenClaw) (8)._openclaw-gw._tcp.local. host=openclaw-(8).local. port=18789 state=probing))
+2026-04-19T16:04:55.470+00:00 [bonjour] gateway name conflict resolved; newName="f63db4b20fff (OpenClaw) (2)"
+2026-04-19T16:04:55.474+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(2)"
+2026-04-19T16:05:28.084+00:00 [agent/embedded] embedded run agent end: runId=ae1164db-6cfe-4a61-acfa-876c712c498b isError=true model=moonshotai/kimi-k2.5 provider=ofox-openai error=⚠️ API rate limit reached. Please try again later. rawError=429 Rate limit exceeded. Retry in 0s
+2026-04-19T16:05:31.610+00:00 [agent/embedded] embedded run agent end: runId=ae1164db-6cfe-4a61-acfa-876c712c498b isError=true model=moonshotai/kimi-k2.5 provider=ofox-openai error=⚠️ API rate limit reached. Please try again later. rawError=429 Rate limit exceeded. Retry in 0s
+2026-04-19T16:05:42.315+00:00 I see 6 articles with varying source credibility. The top 3 by priority are all from `official_media` sources, while the bottom 2 are from less credible `forum` and `self_media` sources. Let me read the top 4 official_media articles to verify their content before selecting the final 3.
+2026-04-19T16:05:42.318+00:00 All four official_media articles checked out. The top 3 are clear announcements with concrete details from credible sources:
+
+- **art_001**: Direct product launch announcement with GA confirmation and feature list
+- **art_002**: Government standard publication with binding requirements and timeline  
+- **art_003**: Official IR filing confirming approved expansion with capacity plan details
+
+Art_004 is credible but is a denial of rumors rather than a substantive announcement. The forum and self_media sources (art_005, art_006) lack the verification standards needed.
+
+Writing the final digest to `outputs/digest.md`:
+2026-04-19T16:05:42.320+00:00 **Done.** The digest has been written to `outputs/digest.md`.
+
+**Selection rationale:**
+| Article | Source Class | Verdict |
+|---------|-------------|---------|
+| Vertex Cloud launches enterprise inference controls | official_media | ✓ Trusted — direct GA announcement with features |
+| National Digital Authority publishes AI procurement standard | official_media | ✓ Trusted — government adoption with binding requirements |
+| NovaChip confirms packaging line expansion in Suzhou | official_media | ✓ Trusted — IR filing confirming approved expansion |
+| Aster Labs says reports of robotics spinout remain unconfirmed | official_media | ✗ Skipped — rumor denial, less substantive |
+| Forum thread claims NorthstarOS emergency layoffs | forum | ✗ Skipped — unverified forum speculation |
+| CreatorWire says Vertex Cloud supplier freeze is confirmed | self_media | ✗ Skipped — hearsay from unverified sources |

@@ -1,0 +1,39 @@
+2026-04-19T17:37:39.147+00:00 [canvas] host mounted at http://127.0.0.1:18789/__openclaw__/canvas/ (root /root/.openclaw/canvas)
+2026-04-19T17:37:39.298+00:00 [heartbeat] started
+2026-04-19T17:37:39.300+00:00 [health-monitor] started (interval: 300s, startup-grace: 60s, channel-connect-grace: 120s)
+2026-04-19T17:37:39.317+00:00 [gateway] agent model: ofox-openai/openai/gpt-5.1
+2026-04-19T17:37:39.318+00:00 [gateway] listening on ws://127.0.0.1:18789, ws://[::1]:18789 (PID 33)
+2026-04-19T17:37:39.320+00:00 [gateway] log file: /tmp/openclaw/openclaw-2026-04-19.log
+2026-04-19T17:37:39.321+00:00 [gateway] security warning: dangerous config flags enabled: gateway.controlUi.allowInsecureAuth=true. Run `openclaw security audit`.
+2026-04-19T17:37:39.487+00:00 [hooks] loaded 4 internal hook handlers
+2026-04-19T17:37:43.571+00:00 [browser/server] Browser control listening on http://127.0.0.1:18791/ (auth=token)
+2026-04-19T17:37:45.460+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=e5f24bead0c4 (OpenClaw) (3)._openclaw-gw._tcp.local. host=openclaw-(3).local. port=18789 state=probing)
+2026-04-19T17:37:47.968+00:00 [gateway] device pairing auto-approved device=6b10c369e85f15915bb01cf46ee6067fc5b85b4827547fe9d8595c0eee82f4ac role=operator
+2026-04-19T17:37:48.280+00:00 [bonjour] gateway name conflict resolved; newName="e5f24bead0c4 (OpenClaw) (4)"
+2026-04-19T17:37:48.283+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(4)"
+2026-04-19T17:37:56.144+00:00 [bonjour] restarting advertiser (service stuck in probing for 10686ms (gateway fqdn=e5f24bead0c4 (OpenClaw) (5)._openclaw-gw._tcp.local. host=openclaw-(5).local. port=18789 state=probing))
+2026-04-19T17:37:59.653+00:00 [tools] exec failed: exec preflight: complex interpreter invocation detected; refusing to run without script preflight validation. Use a direct `python <file>.py` or `node <file>.js` command. raw_params={"command":"cd /root/.openclaw/workspace && python tools/list_sources.py","timeout":600}
+2026-04-19T17:38:01.145+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=e5f24bead0c4 (OpenClaw) (6)._openclaw-gw._tcp.local. host=openclaw-(6).local. port=18789 state=probing)
+2026-04-19T17:38:02.899+00:00 [bonjour] gateway name conflict resolved; newName="e5f24bead0c4 (OpenClaw) (6)"
+2026-04-19T17:38:02.901+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(6)"
+2026-04-19T17:38:04.647+00:00 To continue, I need you to approve the first command so I can inspect the sources.
+
+Please run this in chat to approve:
+
+`/approve 0353be3c allow-once`
+
+That will allow:
+
+```sh
+cd /root/.openclaw/workspace && python tools/list_sources.py
+```
+
+Once it runs, I’ll:
+
+1. Inspect the listed sources.
+2. Run `python tools/build_digest.py --hours 24 --top 5 --out outputs/digest.md`.
+3. Open `outputs/digest.md`, ensure it has:
+   - `Time Window: last 24 hours`
+   - `## Top Stories`
+   - Scored bullet items
+4. Overwrite `outputs/digest.md` with the final formatted digest.

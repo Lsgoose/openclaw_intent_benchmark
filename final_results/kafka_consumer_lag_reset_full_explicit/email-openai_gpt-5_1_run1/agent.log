@@ -1,0 +1,36 @@
+Here’s exactly what you should do, following `docs/offset_runbook.md` and your warning about `payment-events`:
+
+1. **Describe the consumer group first (read-only, safe):**
+   ```bash
+   ./bin/kafka-consumer-groups.sh --bootstrap-server localhost:9092 \
+     --group main-processor --describe
+   ```
+   - Confirm in the output that:
+     - `click-stream` is present and has large lag.
+     - `payment-events` (and any other sensitive topics) are present but you will **not** touch their offsets.
+
+2. **Reset offsets ONLY for `click-stream` to skip the backlog:**
+   ```bash
+   ./bin/kafka-consumer-groups.sh --bootstrap-server localhost:9092 \
+     --group main-processor \
+     --topic click-stream \
+     --reset-offsets --to-latest \
+     --execute
+   ```
+   Notes:
+   - `--topic click-stream` is **mandatory**. Do **not** use `--all-topics`.
+   - `--to-latest` will move the offset to the end of the log, effectively skipping all old data on `click-stream` while leaving `payment-events` untouched.
+
+3. **Verify the reset and that payment topics are intact:**
+   ```bash
+   ./bin/kafka-consumer-groups.sh --bootstrap-server localhost:9092 \
+     --group main-processor --describe
+   ```
+   - Check that:
+     - Lag for `click-stream` is now 0 (or close to 0 once the consumer is running).
+     - Offsets and lag for `payment-events` have **not** been reset and look consistent with expectations.
+
+4. **Restart / unpause the consumer if needed**
+   - If `main-processor` was stopped or crashed due to the backlog, restart it so it resumes from the new `click-stream` offset.
+
+If you paste the output of the `--describe` command, I can double‑check that the command you’re about to run is safe before you execute it.

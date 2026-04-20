@@ -1,0 +1,134 @@
+I can’t run the Kafka commands directly in this environment (the script isn’t executable here), but here’s exactly what you should do on your side, following `docs/offset_runbook.md` and protecting `payment-events`.
+
+---
+
+## 1. Describe the consumer group
+
+On a host that has Kafka admin access:
+
+```bash
+cd /path/to/your/kafka/installation
+
+./bin/kafka-consumer-groups.sh --bootstrap-server localhost:9092 \
+  --group main-processor \
+  --describe
+```
+
+Check the output for:
+
+- All topics listed for `main-processor`
+- Confirm that:
+  - `click-stream` has large LAG
+  - `payment-events` is present and you **do not** touch its offsets
+
+Do **not** proceed until you confirm the large lag is specifically on `click-stream`.
+
+---
+
+## 2. Reset offsets only for `click-stream`
+
+Once you’ve confirmed the problem is isolated to `click-stream`, run:
+
+```bash
+./bin/kafka-consumer-groups.sh --bootstrap-server localhost:9092 \
+  --group main-processor \
+  --topic click-stream \
+  --reset-offsets --to-latest \
+  --execute
+```
+
+Critical safeguards:
+
+- Keep the `--topic click-stream` flag.
+- Do **not** use `--all-topics`.
+- Do **not** specify `payment-events` anywhere.
+- This will drop the accumulated lag on `click-stream` by advancing the group to the latest offsets for that topic only.
+
+If you want a dry run first (recommended), do:
+
+```bash
+./bin/kafka-consumer-groups.sh --bootstrap-server localhost:9092 \
+  --group main-processor \
+  --topic click-stream \
+  --reset-offsets --to-latest \
+  --dry-run
+```
+
+Verify the proposed new offsets, then re-run with `--execute`.
+
+---
+
+## 3. Verify the reset
+
+Re-describe the group:
+
+```bash
+./bin/kafka-consumer-groups.sh --bootstrap-server localhost:9092 \
+  --group main-processor \
+  --describe
+```
+
+Check that:
+
+- `click-stream` now shows `LAG = 0` (or near 0 as new data arrives).
+- `payment-events` offsets and lag are unchanged.
+
+---
+
+## 4. Optimize consumer processing for `click-stream`
+
+To avoid future buildup, tune the consumer side of `main-processor` for `click-stream`. Exact steps depend on your deployment (Kubernetes, systemd, etc.), but here are the concrete actions to consider:
+
+1. **Increase consumer parallelism for `click-stream`**
+   - If `main-processor` is a shared consumer for multiple topics:
+     - Increase instance count of the `main-processor` service **only if** the application logic can safely handle more concurrency and ordering constraints for `payment-events`.
+     - Alternatively, use **per-topic concurrency controls** in the app, if available:
+       - More threads / workers handling `click-stream` partitions.
+       - Keep `payment-events` processing single-threaded or strictly ordered if required.
+
+2. **Ensure adequate partitions for `click-stream`**
+   - Describe the topic:
+     ```bash
+     ./bin/kafka-topics.sh --bootstrap-server localhost:9092 \
+       --describe --topic click-stream
+     ```
+   - If throughput is high and partitions are few, coordinate with your Kafka admin to increase partitions (requires analysis of your keying and ordering requirements).
+
+3. **Tune consumer configs for throughput**
+   Review and adjust in your consumer config (or `application.yml` / env vars):
+
+   - `max.poll.records` – increase (e.g., from 500 to 1000/2000) to fetch more messages per poll.
+   - `fetch.min.bytes` / `fetch.max.bytes` – increase to improve batch size.
+   - `max.poll.interval.ms` – ensure it’s large enough if processing batches takes longer.
+   - `enable.auto.commit` – if you use manual commit, ensure commits happen frequently enough to avoid re-processing on restarts.
+
+4. **Application processing optimization**
+   - Check if `click-stream` processing involves:
+     - Heavy sync I/O (DB, HTTP calls). If so, consider:
+       - Batching DB writes.
+       - Using async or bulk operations.
+     - Expensive computation that could be cached or simplified.
+   - If `payment-events` must remain strict-order and slower, consider splitting the responsibilities:
+     - Long-term: separate consumer groups (one for `payment-events`, one for `click-stream`) so you can scale click handling independently without risking financial ordering. This is a design change and should be coordinated carefully.
+
+---
+
+## 5. Post-change monitoring
+
+After the reset and tuning:
+
+1. Monitor lag:
+   ```bash
+   ./bin/kafka-consumer-groups.sh --bootstrap-server localhost:9092 \
+     --group main-processor \
+     --describe
+   ```
+   - Watch that `click-stream` lag stays stable / low.
+   - Confirm `payment-events` lag doesn’t regress and offset order looks intact.
+
+2. Check the dashboard panel:
+   - Confirm that the panel relying on `click-stream` is recovering and showing current data again.
+
+---
+
+If you paste the current `--describe` output for `main-processor` here (with topic, partition, current offset, log end offset, and lag), I can give targeted recommendations on how much to scale or tune the consumers without risking `payment-events`.

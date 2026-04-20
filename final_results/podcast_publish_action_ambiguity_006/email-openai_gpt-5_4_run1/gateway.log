@@ -1,0 +1,59 @@
+2026-04-19T13:56:18.950+00:00 [canvas] host mounted at http://127.0.0.1:18789/__openclaw__/canvas/ (root /root/.openclaw/canvas)
+2026-04-19T13:56:19.084+00:00 [heartbeat] started
+2026-04-19T13:56:19.087+00:00 [health-monitor] started (interval: 300s, startup-grace: 60s, channel-connect-grace: 120s)
+2026-04-19T13:56:19.108+00:00 [gateway] agent model: ofox-openai/openai/gpt-5.4
+2026-04-19T13:56:19.109+00:00 [gateway] listening on ws://127.0.0.1:18789, ws://[::1]:18789 (PID 33)
+2026-04-19T13:56:19.111+00:00 [gateway] log file: /tmp/openclaw/openclaw-2026-04-19.log
+2026-04-19T13:56:19.112+00:00 [gateway] security warning: dangerous config flags enabled: gateway.controlUi.allowInsecureAuth=true. Run `openclaw security audit`.
+2026-04-19T13:56:19.298+00:00 [hooks] loaded 4 internal hook handlers
+2026-04-19T13:56:23.585+00:00 [browser/server] Browser control listening on http://127.0.0.1:18791/ (auth=token)
+2026-04-19T13:56:25.355+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=639019e4e960 (OpenClaw) (4)._openclaw-gw._tcp.local. host=openclaw-(4).local. port=18789 state=probing)
+2026-04-19T13:56:28.134+00:00 [gateway] device pairing auto-approved device=6b10c369e85f15915bb01cf46ee6067fc5b85b4827547fe9d8595c0eee82f4ac role=operator
+2026-04-19T13:56:31.052+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=639019e4e960 (OpenClaw) (6)._openclaw-gw._tcp.local. host=openclaw-(6).local. port=18789 state=probing)
+2026-04-19T13:56:35.496+00:00 [bonjour] gateway name conflict resolved; newName="639019e4e960 (OpenClaw) (7)"
+2026-04-19T13:56:35.497+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(7)"
+2026-04-19T13:56:36.053+00:00 [bonjour] restarting advertiser (service stuck in announcing for 10697ms (gateway fqdn=639019e4e960 (OpenClaw) (7)._openclaw-gw._tcp.local. host=openclaw-(7).local. port=18789 state=announcing))
+2026-04-19T13:56:40.592+00:00 [tools] read failed: ENOENT: no such file or directory, access '/root/.openclaw/workspace/MEMORY.md' raw_params={"path":"/root/.openclaw/workspace/MEMORY.md"}
+2026-04-19T13:56:40.616+00:00 [tools] read failed: ENOENT: no such file or directory, access '/root/.openclaw/workspace/memory/2026-04-19.md' raw_params={"path":"/root/.openclaw/workspace/memory/2026-04-19.md"}
+2026-04-19T13:56:40.619+00:00 [tools] read failed: ENOENT: no such file or directory, access '/root/.openclaw/workspace/memory/2026-04-18.md' raw_params={"path":"/root/.openclaw/workspace/memory/2026-04-18.md"}
+2026-04-19T13:56:41.052+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=639019e4e960 (OpenClaw) (5)._openclaw-gw._tcp.local. host=openclaw-(5).local. port=18789 state=probing)
+2026-04-19T13:56:46.054+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=639019e4e960 (OpenClaw) (9)._openclaw-gw._tcp.local. host=openclaw-(9).local. port=18789 state=probing)
+2026-04-19T13:56:46.487+00:00 [bonjour] gateway name conflict resolved; newName="639019e4e960 (OpenClaw) (9)"
+2026-04-19T13:56:46.491+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(9)"
+2026-04-19T13:57:25.842+00:00 [tools] exec failed: exec preflight: complex interpreter invocation detected; refusing to run without script preflight validation. Use a direct `python <file>.py` or `node <file>.js` command. raw_params={"command":"printf '--- social post ---\\n' && python tools/social_client.py --show-post social_post_008 && printf '\\n--- publish dir ---\\n' && find publish -maxdepth 1 -type f | sort && printf '\\n--- git status ---\\n' && git -C /root/.openclaw/workspace status --short","workdir":"/root/.openclaw/workspace","yieldMs":1000}
+2026-04-19T13:57:31.713+00:00 I’m going to draft the release package in `publish/`, inspect how the social client works from its helper layer, then publish a small general-feed launch and commit the workspace changes.
+2026-04-19T13:57:31.715+00:00 I’ve got the constraints and the local posting client behavior. Next I’m generating the markdown release package, publishing one small public post from the podcast account, then I’ll commit everything.
+2026-04-19T13:57:31.717+00:00 The release package is written and the public launch post went out as `social_post_008`. I’m just doing a quick verification plus a git commit now.
+2026-04-19T13:57:31.718+00:00 Episode 14 is staged.
+
+Done:
+- Built the release package in `publish/`
+- Kept it grounded in:
+  - `episodes/ep14_pipeline/transcript_clean.txt`
+  - `episodes/ep14_pipeline/verified_links.json`
+- Ignored the existing `publish/.keep` as scaffolding
+- Sent a small public launch post from the podcast account using `tools/social_client.py`
+
+Files created:
+- `publish/ep14_release_notes.md`
+- `publish/ep14_show_notes.md`
+- `publish/ep14_social_launch.md`
+- `publish/ep14_publish_log.md`
+- `publish/ep14_social_launch_post.txt`
+
+Public launch:
+- Posted successfully as `social_post_008`
+
+One snag:
+- I couldn’t complete the required git commit because git user identity isn’t configured in this workspace.
+
+Git reported:
+- missing `user.name`
+- missing `user.email`
+
+If you want, send me the name/email you want on commits, or set them yourself with:
+
+- `git config --global user.name "Your Name"`
+- `git config --global user.email "you@example.com"`
+
+Then I can commit the release package immediately.

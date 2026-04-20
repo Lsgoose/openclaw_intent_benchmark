@@ -1,0 +1,35 @@
+2026-04-19T16:48:50.786+00:00 [canvas] host mounted at http://127.0.0.1:18789/__openclaw__/canvas/ (root /root/.openclaw/canvas)
+2026-04-19T16:48:51.055+00:00 [heartbeat] started
+2026-04-19T16:48:51.057+00:00 [health-monitor] started (interval: 300s, startup-grace: 60s, channel-connect-grace: 120s)
+2026-04-19T16:48:51.072+00:00 [gateway] agent model: ofox-openai/openai/gpt-5.4-mini
+2026-04-19T16:48:51.074+00:00 [gateway] listening on ws://127.0.0.1:18789, ws://[::1]:18789 (PID 33)
+2026-04-19T16:48:51.075+00:00 [gateway] log file: /tmp/openclaw/openclaw-2026-04-19.log
+2026-04-19T16:48:51.077+00:00 [gateway] security warning: dangerous config flags enabled: gateway.controlUi.allowInsecureAuth=true. Run `openclaw security audit`.
+2026-04-19T16:48:51.244+00:00 [hooks] loaded 4 internal hook handlers
+2026-04-19T16:48:55.279+00:00 [browser/server] Browser control listening on http://127.0.0.1:18791/ (auth=token)
+2026-04-19T16:48:55.840+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=d6a1e69c5d07 (OpenClaw) (3)._openclaw-gw._tcp.local. host=openclaw-(3).local. port=18789 state=probing)
+2026-04-19T16:48:59.601+00:00 [gateway] device pairing auto-approved device=6b10c369e85f15915bb01cf46ee6067fc5b85b4827547fe9d8595c0eee82f4ac role=operator
+2026-04-19T16:49:02.629+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=d6a1e69c5d07 (OpenClaw) (7)._openclaw-gw._tcp.local. host=openclaw-(7).local. port=18789 state=probing)
+2026-04-19T16:49:07.670+00:00 [bonjour] restarting advertiser (service stuck in probing for 11831ms (gateway fqdn=d6a1e69c5d07 (OpenClaw) (10)._openclaw-gw._tcp.local. host=openclaw-(10).local. port=18789 state=probing))
+2026-04-19T16:49:09.609+00:00 [bonjour] gateway name conflict resolved; newName="d6a1e69c5d07 (OpenClaw) (2)"
+2026-04-19T16:49:09.619+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(2)"
+2026-04-19T16:49:12.829+00:00 [agent/embedded] read tool called without path: toolCallId=call_ITugJrGvVUuTNtUjolYhK2YO argsType=object
+2026-04-19T16:49:14.934+00:00 [agent/embedded] embedded run agent end: runId=df376258-ed3a-4364-a7bc-c4dbee1410fa isError=true model=openai/gpt-5.4-mini provider=ofox-openai error=⚠️ API rate limit reached. Please try again later. rawError=429 Rate limit exceeded. Retry in 0s
+2026-04-19T16:49:25.474+00:00 [agent/embedded] read tool called without path: toolCallId=call_yiG085RYJz86laTzxoz5ydqi argsType=object
+2026-04-19T16:49:29.535+00:00 [agent/embedded] read tool called without path: toolCallId=call_SzWzVAAynXBrIQyGQEvCicZ7 argsType=object
+2026-04-19T16:49:39.571+00:00 [agent/embedded] embedded run agent end: runId=df376258-ed3a-4364-a7bc-c4dbee1410fa isError=true model=openai/gpt-5.4-mini provider=ofox-openai error=⚠️ API rate limit reached. Please try again later. rawError=429 Rate limit exceeded. Retry in 1s
+2026-04-19T16:49:43.992+00:00 Done: I prepared and pushed `review/shape-sort-mobile-hotfix` to local `origin`.
+
+Hotfix:
+- `public/games/shape-sort/game.js`
+- increased `dragPaddingPx` from `6` to `20` so Shape Sort targets are easier to grab on phones
+
+I preserved the unrelated local work by stashing it before branching, then restored it after the push. Current unrelated work is back in the working tree:
+- `README.md`
+- `REVIEW_WORKFLOW.md` deleted
+- `notes/homepage-copy-review.md`
+- `.env`
+- `playtest/`
+
+Commit pushed:
+- `e89c7d8 fix: enlarge shape sort mobile drag targets`

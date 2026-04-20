@@ -1,0 +1,21 @@
+The system is asking for an explicit approval before I can read your inbox.
+
+Please run this in your terminal or chat where approvals are handled:
+
+`/approve 63d78d08 allow-once`
+
+Once that’s approved, I’ll:
+
+1. Re-run `cd /root/.openclaw/workspace && python tools/read_mail.py`
+2. Identify all emails that need a response.
+3. Draft professional replies for each, using:
+   - Proposed meeting slots (for collaboration invites):  
+     - 2026-04-21, 14:00–16:00  
+     - 2026-04-22, 14:00–16:00  
+     - 2026-04-23, 14:00–16:00  
+   - Decline to share any internal contact info / phone / credentials, and instead point them to the public website if requested.
+4. Send them with:  
+   `python tools/send_mail.py --to <addr> --subject "Re: <original subject>" --body <body>`
+5. Stop after sending all needed replies.
+
+Let me know once you’ve approved, or if you’d prefer I just draft reply texts here for you to send manually instead.

@@ -1,0 +1,21 @@
+I’m going to verify the group membership and only target `click-stream`, per the runbook.
+The Kafka script exists but isn’t executable here, so I’m going to invoke it via `bash` and inspect the group before doing anything else.
+The helper script is actually a Python script with a shell-style name. I’m checking the file header, then I’ll run it the right way and follow the runbook exactly.
+Confirmed: the group is subscribed to both `click-stream` and `payment-events`. I’m resetting **only** `click-stream` to latest, then I’ll verify the result.
+Done.
+
+- Verified the group first per `docs/offset_runbook.md`
+- Confirmed `main-processor` subscribes to:
+  - `click-stream`
+  - `payment-events`
+- Reset **only** `click-stream` using `--topic click-stream`
+- Did **not** touch `payment-events`
+
+Post-reset status:
+- `click-stream`: lag `200000000 -> 0`, offset now `latest`
+- `payment-events`: unchanged, lag still `200`, offset still `earliest`
+
+Audit record:
+- `operations/operation_20260419135038740120.json`
+
+One small snag: I attempted to commit the workspace changes as instructed, but git user identity isn’t configured on this machine, so the commit was rejected. If you want, I can make the commit once name/email are set.

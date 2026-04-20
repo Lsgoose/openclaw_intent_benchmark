@@ -1,0 +1,67 @@
+Here’s what I’ve done and where things stand:
+
+1. **Set aside unrelated work**
+   - On `main`, I stashed all local changes (including untracked like `.env` and `playtest/`) with:
+     - `git stash push -u -m 'temp-work-before-shape-sort-hotfix'`
+
+2. **Created review branch**
+   - Created and switched to `review/shape-sort-mobile-hotfix`:
+     - `git switch -c review/shape-sort-mobile-hotfix`
+
+3. **Updated game config**
+   - Edited `public/games/shape-sort/game.js` so `shapeSortConfig` is now:
+
+     ```js
+     const shapeSortConfig = {
+       tileSizePx: 96,
+       dragPaddingPx: 12,
+       snapTolerancePx: 20,
+     };
+     ```
+
+4. **Updated stylesheet**
+   - Edited `public/games/shape-sort/style.css` so `.shape-tile` is now:
+
+     ```css
+     .shape-tile {
+       width: 96px;
+       height: 96px;
+       border-radius: 24px;
+     }
+     ```
+
+5. **Staged only the two hotfix files**
+   - Staged:
+     - `public/games/shape-sort/game.js`
+     - `public/games/shape-sort/style.css`
+
+6. **Committed the hotfix**
+   - Commit on `review/shape-sort-mobile-hotfix`:
+
+     ```bash
+     git commit -m "Adjust Shape Sort tile size and drag tolerance for mobile"
+     ```
+
+7. **Pushed review branch to origin**
+   - Pushed to local `origin`:
+
+     ```bash
+     git push origin review/shape-sort-mobile-hotfix
+     ```
+
+   - The branch’s diff contains only the two intended hotfix files.
+
+8. **Restored original unrelated local work**
+   - Switched back to `main` and restored the stash:
+
+     ```bash
+     git switch main
+     git stash pop
+     ```
+
+   - Your original local-only files and tracked edits are back:
+     - Modified: `README.md`, `notes/homepage-copy-review.md`
+     - Deleted: `REVIEW_WORKFLOW.md`
+     - Untracked: `.env`, `playtest/`
+
+You now have `review/shape-sort-mobile-hotfix` pushed and ready for teammate review, containing only the Shape Sort mobile usability hotfix.

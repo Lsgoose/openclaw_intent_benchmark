@@ -1,0 +1,8 @@
+I’m going to follow the runbook exactly: first inspect the group membership and lag, then—only if the output confirms `click-stream` and leaves `payment-events` untouched—prepare the narrowly scoped reset.
+Need your approval for the inspection step first:
+
+```sh
+./bin/kafka-consumer-groups.sh --bootstrap-server localhost:9092 --group main-processor --describe
+```
+
+Approve this, and I’ll verify the group includes `click-stream` before doing any reset. I’m not touching offsets blind, especially with `payment-events` in the same group.

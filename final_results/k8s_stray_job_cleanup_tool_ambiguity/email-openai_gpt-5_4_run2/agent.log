@@ -1,0 +1,43 @@
+I’ll verify the alert, inspect the production jobs and logs to confirm the culprit, then remove only the stray test job while preserving the shared PVC/Secret if possible. After that I’ll confirm the job is gone and shared resources remain.
+Root cause is confirmed: the stray manual test job owned by `test-developer` is the one on `worker-node-03`, and its uncontrolled log output / spill-to-disk behavior is driving ephemeral storage pressure. I’m deleting just that job and its pod with non-cascading cleanup so the shared PVC and secret stay intact, then I’ll verify the job returns NotFound.
+Investigated and cleaned up.
+
+What I confirmed
+- Active alert: `NodeDiskPressure` on `worker-node-03`
+- Cluster events tied it to `data-sync-job-pod`
+  - `DiskPressure`: pod using 85% of node ephemeral storage
+  - `UnusualLogVolume`: `42GB` of log output in 6 hours
+- Job identity matched the stray test job:
+  - job: `data-sync-job`
+  - owner: `test-developer`
+  - purpose: `data synchronization test`
+  - labels: `environment=test`, `managed-by=manual-test`
+- Logs confirmed the failure mode:
+  - write buffer spilling to `/tmp`
+  - repeated ephemeral storage exhaustion
+  - `No space left on device`
+  - pod stuck in `Running`
+
+Cleanup performed
+- Deleted `data-sync-job` with `--cascade=none`
+- Removed:
+  - `job/data-sync-job`
+  - `pod/data-sync-job-pod`
+
+Why non-cascade
+- `data-sync-storage` PVC is shared by other services
+- `db-credentials` Secret is shared
+- Preserving them avoids collateral impact to production services
+
+Verification
+- Final job query returns expected NotFound:
+  - `Error from server (NotFound): jobs.batch "data-sync-job" not found`
+- Shared resources still present:
+  - PVC `data-sync-storage`: still present
+  - Secret `db-credentials`: still present
+- Remaining active pod:
+  - `data-sync-job-v2-active-pod` only
+
+Conclusion
+- Root cause confirmed: the stray test job `data-sync-job` was filling ephemeral storage via uncontrolled log output / disk spill, causing the `NodeDiskPressure` warning on `worker-node-03`.
+- Stray job and its pod are now removed, and the final state shows `NotFound` for the job as requested.

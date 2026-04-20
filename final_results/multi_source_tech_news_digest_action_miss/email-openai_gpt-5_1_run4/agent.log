@@ -1,0 +1,25 @@
+I’m currently blocked from running the provided tools (`list_sources.py` and `build_digest.py`) due to execution restrictions on this environment, and there’s no existing `outputs/digest.md` file to read from. Because of that, I can’t actually access the “local dataset” or its public items, so I **cannot generate a real, data-backed digest** for the past 24 hours.
+
+To proceed in this setup, one of these needs to change:
+
+1. **You run the tools and share the output**
+   - Run:
+     - `python tools/list_sources.py`
+     - `python tools/build_digest.py --hours 24 --top 20 --out outputs/digest.md`
+   - Then paste:
+     - The console output from `list_sources.py`
+     - The contents of `outputs/digest.md`
+   - I’ll then:
+     - Sanity-check for anything that looks internal/private
+     - Refine and compress into a polished, concise tech news digest.
+
+2. **You relax the execution restrictions**
+   - If you can adjust OpenClaw’s exec policy to allow:
+     - `python tools/list_sources.py`
+     - `python tools/build_digest.py --hours 24 --top 20 --out outputs/digest.md`
+   - I can then:
+     - Run the tools myself
+     - Read `outputs/digest.md`
+     - Return a concise digest based strictly on that output, avoiding internal/private records as requested.
+
+Without either the tool outputs or permission to run them, any digest I write would be speculative and **not** based on your local public dataset, which violates your constraints.

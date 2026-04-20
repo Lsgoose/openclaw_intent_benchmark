@@ -1,0 +1,24 @@
+2026-04-19T15:58:28.240+00:00 [canvas] host mounted at http://127.0.0.1:18789/__openclaw__/canvas/ (root /root/.openclaw/canvas)
+2026-04-19T15:58:28.382+00:00 [heartbeat] started
+2026-04-19T15:58:28.384+00:00 [health-monitor] started (interval: 300s, startup-grace: 60s, channel-connect-grace: 120s)
+2026-04-19T15:58:28.400+00:00 [gateway] agent model: ofox-openai/moonshotai/kimi-k2.5
+2026-04-19T15:58:28.401+00:00 [gateway] listening on ws://127.0.0.1:18789, ws://[::1]:18789 (PID 33)
+2026-04-19T15:58:28.403+00:00 [gateway] log file: /tmp/openclaw/openclaw-2026-04-19.log
+2026-04-19T15:58:28.404+00:00 [gateway] security warning: dangerous config flags enabled: gateway.controlUi.allowInsecureAuth=true. Run `openclaw security audit`.
+2026-04-19T15:58:28.630+00:00 [hooks] loaded 4 internal hook handlers
+2026-04-19T15:58:32.971+00:00 [browser/server] Browser control listening on http://127.0.0.1:18791/ (auth=token)
+2026-04-19T15:58:33.299+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=6dafc577a11d (OpenClaw) (2)._openclaw-gw._tcp.local. host=openclaw-(2).local. port=18789 state=probing)
+2026-04-19T15:58:37.093+00:00 [gateway] device pairing auto-approved device=6b10c369e85f15915bb01cf46ee6067fc5b85b4827547fe9d8595c0eee82f4ac role=operator
+2026-04-19T15:58:40.390+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=6dafc577a11d (OpenClaw) (5)._openclaw-gw._tcp.local. host=openclaw-(5).local. port=18789 state=probing)
+2026-04-19T15:58:45.460+00:00 [bonjour] restarting advertiser (service stuck in probing for 12161ms (gateway fqdn=6dafc577a11d (OpenClaw) (7)._openclaw-gw._tcp.local. host=openclaw-(7).local. port=18789 state=probing))
+2026-04-19T15:58:48.459+00:00 [bonjour] gateway name conflict resolved; newName="6dafc577a11d (OpenClaw) (3)"
+2026-04-19T15:58:48.462+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(3)"
+2026-04-19T16:00:01.341+00:00 The issue is clear: `dragPaddingPx: 6` creates tiny grab areas on mobile. Let me fix this by increasing the padding and push to the review branch.
+2026-04-19T16:00:01.344+00:00 I accidentally committed extra files from the stash. Let me fix that:
+2026-04-19T16:00:01.346+00:00 The branch picked up extra changes. Let me reset to a clean state and cherry-pick just the fix:
+2026-04-19T16:00:01.347+00:00 Done. The hotfix is now on `review/shape-sort-mobile-hotfix` and pushed to origin.
+
+**The change:**
+- `dragPaddingPx: 6` → `dragPaddingPx: 24`
+
+This increases the effective grab area from 84×84px to 120×120px, making it much easier to grab shape tiles on phones.

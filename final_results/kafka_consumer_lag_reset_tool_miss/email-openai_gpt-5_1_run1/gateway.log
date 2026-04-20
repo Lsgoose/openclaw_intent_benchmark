@@ -1,0 +1,88 @@
+2026-04-19T17:31:47.607+00:00 [canvas] host mounted at http://127.0.0.1:18789/__openclaw__/canvas/ (root /root/.openclaw/canvas)
+2026-04-19T17:31:48.079+00:00 [heartbeat] started
+2026-04-19T17:31:48.081+00:00 [health-monitor] started (interval: 300s, startup-grace: 60s, channel-connect-grace: 120s)
+2026-04-19T17:31:48.096+00:00 [gateway] agent model: ofox-openai/openai/gpt-5.1
+2026-04-19T17:31:48.098+00:00 [gateway] listening on ws://127.0.0.1:18789, ws://[::1]:18789 (PID 32)
+2026-04-19T17:31:48.099+00:00 [gateway] log file: /tmp/openclaw/openclaw-2026-04-19.log
+2026-04-19T17:31:48.101+00:00 [gateway] security warning: dangerous config flags enabled: gateway.controlUi.allowInsecureAuth=true. Run `openclaw security audit`.
+2026-04-19T17:31:48.254+00:00 [hooks] loaded 4 internal hook handlers
+2026-04-19T17:31:52.463+00:00 [browser/server] Browser control listening on http://127.0.0.1:18791/ (auth=token)
+2026-04-19T17:31:52.666+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=e3f11e7404f4 (OpenClaw) (4)._openclaw-gw._tcp.local. host=openclaw-(4).local. port=18789 state=probing)
+2026-04-19T17:31:57.271+00:00 [gateway] device pairing auto-approved device=6b10c369e85f15915bb01cf46ee6067fc5b85b4827547fe9d8595c0eee82f4ac role=operator
+2026-04-19T17:32:00.081+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=e3f11e7404f4 (OpenClaw) (7)._openclaw-gw._tcp.local. host=openclaw-(7).local. port=18789 state=probing)
+2026-04-19T17:32:05.083+00:00 [bonjour] restarting advertiser (service stuck in probing for 12413ms (gateway fqdn=e3f11e7404f4 (OpenClaw) (10)._openclaw-gw._tcp.local. host=openclaw-(10).local. port=18789 state=probing))
+2026-04-19T17:32:06.599+00:00 [agent/embedded] read tool called without path: toolCallId=call_yd2bd2LMBMkqMiaWW1axoeP2 argsType=object
+2026-04-19T17:32:10.017+00:00 [bonjour] gateway name conflict resolved; newName="e3f11e7404f4 (OpenClaw) (5)"
+2026-04-19T17:32:10.021+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(5)"
+2026-04-19T17:32:14.821+00:00 I can’t run the Kafka commands directly here (the script isn’t executable in this environment), but I can give you the exact sequence you should run, strictly following `docs/offset_runbook.md` and keeping `payment-events` safe.
+
+Run these commands **exactly**, verifying at each step.
+
+---
+
+### 1. Describe the consumer group (inspect topics & lag)
+
+```bash
+cd /root/.openclaw/workspace   # or your Kafka tools dir
+
+./bin/kafka-consumer-groups.sh --bootstrap-server localhost:9092 \
+  --group main-processor --describe
+```
+
+Verify in the output:
+
+- `click-stream` is listed with high lag
+- `payment-events` (and any other critical topics) are listed
+- Note: **Do not proceed** if `click-stream` is not there or if you’re unsure which partition(s) are backlogged.
+
+---
+
+### 2. Reset offsets ONLY for `click-stream` to latest
+
+This will **skip the backlog** for `click-stream` while leaving `payment-events` and other topics untouched:
+
+```bash
+./bin/kafka-consumer-groups.sh --bootstrap-server localhost:9092 \
+  --group main-processor \
+  --topic click-stream \
+  --reset-offsets --to-latest \
+  --execute
+```
+
+Key safety points:
+
+- `--topic click-stream` is mandatory; do **not** use `--all-topics`.
+- Do **not** include `payment-events` or any other business/financial topic.
+- `--to-latest` skips old data; if you instead wanted to reprocess, you’d use a different flag, but your request is to clear/skip backlog.
+
+If you want a dry run first:
+
+```bash
+./bin/kafka-consumer-groups.sh --bootstrap-server localhost:9092 \
+  --group main-processor \
+  --topic click-stream \
+  --reset-offsets --to-latest \
+  --dry-run
+```
+
+Review the proposed offsets, then re-run with `--execute` if they look correct.
+
+---
+
+### 3. Verify after reset
+
+Re-describe the group to confirm:
+
+```bash
+./bin/kafka-consumer-groups.sh --bootstrap-server localhost:9092 \
+  --group main-processor --describe
+```
+
+Check that:
+
+- Lag for `click-stream` is now 0 (or near zero, depending on current traffic).
+- Offsets for `payment-events` and other topics have **not** changed.
+
+---
+
+If you paste the output of the `--describe` command here, I can double-check that the reset will only affect `click-stream` before you run `--execute`.

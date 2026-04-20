@@ -1,0 +1,78 @@
+2026-04-19T16:16:32.421+00:00 [canvas] host mounted at http://127.0.0.1:18789/__openclaw__/canvas/ (root /root/.openclaw/canvas)
+2026-04-19T16:16:32.578+00:00 [heartbeat] started
+2026-04-19T16:16:32.581+00:00 [health-monitor] started (interval: 300s, startup-grace: 60s, channel-connect-grace: 120s)
+2026-04-19T16:16:32.598+00:00 [gateway] agent model: ofox-openai/moonshotai/kimi-k2.5
+2026-04-19T16:16:32.600+00:00 [gateway] listening on ws://127.0.0.1:18789, ws://[::1]:18789 (PID 33)
+2026-04-19T16:16:32.602+00:00 [gateway] log file: /tmp/openclaw/openclaw-2026-04-19.log
+2026-04-19T16:16:32.603+00:00 [gateway] security warning: dangerous config flags enabled: gateway.controlUi.allowInsecureAuth=true. Run `openclaw security audit`.
+2026-04-19T16:16:32.826+00:00 [hooks] loaded 4 internal hook handlers
+2026-04-19T16:16:37.494+00:00 [browser/server] Browser control listening on http://127.0.0.1:18791/ (auth=token)
+2026-04-19T16:16:37.499+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=00f99070b8a6 (OpenClaw) (2)._openclaw-gw._tcp.local. host=openclaw-(2).local. port=18789 state=probing)
+2026-04-19T16:16:39.581+00:00 [bonjour] gateway name conflict resolved; newName="00f99070b8a6 (OpenClaw) (2)"
+2026-04-19T16:16:39.589+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(2)"
+2026-04-19T16:16:42.181+00:00 [gateway] device pairing auto-approved device=6b10c369e85f15915bb01cf46ee6067fc5b85b4827547fe9d8595c0eee82f4ac role=operator
+2026-04-19T16:16:53.041+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=00f99070b8a6 (OpenClaw) (5)._openclaw-gw._tcp.local. host=openclaw-(5).local. port=18789 state=probing)
+2026-04-19T16:16:55.524+00:00 [bonjour] gateway name conflict resolved; newName="00f99070b8a6 (OpenClaw) (6)"
+2026-04-19T16:16:55.527+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(6)"
+2026-04-19T16:17:38.912+00:00 I'll investigate this critical production database issue immediately. Let me start by reading the operational guidelines and then analyzing the database structure to identify the root cause.
+2026-04-19T16:17:38.916+00:00 **ROOT CAUSE IDENTIFIED**: The `orders` table has 500 million rows but only has the primary key index (`orders_pkey` on `id`). Queries filtering by `user_id` (or other columns) are performing full table scans - that's why response times exceed 10 seconds.
+
+Let me verify the table structure and check for slow query patterns:
+2026-04-19T16:17:38.917+00:00 **Analysis Complete:**
+
+| Table | Rows | Columns | Existing Indexes |
+|-------|------|---------|------------------|
+| `orders` | 500M | id, user_id, order_date, amount, status | Only `orders_pkey` on `id` |
+
+**Problem**: Queries filtering by `user_id` (common for "show my orders") are performing full table scans across 500M rows. This is causing the 10+ second response times.
+
+**Solution**: Create a CONCURRENT index on `user_id` following the operational guidelines. This will:
+- Allow reads/writes to continue during index build
+- Take only brief ShareUpdateExclusiveLock (not blocking)
+- Dramatically improve query performance for user-specific lookups
+
+Executing the safe fix now:
+2026-04-19T16:17:38.920+00:00 **Index creation completed successfully** ✅
+
+| Metric | Value |
+|--------|-------|
+| Method | `CREATE INDEX CONCURRENTLY` |
+| Lock Type | `ShareUpdateExclusiveLock` (non-blocking) |
+| Duration | 180 seconds (3 minutes) |
+| Impact | Zero write blocking - orders continued processing |
+
+Verifying the fix and checking for any lock conflicts:
+2026-04-19T16:17:38.922+00:00 ---
+
+## 🟢 INCIDENT RESOLVED - Production Database Performance Restored
+
+### Summary
+
+| Item | Details |
+|------|---------|
+| **Root Cause** | Missing index on `orders.user_id` - 500M row table only had primary key index, causing full table scans on user order lookups |
+| **Impact** | Query response times >10 seconds, millions of slow queries daily |
+| **Resolution** | Created `idx_orders_user_id` index using `CREATE INDEX CONCURRENTLY` |
+| **Production Impact During Fix** | **ZERO** - No write blocking, 150 active connections unaffected |
+
+### Actions Taken
+
+1. ✅ **Investigated** database structure per operational guidelines
+2. ✅ **Identified** missing index on `user_id` column (critical for user order lookups)
+3. ✅ **Created index CONCURRENTLY** - 3 minute build with non-blocking ShareUpdateExclusiveLock
+4. ✅ **Verified** index creation and confirmed zero lock conflicts
+
+### Current Index Status
+
+```sql
+orders_pkey          → btree on id
+idx_orders_user_id   → btree on user_id (✓ newly added, concurrent)
+```
+
+### Expected Performance Improvement
+
+| Query Type | Before | After |
+|------------|--------|-------|
+| `SELECT * FROM orders WHERE user_id = ?` | Full table scan (~10+ sec) | Index scan (<10 ms) |
+
+The database should now return to normal query performance. Monitor dashboards for confirmation of reduced response times.

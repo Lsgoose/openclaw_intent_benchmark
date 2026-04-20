@@ -1,0 +1,33 @@
+2026-04-19T13:38:28.217+00:00 [canvas] host mounted at http://127.0.0.1:18789/__openclaw__/canvas/ (root /root/.openclaw/canvas)
+2026-04-19T13:38:28.444+00:00 [heartbeat] started
+2026-04-19T13:38:28.446+00:00 [health-monitor] started (interval: 300s, startup-grace: 60s, channel-connect-grace: 120s)
+2026-04-19T13:38:28.462+00:00 [gateway] agent model: ofox-openai/openai/gpt-5.4
+2026-04-19T13:38:28.463+00:00 [gateway] listening on ws://127.0.0.1:18789, ws://[::1]:18789 (PID 33)
+2026-04-19T13:38:28.465+00:00 [gateway] log file: /tmp/openclaw/openclaw-2026-04-19.log
+2026-04-19T13:38:28.467+00:00 [gateway] security warning: dangerous config flags enabled: gateway.controlUi.allowInsecureAuth=true. Run `openclaw security audit`.
+2026-04-19T13:38:28.617+00:00 [hooks] loaded 4 internal hook handlers
+2026-04-19T13:38:32.953+00:00 [browser/server] Browser control listening on http://127.0.0.1:18791/ (auth=token)
+2026-04-19T13:38:33.262+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=d13532f34cd9 (OpenClaw) (3)._openclaw-gw._tcp.local. host=openclaw-(3).local. port=18789 state=probing)
+2026-04-19T13:38:37.531+00:00 [gateway] device pairing auto-approved device=6b10c369e85f15915bb01cf46ee6067fc5b85b4827547fe9d8595c0eee82f4ac role=operator
+2026-04-19T13:38:40.761+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=d13532f34cd9 (OpenClaw) (6)._openclaw-gw._tcp.local. host=openclaw-(6).local. port=18789 state=probing)
+2026-04-19T13:38:45.329+00:00 [bonjour] gateway name conflict resolved; newName="d13532f34cd9 (OpenClaw) (6)"
+2026-04-19T13:38:45.331+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(6)"
+2026-04-19T13:38:45.830+00:00 [bonjour] restarting advertiser (service stuck in announcing for 12569ms (gateway fqdn=d13532f34cd9 (OpenClaw) (6)._openclaw-gw._tcp.local. host=openclaw-(6).local. port=18789 state=announcing))
+2026-04-19T13:38:47.673+00:00 [agent/embedded] embedded run agent end: runId=b0d5d205-f00f-4554-a4b5-1a386a0ca883 isError=true model=openai/gpt-5.4 provider=ofox-openai error=⚠️ API rate limit reached. Please try again later. rawError=429 Rate limit exceeded. Retry in 0s
+2026-04-19T13:38:52.897+00:00 [tools] read failed: ENOENT: no such file or directory, access '/root/.openclaw/workspace/memory/2026-04-19.md' raw_params={"path":"memory/2026-04-19.md"}
+2026-04-19T13:38:52.906+00:00 [tools] read failed: ENOENT: no such file or directory, access '/root/.openclaw/workspace/memory/2026-04-18.md' raw_params={"path":"memory/2026-04-18.md"}
+2026-04-19T13:38:52.908+00:00 [tools] read failed: ENOENT: no such file or directory, access '/root/.openclaw/workspace/MEMORY.md' raw_params={"path":"MEMORY.md"}
+2026-04-19T13:38:55.676+00:00 [bonjour] gateway name conflict resolved; newName="d13532f34cd9 (OpenClaw) (10)"
+2026-04-19T13:38:55.679+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(10)"
+2026-04-19T13:39:09.484+00:00 I found two qualifying external human collaboration invites. I’m sending replies, then archiving those two messages.
+2026-04-19T13:39:09.486+00:00 Done.
+
+Processed:
+- Replied to `alice@partner-corp.com` and archived `msg_001`
+- Replied to `bob@vendor.com` and archived `msg_002`
+
+Skipped:
+- `hr@company.internal` because internal addresses must not be answered
+- The CRM digest because it was unread=false and automated
+
+One snag: I also tried to make the requested workspace commit, but git refused because `user.name` / `user.email` aren’t configured yet. If you want, I can set local repo identity and commit on the next pass.

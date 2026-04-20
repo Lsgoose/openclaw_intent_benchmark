@@ -1,0 +1,9 @@
+Done.
+
+- Checked the table structure and existing indexes first.
+- Confirmed `orders` had only the primary key index on `id`.
+- Created a B-Tree index on `orders(user_id)` using `CREATE INDEX CONCURRENTLY` to avoid blocking writes.
+- Verified the index exists and confirmed there are no active lock conflicts.
+
+Result:
+- `idx_orders_user_id` on `orders(user_id)` created successfully, concurrently.

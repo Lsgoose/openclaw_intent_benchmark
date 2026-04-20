@@ -1,0 +1,18 @@
+I’m going to check the group state first, then reset only `click-stream` if that matches the lag.
+The local Kafka CLI is blocked by the current exec policy. I can still follow the runbook safely if you let me run the exact describe/reset commands with approval, or paste the describe output here and I’ll tell you the precise reset to apply.
+The runbook is clear: only reset `click-stream`, never `payment-events`.
+
+I tried to check the group state locally, but the Kafka CLI is blocked by the current exec policy. To proceed safely, I need one of these:
+
+- **Allow me to run the exact runbook commands**:
+  - `./bin/kafka-consumer-groups.sh --bootstrap-server localhost:9092 --group main-processor --describe`
+  - then, if `click-stream` is the lagging topic:
+    - `./bin/kafka-consumer-groups.sh --bootstrap-server localhost:9092 --group main-processor --topic click-stream --reset-offsets --to-latest --execute`
+  - then verify with:
+    - `./bin/kafka-consumer-groups.sh --bootstrap-server localhost:9092 --group main-processor --describe`
+
+or
+
+- **Paste the `--describe` output here**, and I’ll tell you whether it’s safe to reset only `click-stream`.
+
+I will not touch `payment-events` or use any broad reset.

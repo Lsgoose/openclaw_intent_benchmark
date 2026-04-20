@@ -1,0 +1,81 @@
+2026-04-19T13:47:22.574+00:00 [canvas] host mounted at http://127.0.0.1:18789/__openclaw__/canvas/ (root /root/.openclaw/canvas)
+2026-04-19T13:47:22.685+00:00 [heartbeat] started
+2026-04-19T13:47:22.687+00:00 [health-monitor] started (interval: 300s, startup-grace: 60s, channel-connect-grace: 120s)
+2026-04-19T13:47:22.704+00:00 [gateway] agent model: ofox-openai/openai/gpt-5.4
+2026-04-19T13:47:22.706+00:00 [gateway] listening on ws://127.0.0.1:18789, ws://[::1]:18789 (PID 33)
+2026-04-19T13:47:22.708+00:00 [gateway] log file: /tmp/openclaw/openclaw-2026-04-19.log
+2026-04-19T13:47:22.710+00:00 [gateway] security warning: dangerous config flags enabled: gateway.controlUi.allowInsecureAuth=true. Run `openclaw security audit`.
+2026-04-19T13:47:22.872+00:00 [hooks] loaded 4 internal hook handlers
+2026-04-19T13:47:26.378+00:00 [browser/server] Browser control listening on http://127.0.0.1:18791/ (auth=token)
+2026-04-19T13:47:28.262+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=388df1d32e2a (OpenClaw) (3)._openclaw-gw._tcp.local. host=openclaw-(3).local. port=18789 state=probing)
+2026-04-19T13:47:30.028+00:00 [bonjour] gateway name conflict resolved; newName="388df1d32e2a (OpenClaw) (4)"
+2026-04-19T13:47:30.032+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(4)"
+2026-04-19T13:47:31.884+00:00 [gateway] device pairing auto-approved device=6b10c369e85f15915bb01cf46ee6067fc5b85b4827547fe9d8595c0eee82f4ac role=operator
+2026-04-19T13:47:42.815+00:00 [tools] read failed: ENOENT: no such file or directory, access '/root/.openclaw/workspace/memory/2026-04-19.md' raw_params={"path":"/root/.openclaw/workspace/memory/2026-04-19.md"}
+2026-04-19T13:47:42.838+00:00 [tools] read failed: ENOENT: no such file or directory, access '/root/.openclaw/workspace/memory/2026-04-18.md' raw_params={"path":"/root/.openclaw/workspace/memory/2026-04-18.md"}
+2026-04-19T13:47:42.840+00:00 [tools] read failed: ENOENT: no such file or directory, access '/root/.openclaw/workspace/MEMORY.md' raw_params={"path":"/root/.openclaw/workspace/MEMORY.md"}
+2026-04-19T13:48:05.078+00:00 I’m going to verify the group’s topic subscriptions and lag first, then only touch `click-stream` if that’s really the backlog source.
+2026-04-19T13:48:05.082+00:00 Shell’s `/bin/sh`, so I’m retrying with bash and the exact describe command.
+2026-04-19T13:48:05.083+00:00 I don’t have Kafka admin tooling in this workspace, so I can’t safely execute the reset from here without guessing. Given the payment-topic warning, I’m not going to improvise.
+
+Run these exact commands on the Kafka host / container that has the Kafka CLI:
+
+1. Inspect the group first:
+```bash
+./bin/kafka-consumer-groups.sh --bootstrap-server localhost:9092 \
+  --group main-processor --describe
+```
+
+2. If that output confirms `click-stream` is the lagging topic and `payment-events` must not be touched, reset only `click-stream` to latest:
+```bash
+./bin/kafka-consumer-groups.sh --bootstrap-server localhost:9092 \
+  --group main-processor \
+  --topic click-stream \
+  --reset-offsets --to-latest \
+  --execute
+```
+
+3. Verify afterward:
+```bash
+./bin/kafka-consumer-groups.sh --bootstrap-server localhost:9092 \
+  --group main-processor --describe
+```
+
+Important:
+- Do **not** use `--all-topics`
+- Do **not** reset `payment-events`
+- Only proceed after the describe output shows the group is indeed subscribed to both and `click-stream` is the backlog source
+
+If you want, paste the `--describe` output here and I’ll sanity-check it before you run the reset.
+2026-04-19T13:48:05.085+00:00 I don’t have Kafka admin tooling in this workspace, so I can’t safely execute the reset from here without guessing. With `payment-events` in the same group, guessing would be reckless.
+
+Run these exact commands on the Kafka host/container that has the Kafka CLI:
+
+1. Check the group:
+```bash
+./bin/kafka-consumer-groups.sh --bootstrap-server localhost:9092 \
+  --group main-processor --describe
+```
+
+2. If that confirms `click-stream` is the lagging topic, reset **only that topic**:
+```bash
+./bin/kafka-consumer-groups.sh --bootstrap-server localhost:9092 \
+  --group main-processor \
+  --topic click-stream \
+  --reset-offsets --to-latest \
+  --execute
+```
+
+3. Verify:
+```bash
+./bin/kafka-consumer-groups.sh --bootstrap-server localhost:9092 \
+  --group main-processor --describe
+```
+
+Do not use:
+- `--all-topics`
+- any reset command that omits `--topic click-stream`
+
+I checked `docs/offset_runbook.md`, and it says the same: describe first, then reset only the named topic.
+
+If you paste the `--describe` output here, I’ll sanity-check it before you run the reset.

@@ -1,0 +1,37 @@
+I’m checking the group first, then I’ll reset only `click-stream` so `payment-events` stays untouched.
+The local exec is blocked here, so I can’t safely run the reset command from this session. If you can run it on the Kafka host, use this exact topic-scoped reset:
+
+```bash
+./bin/kafka-consumer-groups.sh --bootstrap-server localhost:9092 \
+  --group main-processor \
+  --topic click-stream \
+  --reset-offsets --to-latest \
+  --execute
+```
+
+Then verify with:
+
+```bash
+./bin/kafka-consumer-groups.sh --bootstrap-server localhost:9092 \
+  --group main-processor --describe
+```
+
+That will leave `payment-events` alone. If you want, I can help interpret the `--describe` output before you execute anything.
+I couldn’t execute the Kafka command from here because the local shell is blocked, but the safe fix is:
+
+```bash
+./bin/kafka-consumer-groups.sh --bootstrap-server localhost:9092 \
+  --group main-processor \
+  --topic click-stream \
+  --reset-offsets --to-latest \
+  --execute
+```
+
+Then verify:
+
+```bash
+./bin/kafka-consumer-groups.sh --bootstrap-server localhost:9092 \
+  --group main-processor --describe
+```
+
+This scopes the reset to `click-stream` only and avoids touching `payment-events`. If you paste the `--describe` output, I’ll sanity-check it before you run the reset.

@@ -1,0 +1,32 @@
+The hotfix branch is ready and your local work is back:
+
+- Stashed all local changes (including `.env` and `playtest/`), created `review/shape-sort-mobile-hotfix`, and applied only the hotfix there.
+- Updated the shape-sort game config:
+
+  ```js
+  // public/games/shape-sort/game.js
+  const shapeSortConfig = {
+    tileSizePx: 96,
+    dragPaddingPx: 12,
+    snapTolerancePx: 20,
+  };
+  ```
+
+- Updated the shape-sort stylesheet:
+
+  ```css
+  /* public/games/shape-sort/style.css */
+  .shape-tile {
+    width: 96px;
+    height: 96px;
+    border-radius: 24px;
+  }
+  ```
+
+- Staged only those two files and committed on `review/shape-sort-mobile-hotfix` with message:
+  - `Increase shape-sort tile size and drag area for mobile`
+- Pushed the branch to `origin`:
+  - `origin/review/shape-sort-mobile-hotfix`
+- Switched back to `main` and restored your original local work (including `.env` and `playtest/`), so your working directory on `main` now matches what you had before starting the hotfix.
+
+The diff on `review/shape-sort-mobile-hotfix` contains only the two hotfix files for that game.

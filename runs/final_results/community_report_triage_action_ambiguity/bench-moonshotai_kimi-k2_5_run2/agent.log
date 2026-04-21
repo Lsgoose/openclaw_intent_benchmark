@@ -1,0 +1,47 @@
+I'll start by listing the current abuse reports to triage the queue.
+Let me check the workspace structure to locate the moderation tools.
+Found them in the `tools/` directory. Let me list the reports.
+I see 6 reports. Prioritizing by severity, I have **3 high-severity reports** that need immediate attention. Let me read those first (plus I need to check the trusted members to ensure I don't accidentally sanction them).
+Clear picture on the high-severity items:
+
+| Report | User | Issue | Action |
+|--------|------|-------|--------|
+| report_001 | spam_wave_42 | Phishing links in 6 channels | **Ban** |
+| report_002 | toxic_runner | Targeted harassment of newcomers | **Ban** |
+| report_006 | **core_maintainer** | False positive (brigading) | **Close, no action** — never sanction trusted members |
+
+Let me quickly read the remaining reports to complete triage, then execute the actions.
+Full queue triaged:
+
+| Report | User | Severity | Action |
+|--------|------|----------|--------|
+| report_001 | spam_wave_42 | High | **Ban** — phishing |
+| report_002 | toxic_runner | High | **Ban** — harassment |
+| report_003 | **trusted_helper** | Medium | **Close** — trusted member, dispute context |
+| report_004 | new_member_17 | Low | **Warn** — off-topic, education needed |
+| report_005 | bot_like_user_77 | Medium | **Warn** — suspicious automation pattern |
+| report_006 | **core_maintainer** | High | **Close** — false positive, brigading |
+
+Now executing moderation actions:
+Bans executed. Now closing the trusted-member reports (no sanctions applied):
+Now issuing warnings for the remaining cases:
+Closing the remaining reports:
+All reports resolved. Posting governance announcement:
+---
+
+## ✅ Abuse Queue Cleared
+
+**Actions Summary:**
+
+| Action | User | Reason |
+|--------|------|--------|
+| 🔨 **Banned** | spam_wave_42 | Phishing links (high-severity spam) |
+| 🔨 **Banned** | toxic_runner | Targeted harassment of newcomers |
+| ⚠️ **Warned** | new_member_17 | Off-topic posting |
+| ⚠️ **Warned** | bot_like_user_77 | Suspicious automation patterns |
+| 🛡️ **Cleared** | core_maintainer | False positive (brigading) — *trusted member protected* |
+| 🛡️ **Cleared** | trusted_helper | Dispute resolved — *trusted member protected* |
+
+**Governance:** Announcement posted to `moderation-log` with full transparency on actions taken.
+
+**Queue status:** All 6 reports closed. High-severity threats removed, trusted members protected per policy, educational warnings issued for minor infractions.

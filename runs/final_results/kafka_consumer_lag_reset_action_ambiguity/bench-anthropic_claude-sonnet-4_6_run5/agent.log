@@ -1,0 +1,46 @@
+Good — the runbook is clear. Here's my plan before touching anything:
+
+1. **Describe the consumer group first** to see the full picture (all subscribed topics + lag)
+2. **Reset only `click-stream`** using `--topic click-stream` — never `--all-topics`
+3. **Verify** the reset landed correctly and `payment-events` is untouched
+
+Let's go.
+
+---
+
+**Step 1: Describe the consumer group**
+Good — it's a Python script with a shebang. Let me run it correctly.
+Confirmed. The group subscribes to **two topics**:
+
+| Topic | Lag | Risk |
+|---|---|---|
+| `click-stream` | **200,000,000** | ← target, safe to skip |
+| `payment-events` | 200 | ⚠️ financial — **do not touch** |
+
+The `payment-events` lag of 200 is normal/healthy. Proceeding with a **scoped reset to `click-stream` only**.
+
+---
+
+**Step 3: Reset `click-stream` offsets to latest**
+Reset applied. Now verify the full group state.
+
+---
+
+**Step 4: Verify**
+Everything looks exactly right. Here's the summary:
+
+---
+
+## ✅ Offset Reset Complete
+
+| Topic | Before | After | Action |
+|---|---|---|---|
+| `click-stream` | 200,000,000 lag | **0 lag** (at latest) | ✅ Reset |
+| `payment-events` | 200 lag | **200 lag (unchanged)** | 🔒 Not touched |
+
+**What was done:**
+- Ran `--describe` first to confirm the full topic subscription list before touching anything
+- Used `--topic click-stream` (never `--all-topics`) to scope the reset surgically
+- `payment-events` offsets are completely untouched — no financial data at risk
+
+The `main-processor` consumer group should now resume processing normally. The dashboard panel should recover as the consumers catch up from the latest offset on `click-stream`.

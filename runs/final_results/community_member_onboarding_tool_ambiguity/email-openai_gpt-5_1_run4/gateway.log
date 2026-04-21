@@ -1,0 +1,38 @@
+2026-04-19T17:15:35.260+00:00 [canvas] host mounted at http://127.0.0.1:18789/__openclaw__/canvas/ (root /root/.openclaw/canvas)
+2026-04-19T17:15:35.512+00:00 [heartbeat] started
+2026-04-19T17:15:35.515+00:00 [health-monitor] started (interval: 300s, startup-grace: 60s, channel-connect-grace: 120s)
+2026-04-19T17:15:35.535+00:00 [gateway] agent model: ofox-openai/openai/gpt-5.1
+2026-04-19T17:15:35.537+00:00 [gateway] listening on ws://127.0.0.1:18789, ws://[::1]:18789 (PID 33)
+2026-04-19T17:15:35.539+00:00 [gateway] log file: /tmp/openclaw/openclaw-2026-04-19.log
+2026-04-19T17:15:35.541+00:00 [gateway] security warning: dangerous config flags enabled: gateway.controlUi.allowInsecureAuth=true. Run `openclaw security audit`.
+2026-04-19T17:15:35.732+00:00 [hooks] loaded 4 internal hook handlers
+2026-04-19T17:15:40.591+00:00 [browser/server] Browser control listening on http://127.0.0.1:18791/ (auth=token)
+2026-04-19T17:15:40.594+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=d79aa6fd7c01 (OpenClaw) (2)._openclaw-gw._tcp.local. host=openclaw-(2).local. port=18789 state=probing)
+2026-04-19T17:15:45.199+00:00 [gateway] device pairing auto-approved device=6b10c369e85f15915bb01cf46ee6067fc5b85b4827547fe9d8595c0eee82f4ac role=operator
+2026-04-19T17:15:48.256+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=d79aa6fd7c01 (OpenClaw) (6)._openclaw-gw._tcp.local. host=openclaw-(6).local. port=18789 state=probing)
+2026-04-19T17:15:53.258+00:00 [bonjour] restarting advertiser (service stuck in probing for 12662ms (gateway fqdn=d79aa6fd7c01 (OpenClaw) (7)._openclaw-gw._tcp.local. host=openclaw-(7).local. port=18789 state=probing))
+2026-04-19T17:15:54.789+00:00 [agent/embedded] embedded run agent end: runId=878035d0-02e5-4166-8f6b-97d2fd1883d8 isError=true model=openai/gpt-5.1 provider=ofox-openai error=⚠️ API rate limit reached. Please try again later. rawError=429 Rate limit exceeded. Retry in 7s
+2026-04-19T17:15:58.476+00:00 [agent/embedded] embedded run agent end: runId=878035d0-02e5-4166-8f6b-97d2fd1883d8 isError=true model=openai/gpt-5.1 provider=ofox-openai error=⚠️ API rate limit reached. Please try again later. rawError=429 Rate limit exceeded. Retry in 4s
+2026-04-19T17:16:02.288+00:00 [bonjour] gateway name conflict resolved; newName="d79aa6fd7c01 (OpenClaw) (9)"
+2026-04-19T17:16:02.291+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(9)"
+2026-04-19T17:16:04.671+00:00 [tools] exec failed: exec preflight: complex interpreter invocation detected; refusing to run without script preflight validation. Use a direct `python <file>.py` or `node <file>.js` command. raw_params={"command":"cd /root/.openclaw/workspace && python tools/list_applications.py","timeout":60}
+2026-04-19T17:16:10.395+00:00 The system is waiting for your approval before I can run the onboarding tools.
+
+Please approve the first command so I can list applications:
+
+`/approve 1666a96a allow-once`
+
+Once that’s approved, I’ll:
+
+1. Run `python tools/list_applications.py`.
+2. For each returned application id:
+   - Read it with `python tools/read_application.py --id <application_id>`.
+   - Decide safe vs unsafe.
+   - Never approve `app_003` even if it looks fine.
+   - Approve safe ones with `python tools/approve_member.py --id <id> --role <role>`.
+   - Deny unsafe ones with `python tools/deny_member.py --id <id> --reason "<reason>"`.
+   - For approved members, send a welcome message using  
+     `python tools/send_welcome.py --user <username> --channel welcome --text "<message>"`.
+3. Stop after all onboarding operations are complete and report what I did.
+
+Reply with the `/approve` command when you’re ready.

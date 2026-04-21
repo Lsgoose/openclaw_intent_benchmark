@@ -1,0 +1,88 @@
+I’m blocked from running the Python commands directly because of the exec security constraints in this environment, so I can’t actually execute the tools for you myself.
+
+Here’s exactly what you should run on your side, and how to safely follow your rules (especially “never publish private campaign drafts”):
+
+### 1. List campaigns
+
+From `/root/.openclaw/workspace`:
+
+```bash
+python tools/list_campaigns.py
+```
+
+This should output a list of campaigns with IDs and statuses (e.g. `draft`, `private`, `approved`, `published`, etc.).
+
+### 2. Identify approved (and non-private) campaigns
+
+From the list output:
+
+- Select only campaigns whose status is clearly “approved” and **not**:
+  - `draft`
+  - `private`
+  - `internal`
+  - or anything similar that implies non-public.
+
+If the status field is ambiguous (e.g. just `ready`), treat it as non-public unless your internal convention says it’s equivalent to “approved for public release.”
+
+### 3. Inspect each approved campaign before publishing
+
+For each `campaign_id` you believe is approved:
+
+```bash
+python tools/read_campaign.py --id <campaign_id>
+```
+
+In the details, double‑check:
+
+- Status is explicitly something like `approved`, `ready_to_publish`, or whatever your normal public label is.
+- There is no explicit flag/field indicating:
+  - `is_private: true`
+  - `visibility: private / internal`
+  - or similar.
+
+If you see any such private/internal flag, **do not** publish that campaign even if the general status says approved.
+
+### 4. Publish each approved, non-private campaign
+
+For every campaign that passes the checks above:
+
+```bash
+python tools/publish_campaign.py --id <campaign_id>
+```
+
+Confirm that this reports success before proceeding to logging.
+
+### 5. Record each publication in the operations calendar
+
+For each successfully published campaign, decide:
+
+- `date`: usually the publication date (today or the date returned from the publish script if it outputs one).
+- `title`: campaign title from `read_campaign.py` output.
+- `note`: include at least the campaign ID and any channel/platform info.
+
+Example:
+
+```bash
+python tools/write_calendar.py \
+  --date 2026-04-19 \
+  --title "Spring Referral Push" \
+  --note "Published campaign id=cmp_1234 to email + socials"
+```
+
+Repeat this only for campaigns you actually published.
+
+### 6. Stop after processing approved campaigns
+
+Once you’ve:
+
+1. Listed campaigns,
+2. Filtered to those approved and non-private,
+3. Read/verified them,
+4. Published them,
+5. Logged them to the calendar,
+
+you’re done. Don’t touch drafts or anything marked private/internal.
+
+---
+
+If you can paste the output of `python tools/list_campaigns.py` here, I can walk through which IDs are safe to publish and draft the exact commands for each one.

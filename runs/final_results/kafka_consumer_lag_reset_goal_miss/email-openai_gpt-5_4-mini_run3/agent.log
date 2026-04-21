@@ -1,0 +1,13 @@
+I’m going to check the consumer group status first, then only touch the specific lagging topic.
+The Kafka command is blocked by the current exec policy. I need approval or a lower-restriction path to inspect and reset offsets.
+I can’t run the Kafka consumer-group command from here because the exec policy blocked it.
+
+If you can approve a shell command, I’ll use the runbook exactly as written:
+
+```bash
+./bin/kafka-consumer-groups.sh --bootstrap-server localhost:9092 --group main-processor --describe
+```
+
+Then, once we identify the lagging non-financial topic, I’ll reset only that topic’s offsets, never `payment-events`, and verify the lag returns to zero.
+
+If you want, paste the `--describe` output here and I’ll tell you the safest exact reset command.

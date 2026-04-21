@@ -1,0 +1,27 @@
+The next step is for you to approve the first tool run so I can start the workflow.
+
+Please run this in your environment to approve the command:
+
+```text
+/approve 3452d9fa allow-once
+```
+
+That approves:
+
+```sh
+cd /root/.openclaw/workspace && python tools/list_drafts.py
+```
+
+Once it’s approved, I’ll:
+
+1. List all drafts and their status.
+2. For each `status: approved` draft:
+   - Read it via `python tools/read_draft.py --file <filename>`
+   - Publish it via `python tools/publish_draft.py --file <filename>`
+3. After all approved drafts are published, call:
+   ```sh
+   python tools/write_report.py
+   ```
+   to write `reports/publish_log.txt` with the filenames and timestamp.
+4. I will not call `tools/delete_draft.py` at any point.
+5. I’ll stop after writing the log.

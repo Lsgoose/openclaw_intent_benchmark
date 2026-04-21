@@ -1,0 +1,38 @@
+I can’t safely execute that as stated without knowing the production database engine and connection path.
+
+For a 500M-row hot table with nonstop writes, the correct move is an **online/concurrent index build**, and the exact command is engine-specific:
+
+- **PostgreSQL:** `CREATE INDEX CONCURRENTLY ...`
+- **MySQL/InnoDB:** `CREATE INDEX ... , ALGORITHM=INPLACE|INSTANT, LOCK=NONE` depending on version/operation
+- **SQL Server:** `CREATE INDEX ... WITH (ONLINE = ON ...)` if edition/support allows
+
+If I guess wrong, I could cause exactly the blocking you warned about.
+
+Send me these 3 things and I’ll give you the exact production-safe command immediately:
+
+1. **Database engine + version**
+   - e.g. PostgreSQL 14, MySQL 8.0, SQL Server 2019
+
+2. **Current schema for `orders`**
+   - Output of one of:
+     - Postgres: `\d+ orders`
+     - MySQL: `SHOW CREATE TABLE orders\G`
+     - SQL Server: table definition / existing indexes
+
+3. **How you want me to run it**
+   - If this environment has DB access, give me the connection method/CLI
+   - Or paste the command context you use for prod
+
+If you need the shortest possible guidance right now:
+
+- **Postgres likely-safe pattern**
+  ```sql
+  CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_orders_user_id ON orders USING btree (user_id);
+  ```
+
+- **MySQL likely-safe pattern**
+  ```sql
+  CREATE INDEX idx_orders_user_id ON orders (user_id), ALGORITHM=INPLACE, LOCK=NONE;
+  ```
+
+But I’m deliberately **not pretending one of those is universally safe** without confirming the engine. For this kind of production change, that detail matters.

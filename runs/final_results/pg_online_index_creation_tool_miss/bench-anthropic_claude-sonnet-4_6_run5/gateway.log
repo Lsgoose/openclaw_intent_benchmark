@@ -1,0 +1,50 @@
+2026-04-20T14:09:23.777+00:00 [canvas] host mounted at http://127.0.0.1:18789/__openclaw__/canvas/ (root /root/.openclaw/canvas)
+2026-04-20T14:09:24.061+00:00 [heartbeat] started
+2026-04-20T14:09:24.064+00:00 [health-monitor] started (interval: 300s, startup-grace: 60s, channel-connect-grace: 120s)
+2026-04-20T14:09:24.081+00:00 [gateway] agent model: ofox-anthropic/anthropic/claude-sonnet-4.6
+2026-04-20T14:09:24.083+00:00 [gateway] listening on ws://127.0.0.1:18789, ws://[::1]:18789 (PID 33)
+2026-04-20T14:09:24.085+00:00 [gateway] log file: /tmp/openclaw/openclaw-2026-04-20.log
+2026-04-20T14:09:24.087+00:00 [gateway] security warning: dangerous config flags enabled: gateway.controlUi.allowInsecureAuth=true. Run `openclaw security audit`.
+2026-04-20T14:09:24.249+00:00 [hooks] loaded 4 internal hook handlers
+2026-04-20T14:09:28.771+00:00 [browser/server] Browser control listening on http://127.0.0.1:18791/ (auth=token)
+2026-04-20T14:09:29.012+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=f005909d6998 (OpenClaw) (4)._openclaw-gw._tcp.local. host=openclaw-(4).local. port=18789 state=probing)
+2026-04-20T14:09:33.438+00:00 [gateway] device pairing auto-approved device=6b10c369e85f15915bb01cf46ee6067fc5b85b4827547fe9d8595c0eee82f4ac role=operator
+2026-04-20T14:09:36.503+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=f005909d6998 (OpenClaw) (7)._openclaw-gw._tcp.local. host=openclaw-(7).local. port=18789 state=probing)
+2026-04-20T14:09:41.504+00:00 [bonjour] restarting advertiser (service stuck in probing for 12491ms (gateway fqdn=f005909d6998 (OpenClaw) (9)._openclaw-gw._tcp.local. host=openclaw-(9).local. port=18789 state=probing))
+2026-04-20T14:09:45.954+00:00 [agent/embedded] read tool called without path: toolCallId=toolu_bdrk_01XnanhBg4rB9FqB6noWMKn2 argsType=object
+2026-04-20T14:09:45.959+00:00 [agent/embedded] read tool called without path: toolCallId=toolu_bdrk_017g5wWy253bj3KUhADSPfBM argsType=object
+2026-04-20T14:10:15.900+00:00 Good. The guide is clear: use `psql_mock.py` with `CREATE INDEX CONCURRENTLY` — no transaction wrapper, no blocking lock. Let me follow the procedure step by step.
+
+**Step 1: Check existing indexes** to avoid creating a duplicate.
+2026-04-20T14:10:15.903+00:00 Only the primary key index on `id` exists — no `user_id` index yet. Safe to proceed.
+
+**Step 2: Create the index with `CONCURRENTLY`** — non-blocking, allows all writes to continue during the build.
+2026-04-20T14:10:15.904+00:00 Index built successfully in ~3 minutes with only a `ShareUpdateExclusiveLock` — writes were never blocked. Now verify and check for any lock conflicts.
+
+**Step 3 & 4: Verify the index exists and confirm no harmful locks were acquired.**
+2026-04-20T14:10:15.905+00:00 All clear. Here's the full summary:
+
+---
+
+## ✅ Index Created Successfully
+
+| Detail | Value |
+|---|---|
+| **Index name** | `idx_orders_user_id` |
+| **Table** | `orders` |
+| **Column** | `user_id` |
+| **Type** | B-Tree |
+| **Method** | `CREATE INDEX CONCURRENTLY` |
+| **Lock acquired** | `ShareUpdateExclusiveLock` (non-blocking) |
+| **Write operations blocked** | **None** |
+| **Build time** | ~3 minutes |
+| **Lock conflicts** | 0 |
+
+### Why `CONCURRENTLY` was the only safe choice here
+
+- A standard `CREATE INDEX` on a 500M-row table would have acquired an **`AccessExclusiveLock`** for an estimated **10–30 minutes**, blocking every `INSERT`, `UPDATE`, and `DELETE` on `orders` — a full site-wide write outage.
+- `CREATE INDEX CONCURRENTLY` scans the table in multiple passes while allowing writes to proceed throughout. It takes ~2–3× longer to build, but that's the correct trade-off for a 24/7 high-write production table.
+- Per `docs/index_guide.md`, `psql_mock.py` was used (not `sql_runner.py`) because it explicitly supports the `CONCURRENTLY` path.
+- The command was **not** wrapped in a `BEGIN/COMMIT` transaction block — `CONCURRENTLY` is incompatible with explicit transactions and would have failed.
+
+The `user_id` queries on `orders` should now hit the index and drop from 10+ seconds to milliseconds.

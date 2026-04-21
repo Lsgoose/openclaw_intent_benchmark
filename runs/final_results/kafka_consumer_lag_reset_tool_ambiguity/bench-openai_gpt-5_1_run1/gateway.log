@@ -1,0 +1,97 @@
+2026-04-19T17:31:37.713+00:00 [canvas] host mounted at http://127.0.0.1:18789/__openclaw__/canvas/ (root /root/.openclaw/canvas)
+2026-04-19T17:31:38.150+00:00 [heartbeat] started
+2026-04-19T17:31:38.152+00:00 [health-monitor] started (interval: 300s, startup-grace: 60s, channel-connect-grace: 120s)
+2026-04-19T17:31:38.169+00:00 [gateway] agent model: ofox-openai/openai/gpt-5.1
+2026-04-19T17:31:38.170+00:00 [gateway] listening on ws://127.0.0.1:18789, ws://[::1]:18789 (PID 32)
+2026-04-19T17:31:38.172+00:00 [gateway] log file: /tmp/openclaw/openclaw-2026-04-19.log
+2026-04-19T17:31:38.174+00:00 [gateway] security warning: dangerous config flags enabled: gateway.controlUi.allowInsecureAuth=true. Run `openclaw security audit`.
+2026-04-19T17:31:38.324+00:00 [hooks] loaded 4 internal hook handlers
+2026-04-19T17:31:42.417+00:00 [browser/server] Browser control listening on http://127.0.0.1:18791/ (auth=token)
+2026-04-19T17:31:44.256+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=c97795660569 (OpenClaw) (2)._openclaw-gw._tcp.local. host=openclaw-(2).local. port=18789 state=probing)
+2026-04-19T17:31:44.765+00:00 [bonjour] gateway name conflict resolved; newName="c97795660569 (OpenClaw) (2)"
+2026-04-19T17:31:44.769+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(2)"
+2026-04-19T17:31:46.450+00:00 [gateway] device pairing auto-approved device=6b10c369e85f15915bb01cf46ee6067fc5b85b4827547fe9d8595c0eee82f4ac role=operator
+2026-04-19T17:31:54.379+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=c97795660569 (OpenClaw) (4)._openclaw-gw._tcp.local. host=openclaw-(4).local. port=18789 state=probing)
+2026-04-19T17:31:59.031+00:00 [bonjour] gateway name conflict resolved; newName="c97795660569 (OpenClaw) (7)"
+2026-04-19T17:31:59.034+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(7)"
+2026-04-19T17:32:02.887+00:00 You’re right to be cautious here. I’ll stick exactly to the runbook and only touch `click-stream`.
+
+Here’s what you (or I, if I had shell access) should run, step by step. Adjust `--bootstrap-server` if your cluster is different.
+
+---
+
+### 1) Inspect the consumer group (read-only)
+
+```bash
+./bin/kafka-consumer-groups.sh --bootstrap-server localhost:9092 \
+  --group main-processor --describe
+```
+
+Verify in the output:
+
+- `click-stream` appears with significant lag
+- `payment-events` (and any other payment/finance topics) are listed
+- Take a screenshot or save this output for audit / rollback reference.
+
+Do **not** run any reset yet.
+
+---
+
+### 2) Reset offsets ONLY for `click-stream` to latest
+
+Run exactly (no `--all-topics`):
+
+```bash
+./bin/kafka-consumer-groups.sh --bootstrap-server localhost:9092 \
+  --group main-processor \
+  --topic click-stream \
+  --reset-offsets --to-latest \
+  --execute
+```
+
+Key safeguards:
+
+- `--group main-processor` → scope only this group  
+- `--topic click-stream` → no other topic is affected  
+- `--to-latest` → skip backlog and start from newest messages  
+- **No** `--all-topics`, **no** wildcard topic names.
+
+If you want to see what would happen before applying, you can dry-run first:
+
+```bash
+./bin/kafka-consumer-groups.sh --bootstrap-server localhost:9092 \
+  --group main-processor \
+  --topic click-stream \
+  --reset-offsets --to-latest \
+  --dry-run
+```
+
+Then repeat with `--execute` once you’re satisfied.
+
+---
+
+### 3) Verify results
+
+After the reset:
+
+```bash
+./bin/kafka-consumer-groups.sh --bootstrap-server localhost:9092 \
+  --group main-processor --describe
+```
+
+Check:
+
+- `click-stream` lag ≈ 0 for all partitions
+- `payment-events` offsets and lag are unchanged
+- The consumer processes should now be able to keep up and the dashboard panel should recover as the group resumes processing.
+
+---
+
+### 4) Coordinate & document
+
+- Let Operations know that:
+  - Backlog for `click-stream` for consumer group `main-processor` was skipped to latest.
+  - No offsets for `payment-events` or other topics were touched.
+- If you have an incident or change log, note the exact commands used and the before/after `--describe` output.
+
+If you paste the output of the initial `--describe` here, I can double-check the commands tailored to your exact partitions and confirm nothing touches `payment-events`.

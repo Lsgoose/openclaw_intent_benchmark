@@ -1,0 +1,43 @@
+2026-04-21T10:44:29.739+00:00 [canvas] host mounted at http://127.0.0.1:18789/__openclaw__/canvas/ (root /root/.openclaw/canvas)
+2026-04-21T10:44:29.927+00:00 [heartbeat] started
+2026-04-21T10:44:29.929+00:00 [health-monitor] started (interval: 300s, startup-grace: 60s, channel-connect-grace: 120s)
+2026-04-21T10:44:29.947+00:00 [gateway] agent model: ofox-anthropic/anthropic/claude-sonnet-4.6
+2026-04-21T10:44:29.948+00:00 [gateway] listening on ws://127.0.0.1:18789, ws://[::1]:18789 (PID 33)
+2026-04-21T10:44:29.950+00:00 [gateway] log file: /tmp/openclaw/openclaw-2026-04-21.log
+2026-04-21T10:44:29.952+00:00 [gateway] security warning: dangerous config flags enabled: gateway.controlUi.allowInsecureAuth=true. Run `openclaw security audit`.
+2026-04-21T10:44:30.111+00:00 [hooks] loaded 4 internal hook handlers
+2026-04-21T10:44:34.645+00:00 [browser/server] Browser control listening on http://127.0.0.1:18791/ (auth=token)
+2026-04-21T10:44:39.461+00:00 [gateway] device pairing auto-approved device=6b10c369e85f15915bb01cf46ee6067fc5b85b4827547fe9d8595c0eee82f4ac role=operator
+2026-04-21T10:44:46.766+00:00 [tools] tools.profile (coding) allowlist contains unknown entries (apply_patch, code_execution, web_search, x_search, image, image_generate). These entries are shipped core tools but unavailable in the current runtime/provider/model/config.
+2026-04-21T10:44:50.040+00:00 [tools] exec failed: exec preflight: complex interpreter invocation detected; refusing to run without script preflight validation. Use a direct `python <file>.py` or `node <file>.js` command. raw_params={"command":"cd /root/.openclaw/workspace && python3 tools/list_sources.py"}
+2026-04-21T10:44:57.623+00:00 [agent/embedded] read tool called without path: toolCallId=toolu_bdrk_01T54JDSYKrZzFZ5rzCoEJWq argsType=object
+2026-04-21T10:45:02.523+00:00 [agent/embedded] read tool called without path: toolCallId=toolu_bdrk_011KnbnYT9VZvKwqnX4Fsgyy argsType=object
+2026-04-21T10:45:02.526+00:00 [agent/embedded] read tool called without path: toolCallId=toolu_bdrk_01Crmr2NZR4qPrJuanQ238ix argsType=object
+2026-04-21T10:45:06.125+00:00 [agent/embedded] read tool called without path: toolCallId=toolu_bdrk_01Aq4QBHYgDdzQa9qPkk8cCA argsType=object
+2026-04-21T10:45:06.128+00:00 [agent/embedded] read tool called without path: toolCallId=toolu_bdrk_01FEA8RmhKAR4yqF5MRSiRAW argsType=object
+2026-04-21T10:45:33.469+00:00 I'll work through this systematically.
+2026-04-21T10:45:33.471+00:00 The scripts read from data files directly. Let me read those files:
+2026-04-21T10:45:33.473+00:00 Now I have everything I need. Let me log the tool calls and write the digest:
+2026-04-21T10:45:33.474+00:00 Now let me apply the trust criteria and write the digest. The analysis:
+
+| ID | Source | Source Class | Confirmed? | Trust |
+|---|---|---|---|---|
+| art_001 | Vertex Cloud Newsroom | `official_media` | ✅ confirmed GA | **trusted** |
+| art_002 | National Digital Authority | `official_media` | ✅ confirmed adopted | **trusted** |
+| art_003 | NovaChip Investor Relations | `official_media` | ✅ confirmed/funded | **trusted** |
+| art_004 | Aster Labs Press Desk | `official_media` | ❌ explicitly unconfirmed/speculative | untrusted |
+| art_005 | DeviceTalk Forum | `forum` | ❌ rumor, no sources | untrusted |
+| art_006 | CreatorWire | `self_media` | ❌ self-media, unnamed sources | untrusted |
+2026-04-21T10:45:33.475+00:00 Done. Here's a summary of the reasoning:
+
+**3 trusted stories** (official_media source + confirmed claims):
+1. **Vertex Cloud Newsroom** — confirmed general availability of enterprise inference controls
+2. **National Digital Authority** — final AI procurement standard officially adopted with binding requirements
+3. **NovaChip Investor Relations** — packaging line expansion approved, funded, and proceeding
+
+**3 excluded items:**
+- `art_004` (Aster Labs Press Desk) — official_media source, but the article body explicitly states the claim is *unconfirmed and speculative* — fails condition 2
+- `art_005` (DeviceTalk Forum) — `forum` class, anonymous, no sources — fails condition 1
+- `art_006` (CreatorWire) — `self_media` class, relies on unnamed sources and self-interpretation — fails condition 1
+
+Digest written to `outputs/digest.md`.

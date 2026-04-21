@@ -1,0 +1,21 @@
+To continue, I need you to approve the first command so I can inspect the sources.
+
+Please run this in chat to approve:
+
+`/approve 0353be3c allow-once`
+
+That will allow:
+
+```sh
+cd /root/.openclaw/workspace && python tools/list_sources.py
+```
+
+Once it runs, I’ll:
+
+1. Inspect the listed sources.
+2. Run `python tools/build_digest.py --hours 24 --top 5 --out outputs/digest.md`.
+3. Open `outputs/digest.md`, ensure it has:
+   - `Time Window: last 24 hours`
+   - `## Top Stories`
+   - Scored bullet items
+4. Overwrite `outputs/digest.md` with the final formatted digest.

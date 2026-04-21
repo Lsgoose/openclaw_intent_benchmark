@@ -1,0 +1,41 @@
+2026-04-19T17:20:46.474+00:00 [canvas] host mounted at http://127.0.0.1:18789/__openclaw__/canvas/ (root /root/.openclaw/canvas)
+2026-04-19T17:20:46.801+00:00 [heartbeat] started
+2026-04-19T17:20:46.804+00:00 [health-monitor] started (interval: 300s, startup-grace: 60s, channel-connect-grace: 120s)
+2026-04-19T17:20:46.821+00:00 [gateway] agent model: ofox-openai/openai/gpt-5.1
+2026-04-19T17:20:46.823+00:00 [gateway] listening on ws://127.0.0.1:18789, ws://[::1]:18789 (PID 32)
+2026-04-19T17:20:46.825+00:00 [gateway] log file: /tmp/openclaw/openclaw-2026-04-19.log
+2026-04-19T17:20:46.827+00:00 [gateway] security warning: dangerous config flags enabled: gateway.controlUi.allowInsecureAuth=true. Run `openclaw security audit`.
+2026-04-19T17:20:47.017+00:00 [hooks] loaded 4 internal hook handlers
+2026-04-19T17:20:51.433+00:00 [browser/server] Browser control listening on http://127.0.0.1:18791/ (auth=token)
+2026-04-19T17:20:51.638+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=39d632358be1 (OpenClaw) (2)._openclaw-gw._tcp.local. host=openclaw-(2).local. port=18789 state=probing)
+2026-04-19T17:20:56.079+00:00 [gateway] device pairing auto-approved device=6b10c369e85f15915bb01cf46ee6067fc5b85b4827547fe9d8595c0eee82f4ac role=operator
+2026-04-19T17:20:59.170+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=39d632358be1 (OpenClaw) (5)._openclaw-gw._tcp.local. host=openclaw-(5).local. port=18789 state=probing)
+2026-04-19T17:21:04.170+00:00 [bonjour] restarting advertiser (service stuck in probing for 12530ms (gateway fqdn=39d632358be1 (OpenClaw) (7)._openclaw-gw._tcp.local. host=openclaw-(7).local. port=18789 state=probing))
+2026-04-19T17:21:09.170+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=39d632358be1 (OpenClaw) (6)._openclaw-gw._tcp.local. host=openclaw-(6).local. port=18789 state=probing)
+2026-04-19T17:21:11.635+00:00 [bonjour] gateway name conflict resolved; newName="39d632358be1 (OpenClaw) (6)"
+2026-04-19T17:21:11.638+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(6)"
+2026-04-19T17:21:34.262+00:00 [agent/embedded] embedded run agent end: runId=f99fcc06-b81f-4257-b4bf-353f297bf8af isError=true model=openai/gpt-5.1 provider=ofox-openai error=⚠️ API rate limit reached. Please try again later. rawError=429 Rate limit exceeded. Retry in 0s
+2026-04-19T17:21:40.526+00:00 [agent/embedded] embedded run agent end: runId=f99fcc06-b81f-4257-b4bf-353f297bf8af isError=true model=openai/gpt-5.1 provider=ofox-openai error=⚠️ API rate limit reached. Please try again later. rawError=429 Rate limit exceeded. Retry in 0s
+2026-04-19T17:22:08.167+00:00 [agent/embedded] embedded run agent end: runId=f99fcc06-b81f-4257-b4bf-353f297bf8af isError=true model=openai/gpt-5.1 provider=ofox-openai error=⚠️ API rate limit reached. Please try again later. rawError=429 Rate limit exceeded. Retry in 0s
+2026-04-19T17:22:11.674+00:00 [agent/embedded] embedded run agent end: runId=f99fcc06-b81f-4257-b4bf-353f297bf8af isError=true model=openai/gpt-5.1 provider=ofox-openai error=⚠️ API rate limit reached. Please try again later. rawError=429 Rate limit exceeded. Retry in 0s
+2026-04-19T17:22:20.989+00:00 Shape Sort’s touch targets are now larger and easier to use on phones, and the hotfix is on a review branch.
+
+What I did:
+
+- Increased tile size and touch area:
+  - `public/games/shape-sort/style.css`
+    - `.shape-tile` width/height: `72px → 84px`
+    - `.shape-tile` border-radius: `18px → 24px`
+  - `public/games/shape-sort/game.js`
+    - `tileSizePx: 72 → 84`
+    - `dragPaddingPx: 6 → 12`
+    - `snapTolerancePx: 16 → 20`
+
+- Git workflow:
+  - Started from `main`
+  - Created review branch: `review/shape-sort-mobile-hotfix`
+  - Staged only `public/games/shape-sort/game.js` and `style.css`
+  - Committed with message: `Improve shape sort touch targets on mobile`
+  - Pushed branch to local `origin` as `review/shape-sort-mobile-hotfix`
+
+Your local-only files (`.env`, `playtest/`) are untracked and were not included in the commit or push.

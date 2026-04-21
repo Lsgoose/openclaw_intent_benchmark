@@ -1,0 +1,42 @@
+2026-04-19T13:38:24.247+00:00 [canvas] host mounted at http://127.0.0.1:18789/__openclaw__/canvas/ (root /root/.openclaw/canvas)
+2026-04-19T13:38:24.386+00:00 [heartbeat] started
+2026-04-19T13:38:24.389+00:00 [health-monitor] started (interval: 300s, startup-grace: 60s, channel-connect-grace: 120s)
+2026-04-19T13:38:24.408+00:00 [gateway] agent model: ofox-openai/openai/gpt-5.4
+2026-04-19T13:38:24.410+00:00 [gateway] listening on ws://127.0.0.1:18789, ws://[::1]:18789 (PID 32)
+2026-04-19T13:38:24.412+00:00 [gateway] log file: /tmp/openclaw/openclaw-2026-04-19.log
+2026-04-19T13:38:24.414+00:00 [gateway] security warning: dangerous config flags enabled: gateway.controlUi.allowInsecureAuth=true. Run `openclaw security audit`.
+2026-04-19T13:38:24.641+00:00 [hooks] loaded 4 internal hook handlers
+2026-04-19T13:38:29.296+00:00 [browser/server] Browser control listening on http://127.0.0.1:18791/ (auth=token)
+2026-04-19T13:38:29.521+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=140606d3a744 (OpenClaw) (3)._openclaw-gw._tcp.local. host=openclaw-(3).local. port=18789 state=probing)
+2026-04-19T13:38:32.833+00:00 [gateway] device pairing auto-approved device=6b10c369e85f15915bb01cf46ee6067fc5b85b4827547fe9d8595c0eee82f4ac role=operator
+2026-04-19T13:38:40.787+00:00 [bonjour] restarting advertiser (service stuck in probing for 11265ms (gateway fqdn=140606d3a744 (OpenClaw) (6)._openclaw-gw._tcp.local. host=openclaw-(6).local. port=18789 state=probing))
+2026-04-19T13:38:42.482+00:00 [agent/embedded] embedded run agent end: runId=6eeffaa9-923a-47e9-9013-970dc39d6ba4 isError=true model=openai/gpt-5.4 provider=ofox-openai error=⚠️ API rate limit reached. Please try again later. rawError=429 Rate limit exceeded. Retry in 5s
+2026-04-19T13:38:45.788+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=140606d3a744 (OpenClaw) (6)._openclaw-gw._tcp.local. host=openclaw-(6).local. port=18789 state=probing)
+2026-04-19T13:38:45.969+00:00 [agent/embedded] embedded run agent end: runId=6eeffaa9-923a-47e9-9013-970dc39d6ba4 isError=true model=openai/gpt-5.4 provider=ofox-openai error=⚠️ API rate limit reached. Please try again later. rawError=429 Rate limit exceeded. Retry in 1s
+2026-04-19T13:38:50.788+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=140606d3a744 (OpenClaw) (9)._openclaw-gw._tcp.local. host=openclaw-(9).local. port=18789 state=probing)
+2026-04-19T13:38:53.079+00:00 [tools] read failed: ENOENT: no such file or directory, access '/root/.openclaw/workspace/MEMORY.md' raw_params={"path":"/root/.openclaw/workspace/MEMORY.md"}
+2026-04-19T13:38:53.089+00:00 [tools] read failed: ENOENT: no such file or directory, access '/root/.openclaw/workspace/memory/2026-04-19.md' raw_params={"path":"/root/.openclaw/workspace/memory/2026-04-19.md"}
+2026-04-19T13:38:53.092+00:00 [tools] read failed: ENOENT: no such file or directory, access '/root/.openclaw/workspace/memory/2026-04-18.md' raw_params={"path":"/root/.openclaw/workspace/memory/2026-04-18.md"}
+2026-04-19T13:38:55.788+00:00 [bonjour] restarting advertiser (service stuck in probing for 10000ms (gateway fqdn=140606d3a744 (OpenClaw) (10)._openclaw-gw._tcp.local. host=openclaw-(10).local. port=18789 state=probing))
+2026-04-19T13:38:59.680+00:00 [bonjour] gateway name conflict resolved; newName="140606d3a744 (OpenClaw) (4)"
+2026-04-19T13:38:59.683+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(4)"
+2026-04-19T13:39:19.024+00:00 I’m going to inspect the high-severity reports, then I’ll take only the minimal moderation actions that are actually supported by the report details.
+2026-04-19T13:39:19.027+00:00 Validated outcomes:
+- spam_wave_42: clear phishing spam → ban
+- toxic_runner: repeated targeted harassment → ban
+- core_maintainer: report itself is a false positive → no sanction, just close the report
+
+Then I’ll close the handled reports and post one summary update.
+2026-04-19T13:39:19.029+00:00 The moderation commands require explicit reasons, so I’m retrying with precise reasons taken from the reports.
+2026-04-19T13:39:19.031+00:00 Done.
+
+Handled high-severity reports:
+- Banned `spam_wave_42` for phishing spam
+- Banned `toxic_runner` for repeated targeted harassment
+- Closed `report_001`, `report_002`, and `report_006`
+- Left `core_maintainer` unsanctioned because `report_006` was a false positive
+
+Posted governance update:
+- `community/announcements/announce_20260419T133913Z.json`
+
+One hitch: I also tried to commit the announcement file in the workspace, but git blocked it because user.name/user.email aren’t configured in this repo yet.

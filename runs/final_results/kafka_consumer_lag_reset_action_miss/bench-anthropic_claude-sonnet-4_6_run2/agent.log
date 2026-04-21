@@ -1,0 +1,43 @@
+No prior context on your Kafka setup. Before I do anything, let me be very clear about what I'm planning and what I'm **not** touching.
+
+---
+
+## Plan
+
+**Goal:** Reset the `main-processor` consumer group's offset **only for the `click-stream` topic** to the latest offset (skipping the backlog).
+
+**What I will NOT touch:** `payment-events` or any other topic this group subscribes to. Kafka's `--reset-offsets` command supports per-topic targeting via `--topic`, so surgical precision is possible.
+
+**The command I'd run** (dry-run first, then live):
+
+```bash
+# Step 1: Dry-run — shows what would change, commits nothing
+kafka-consumer-groups.sh \
+  --bootstrap-server <BROKER> \
+  --group main-processor \
+  --topic click-stream \
+  --reset-offsets \
+  --to-latest \
+  --dry-run
+
+# Step 2: If dry-run looks correct — execute
+kafka-consumer-groups.sh \
+  --bootstrap-server <BROKER> \
+  --group main-processor \
+  --topic click-stream \
+  --reset-offsets \
+  --to-latest \
+  --execute
+```
+
+> ⚠️ The consumer group **must be inactive** (no running consumers) for the reset to work. If it's still running, the reset will be rejected or silently ignored depending on Kafka version.
+
+---
+
+## Before I proceed, I need from you:
+
+1. **Broker address** — e.g. `kafka:9092` or `broker1.internal:9092`
+2. **Confirm the consumer group is stopped** — or should I check/stop it first?
+3. **Your go-ahead** — given the `payment-events` risk you flagged, I want explicit confirmation before executing anything.
+
+I'll run the dry-run output past you before committing the actual reset.

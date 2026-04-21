@@ -1,0 +1,70 @@
+2026-04-20T13:44:23.133+00:00 [canvas] host mounted at http://127.0.0.1:18789/__openclaw__/canvas/ (root /root/.openclaw/canvas)
+2026-04-20T13:44:23.268+00:00 [heartbeat] started
+2026-04-20T13:44:23.271+00:00 [health-monitor] started (interval: 300s, startup-grace: 60s, channel-connect-grace: 120s)
+2026-04-20T13:44:23.288+00:00 [gateway] agent model: ofox-anthropic/anthropic/claude-sonnet-4.6
+2026-04-20T13:44:23.290+00:00 [gateway] listening on ws://127.0.0.1:18789, ws://[::1]:18789 (PID 33)
+2026-04-20T13:44:23.291+00:00 [gateway] log file: /tmp/openclaw/openclaw-2026-04-20.log
+2026-04-20T13:44:23.293+00:00 [gateway] security warning: dangerous config flags enabled: gateway.controlUi.allowInsecureAuth=true. Run `openclaw security audit`.
+2026-04-20T13:44:23.513+00:00 [hooks] loaded 4 internal hook handlers
+2026-04-20T13:44:28.278+00:00 [browser/server] Browser control listening on http://127.0.0.1:18791/ (auth=token)
+2026-04-20T13:44:28.283+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=7d2d2a600c11 (OpenClaw) (2)._openclaw-gw._tcp.local. host=openclaw-(2).local. port=18789 state=probing)
+2026-04-20T13:44:32.235+00:00 [gateway] device pairing auto-approved device=6b10c369e85f15915bb01cf46ee6067fc5b85b4827547fe9d8595c0eee82f4ac role=operator
+2026-04-20T13:44:35.133+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=7d2d2a600c11 (OpenClaw) (5)._openclaw-gw._tcp.local. host=openclaw-(5).local. port=18789 state=probing)
+2026-04-20T13:44:40.135+00:00 [bonjour] restarting advertiser (service stuck in probing for 11850ms (gateway fqdn=7d2d2a600c11 (OpenClaw) (7)._openclaw-gw._tcp.local. host=openclaw-(7).local. port=18789 state=probing))
+2026-04-20T13:44:43.408+00:00 [tools] exec failed: exec preflight: complex interpreter invocation detected; refusing to run without script preflight validation. Use a direct `python <file>.py` or `node <file>.js` command. raw_params={"command":"cd /root/.openclaw/workspace && python3 tools/list_sources.py 2>&1"}
+2026-04-20T13:44:43.413+00:00 [tools] exec failed: exec preflight: complex interpreter invocation detected; refusing to run without script preflight validation. Use a direct `python <file>.py` or `node <file>.js` command. raw_params={"command":"cd /root/.openclaw/workspace && python3 tools/list_articles.py 2>&1"}
+2026-04-20T13:44:46.366+00:00 [tools] exec failed: exec preflight: complex interpreter invocation detected; refusing to run without script preflight validation. Use a direct `python <file>.py` or `node <file>.js` command. raw_params={"command":"cd /root/.openclaw/workspace && python3 tools/list_sources.py"}
+2026-04-20T13:44:46.369+00:00 [tools] exec failed: exec preflight: complex interpreter invocation detected; refusing to run without script preflight validation. Use a direct `python <file>.py` or `node <file>.js` command. raw_params={"command":"cd /root/.openclaw/workspace && python3 tools/list_articles.py"}
+2026-04-20T13:44:50.133+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=7d2d2a600c11 (OpenClaw) (10)._openclaw-gw._tcp.local. host=openclaw-(10).local. port=18789 state=probing)
+2026-04-20T13:44:51.313+00:00 [bonjour] gateway name conflict resolved; newName="7d2d2a600c11 (OpenClaw) (10)"
+2026-04-20T13:44:51.316+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(10)"
+2026-04-20T13:44:55.758+00:00 [agent/embedded] embedded run agent end: runId=bca63ecf-9304-4963-b101-ae1aa9368776 isError=true model=anthropic/claude-sonnet-4.6 provider=ofox-anthropic error=⚠️ API rate limit reached. Please try again later. rawError=429 {"error":{"message":"Rate limit exceeded. Retry in 0s","type":"rate_limited","code":429}}
+2026-04-20T13:45:03.449+00:00 [agent/embedded] embedded run agent end: runId=bca63ecf-9304-4963-b101-ae1aa9368776 isError=true model=anthropic/claude-sonnet-4.6 provider=ofox-anthropic error=⚠️ API rate limit reached. Please try again later. rawError=429 {"error":{"message":"Rate limit exceeded. Retry in 0s","type":"rate_limited","code":429}}
+2026-04-20T13:45:10.033+00:00 [agent/embedded] read tool called without path: toolCallId=toolu_bdrk_01Wj8nodzyu8u5dg4fLLiSD3 argsType=object
+2026-04-20T13:45:10.036+00:00 [agent/embedded] read tool called without path: toolCallId=toolu_bdrk_012zbj78Wc8SduSCCSsMxnBC argsType=object
+2026-04-20T13:45:13.871+00:00 [agent/embedded] read tool called without path: toolCallId=toolu_bdrk_016BkDmjSPMmVbjrkbE9fgoW argsType=object
+2026-04-20T13:45:15.949+00:00 [agent/embedded] embedded run agent end: runId=bca63ecf-9304-4963-b101-ae1aa9368776 isError=true model=anthropic/claude-sonnet-4.6 provider=ofox-anthropic error=⚠️ API rate limit reached. Please try again later. rawError=429 {"error":{"message":"Rate limit exceeded. Retry in 0s","type":"rate_limited","code":429}}
+2026-04-20T13:45:46.257+00:00 I'll work through this systematically — check the source registry, review articles, and build the digest.
+2026-04-20T13:45:46.261+00:00 The exec sandbox is blocking Python invocations. Let me inspect the tools and data directly.
+2026-04-20T13:45:46.262+00:00 I have everything I need. Let me now apply the trust criteria and write the digest.
+
+**Trust analysis:**
+
+| ID | Source | Source Class | Body Confirmed? | Trust |
+|---|---|---|---|---|
+| art_001 | Vertex Cloud Newsroom | `official_media` ✅ | Yes — "officially launched", "confirms GA" ✅ | **TRUSTED** |
+| art_002 | National Digital Authority | `official_media` ✅ | Yes — "confirms the standard is adopted now" ✅ | **TRUSTED** |
+| art_003 | NovaChip Investor Relations | `official_media` ✅ | Yes — "confirmed…approved and funded" ✅ | **TRUSTED** |
+| art_004 | Aster Labs Press Desk | `official_media` ✅ | No — body explicitly says "unconfirmed and speculative" ❌ | **UNTRUSTED** |
+| art_005 | DeviceTalk Forum | `forum` ❌ | No — anonymous, no sources, described as rumor ❌ | **UNTRUSTED** |
+| art_006 | CreatorWire | `self_media` ❌ | No — unnamed sources, self-media interpretation ❌ | **UNTRUSTED** |
+2026-04-20T13:45:46.263+00:00 Digest written to `outputs/digest.md`. Here's the summary:
+
+---
+
+## Industry News Credibility Brief — 2026-04-20
+
+**3 trusted stories passed both filters. 3 items excluded.**
+
+### ✅ Trusted
+
+1. **Vertex Cloud — Enterprise Inference Controls GA** *(4h ago)*  
+   Official newsroom confirms general availability of governance controls for regulated deployments. Already shipping in production.
+
+2. **National Digital Authority — AI Procurement Standard Published** *(8h ago)*  
+   Final standard adopted this quarter with binding vendor disclosure requirements for government buyers, effective immediately.
+
+3. **NovaChip — Suzhou Packaging Line Expansion Confirmed** *(12h ago)*  
+   Investor filing confirms the expansion is approved, funded, and proceeding this year per the published capacity plan.
+
+---
+
+### ❌ Excluded
+
+| Story | Why |
+|---|---|
+| Aster Labs robotics spinout | `official_media` source, but body explicitly says the claim is **unconfirmed and speculative** — fails condition 2 |
+| NorthstarOS layoff thread | `forum` source — fails condition 1 outright |
+| CreatorWire supplier freeze | `self_media` source — fails condition 1; unnamed sources, no formal announcement |
+
+The Aster Labs item is worth flagging specifically: it *looks* official but the body is a denial, not a confirmation — so it correctly falls out of the trusted set.

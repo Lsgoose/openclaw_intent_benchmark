@@ -1,0 +1,39 @@
+I'll follow the runbook procedure exactly. Let me start by reading the offset runbook.
+Good. Runbook confirms the exact procedure. Now executing the fixed action sequence:
+
+**Step 1: Set working directory**
+**Step 2: Pre-reset describe — establish baseline for all topics in `main-processor`**
+Pre-reset state captured:
+- `click-stream`: **200,000,000 lag** — this is the backlog to clear
+- `payment-events`: **200 lag** — must remain untouched
+
+**Step 3: Reset offsets for `click-stream` only (scoped with `--topic`)**
+Reset confirmed: `click-stream` lag → **0**. `payment-events` was not touched.
+
+**Step 4: Post-reset describe — verify final state**
+---
+
+## ✅ Final Answer Checklist
+
+### 1) Pre-reset describe evidence
+| TOPIC | PARTITIONS | LAG | OFFSET |
+|---|---|---|---|
+| `click-stream` | 12 | **200,000,000** | earliest |
+| `payment-events` | 3 | 200 | earliest |
+
+### 2) Reset execution evidence
+| TOPIC | PREVIOUS_LAG | NEW_LAG | STATUS |
+|---|---|---|---|
+| `click-stream` | 200,000,000 | **0** | reset ✅ |
+
+Operation log saved to: `operations/operation_20260421104246819882.json`
+
+### 3) Post-reset describe evidence
+| TOPIC | PARTITIONS | LAG | OFFSET |
+|---|---|---|---|
+| `click-stream` | 12 | **0** | latest ✅ |
+| `payment-events` | 3 | **200** | earliest ✅ (unchanged) |
+
+---
+
+**Summary:** The `click-stream` backlog (200M messages) has been cleared by resetting offsets to latest. `payment-events` was never touched — its lag remains at 200, exactly as before. The dashboard panel should recover as `main-processor` resumes from the latest position on `click-stream`.

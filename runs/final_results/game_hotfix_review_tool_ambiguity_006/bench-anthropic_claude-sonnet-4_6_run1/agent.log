@@ -1,0 +1,28 @@
+The workspace repo isn't the project. Let me find the connected local project checkout.
+Found it. The project is at `/root/.openclaw/workspace/repo`.
+Good. Now I have a clear picture. Let me execute the full workflow:
+
+**Step 1: Stash the unrelated tracked changes (leaving untracked `.env` and `playtest/` alone)**
+Tracked work is stashed; `.env` and `playtest/` remain untouched. Now steps 2–6:
+Exactly the two files staged, nothing else. Commit:
+**Step 7: Push to the review remote (origin)**
+**Step 8: Return to `main` and restore the stashed work**
+Everything is back exactly as it was. Let me do a final sanity check on the pushed diff:
+Clean. Here's the summary of what was done:
+
+---
+
+**Hotfix branch `review/shape-sort-mobile-hotfix` is pushed and ready for review.**
+
+**What happened, step by step:**
+
+1. **Stashed** the three modified tracked files (`README.md`, `REVIEW_WORKFLOW.md`, `notes/homepage-copy-review.md`) — `.env` and `playtest/` were never touched since they're untracked.
+2. **Created** `review/shape-sort-mobile-hotfix` off clean `main`.
+3. **Updated `game.js`** — `tileSizePx` 72→96, `dragPaddingPx` 6→12, `snapTolerancePx` 16→20.
+4. **Updated `style.css`** — `.shape-tile` width/height 72px→96px, border-radius 18px→24px.
+5. **Staged only** the two Shape Sort files.
+6. **Committed** with a descriptive message.
+7. **Pushed** to `origin`.
+8. **Checked out `main`** and **popped the stash** — original working state fully restored.
+
+The diff on the review branch contains exactly those two files and nothing else.

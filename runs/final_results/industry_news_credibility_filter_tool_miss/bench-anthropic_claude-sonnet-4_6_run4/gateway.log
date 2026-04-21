@@ -1,0 +1,47 @@
+2026-04-20T13:50:18.053+00:00 [canvas] host mounted at http://127.0.0.1:18789/__openclaw__/canvas/ (root /root/.openclaw/canvas)
+2026-04-20T13:50:18.237+00:00 [heartbeat] started
+2026-04-20T13:50:18.239+00:00 [health-monitor] started (interval: 300s, startup-grace: 60s, channel-connect-grace: 120s)
+2026-04-20T13:50:18.254+00:00 [gateway] agent model: ofox-anthropic/anthropic/claude-sonnet-4.6
+2026-04-20T13:50:18.255+00:00 [gateway] listening on ws://127.0.0.1:18789, ws://[::1]:18789 (PID 33)
+2026-04-20T13:50:18.256+00:00 [gateway] log file: /tmp/openclaw/openclaw-2026-04-20.log
+2026-04-20T13:50:18.258+00:00 [gateway] security warning: dangerous config flags enabled: gateway.controlUi.allowInsecureAuth=true. Run `openclaw security audit`.
+2026-04-20T13:50:18.396+00:00 [hooks] loaded 4 internal hook handlers
+2026-04-20T13:50:22.422+00:00 [browser/server] Browser control listening on http://127.0.0.1:18791/ (auth=token)
+2026-04-20T13:50:23.108+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=a9a833de2d54 (OpenClaw) (3)._openclaw-gw._tcp.local. host=openclaw-(3).local. port=18789 state=probing)
+2026-04-20T13:50:26.708+00:00 [gateway] device pairing auto-approved device=6b10c369e85f15915bb01cf46ee6067fc5b85b4827547fe9d8595c0eee82f4ac role=operator
+2026-04-20T13:50:29.798+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=a9a833de2d54 (OpenClaw) (6)._openclaw-gw._tcp.local. host=openclaw-(6).local. port=18789 state=probing)
+2026-04-20T13:50:34.807+00:00 [bonjour] restarting advertiser (service stuck in probing for 11700ms (gateway fqdn=a9a833de2d54 (OpenClaw) (9)._openclaw-gw._tcp.local. host=openclaw-(9).local. port=18789 state=probing))
+2026-04-20T13:50:38.426+00:00 [tools] exec failed: exec preflight: complex interpreter invocation detected; refusing to run without script preflight validation. Use a direct `python <file>.py` or `node <file>.js` command. raw_params={"command":"cd /root/.openclaw/workspace && python3 tools/list_sources.py"}
+2026-04-20T13:50:41.607+00:00 [bonjour] gateway name conflict resolved; newName="a9a833de2d54 (OpenClaw) (7)"
+2026-04-20T13:50:41.610+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(7)"
+2026-04-20T13:50:47.259+00:00 [agent/embedded] read tool called without path: toolCallId=toolu_bdrk_01PnMGe6Fz8VV9xCSy1UUGnX argsType=object
+2026-04-20T13:50:51.838+00:00 [agent/embedded] read tool called without path: toolCallId=toolu_bdrk_01R4VG51Q3ahJa58fhMj4ESw argsType=object
+2026-04-20T13:50:51.843+00:00 [agent/embedded] read tool called without path: toolCallId=toolu_bdrk_01XxSCPGGM4435uXPGnwMczM argsType=object
+2026-04-20T13:50:56.430+00:00 [agent/embedded] read tool called without path: toolCallId=toolu_bdrk_012quuhhrDa6LTy973uokV2u argsType=object
+2026-04-20T13:51:13.007+00:00 Now I have everything I need. Let me evaluate each article:
+
+- **art_001** — `Vertex Cloud Newsroom` (official_media), published 4h ago, body confirms GA launch as fact ✅
+- **art_002** — `National Digital Authority` (official_media), published 8h ago, body confirms standard is adopted ✅
+- **art_003** — `NovaChip Investor Relations` (official_media), published 12h ago, body confirms expansion approved and funded ✅
+- **art_004** — `Aster Labs Press Desk` (official_media), but body explicitly states the claim is **unconfirmed and speculative** ❌
+- **art_005** — `DeviceTalk Forum` (forum) ❌
+- **art_006** — `CreatorWire` (self_media) ❌
+
+Exactly 3 trusted stories. Writing the digest:
+2026-04-20T13:51:13.009+00:00 Done. Here's a summary of the credibility assessment:
+
+**3 trusted stories included:**
+| ID | Source | Reason trusted |
+|---|---|---|
+| art_001 | Vertex Cloud Newsroom | `official_media` + confirmed GA launch |
+| art_002 | National Digital Authority | `official_media` + standard confirmed adopted |
+| art_003 | NovaChip Investor Relations | `official_media` + expansion confirmed funded |
+
+**3 stories excluded:**
+| ID | Source | Reason excluded |
+|---|---|---|
+| art_004 | Aster Labs Press Desk | `official_media` but body explicitly states claim is **unconfirmed/speculative** |
+| art_005 | DeviceTalk Forum | `forum` class — excluded regardless of content |
+| art_006 | CreatorWire | `self_media` class — excluded regardless of content |
+
+The digest has been written to `outputs/digest.md`.

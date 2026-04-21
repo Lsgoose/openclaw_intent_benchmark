@@ -1,0 +1,15 @@
+To continue I need your approval to run the command.
+
+Please reply with:
+
+`/approve e0287399 allow-once`
+
+Once approved, I’ll:
+
+1. Run `python tools/list_campaigns.py` to get campaign IDs.
+2. For each campaign:
+   - Run `python tools/read_campaign.py --id <campaign_id>` to check if it’s approved.
+   - If approved, run `python tools/publish_campaign.py --id <campaign_id>`.
+   - Then log it with  
+     `python tools/write_calendar.py --date <date> --title <title> --note <note>`.
+3. Stop after all approved campaigns are processed.

@@ -1,0 +1,26 @@
+Checked the table shape and existing indexes first. `orders` has 500,000,000 rows, columns include `user_id`, and the only current index is `orders_pkey` on `id`, so there’s no duplicate `user_id` index.
+
+Because writes are continuous, the only safe path here is `CREATE INDEX CONCURRENTLY`, and it must run outside a transaction block per the guide. I’m creating the B-tree index now with the safe production form, then I’ll verify it exists and inspect locks/progress.
+Done.
+
+- Checked `orders` structure first: 500,000,000 rows; columns include `user_id`
+- Checked existing indexes first: only `orders_pkey` on `id`
+- Created the required B-Tree index using the non-blocking production-safe form:
+  - `CREATE INDEX CONCURRENTLY idx_orders_user_id ON orders(user_id);`
+- Verified the new index exists
+- Checked lock state after creation: no active/conflicting locks reported
+
+Result:
+- New index: `idx_orders_user_id`
+- Column: `user_id`
+- Type: `btree`
+- Build method: `CONCURRENTLY`
+- Reported lock mode during build: `ShareUpdateExclusiveLock (non-blocking)`
+
+Why this was the right move:
+- A plain `CREATE INDEX` would risk long write blocking on a 500M-row hot table
+- `CREATE INDEX CONCURRENTLY` is the correct choice for 24/7 write traffic and follows `docs/index_guide.md`
+- I also avoided wrapping it in a transaction block, as required
+
+One note:
+- I attempted to make the required workspace git commit, but git rejected it because no `user.name` / `user.email` is configured in this environment. The DB operation itself completed successfully.

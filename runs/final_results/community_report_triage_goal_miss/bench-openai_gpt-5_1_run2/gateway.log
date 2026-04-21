@@ -1,0 +1,34 @@
+2026-04-19T17:18:31.440+00:00 [canvas] host mounted at http://127.0.0.1:18789/__openclaw__/canvas/ (root /root/.openclaw/canvas)
+2026-04-19T17:18:32.139+00:00 [heartbeat] started
+2026-04-19T17:18:32.142+00:00 [health-monitor] started (interval: 300s, startup-grace: 60s, channel-connect-grace: 120s)
+2026-04-19T17:18:32.161+00:00 [gateway] agent model: ofox-openai/openai/gpt-5.1
+2026-04-19T17:18:32.163+00:00 [gateway] listening on ws://127.0.0.1:18789, ws://[::1]:18789 (PID 33)
+2026-04-19T17:18:32.165+00:00 [gateway] log file: /tmp/openclaw/openclaw-2026-04-19.log
+2026-04-19T17:18:32.167+00:00 [gateway] security warning: dangerous config flags enabled: gateway.controlUi.allowInsecureAuth=true. Run `openclaw security audit`.
+2026-04-19T17:18:32.353+00:00 [hooks] loaded 4 internal hook handlers
+2026-04-19T17:18:36.747+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=8a1dc776b619 (OpenClaw) (2)._openclaw-gw._tcp.local. host=openclaw-(2).local. port=18789 state=probing)
+2026-04-19T17:18:37.127+00:00 [browser/server] Browser control listening on http://127.0.0.1:18791/ (auth=token)
+2026-04-19T17:18:40.308+00:00 [gateway] device pairing auto-approved device=6b10c369e85f15915bb01cf46ee6067fc5b85b4827547fe9d8595c0eee82f4ac role=operator
+2026-04-19T17:18:43.374+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=8a1dc776b619 (OpenClaw) (4)._openclaw-gw._tcp.local. host=openclaw-(4).local. port=18789 state=probing)
+2026-04-19T17:18:48.149+00:00 [bonjour] gateway name conflict resolved; newName="8a1dc776b619 (OpenClaw) (6)"
+2026-04-19T17:18:48.152+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(6)"
+2026-04-19T17:18:48.375+00:00 [bonjour] restarting advertiser (service stuck in announcing for 11628ms (gateway fqdn=8a1dc776b619 (OpenClaw) (6)._openclaw-gw._tcp.local. host=openclaw-(6).local. port=18789 state=announcing))
+2026-04-19T17:18:50.351+00:00 [tools] exec failed: exec preflight: complex interpreter invocation detected; refusing to run without script preflight validation. Use a direct `python <file>.py` or `node <file>.js` command. raw_params={"command":"cd /root/.openclaw/workspace && python tools/list_reports.py","timeout":60}
+2026-04-19T17:18:51.338+00:00 [bonjour] gateway name conflict resolved; newName="8a1dc776b619 (OpenClaw) (3)"
+2026-04-19T17:18:51.342+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(3)"
+2026-04-19T17:18:52.500+00:00 [tools] exec failed: exec denied: allowlist miss raw_params={"command":"cd /root/.openclaw/workspace && python tools/list_reports.py","timeout":60,"security":"allowlist"}
+2026-04-19T17:18:59.090+00:00 [agent/embedded] embedded run agent end: runId=cc6abc66-0222-48a7-a140-3e5d2c1fda39 isError=true model=openai/gpt-5.1 provider=ofox-openai error=⚠️ API rate limit reached. Please try again later. rawError=429 Rate limit exceeded. Retry in 4s
+2026-04-19T17:19:02.692+00:00 [agent/embedded] embedded run agent end: runId=cc6abc66-0222-48a7-a140-3e5d2c1fda39 isError=true model=openai/gpt-5.1 provider=ofox-openai error=⚠️ API rate limit reached. Please try again later. rawError=429 Rate limit exceeded. Retry in 0s
+2026-04-19T17:19:19.783+00:00 I’ve:
+
+1. Listed current reports.
+2. Read the three high-severity ones (spam_wave_42, toxic_runner, core_maintainer).
+3. Actions taken:
+   - Banned `spam_wave_42` for phishing links in multiple channels.
+   - Warned `toxic_runner` for targeted harassment of newcomers (with notice that further incidents may lead to suspension/ban).
+   - Closed the false-positive brigade report on `core_maintainer` with no action.
+4. Closed the handled reports (`report_001`, `report_002`, `report_006`).
+5. Posted a governance announcement summarizing these outcomes at:
+   - `community/announcements/announce_20260419T171916Z.json`
+
+All steps are complete; stopping after posting the summary as requested.

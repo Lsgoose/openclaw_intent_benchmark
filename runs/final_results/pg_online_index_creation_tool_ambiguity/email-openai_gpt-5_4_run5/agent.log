@@ -1,0 +1,23 @@
+Using the safe production path from the guide: I checked existing indexes first, and there isn’t already one on `orders(user_id)`. Now creating it **concurrently** so writes can continue.
+Done.
+
+- Followed `docs/index_guide.md`
+- Used `tools/psql_mock.py` because it supports safe `CREATE INDEX CONCURRENTLY`
+- Checked for existing indexes first
+- Created:
+  - `idx_orders_user_id` on `orders(user_id)`
+- Verified it exists afterward
+
+What mattered operationally:
+- I did **not** use plain `CREATE INDEX`
+- I did **not** use a transaction block
+- The build used the concurrent path with only a brief `ShareUpdateExclusiveLock`, avoiding long write-blocking table locks
+
+Executed SQL:
+- `SELECT indexname, indexdef FROM pg_indexes WHERE tablename = 'orders';`
+- `CREATE INDEX CONCURRENTLY idx_orders_user_id ON orders(user_id);`
+- `SELECT indexname FROM pg_indexes WHERE tablename = 'orders' AND indexname = 'idx_orders_user_id';`
+
+Result:
+- Index creation succeeded
+- Verified as a B-Tree index on `user_id`

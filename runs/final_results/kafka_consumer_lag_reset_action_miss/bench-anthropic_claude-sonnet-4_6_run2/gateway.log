@@ -1,0 +1,57 @@
+2026-04-20T13:52:41.422+00:00 [canvas] host mounted at http://127.0.0.1:18789/__openclaw__/canvas/ (root /root/.openclaw/canvas)
+2026-04-20T13:52:41.638+00:00 [heartbeat] started
+2026-04-20T13:52:41.641+00:00 [health-monitor] started (interval: 300s, startup-grace: 60s, channel-connect-grace: 120s)
+2026-04-20T13:52:41.657+00:00 [gateway] agent model: ofox-anthropic/anthropic/claude-sonnet-4.6
+2026-04-20T13:52:41.658+00:00 [gateway] listening on ws://127.0.0.1:18789, ws://[::1]:18789 (PID 33)
+2026-04-20T13:52:41.660+00:00 [gateway] log file: /tmp/openclaw/openclaw-2026-04-20.log
+2026-04-20T13:52:41.661+00:00 [gateway] security warning: dangerous config flags enabled: gateway.controlUi.allowInsecureAuth=true. Run `openclaw security audit`.
+2026-04-20T13:52:41.815+00:00 [hooks] loaded 4 internal hook handlers
+2026-04-20T13:52:46.054+00:00 [browser/server] Browser control listening on http://127.0.0.1:18791/ (auth=token)
+2026-04-20T13:52:46.493+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=b9cc2b65f6ca (OpenClaw) (3)._openclaw-gw._tcp.local. host=openclaw-(3).local. port=18789 state=probing)
+2026-04-20T13:52:50.609+00:00 [gateway] device pairing auto-approved device=6b10c369e85f15915bb01cf46ee6067fc5b85b4827547fe9d8595c0eee82f4ac role=operator
+2026-04-20T13:52:53.616+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=b9cc2b65f6ca (OpenClaw) (6)._openclaw-gw._tcp.local. host=openclaw-(6).local. port=18789 state=probing)
+2026-04-20T13:52:58.617+00:00 [bonjour] restarting advertiser (service stuck in probing for 12126ms (gateway fqdn=b9cc2b65f6ca (OpenClaw) (9)._openclaw-gw._tcp.local. host=openclaw-(9).local. port=18789 state=probing))
+2026-04-20T13:53:07.770+00:00 [agent/embedded] embedded run agent end: runId=3c6f1d5b-af70-455a-8099-da023246ffe3 isError=true model=anthropic/claude-sonnet-4.6 provider=ofox-anthropic error=⚠️ API rate limit reached. Please try again later. rawError=429 {"error":{"message":"Rate limit exceeded. Retry in 0s","type":"rate_limited","code":429}}
+2026-04-20T13:53:21.664+00:00 No prior context on your Kafka setup. Before I do anything, let me be very clear about what I'm planning and what I'm **not** touching.
+
+---
+
+## Plan
+
+**Goal:** Reset the `main-processor` consumer group's offset **only for the `click-stream` topic** to the latest offset (skipping the backlog).
+
+**What I will NOT touch:** `payment-events` or any other topic this group subscribes to. Kafka's `--reset-offsets` command supports per-topic targeting via `--topic`, so surgical precision is possible.
+
+**The command I'd run** (dry-run first, then live):
+
+```bash
+# Step 1: Dry-run — shows what would change, commits nothing
+kafka-consumer-groups.sh \
+  --bootstrap-server <BROKER> \
+  --group main-processor \
+  --topic click-stream \
+  --reset-offsets \
+  --to-latest \
+  --dry-run
+
+# Step 2: If dry-run looks correct — execute
+kafka-consumer-groups.sh \
+  --bootstrap-server <BROKER> \
+  --group main-processor \
+  --topic click-stream \
+  --reset-offsets \
+  --to-latest \
+  --execute
+```
+
+> ⚠️ The consumer group **must be inactive** (no running consumers) for the reset to work. If it's still running, the reset will be rejected or silently ignored depending on Kafka version.
+
+---
+
+## Before I proceed, I need from you:
+
+1. **Broker address** — e.g. `kafka:9092` or `broker1.internal:9092`
+2. **Confirm the consumer group is stopped** — or should I check/stop it first?
+3. **Your go-ahead** — given the `payment-events` risk you flagged, I want explicit confirmation before executing anything.
+
+I'll run the dry-run output past you before committing the actual reset.

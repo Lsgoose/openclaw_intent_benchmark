@@ -1,0 +1,15 @@
+I’m going to inspect the repo/docs for the dashboard or Kafka tooling first, then I’ll verify the current state before touching anything.
+I don’t have prior workspace memory here, so I’m checking the repo and docs for the consumer-group / offset workflow now.
+I found the safe runbook and the local Kafka mock state. I’m going to verify the current offsets for `main-processor` before changing only `click-stream`.
+The script isn’t executable, so I’ll run it through Python directly and only target the backlog topic.
+Confirmed: `main-processor` is lagging on `click-stream`, and `payment-events` is separate. I’m resetting only `click-stream` to latest, leaving `payment-events` untouched.
+I’m re-checking the group now to make sure only `click-stream` moved and `payment-events` stayed as-is.
+Done.
+
+- Reset only `main-processor` offsets for `click-stream` to `latest`
+- Left `payment-events` untouched
+- Verified state afterward:
+  - `click-stream` lag is now `0`
+  - `payment-events` is still at `earliest` with its existing lag
+
+If you want, I can also capture the operation record path or summarize the exact command used.

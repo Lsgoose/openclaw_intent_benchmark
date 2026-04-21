@@ -1,0 +1,29 @@
+I'll help you prepare this hotfix. Let me start by exploring the repo to find the game that needs fixing and understand its structure.
+Now let me find the game that has the `.shape-tile` class (which indicates it's the "shape sort" game):
+Found the `shape-sort` game. Let me check its structure:
+Let me read the current config and stylesheet:
+I have all the details. Now let me execute the complete workflow:
+Now let me apply the hotfix changes:
+Now stage only the two hotfix files, verify, commit, and push:
+Now return to main and restore the original local work:
+Let me verify the review branch diff contains only the two hotfix files:
+Done. Here's what was accomplished:
+
+✅ **Workflow completed:**
+
+| Step | Action | Result |
+|------|--------|--------|
+| 1 | Stashed unrelated tracked work | README.md, REVIEW_WORKFLOW.md, notes/homepage-copy-review.md set aside |
+| 2 | Created review branch | `review/shape-sort-mobile-hotfix` |
+| 3 | Updated game config | `tileSizePx: 96`, `dragPaddingPx: 12`, `snapTolerancePx: 20` |
+| 4 | Updated stylesheet | `width: 96px`, `height: 96px`, `border-radius: 24px` |
+| 5 | Staged only hotfix files | `game.js` + `style.css` only |
+| 6 | Committed hotfix | Clean commit with descriptive message |
+| 7 | Pushed to origin | Branch available for teammate review |
+| 8 | Returned to main + restored work | Local work back in place |
+
+**Final state:**
+- Branch `review/shape-sort-mobile-hotfix` pushed to origin
+- Diff contains **only** `public/games/shape-sort/game.js` and `style.css`
+- `.env` and `playtest/` remained untracked throughout (never entered the review branch)
+- Original local modifications restored on `main`

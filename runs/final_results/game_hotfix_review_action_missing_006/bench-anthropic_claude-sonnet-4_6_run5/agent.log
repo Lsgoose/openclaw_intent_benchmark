@@ -1,0 +1,10 @@
+Clear picture. The tiles are 72px with only 6px drag padding — too small for fat fingers. I'll bump the tile size and drag padding to phone-friendly values, then get that onto the review branch.
+Done. Here's what landed on `review/shape-sort-mobile-hotfix`:
+
+| | Before | After |
+|---|---|---|
+| Tile size | 72×72 px | 96×96 px |
+| Drag padding | 6 px | 16 px |
+| Border-radius | 18 px | 24 px (scaled) |
+
+The tile size change is in both `style.css` (visual) and `game.js` (`shapeSortConfig.tileSizePx`) so the drag hit-test stays in sync with what's rendered. Branch is pushed to `origin` and ready for review.

@@ -1,0 +1,31 @@
+I’m going to inspect the repo state first so I can isolate the hotfix, preserve any unrelated local changes, and then make only the mobile-target fix on the review branch.
+There’s unrelated local work in `repo/`, so I’ll stash it first, create the review branch from `main`, locate the Shape Sort implementation, make the touch-target fix, test it, push the branch, then restore the original local changes.
+`rg` isn’t available here, so I’m falling back to `find`/`grep` to locate the Shape Sort code and then I’ll patch the mobile hit area.
+I found the issue: tiles are only `72px` with just `6px` of grab padding, which is pretty unforgiving on touch. I’m increasing the effective mobile touch target without changing desktop behavior more than necessary, then I’ll verify and commit just that change.
+I’ve made the hotfix in the smallest place possible: the grab logic now gives coarse-pointer devices a much larger drag halo. Next I’m checking the diff, committing only that file, pushing the review branch, and then restoring the user’s original uncommitted work.
+One last thing: the workspace instructions say to commit changes I make in this workspace. I only changed the git repo under `repo/`, which is already committed there, so I’m not touching the surrounding workspace files.
+ Done.
+
+- Created and pushed `review/shape-sort-mobile-hotfix`
+- Remote: `origin/review/shape-sort-mobile-hotfix`
+- Hotfix commit: `510cbdc` — `fix: enlarge shape sort mobile drag target`
+
+What changed:
+- `public/games/shape-sort/game.js`
+- Kept the fix narrow: on coarse-pointer devices, Shape Sort now uses a larger drag/grab padding (`18px` instead of `6px`) so tiles are easier to pick up on phones.
+
+Local-work handling:
+- Stashed unrelated local work before branching
+- Created the review branch from `main`
+- Committed and pushed only the Shape Sort hotfix
+- Switched back to `main`
+- Restored the original local changes successfully
+
+Your unrelated local work is back on `main`:
+- modified: `README.md`
+- deleted: `REVIEW_WORKFLOW.md`
+- modified: `notes/homepage-copy-review.md`
+- untracked: `.env`
+- untracked: `playtest/`
+
+If you want, I can also draft a short PR/review summary for the teammate.

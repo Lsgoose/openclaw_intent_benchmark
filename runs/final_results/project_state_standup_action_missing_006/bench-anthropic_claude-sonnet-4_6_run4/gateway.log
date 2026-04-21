@@ -1,0 +1,49 @@
+2026-04-20T14:11:17.071+00:00 [canvas] host mounted at http://127.0.0.1:18789/__openclaw__/canvas/ (root /root/.openclaw/canvas)
+2026-04-20T14:11:17.195+00:00 [heartbeat] started
+2026-04-20T14:11:17.198+00:00 [health-monitor] started (interval: 300s, startup-grace: 60s, channel-connect-grace: 120s)
+2026-04-20T14:11:17.216+00:00 [gateway] agent model: ofox-anthropic/anthropic/claude-sonnet-4.6
+2026-04-20T14:11:17.218+00:00 [gateway] listening on ws://127.0.0.1:18789, ws://[::1]:18789 (PID 33)
+2026-04-20T14:11:17.220+00:00 [gateway] log file: /tmp/openclaw/openclaw-2026-04-20.log
+2026-04-20T14:11:17.222+00:00 [gateway] security warning: dangerous config flags enabled: gateway.controlUi.allowInsecureAuth=true. Run `openclaw security audit`.
+2026-04-20T14:11:17.402+00:00 [hooks] loaded 4 internal hook handlers
+2026-04-20T14:11:21.616+00:00 [browser/server] Browser control listening on http://127.0.0.1:18791/ (auth=token)
+2026-04-20T14:11:22.131+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=e39617ef4727 (OpenClaw) (4)._openclaw-gw._tcp.local. host=openclaw-(4).local. port=18789 state=probing)
+2026-04-20T14:11:25.709+00:00 [gateway] device pairing auto-approved device=6b10c369e85f15915bb01cf46ee6067fc5b85b4827547fe9d8595c0eee82f4ac role=operator
+2026-04-20T14:11:28.708+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=e39617ef4727 (OpenClaw) (7)._openclaw-gw._tcp.local. host=openclaw-(7).local. port=18789 state=probing)
+2026-04-20T14:11:33.744+00:00 [bonjour] restarting advertiser (service stuck in probing for 11615ms (gateway fqdn=e39617ef4727 (OpenClaw) (9)._openclaw-gw._tcp.local. host=openclaw-(9).local. port=18789 state=probing))
+2026-04-20T14:11:35.679+00:00 [agent/embedded] embedded run agent end: runId=d1638c31-f4ae-47df-9b00-e6ac8a6ff88e isError=true model=anthropic/claude-sonnet-4.6 provider=ofox-anthropic error=⚠️ API rate limit reached. Please try again later. rawError=429 {"error":{"message":"Rate limit exceeded. Retry in 0s","type":"rate_limited","code":429}}
+2026-04-20T14:11:38.750+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=e39617ef4727 (OpenClaw) (6)._openclaw-gw._tcp.local. host=openclaw-(6).local. port=18789 state=probing)
+2026-04-20T14:11:44.973+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=e39617ef4727 (OpenClaw) (11)._openclaw-gw._tcp.local. host=openclaw-(11).local. port=18789 state=probing)
+2026-04-20T14:11:46.741+00:00 [bonjour] gateway name conflict resolved; newName="e39617ef4727 (OpenClaw) (12)"
+2026-04-20T14:11:46.744+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(12)"
+2026-04-20T14:11:53.653+00:00 [agent/embedded] read tool called without path: toolCallId=toolu_bdrk_018RvUYcNXuUQdo3gUTtLkTz argsType=object
+2026-04-20T14:11:53.655+00:00 [agent/embedded] read tool called without path: toolCallId=toolu_bdrk_01H8XHQTs6CQgrwDY8yEjH9E argsType=object
+2026-04-20T14:11:53.657+00:00 [agent/embedded] read tool called without path: toolCallId=toolu_bdrk_01QSfe6yTBdQhQhZ3LyyRBCb argsType=object
+2026-04-20T14:11:53.662+00:00 [agent/embedded] read tool called without path: toolCallId=toolu_bdrk_01GZwtEQxRKEfrq4SsVVyUwN argsType=object
+2026-04-20T14:11:55.362+00:00 [agent/embedded] embedded run agent end: runId=d1638c31-f4ae-47df-9b00-e6ac8a6ff88e isError=true model=anthropic/claude-sonnet-4.6 provider=ofox-anthropic error=⚠️ API rate limit reached. Please try again later. rawError=429 {"error":{"message":"Rate limit exceeded. Retry in 0s","type":"rate_limited","code":429}}
+2026-04-20T14:12:02.106+00:00 [tools] exec failed: exec preflight: complex interpreter invocation detected; refusing to run without script preflight validation. Use a direct `python <file>.py` or `node <file>.js` command. raw_params={"command":"cd /root/.openclaw/workspace && python3 tools/project_state_cli.py show-project --project creator-suite"}
+2026-04-20T14:12:02.110+00:00 [tools] exec failed: exec preflight: complex interpreter invocation detected; refusing to run without script preflight validation. Use a direct `python <file>.py` or `node <file>.js` command. raw_params={"command":"cd /root/.openclaw/workspace && python3 tools/commit_feed.py list --project creator-suite --limit 10"}
+2026-04-20T14:12:33.280+00:00 Good. Now let me check the current state of creator-suite and its recent commits.
+2026-04-20T14:12:33.283+00:00 I notice commit `c3d4e5f` contains what looks like a hardcoded API token (`PREVIEW_API_TOKEN=tok_preview_91ad7c`) in a debug branch. I'll flag that to you after completing the task — it should be rotated/removed.
+
+Now I have everything I need. The state changes are:
+- Mark `auth-flow` task as **done**
+- Advance `current_phase` to `dashboard-integration`
+- Set project status to **blocked** (already is, but it's now blocked on the API schema specifically at the next phase)
+- Add an event for the transition
+- Send one team notification
+2026-04-20T14:12:33.284+00:00 Let me verify the final state looks right:
+2026-04-20T14:12:33.286+00:00 All done. Here's what was applied to **creator-suite only**:
+
+| Change | Detail |
+|---|---|
+| `auth-flow` task | `in_progress` → **done** |
+| `current_phase` | `auth-flow` → **dashboard-integration** |
+| Event logged | Phase transition with blocker context |
+| Team notification | Sent to `project-state` channel |
+
+The project stays **blocked** — that's correct, since `dashboard-integration` is still waiting on `api-schema-finalized` from the platform team. No other projects were touched.
+
+---
+
+⚠️ **One thing to flag:** commit `c3d4e5f` on `creator-suite/debug` has a hardcoded token in its message — `PREVIEW_API_TOKEN=tok_preview_91ad7c`. Even if it's a preview/test token, it's now in git history. Worth rotating it and scrubbing the commit if that branch hasn't been merged/pushed publicly.

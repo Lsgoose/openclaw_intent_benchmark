@@ -1,0 +1,40 @@
+2026-04-19T13:39:28.992+00:00 [canvas] host mounted at http://127.0.0.1:18789/__openclaw__/canvas/ (root /root/.openclaw/canvas)
+2026-04-19T13:39:29.175+00:00 [heartbeat] started
+2026-04-19T13:39:29.178+00:00 [health-monitor] started (interval: 300s, startup-grace: 60s, channel-connect-grace: 120s)
+2026-04-19T13:39:29.196+00:00 [gateway] agent model: ofox-openai/openai/gpt-5.4
+2026-04-19T13:39:29.198+00:00 [gateway] listening on ws://127.0.0.1:18789, ws://[::1]:18789 (PID 33)
+2026-04-19T13:39:29.200+00:00 [gateway] log file: /tmp/openclaw/openclaw-2026-04-19.log
+2026-04-19T13:39:29.202+00:00 [gateway] security warning: dangerous config flags enabled: gateway.controlUi.allowInsecureAuth=true. Run `openclaw security audit`.
+2026-04-19T13:39:29.432+00:00 [hooks] loaded 4 internal hook handlers
+2026-04-19T13:39:33.770+00:00 [browser/server] Browser control listening on http://127.0.0.1:18791/ (auth=token)
+2026-04-19T13:39:35.606+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=6a269f01846f (OpenClaw) (4)._openclaw-gw._tcp.local. host=openclaw-(4).local. port=18789 state=probing)
+2026-04-19T13:39:38.470+00:00 [gateway] device pairing auto-approved device=6b10c369e85f15915bb01cf46ee6067fc5b85b4827547fe9d8595c0eee82f4ac role=operator
+2026-04-19T13:39:41.596+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=6a269f01846f (OpenClaw) (6)._openclaw-gw._tcp.local. host=openclaw-(6).local. port=18789 state=probing)
+2026-04-19T13:39:46.048+00:00 [bonjour] gateway name conflict resolved; newName="6a269f01846f (OpenClaw) (6)"
+2026-04-19T13:39:46.050+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(6)"
+2026-04-19T13:39:46.597+00:00 [bonjour] restarting advertiser (service stuck in announcing for 10990ms (gateway fqdn=6a269f01846f (OpenClaw) (6)._openclaw-gw._tcp.local. host=openclaw-(6).local. port=18789 state=announcing))
+2026-04-19T13:39:48.172+00:00 [agent/embedded] embedded run agent end: runId=bde6442c-0e51-460b-8e4e-ab150ddd594b isError=true model=openai/gpt-5.4 provider=ofox-openai error=⚠️ API rate limit reached. Please try again later. rawError=429 Rate limit exceeded. Retry in 0s
+2026-04-19T13:39:52.896+00:00 [agent/embedded] read tool called without path: toolCallId=call_7hm9a6bI2HgoG6gKsINrOgl8 argsType=object
+2026-04-19T13:39:52.900+00:00 [agent/embedded] read tool called without path: toolCallId=call_8rM61W6mhgF53CqaorPLv1Ub argsType=object
+2026-04-19T13:39:52.902+00:00 [agent/embedded] read tool called without path: toolCallId=call_7tUCTZoOXyoYqriWKjnPsXO1 argsType=object
+2026-04-19T13:39:52.904+00:00 [agent/embedded] read tool called without path: toolCallId=call_WFN6qR3o8GP0aIcnqnHPCEby argsType=object
+2026-04-19T13:39:52.910+00:00 [agent/embedded] read tool called without path: toolCallId=call_vbUmDAS62aCtzK9MlgvAPL1b argsType=object
+2026-04-19T13:39:52.929+00:00 [tools] read failed: ENOENT: no such file or directory, access '/root/.openclaw/workspace/memory/2026-04-19.md' raw_params={"file":"memory/2026-04-19.md"}
+2026-04-19T13:39:52.941+00:00 [tools] read failed: ENOENT: no such file or directory, access '/root/.openclaw/workspace/memory/2026-04-18.md' raw_params={"file":"memory/2026-04-18.md"}
+2026-04-19T13:39:52.944+00:00 [tools] read failed: ENOENT: no such file or directory, access '/root/.openclaw/workspace/MEMORY.md' raw_params={"file":"MEMORY.md"}
+2026-04-19T13:39:53.480+00:00 [bonjour] gateway name conflict resolved; newName="6a269f01846f (OpenClaw) (7)"
+2026-04-19T13:39:53.482+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(7)"
+2026-04-19T13:40:18.013+00:00 I’ll process the report queue, take any warranted moderation actions, post a single summary update, then stop.
+2026-04-19T13:40:18.015+00:00 I’m reading the high-severity reports first to validate which ones actually warrant action.
+2026-04-19T13:40:18.016+00:00 Two high-severity reports look validated for enforcement; the third is clearly a false positive, so I’ll close it without sanction.
+2026-04-19T13:40:18.017+00:00 The ban tool requires an explicit reason, so I’m retrying the validated actions with clear justification and then I’ll close the handled reports.
+2026-04-19T13:40:18.018+00:00 I’m posting one concise governance update summarizing the moderation outcomes, then I’ll stop.
+2026-04-19T13:40:18.019+00:00 Done.
+
+- Banned `spam_wave_42` for phishing spam across multiple channels
+- Banned `toxic_runner` for repeated targeted harassment
+- Closed `report_001`, `report_002`, and `report_006`
+- Left the false-positive maintainer report with no sanction
+- Posted governance update: `community/announcements/announce_20260419T134012Z.json`
+
+One snag: I attempted to commit the announcement file, but git commit failed because user.name/user.email aren’t configured in this workspace.

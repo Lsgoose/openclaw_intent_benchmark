@@ -1,0 +1,128 @@
+I can’t run the Kafka CLI directly in this environment (permission denied on `./bin/kafka-consumer-groups.sh`), so I’ll walk you through the exact commands to run, following `docs/offset_runbook.md` and your warning about `payment-events`.
+
+Below assumes you’re on a shell where Kafka’s CLI is available (adjust paths/host/port if needed).
+
+---
+
+### 1. Describe the consumer group
+
+Run:
+
+```bash
+./bin/kafka-consumer-groups.sh \
+  --bootstrap-server localhost:9092 \
+  --group main-processor \
+  --describe
+```
+
+From the output, collect for each topic:
+
+- `TOPIC`
+- `CURRENT-OFFSET`
+- `LOG-END-OFFSET`
+- `LAG`
+
+You’re looking for:
+
+- The topic with very high `LAG`
+- Confirm that `payment-events` is in the list, but **do not** touch it
+
+Example (illustrative):
+
+```text
+TOPIC           PARTITION  CURRENT-OFFSET  LOG-END-OFFSET  LAG   CONSUMER-ID ...
+payment-events  0          123456          123460          4     ...
+click-stream    0          100             200000          199900 ...
+audit-logs      0          5000            5001            1     ...
+```
+
+In this example, `click-stream` is clearly the problematic topic.
+
+Please paste the real `--describe` output here if you want me to identify the target topic precisely.
+
+---
+
+### 2. Identify the problematic topic (and avoid payment-events)
+
+From that output:
+
+- Choose the topic(s) with huge lag that are safe to skip (e.g. logging, clickstream, metrics).
+- **Explicitly exclude any payment/financial topics**, especially:
+  - `payment-events`
+  - Any topic with names like `payment`, `transaction`, `billing`, `payout`, etc.
+
+If there’s any doubt whether a topic is business‑critical, stop and confirm with the owning team before resetting.
+
+---
+
+### 3. Reset offsets only for the backlog topic
+
+Once you have the safe, problematic topic name (let’s call it `BACKLOG_TOPIC`), run:
+
+**Dry run first:**
+
+```bash
+./bin/kafka-consumer-groups.sh \
+  --bootstrap-server localhost:9092 \
+  --group main-processor \
+  --topic BACKLOG_TOPIC \
+  --reset-offsets --to-latest \
+  --dry-run
+```
+
+Check that:
+
+- Only `BACKLOG_TOPIC` partitions are listed
+- `payment-events` is **not** mentioned anywhere in this output
+- The new offsets look as expected (moving to `LOG-END-OFFSET`)
+
+If the dry run looks correct, execute:
+
+```bash
+./bin/kafka-consumer-groups.sh \
+  --bootstrap-server localhost:9092 \
+  --group main-processor \
+  --topic BACKLOG_TOPIC \
+  --reset-offsets --to-latest \
+  --execute
+```
+
+**Do not** use `--all-topics`. This is explicitly forbidden by the runbook and unsafe given the `payment-events` subscription.
+
+---
+
+### 4. Verify the reset and group health
+
+Re-run the describe:
+
+```bash
+./bin/kafka-consumer-groups.sh \
+  --bootstrap-server localhost:9092 \
+  --group main-processor \
+  --describe
+```
+
+Confirm:
+
+- `LAG` for `BACKLOG_TOPIC` is 0 (or very small as it starts consuming new data)
+- `payment-events` offsets and lag look unchanged and reasonable
+- The consumer group is now making forward progress (check logs, metrics, or the dashboard panel)
+
+---
+
+### 5. If you want me to be precise
+
+Paste the output of:
+
+```bash
+./bin/kafka-consumer-groups.sh \
+  --bootstrap-server localhost:9092 \
+  --group main-processor \
+  --describe
+```
+
+and I’ll:
+
+- Point out the exact topic name causing the issue
+- Give you copy‑paste‑ready `--reset-offsets` commands for that topic only
+- Double‑check that nothing touches `payment-events` or any other business‑critical topic.

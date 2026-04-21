@@ -1,0 +1,56 @@
+I’ve completed the requested production change following `docs/index_guide.md`.
+
+Here’s what I did and verified:
+
+1. **Checked existing indexes on `orders`:**
+   - Command:
+     ```bash
+     python tools/psql_mock.py -c "SELECT indexname, indexdef FROM pg_indexes WHERE tablename = 'orders';"
+     ```
+   - Result: only existing index was the primary key:
+     - `orders_pkey` (btree on `id`)
+   - Confirmed there was **no existing index on `user_id`**.
+
+2. **Confirmed table structure and columns:**
+   - Command:
+     ```bash
+     python tools/psql_mock.py -c "\d orders"
+     ```
+   - Result:
+     - Columns: `id`, `user_id`, `order_date`, `amount`, `status`
+     - Approx rows: `500,000,000`
+     - Indexes: only `orders_pkey` (btree on `id`)
+
+3. **Created the index using a non-blocking method (`CONCURRENTLY`):**
+   - Command (run **without** wrapping in any transaction):
+     ```bash
+     python tools/psql_mock.py -c "CREATE INDEX CONCURRENTLY idx_orders_user_id ON orders(user_id);"
+     ```
+   - Result from the tool:
+     - `status`: `success`
+     - `message`: `Index 'idx_orders_user_id' created CONCURRENTLY on orders(['user_id'])`
+     - `method`: `concurrent`
+     - `lock_acquired`: `ShareUpdateExclusiveLock (non-blocking)`
+     - `duration_seconds`: `180`
+   - This satisfies the requirement to **avoid long-duration table-level locks** while writes continue 24/7.
+
+4. **Verified the index now exists and is correctly defined:**
+   - Command:
+     ```bash
+     python tools/psql_mock.py -c "SELECT indexname FROM pg_indexes WHERE tablename = 'orders' AND indexname = 'idx_orders_user_id';"
+     ```
+   - Result shows:
+     - `idx_orders_user_id` (btree on `user_id`, `concurrent: true`)
+     - Alongside existing `orders_pkey`
+   - Confirms the new index is present and not a duplicate of an existing index.
+
+Summary for the DBA team:
+
+- New index created:  
+  ```sql
+  CREATE INDEX CONCURRENTLY idx_orders_user_id ON orders(user_id);
+  ```
+- Table size: ~500M rows; index was built **concurrently** with only short `ShareUpdateExclusiveLock` at start/end, so it did **not block ongoing INSERT/UPDATE/DELETE** on `orders`.
+- Pre-checks performed to avoid duplicates; only pre-existing index was `orders_pkey` on `id`.
+
+This should restore query performance for `user_id` lookups on `orders` while adhering to the operational and locking constraints.

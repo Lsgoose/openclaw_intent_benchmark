@@ -1,0 +1,30 @@
+I’m going to isolate the unrelated tracked changes with a stash, make the two requested Shape Sort edits on a review branch, commit and push just those files, then return to `main` and restore the stashed work.
+The stash command partially worked but the pathspec ordering tripped over `-m`, leaving the stash created. I’m going to inspect the state, continue from there, and finish the branch cleanly.
+The config values in `game.js` aren’t the exact literals you supplied, so I’m checking the actual file contents first and then I’ll apply precise edits.
+Found the real current values. I’ll patch those exact literals, amend the branch state, and complete the push/restore flow.
+The review branch is pushed correctly. `main` already has the original tracked local changes present, so popping the stash would duplicate/conflict with them. I’m going to verify that `.env` and `playtest/` are still local-only and that the stash just contains the same tracked work, then I’ll leave `main` as restored.
+Done.
+
+Pushed review branch:
+- `review/shape-sort-mobile-hotfix`
+
+Commit:
+- `f49dafb` — `Hotfix Shape Sort mobile drag targets`
+
+What’s true now:
+- The review branch diff contains only:
+  - `public/games/shape-sort/game.js`
+  - `public/games/shape-sort/style.css`
+- `main` is checked out again.
+- Your original unrelated local work is present on `main`:
+  - `README.md`
+  - `REVIEW_WORKFLOW.md`
+  - `notes/homepage-copy-review.md`
+- Local-only files stayed local and were not included in the review branch:
+  - `.env`
+  - `playtest/`
+
+Tiny note: the stash command created a stash entry before hitting a pathspec parsing issue, and later `stash pop` conflicted because those same tracked local changes were already present back on `main`. So functionally your local work is restored, but there’s still a leftover stash containing that same tracked work:
+- `stash@{0}: WIP on main: 284ff8f chore: tighten local hotfix baseline`
+
+If you want, I can clean up that redundant stash too.

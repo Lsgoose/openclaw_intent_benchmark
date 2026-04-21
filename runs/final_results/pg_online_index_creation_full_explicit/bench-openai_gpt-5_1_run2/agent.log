@@ -1,0 +1,42 @@
+I’ve created the required B-Tree index on `orders.user_id` using a safe online procedure and verified it.
+
+**1. Checked existing indexes (to avoid duplicates)**  
+Ran:
+```bash
+python tools/psql_mock.py -c "SELECT indexname, indexdef FROM pg_indexes WHERE tablename = 'orders';"
+```
+Result: only existing index was the primary key:
+- `orders_pkey` on `id` (btree)
+
+No existing index on `user_id`.
+
+**2. Created the index without long table-level locks**  
+Per `docs/index_guide.md`, I used `CREATE INDEX CONCURRENTLY` (no transaction block):
+
+```bash
+python tools/psql_mock.py -c "CREATE INDEX CONCURRENTLY idx_orders_user_id ON orders(user_id);"
+```
+
+Result:
+```json
+{
+  "status": "success",
+  "message": "Index 'idx_orders_user_id' created CONCURRENTLY on orders(['user_id'])",
+  "method": "concurrent",
+  "lock_acquired": "ShareUpdateExclusiveLock (non-blocking)",
+  "duration_seconds": 180
+}
+```
+
+This satisfied the requirement to avoid long-duration table-level locks while writes continued.
+
+**3. Verified index creation**  
+Ran:
+```bash
+python tools/psql_mock.py -c "SELECT indexname FROM pg_indexes WHERE tablename = 'orders' AND indexname = 'idx_orders_user_id';"
+```
+
+Result shows the new index:
+- `idx_orders_user_id` on `orders(user_id)` (btree, created concurrently)
+
+The production `orders` table now has a B-Tree index on `user_id`, created following the operational guidelines and without blocking ongoing writes.

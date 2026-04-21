@@ -1,0 +1,23 @@
+I’m going to isolate the Shape Sort hotfix on a review branch, stash the unrelated local work first, make the mobile-target fix, push it, then restore your work.
+Done — I prepared and pushed `review/shape-sort-mobile-hotfix` with the Shape Sort mobile-hit-target fix, and then restored the unrelated local work.
+
+What changed on the review branch:
+- `public/games/shape-sort/style.css`
+  - increased touch usability by adding:
+    - `min-width: 88px`
+    - `min-height: 88px`
+    - `touch-action: none`
+  - also set `touch-action: none` on the board
+
+Push:
+- `origin/review/shape-sort-mobile-hotfix` now points to commit `6da84b0`
+
+Unrelated local work:
+- restored exactly as it was after the push:
+  - modified `README.md`
+  - deleted `REVIEW_WORKFLOW.md`
+  - modified `notes/homepage-copy-review.md`
+  - untracked `.env`
+  - untracked `playtest/`
+
+If you want, I can also do a quick pass to make the hotfix even more mobile-friendly, but I kept this branch narrowly scoped to the Shape Sort issue.

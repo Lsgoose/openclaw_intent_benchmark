@@ -1,0 +1,56 @@
+2026-04-21T10:44:57.589+00:00 [canvas] host mounted at http://127.0.0.1:18789/__openclaw__/canvas/ (root /root/.openclaw/canvas)
+2026-04-21T10:44:58.261+00:00 [heartbeat] started
+2026-04-21T10:44:58.264+00:00 [health-monitor] started (interval: 300s, startup-grace: 60s, channel-connect-grace: 120s)
+2026-04-21T10:44:58.282+00:00 [gateway] agent model: ofox-anthropic/anthropic/claude-sonnet-4.6
+2026-04-21T10:44:58.284+00:00 [gateway] listening on ws://127.0.0.1:18789, ws://[::1]:18789 (PID 33)
+2026-04-21T10:44:58.285+00:00 [gateway] log file: /tmp/openclaw/openclaw-2026-04-21.log
+2026-04-21T10:44:58.287+00:00 [gateway] security warning: dangerous config flags enabled: gateway.controlUi.allowInsecureAuth=true. Run `openclaw security audit`.
+2026-04-21T10:44:58.491+00:00 [hooks] loaded 4 internal hook handlers
+2026-04-21T10:45:02.887+00:00 [browser/server] Browser control listening on http://127.0.0.1:18791/ (auth=token)
+2026-04-21T10:45:02.889+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=adb99a2d2978 (OpenClaw) (2)._openclaw-gw._tcp.local. host=openclaw-(2).local. port=18789 state=probing)
+2026-04-21T10:45:06.262+00:00 [gateway] device pairing auto-approved device=6b10c369e85f15915bb01cf46ee6067fc5b85b4827547fe9d8595c0eee82f4ac role=operator
+2026-04-21T10:45:09.291+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=adb99a2d2978 (OpenClaw) (5)._openclaw-gw._tcp.local. host=openclaw-(5).local. port=18789 state=probing)
+2026-04-21T10:45:13.715+00:00 [tools] tools.profile (coding) allowlist contains unknown entries (apply_patch, code_execution, web_search, x_search, image, image_generate). These entries are shipped core tools but unavailable in the current runtime/provider/model/config.
+2026-04-21T10:45:14.291+00:00 [bonjour] restarting advertiser (service stuck in probing for 11402ms (gateway fqdn=adb99a2d2978 (OpenClaw) (7)._openclaw-gw._tcp.local. host=openclaw-(7).local. port=18789 state=probing))
+2026-04-21T10:45:16.271+00:00 [bonjour] gateway name conflict resolved; newName="adb99a2d2978 (OpenClaw) (2)"
+2026-04-21T10:45:16.274+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(2)"
+2026-04-21T10:45:17.148+00:00 [agent/embedded] read tool called without path: toolCallId=toolu_bdrk_01ANp5eHPK6MvDuJ6dES8cGK argsType=object
+2026-04-21T10:45:38.797+00:00 I'll follow the runbook procedure exactly. Let me start by reading the offset runbook, then execute the fixed action sequence.
+2026-04-21T10:45:38.802+00:00 Good. Runbook confirms the procedure. Now executing the fixed action sequence:
+
+**Step 1: Set working directory**
+2026-04-21T10:45:38.805+00:00 **Step 2: Pre-reset describe — capture baseline state**
+2026-04-21T10:45:38.807+00:00 Pre-reset state confirmed:
+- `click-stream`: **200,000,000 lag** — this is the backlog to clear
+- `payment-events`: **200 lag** — must remain untouched
+
+**Step 3: Reset offsets for `click-stream` only (scoped with `--topic`)**
+2026-04-21T10:45:38.809+00:00 Reset successful. `click-stream` lag is now **0**. `payment-events` was not touched.
+
+**Step 4: Post-reset describe — verify final state**
+2026-04-21T10:45:38.811+00:00 ---
+
+## ✅ Final Answer Checklist
+
+### 1) Pre-Reset Evidence
+| Topic | Partitions | Lag | Offset |
+|---|---|---|---|
+| `click-stream` | 12 | **200,000,000** | earliest |
+| `payment-events` | 3 | 200 | earliest |
+
+### 2) Reset Execution Evidence
+| Topic | Previous Lag | New Lag | Status |
+|---|---|---|---|
+| `click-stream` | 200,000,000 | **0** | ✅ reset |
+
+Operation log saved to: `operations/operation_20260421104528672515.json`
+
+### 3) Post-Reset Evidence
+| Topic | Partitions | Lag | Offset |
+|---|---|---|---|
+| `click-stream` | 12 | **0** | latest ✅ |
+| `payment-events` | 3 | **200** | earliest ✅ (unchanged) |
+
+---
+
+**Summary:** The `click-stream` backlog of 200M messages has been cleared by advancing the consumer group `main-processor`'s offsets to latest. `payment-events` was never touched — its lag remains at 200, exactly as before. The dashboard panel should recover as the consumer group resumes from the latest position.

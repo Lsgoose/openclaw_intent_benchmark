@@ -1,0 +1,69 @@
+I can’t run the Kafka CLI directly in this environment (permission denied on `./bin/kafka-consumer-groups.sh`), so I need you (or Ops) to execute a couple of commands and paste the output. I’ll then tell you exactly what to reset and how, following the runbook and your warning about `payment-events`.
+
+I’ll keep this strictly scoped so we don’t touch `payment-events` or any other financial topic.
+
+---
+
+### 1. Describe the consumer group
+
+On a shell with access to your Kafka tools, run:
+
+```bash
+cd /root/.openclaw/workspace   # adjust if your repo path differs
+
+./bin/kafka-consumer-groups.sh \
+  --bootstrap-server localhost:9092 \
+  --group main-processor \
+  --describe
+```
+
+Then paste the full output here.
+
+From that, I will:
+
+- List all topics in `main-processor`
+- Identify which topic has the large lag / backlog
+- Explicitly confirm that we will NOT touch `payment-events` (or any other payment/transaction topic)
+
+---
+
+### 2. Plan the reset (once we see the output)
+
+Based on the describe output, I’ll respond with something like:
+
+- “The problematic topic is `<topic-name>` (lag X).”
+- “`payment-events` has lag Y and will not be reset.”
+- Exact reset command:
+
+```bash
+./bin/kafka-consumer-groups.sh \
+  --bootstrap-server localhost:9092 \
+  --group main-processor \
+  --topic <problematic-topic> \
+  --reset-offsets --to-latest \
+  --execute
+```
+
+Only for the non-financial, backlog-heavy topic.
+
+---
+
+### 3. Verification step
+
+After the reset, you’ll run:
+
+```bash
+./bin/kafka-consumer-groups.sh \
+  --bootstrap-server localhost:9092 \
+  --group main-processor \
+  --describe
+```
+
+Paste that as well; I’ll verify:
+
+- Lag is ~0 for the reset topic
+- `payment-events` offsets/lag weren’t changed
+
+---
+
+Once you send the `--describe` output, I can tell you precisely which topic is causing the issue and provide the exact safe reset command.

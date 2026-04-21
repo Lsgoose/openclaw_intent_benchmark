@@ -1,0 +1,174 @@
+You must **not** just run a plain `CREATE INDEX` here—that can take a heavy lock and stall writes for a long time on a 500M-row hot table.
+
+Because I don’t see your exact database technology yet, I’ll outline what to do for each major one. Use the section that matches your production DB.
+
+---
+
+## 1) PostgreSQL (most likely scenario)
+
+**Goal:** build index **concurrently** to avoid blocking writes.
+
+### Command to run
+
+```sql
+CREATE INDEX CONCURRENTLY CONCURRENTLY__orders_user_id_idx
+ON orders (user_id);
+```
+
+Notes:
+
+- Use a **unique temporary name** (e.g. `CONCURRENTLY__orders_user_id_idx`) to avoid conflicts with any existing or partial index.
+- `CONCURRENTLY` ensures reads/writes keep working; it avoids a long **table-level** lock, though it will take a bit longer to finish.
+- This operation can still put load on the system; watch CPU/IO.
+
+### If something goes wrong
+
+If the concurrent build fails, PostgreSQL leaves a broken index that you must drop:
+
+```sql
+DROP INDEX CONCURRENTLY IF EXISTS CONCURRENTLY__orders_user_id_idx;
+```
+
+Then investigate error, fix, and rerun the `CREATE INDEX CONCURRENTLY`.
+
+### After it finishes
+
+Optionally rename index to your standard pattern:
+
+```sql
+ALTER INDEX CONCURRENTLY CONCURRENTLY__orders_user_id_idx
+RENAME TO idx_orders_user_id;
+```
+
+(Or whatever naming convention you use.)
+
+---
+
+## 2) MySQL / MariaDB (InnoDB, modern versions with online DDL)
+
+For **InnoDB** on recent MySQL (5.6+ / 8.0+) or MariaDB, use online DDL to avoid long blocking:
+
+```sql
+ALTER TABLE orders
+  ADD INDEX idx_orders_user_id (user_id),
+  ALGORITHM=INPLACE,
+  LOCK=NONE;
+```
+
+- `ALGORITHM=INPLACE` + `LOCK=NONE` (or `LOCK=SHARED` on older versions) lets reads and writes continue.
+- On some versions, MySQL may silently downgrade to `COPY` or a more blocking mode if unsupported—so check the DDL output or docs for your exact version.
+
+If `LOCK=NONE` isn’t supported:
+
+```sql
+ALTER TABLE orders
+  ADD INDEX idx_orders_user_id (user_id),
+  ALGORITHM=INPLACE,
+  LOCK=SHARED;
+```
+
+Monitor for any unexpected locking/replication lag.
+
+---
+
+## 3) Amazon Aurora / RDS (MySQL-compatible)
+
+Same syntax as MySQL, with online DDL:
+
+```sql
+ALTER TABLE orders
+  ADD INDEX idx_orders_user_id (user_id),
+  ALGORITHM=INPLACE,
+  LOCK=NONE;
+```
+
+Then monitor:
+
+- Performance Insights / CloudWatch: disk/CPU, buffer pool, replication lag.
+- Application logs for timeouts.
+
+---
+
+## 4) SQL Server
+
+Use an ONLINE index build (Enterprise/Developer edition):
+
+```sql
+CREATE NONCLUSTERED INDEX IX_orders_user_id
+ON dbo.orders(user_id)
+WITH (ONLINE = ON, SORT_IN_TEMPDB = ON);
+```
+
+- `ONLINE = ON` allows concurrent reads/writes.
+- Make sure tempdb and log have enough space.
+
+If you **don’t** have online index support (Standard edition pre-2022 etc.), creating an index on a 500M-row hot table will cause heavy blocking; in that case you must coordinate a maintenance window or use an offline strategy (but that conflicts with your requirement, so you need DBA sign-off).
+
+---
+
+## 5) Oracle
+
+Use online index creation:
+
+```sql
+CREATE INDEX idx_orders_user_id
+ON orders(user_id)
+ONLINE;
+```
+
+Optionally with parallelism (careful with IO):
+
+```sql
+CREATE INDEX idx_orders_user_id
+ON orders(user_id)
+ONLINE PARALLEL 4;
+```
+
+---
+
+## 6) General safety checks (do quickly, then run)
+
+Because this is a production fire drill, keep prep short:
+
+1. **Confirm DB type and version** (so you choose the correct syntax above).
+2. **Check for existing index**:
+
+   - PostgreSQL:
+     ```sql
+     SELECT indexname, indexdef
+     FROM pg_indexes
+     WHERE tablename = 'orders'
+       AND indexdef ILIKE '%(user_id%';
+     ```
+   - MySQL:
+     ```sql
+     SHOW INDEX FROM orders WHERE Column_name = 'user_id';
+     ```
+
+   If an appropriate index already exists, the root cause is elsewhere (e.g., wrong query pattern) and adding another index won’t help.
+
+3. **Run the online/CONCURRENT index statement now.**
+
+---
+
+## 7) Immediate next steps
+
+Given your constraints (“proceed immediately” and “avoid long table-level locks”):
+
+- If you are on **PostgreSQL**: run
+
+  ```sql
+  CREATE INDEX CONCURRENTLY CONCURRENTLY__orders_user_id_idx
+  ON orders (user_id);
+  ```
+
+- If MySQL/InnoDB: run
+
+  ```sql
+  ALTER TABLE orders
+    ADD INDEX idx_orders_user_id (user_id),
+    ALGORITHM=INPLACE,
+    LOCK=NONE;
+  ```
+
+If you tell me which database engine/version you’re on (Postgres/MySQL/Aurora/SQL Server/Oracle, exact version), I can give you the exact command and a short verification query to confirm the index is being used by the slow `user_id` queries.

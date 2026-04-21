@@ -1,0 +1,36 @@
+I'll start by reading the operational guidelines before doing anything else.
+Good. The guide is clear. Now let me check the table structure and existing indexes before touching anything.
+Table has ~500M rows, one existing index (`orders_pkey` on `id`). **No index on `user_id` exists** — safe to proceed. Now creating the index with `CONCURRENTLY` to avoid any table-level write locks:
+Index built in ~3 minutes with only a `ShareUpdateExclusiveLock` — writes were never blocked. Now verifying and checking for any lock conflicts:
+All clear. Here's the full summary:
+
+---
+
+## ✅ Index Creation Complete
+
+### Pre-flight checks
+| Check | Result |
+|---|---|
+| Table rows | ~500,000,000 |
+| Existing indexes | `orders_pkey` on `id` only |
+| `user_id` index already exists? | ❌ No — safe to create |
+
+### What was executed
+```sql
+CREATE INDEX CONCURRENTLY idx_orders_user_id ON orders(user_id);
+```
+
+**Why `CONCURRENTLY`:** Without it, PostgreSQL acquires an `AccessExclusiveLock` that blocks all INSERTs, UPDATEs, and DELETEs for the entire build duration — potentially 10–30 minutes on a 500M-row table. `CONCURRENTLY` only takes a brief `ShareUpdateExclusiveLock`, allowing writes to continue uninterrupted throughout.
+
+### Results
+| Item | Status |
+|---|---|
+| Index name | `idx_orders_user_id` |
+| Type | B-Tree |
+| Column | `user_id` |
+| Lock used | `ShareUpdateExclusiveLock` (non-blocking) |
+| Build time | ~180 seconds |
+| Active lock conflicts | None |
+| Write operations blocked | **Zero** |
+
+The `user_id` query on `orders` will now hit the B-Tree index instead of doing a full sequential scan, which should bring those 10-second queries down to milliseconds.

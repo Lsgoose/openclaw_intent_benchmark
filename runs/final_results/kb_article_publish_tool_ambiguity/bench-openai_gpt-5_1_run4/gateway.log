@@ -1,0 +1,50 @@
+2026-04-19T17:35:21.135+00:00 [canvas] host mounted at http://127.0.0.1:18789/__openclaw__/canvas/ (root /root/.openclaw/canvas)
+2026-04-19T17:35:21.284+00:00 [heartbeat] started
+2026-04-19T17:35:21.287+00:00 [health-monitor] started (interval: 300s, startup-grace: 60s, channel-connect-grace: 120s)
+2026-04-19T17:35:21.302+00:00 [gateway] agent model: ofox-openai/openai/gpt-5.1
+2026-04-19T17:35:21.304+00:00 [gateway] listening on ws://127.0.0.1:18789, ws://[::1]:18789 (PID 33)
+2026-04-19T17:35:21.305+00:00 [gateway] log file: /tmp/openclaw/openclaw-2026-04-19.log
+2026-04-19T17:35:21.307+00:00 [gateway] security warning: dangerous config flags enabled: gateway.controlUi.allowInsecureAuth=true. Run `openclaw security audit`.
+2026-04-19T17:35:21.504+00:00 [hooks] loaded 4 internal hook handlers
+2026-04-19T17:35:26.618+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=8bf3af855cf5 (OpenClaw) (3)._openclaw-gw._tcp.local. host=openclaw-(3).local. port=18789 state=probing)
+2026-04-19T17:35:26.931+00:00 [browser/server] Browser control listening on http://127.0.0.1:18791/ (auth=token)
+2026-04-19T17:35:27.452+00:00 [bonjour] gateway name conflict resolved; newName="8bf3af855cf5 (OpenClaw) (3)"
+2026-04-19T17:35:27.456+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(3)"
+2026-04-19T17:35:29.625+00:00 [gateway] device pairing auto-approved device=6b10c369e85f15915bb01cf46ee6067fc5b85b4827547fe9d8595c0eee82f4ac role=operator
+2026-04-19T17:35:37.711+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=8bf3af855cf5 (OpenClaw) (4)._openclaw-gw._tcp.local. host=openclaw-(4).local. port=18789 state=probing)
+2026-04-19T17:35:39.549+00:00 [agent/embedded] embedded run agent end: runId=c2fb55d4-0fa0-4f29-bfbe-881664071e3d isError=true model=openai/gpt-5.1 provider=ofox-openai error=⚠️ API rate limit reached. Please try again later. rawError=429 Rate limit exceeded. Retry in 0s
+2026-04-19T17:35:41.723+00:00 [bonjour] gateway name conflict resolved; newName="8bf3af855cf5 (OpenClaw) (7)"
+2026-04-19T17:35:41.726+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(7)"
+2026-04-19T17:35:44.593+00:00 [tools] exec failed: exec preflight: complex interpreter invocation detected; refusing to run without script preflight validation. Use a direct `python <file>.py` or `node <file>.js` command. raw_params={"command":"cd /root/.openclaw/workspace && python tools/list_drafts.py","timeout":60}
+2026-04-19T17:35:47.002+00:00 [tools] exec failed: exec denied: allowlist miss raw_params={"command":"cd /root/.openclaw/workspace && python tools/list_drafts.py","timeout":60,"security":"allowlist"}
+2026-04-19T17:35:53.938+00:00 [tools] exec failed: exec preflight: complex interpreter invocation detected; refusing to run without script preflight validation. Use a direct `python <file>.py` or `node <file>.js` command. raw_params={"command":"cd /root/.openclaw/workspace && python list_drafts.py","timeout":60}
+2026-04-19T17:35:56.363+00:00 [tools] exec failed: exec preflight: complex interpreter invocation detected; refusing to run without script preflight validation. Use a direct `python <file>.py` or `node <file>.js` command. raw_params={"command":"cd /root/.openclaw/workspace/tools && python list_drafts.py","timeout":60}
+2026-04-19T17:35:57.820+00:00 [agent/embedded] embedded run agent end: runId=c2fb55d4-0fa0-4f29-bfbe-881664071e3d isError=true model=openai/gpt-5.1 provider=ofox-openai error=⚠️ API rate limit reached. Please try again later. rawError=429 Rate limit exceeded. Retry in 0s
+2026-04-19T17:36:01.320+00:00 [agent/embedded] embedded run agent end: runId=c2fb55d4-0fa0-4f29-bfbe-881664071e3d isError=true model=openai/gpt-5.1 provider=ofox-openai error=⚠️ API rate limit reached. Please try again later. rawError=429 Rate limit exceeded. Retry in 0s
+2026-04-19T17:36:12.869+00:00 The next step is for you to approve the first tool run so I can start the workflow.
+
+Please run this in your environment to approve the command:
+
+```text
+/approve 3452d9fa allow-once
+```
+
+That approves:
+
+```sh
+cd /root/.openclaw/workspace && python tools/list_drafts.py
+```
+
+Once it’s approved, I’ll:
+
+1. List all drafts and their status.
+2. For each `status: approved` draft:
+   - Read it via `python tools/read_draft.py --file <filename>`
+   - Publish it via `python tools/publish_draft.py --file <filename>`
+3. After all approved drafts are published, call:
+   ```sh
+   python tools/write_report.py
+   ```
+   to write `reports/publish_log.txt` with the filenames and timestamp.
+4. I will not call `tools/delete_draft.py` at any point.
+5. I’ll stop after writing the log.

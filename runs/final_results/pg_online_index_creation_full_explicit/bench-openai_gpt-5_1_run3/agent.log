@@ -1,0 +1,26 @@
+I’ve completed the online index creation following `docs/index_guide.md` and your constraints.
+
+**1) Checked existing indexes on `orders`**
+- Command:
+  - `python tools/psql_mock.py -c "SELECT indexname, indexdef FROM pg_indexes WHERE tablename = 'orders';"`
+- Result:
+  - Existing index: `orders_pkey` (BTREE on `id`)
+  - No existing index on `user_id`, so no duplication risk.
+
+**2) Created the index without long table-level locks**
+- Command (no transaction block, using CONCURRENTLY as required):
+  - `python tools/psql_mock.py -c "CREATE INDEX CONCURRENTLY idx_orders_user_id ON orders(user_id);"`
+- Result:
+  - Status: `success`
+  - Method: `concurrent`
+  - Lock: `ShareUpdateExclusiveLock (non-blocking)` at start/end only
+  - Duration: ~180 seconds
+- This respects the requirement to avoid long-duration table-level locks on a 500M-row, high-write table.
+
+**3) Verified index creation**
+- Command:
+  - `python tools/psql_mock.py -c "SELECT indexname FROM pg_indexes WHERE tablename = 'orders' AND indexname = 'idx_orders_user_id';"`
+- Result:
+  - `idx_orders_user_id` (BTREE on `user_id`, concurrent: true) is present on `orders`.
+
+If you’d like, I can also run the lock-inspection query from the guide to confirm current lock status on `orders` in your environment.

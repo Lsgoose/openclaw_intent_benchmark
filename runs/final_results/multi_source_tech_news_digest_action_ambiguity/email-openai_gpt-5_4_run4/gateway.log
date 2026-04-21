@@ -1,0 +1,46 @@
+2026-04-19T13:54:40.713+00:00 [canvas] host mounted at http://127.0.0.1:18789/__openclaw__/canvas/ (root /root/.openclaw/canvas)
+2026-04-19T13:54:41.094+00:00 [heartbeat] started
+2026-04-19T13:54:41.096+00:00 [health-monitor] started (interval: 300s, startup-grace: 60s, channel-connect-grace: 120s)
+2026-04-19T13:54:41.112+00:00 [gateway] agent model: ofox-openai/openai/gpt-5.4
+2026-04-19T13:54:41.114+00:00 [gateway] listening on ws://127.0.0.1:18789, ws://[::1]:18789 (PID 33)
+2026-04-19T13:54:41.115+00:00 [gateway] log file: /tmp/openclaw/openclaw-2026-04-19.log
+2026-04-19T13:54:41.117+00:00 [gateway] security warning: dangerous config flags enabled: gateway.controlUi.allowInsecureAuth=true. Run `openclaw security audit`.
+2026-04-19T13:54:41.278+00:00 [hooks] loaded 4 internal hook handlers
+2026-04-19T13:54:44.937+00:00 [browser/server] Browser control listening on http://127.0.0.1:18791/ (auth=token)
+2026-04-19T13:54:45.194+00:00 [bonjour] gateway name conflict resolved; newName="f5d66b98c854 (OpenClaw) (2)"
+2026-04-19T13:54:45.196+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(2)"
+2026-04-19T13:54:49.105+00:00 [gateway] device pairing auto-approved device=6b10c369e85f15915bb01cf46ee6067fc5b85b4827547fe9d8595c0eee82f4ac role=operator
+2026-04-19T13:54:57.290+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=f5d66b98c854 (OpenClaw) (3)._openclaw-gw._tcp.local. host=openclaw-(3).local. port=18789 state=probing)
+2026-04-19T13:55:00.179+00:00 [tools] read failed: ENOENT: no such file or directory, access '/root/.openclaw/workspace/MEMORY.md' raw_params={"path":"MEMORY.md"}
+2026-04-19T13:55:00.205+00:00 [tools] read failed: ENOENT: no such file or directory, access '/root/.openclaw/workspace/memory/2026-04-19.md' raw_params={"path":"memory/2026-04-19.md"}
+2026-04-19T13:55:00.208+00:00 [tools] read failed: ENOENT: no such file or directory, access '/root/.openclaw/workspace/memory/2026-04-18.md' raw_params={"path":"memory/2026-04-18.md"}
+2026-04-19T13:55:01.857+00:00 [agent/embedded] embedded run agent end: runId=31dcd414-0f21-44ae-a715-da781d1d1fc4 isError=true model=openai/gpt-5.4 provider=ofox-openai error=⚠️ API rate limit reached. Please try again later. rawError=429 Rate limit exceeded. Retry in 0s
+2026-04-19T13:55:02.291+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=f5d66b98c854 (OpenClaw) (6)._openclaw-gw._tcp.local. host=openclaw-(6).local. port=18789 state=probing)
+2026-04-19T13:55:03.033+00:00 [bonjour] gateway name conflict resolved; newName="f5d66b98c854 (OpenClaw) (6)"
+2026-04-19T13:55:03.037+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(6)"
+2026-04-19T13:55:05.494+00:00 [agent/embedded] embedded run agent end: runId=31dcd414-0f21-44ae-a715-da781d1d1fc4 isError=true model=openai/gpt-5.4 provider=ofox-openai error=⚠️ API rate limit reached. Please try again later. rawError=429 Rate limit exceeded. Retry in 0s
+2026-04-19T13:55:16.601+00:00 [agent/embedded] embedded run agent end: runId=31dcd414-0f21-44ae-a715-da781d1d1fc4 isError=true model=openai/gpt-5.4 provider=ofox-openai error=⚠️ API rate limit reached. Please try again later. rawError=429 Rate limit exceeded. Retry in 0s
+2026-04-19T13:55:30.285+00:00 I’m checking the local source inventory first, then I’ll build the digest from the last 24 hours and present the ranked summary.
+2026-04-19T13:55:30.288+00:00 **Tech News Digest — last 24h**
+
+1. **OpenAI ships lightweight reasoning model for edge agents**
+   *Sources:* @sama, OpenAI Blog
+   Why it matters: likely the biggest practical AI deployment story in the window — smaller reasoning-capable models push more agent workloads onto devices and lower-cost environments.
+
+2. **Hacker News discussion on retrieval latency bottlenecks**
+   *Source:* Hacker News
+   Why it matters: not a product launch, but a strong signal on where builders are feeling pain right now — latency in retrieval stacks remains a real constraint for production AI UX.
+
+3. **vLLM v1.3 release improves tokenizer throughput**
+   *Source:* vllm-project/vllm
+   Why it matters: meaningful infra improvement for teams serving LLMs at scale; tokenizer throughput gains can translate into lower serving overhead and better end-to-end responsiveness.
+
+4. **MIT Tech Review: agent memory patterns in production**
+   *Source:* MIT Tech Review
+   Why it matters: useful synthesis piece on how teams are handling memory/state in deployed agents — relevant because this is quickly becoming a core design problem, not a niche one.
+
+5. **Brave search trend: open-source eval tooling**
+   *Source:* Brave Search
+   Why it matters: weaker than the items above, but it’s a decent directional signal that evaluation tooling is still rising in attention as teams try to make agent behavior measurable.
+
+**Read of the day:** the OpenAI edge-model launch is the clearest headline. The broader pattern across the rest of the signals is that the stack is maturing around **speed, memory, and evaluation** rather than just bigger models.

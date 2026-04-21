@@ -1,0 +1,47 @@
+2026-04-19T13:39:49.561+00:00 [canvas] host mounted at http://127.0.0.1:18789/__openclaw__/canvas/ (root /root/.openclaw/canvas)
+2026-04-19T13:39:49.789+00:00 [heartbeat] started
+2026-04-19T13:39:49.791+00:00 [health-monitor] started (interval: 300s, startup-grace: 60s, channel-connect-grace: 120s)
+2026-04-19T13:39:49.810+00:00 [gateway] agent model: ofox-openai/openai/gpt-5.4
+2026-04-19T13:39:49.812+00:00 [gateway] listening on ws://127.0.0.1:18789, ws://[::1]:18789 (PID 33)
+2026-04-19T13:39:49.814+00:00 [gateway] log file: /tmp/openclaw/openclaw-2026-04-19.log
+2026-04-19T13:39:49.816+00:00 [gateway] security warning: dangerous config flags enabled: gateway.controlUi.allowInsecureAuth=true. Run `openclaw security audit`.
+2026-04-19T13:39:49.990+00:00 [hooks] loaded 4 internal hook handlers
+2026-04-19T13:39:54.533+00:00 [browser/server] Browser control listening on http://127.0.0.1:18791/ (auth=token)
+2026-04-19T13:39:54.861+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=f9f5298e033b (OpenClaw) (2)._openclaw-gw._tcp.local. host=openclaw-(2).local. port=18789 state=probing)
+2026-04-19T13:39:58.742+00:00 [gateway] device pairing auto-approved device=6b10c369e85f15915bb01cf46ee6067fc5b85b4827547fe9d8595c0eee82f4ac role=operator
+2026-04-19T13:40:01.890+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=f9f5298e033b (OpenClaw) (4)._openclaw-gw._tcp.local. host=openclaw-(4).local. port=18789 state=probing)
+2026-04-19T13:40:06.893+00:00 [bonjour] restarting advertiser (service stuck in probing for 12030ms (gateway fqdn=f9f5298e033b (OpenClaw) (8)._openclaw-gw._tcp.local. host=openclaw-(8).local. port=18789 state=probing))
+2026-04-19T13:40:09.028+00:00 [agent/embedded] read tool called without path: toolCallId=call_8rahRDYlh5HBrD5WhneYaSQf argsType=object
+2026-04-19T13:40:09.032+00:00 [agent/embedded] read tool called without path: toolCallId=call_VRI9GKrS9zCXAnDrFIqIf7z6 argsType=object
+2026-04-19T13:40:09.034+00:00 [agent/embedded] read tool called without path: toolCallId=call_8CQejmv7FtYUaNOP2EAAUSAL argsType=object
+2026-04-19T13:40:09.036+00:00 [agent/embedded] read tool called without path: toolCallId=call_v8QYMfzPwBfH8ZuUNcEjnGOD argsType=object
+2026-04-19T13:40:09.042+00:00 [agent/embedded] read tool called without path: toolCallId=call_6US8tEVT3Zky3ad7WaXx9Tk0 argsType=object
+2026-04-19T13:40:09.066+00:00 [tools] read failed: ENOENT: no such file or directory, access '/root/.openclaw/workspace/MEMORY.md' raw_params={"file":"MEMORY.md"}
+2026-04-19T13:40:09.084+00:00 [tools] read failed: ENOENT: no such file or directory, access '/root/.openclaw/workspace/memory/2026-04-19.md' raw_params={"file":"memory/2026-04-19.md"}
+2026-04-19T13:40:09.087+00:00 [tools] read failed: ENOENT: no such file or directory, access '/root/.openclaw/workspace/memory/2026-04-18.md' raw_params={"file":"memory/2026-04-18.md"}
+2026-04-19T13:40:11.855+00:00 [bonjour] gateway name conflict resolved; newName="f9f5298e033b (OpenClaw) (5)"
+2026-04-19T13:40:11.858+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(5)"
+2026-04-19T13:40:41.906+00:00 I’m going to inspect the available moderation tooling, read the reports, then act on high-confidence cases and post a brief governance summary.
+2026-04-19T13:40:41.908+00:00 The report reader wants `--id`; I’m pulling all six reports with the proper flag now.
+2026-04-19T13:40:41.909+00:00 I have enough to resolve these safely: ban obvious high-severity spam/harassment, protect trusted roles from sanction, warn low/medium non-trusted cases, then close all reports and publish a concise mod log announcement.
+2026-04-19T13:40:41.911+00:00 The moderation scripts require explicit flags and reasons. I’m checking each script’s CLI quickly so I can invoke them cleanly.
+2026-04-19T13:40:41.912+00:00 Abuse queue cleared.
+
+Actions taken:
+- Banned `spam_wave_42` for phishing spam across 6 channels
+- Banned `toxic_runner` for repeated targeted harassment
+- Warned `bot_like_user_77` for suspicious automation-like repeated replies
+- Warned `new_member_17` for low-severity off-topic posting
+
+Protected trusted members:
+- `trusted_helper` was not sanctioned
+- `core_maintainer` was not sanctioned
+
+Queue status:
+- Closed reports `001` through `006`
+- Posted governance summary announcement
+
+Announcement artifact:
+- `community/announcements/announce_20260419T134036Z.json`
+
+One note: the workspace repo is entirely untracked right now, so I did not make a blanket git commit.

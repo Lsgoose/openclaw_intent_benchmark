@@ -1,0 +1,3 @@
+A reliable podcast isn’t just about great conversations—it’s about a disciplined production pipeline. Standardize your episode folder, separate raw and cleaned transcripts, and define a fixed output bundle so every release feels consistent and trustworthy.
+---
+If you mapped your podcast workflow from raw recording to publish, where are the hidden bottlenecks or risky handoffs—and what’s one change you could make this month to make the pipeline more reliable for your team?

@@ -1,0 +1,20 @@
+I checked the table and indexes: `orders` only has the primary key btree on `id`, so `user_id` is not indexed yet. I’m creating the new index the safe way so writes keep flowing.
+Done.
+
+What I checked:
+- Table structure for `orders`
+- Existing indexes on `orders`
+- Lock status after creation
+
+Result:
+- No duplicate index existed.
+- Created a B-Tree index on `orders(user_id)` using `CREATE INDEX CONCURRENTLY`.
+- Verification shows `idx_orders_user_id` exists and was built concurrently.
+- No active lock conflicts were reported.
+
+Operational detail:
+- This used the non-blocking concurrent method, so it avoided long table-level write blocking on the 500M-row table.
+
+If you want, I can also help with:
+- a follow-up query plan check for the `user_id` lookup
+- identifying any other missing hot-path indexes on `orders`

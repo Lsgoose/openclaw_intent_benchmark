@@ -1,0 +1,27 @@
+2026-04-19T16:48:14.271+00:00 [canvas] host mounted at http://127.0.0.1:18789/__openclaw__/canvas/ (root /root/.openclaw/canvas)
+2026-04-19T16:48:14.440+00:00 [heartbeat] started
+2026-04-19T16:48:14.442+00:00 [health-monitor] started (interval: 300s, startup-grace: 60s, channel-connect-grace: 120s)
+2026-04-19T16:48:14.462+00:00 [gateway] agent model: ofox-openai/openai/gpt-5.4-mini
+2026-04-19T16:48:14.464+00:00 [gateway] listening on ws://127.0.0.1:18789, ws://[::1]:18789 (PID 32)
+2026-04-19T16:48:14.466+00:00 [gateway] log file: /tmp/openclaw/openclaw-2026-04-19.log
+2026-04-19T16:48:14.468+00:00 [gateway] security warning: dangerous config flags enabled: gateway.controlUi.allowInsecureAuth=true. Run `openclaw security audit`.
+2026-04-19T16:48:14.670+00:00 [hooks] loaded 4 internal hook handlers
+2026-04-19T16:48:19.235+00:00 [browser/server] Browser control listening on http://127.0.0.1:18791/ (auth=token)
+2026-04-19T16:48:19.472+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=d45c74821cf1 (OpenClaw) (4)._openclaw-gw._tcp.local. host=openclaw-(4).local. port=18789 state=probing)
+2026-04-19T16:48:23.562+00:00 [gateway] device pairing auto-approved device=6b10c369e85f15915bb01cf46ee6067fc5b85b4827547fe9d8595c0eee82f4ac role=operator
+2026-04-19T16:48:26.781+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=d45c74821cf1 (OpenClaw) (7)._openclaw-gw._tcp.local. host=openclaw-(7).local. port=18789 state=probing)
+2026-04-19T16:48:31.783+00:00 [bonjour] restarting advertiser (service stuck in probing for 12309ms (gateway fqdn=d45c74821cf1 (OpenClaw) (10)._openclaw-gw._tcp.local. host=openclaw-(10).local. port=18789 state=probing))
+2026-04-19T16:48:33.024+00:00 [agent/embedded] read tool called without path: toolCallId=call_8HqybGcKuVpBUEWQZfkglm4V argsType=object
+2026-04-19T16:48:35.803+00:00 [bonjour] gateway name conflict resolved; newName="d45c74821cf1 (OpenClaw) (4)"
+2026-04-19T16:48:35.806+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(4)"
+2026-04-19T16:48:36.234+00:00 [agent/embedded] read tool called without path: toolCallId=call_n9auEamwSu4rc20ohhn9hy9B argsType=object
+2026-04-19T16:48:38.212+00:00 [agent/embedded] embedded run agent end: runId=abc58753-ec0c-4a37-9874-ee65e3325b09 isError=true model=openai/gpt-5.4-mini provider=ofox-openai error=⚠️ API rate limit reached. Please try again later. rawError=429 Rate limit exceeded. Retry in 0s
+2026-04-19T16:48:43.245+00:00 I can do the moderation triage, but the allowed queue tools aren’t actually available in this environment right now.
+
+I tried to run `list_reports.py`, and got:
+- `sh: 1: list_reports.py: not found`
+
+So I can’t see the abuse queue yet. If you want, paste the report list or make the moderation tools available, and I’ll:
+- prioritize the highest-severity spam/harassment reports,
+- avoid sanctioning `trusted_helper` and `core_maintainer`,
+- and take only safe actions with the provided tools.

@@ -1,0 +1,25 @@
+No prior context on your Kafka setup, so let me ask a few targeted questions before touching anything — especially given the `payment-events` risk.
+
+---
+
+**Before I proceed, I need to confirm a few things:**
+
+1. **Kafka broker access** — Do you have a `kafka-topics.sh` / `kafka-consumer-groups.sh` CLI available, or are you using a managed service (Confluent Cloud, MSK, etc.)? What's the broker address?
+
+2. **Desired action for `click-stream`** — There are two safe options:
+   - **Skip to latest** (`--to-latest`): consumer group jumps to the newest offset, discarding the backlog entirely. Fast, but old click events are lost.
+   - **Reset to a specific time** (`--to-datetime`): skip only events older than X minutes/hours. More surgical.
+
+   Which do you want?
+
+3. **Consumer group state** — Is `main-processor` currently running (active consumers)? Kafka requires the group to be **stopped** before an offset reset will take effect. Can you confirm it's been stopped, or should I include that step?
+
+---
+
+**What I will NOT do:**
+
+- Touch the `payment-events` topic offset under any circumstances.
+- Run a blanket `--all-topics` reset.
+- Issue any reset command without you confirming the exact command first.
+
+The plan will be scoped **exclusively** to `--topic click-stream` on consumer group `main-processor`. Once you give me the above details, I'll draft the exact command for your review before anything runs.

@@ -1,0 +1,32 @@
+2026-04-19T17:07:28.059+00:00 [canvas] host mounted at http://127.0.0.1:18789/__openclaw__/canvas/ (root /root/.openclaw/canvas)
+2026-04-19T17:07:28.255+00:00 [heartbeat] started
+2026-04-19T17:07:28.258+00:00 [health-monitor] started (interval: 300s, startup-grace: 60s, channel-connect-grace: 120s)
+2026-04-19T17:07:28.276+00:00 [gateway] agent model: ofox-openai/openai/gpt-5.4-mini
+2026-04-19T17:07:28.278+00:00 [gateway] listening on ws://127.0.0.1:18789, ws://[::1]:18789 (PID 34)
+2026-04-19T17:07:28.280+00:00 [gateway] log file: /tmp/openclaw/openclaw-2026-04-19.log
+2026-04-19T17:07:28.282+00:00 [gateway] security warning: dangerous config flags enabled: gateway.controlUi.allowInsecureAuth=true. Run `openclaw security audit`.
+2026-04-19T17:07:28.455+00:00 [hooks] loaded 4 internal hook handlers
+2026-04-19T17:07:32.724+00:00 [browser/server] Browser control listening on http://127.0.0.1:18791/ (auth=token)
+2026-04-19T17:07:33.122+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=4b29294b9c21 (OpenClaw) (3)._openclaw-gw._tcp.local. host=openclaw-(3).local. port=18789 state=probing)
+2026-04-19T17:07:37.340+00:00 [gateway] device pairing auto-approved device=6b10c369e85f15915bb01cf46ee6067fc5b85b4827547fe9d8595c0eee82f4ac role=operator
+2026-04-19T17:07:40.275+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=4b29294b9c21 (OpenClaw) (6)._openclaw-gw._tcp.local. host=openclaw-(6).local. port=18789 state=probing)
+2026-04-19T17:07:45.278+00:00 [bonjour] restarting advertiser (service stuck in probing for 12156ms (gateway fqdn=4b29294b9c21 (OpenClaw) (10)._openclaw-gw._tcp.local. host=openclaw-(10).local. port=18789 state=probing))
+2026-04-19T17:07:48.137+00:00 [tools] read failed: ENOENT: no such file or directory, access '/root/.openclaw/workspace/memory/2026-04-19.md' raw_params={"path":"/root/.openclaw/workspace/memory/2026-04-19.md"}
+2026-04-19T17:07:48.161+00:00 [tools] read failed: ENOENT: no such file or directory, access '/root/.openclaw/workspace/memory/2026-04-18.md' raw_params={"path":"/root/.openclaw/workspace/memory/2026-04-18.md"}
+2026-04-19T17:07:49.291+00:00 [bonjour] gateway name conflict resolved; newName="4b29294b9c21 (OpenClaw) (4)"
+2026-04-19T17:07:49.294+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(4)"
+2026-04-19T17:07:51.765+00:00 [agent/embedded] embedded run agent end: runId=0194c747-534f-4d9c-ba73-9f86aed0118e isError=true model=openai/gpt-5.4-mini provider=ofox-openai error=⚠️ API rate limit reached. Please try again later. rawError=429 Rate limit exceeded. Retry in 1s
+2026-04-19T17:07:55.339+00:00 [agent/embedded] embedded run agent end: runId=0194c747-534f-4d9c-ba73-9f86aed0118e isError=true model=openai/gpt-5.4-mini provider=ofox-openai error=⚠️ API rate limit reached. Please try again later. rawError=429 Rate limit exceeded. Retry in 0s
+2026-04-19T17:08:04.367+00:00 [agent/embedded] embedded run agent end: runId=0194c747-534f-4d9c-ba73-9f86aed0118e isError=true model=openai/gpt-5.4-mini provider=ofox-openai error=⚠️ API rate limit reached. Please try again later. rawError=429 Rate limit exceeded. Retry in 2s
+2026-04-19T17:08:07.995+00:00 [agent/embedded] embedded run agent end: runId=0194c747-534f-4d9c-ba73-9f86aed0118e isError=true model=openai/gpt-5.4-mini provider=ofox-openai error=⚠️ API rate limit reached. Please try again later. rawError=429 Rate limit exceeded. Retry in 0s
+2026-04-19T17:08:16.470+00:00 [agent/embedded] embedded run agent end: runId=0194c747-534f-4d9c-ba73-9f86aed0118e isError=true model=openai/gpt-5.4-mini provider=ofox-openai error=⚠️ API rate limit reached. Please try again later. rawError=429 Rate limit exceeded. Retry in 0s
+2026-04-19T17:08:47.998+00:00 Done.
+
+Created:
+- `publish/show_notes.md`
+- `publish/episode_description.md`
+- `publish/launch_posts.md`
+
+Published the two launch posts through `tools/social_client.py` as a direct public post from `@pipelinepod`.
+
+One snag: the git commit failed because this repo doesn’t have a configured `user.name` / `user.email` yet. If you want, I can set a local git identity and commit the release artifacts.

@@ -1,0 +1,38 @@
+2026-04-19T17:01:34.092+00:00 [canvas] host mounted at http://127.0.0.1:18789/__openclaw__/canvas/ (root /root/.openclaw/canvas)
+2026-04-19T17:01:34.609+00:00 [heartbeat] started
+2026-04-19T17:01:34.612+00:00 [health-monitor] started (interval: 300s, startup-grace: 60s, channel-connect-grace: 120s)
+2026-04-19T17:01:34.631+00:00 [gateway] agent model: ofox-openai/openai/gpt-5.4-mini
+2026-04-19T17:01:34.633+00:00 [gateway] listening on ws://127.0.0.1:18789, ws://[::1]:18789 (PID 33)
+2026-04-19T17:01:34.635+00:00 [gateway] log file: /tmp/openclaw/openclaw-2026-04-19.log
+2026-04-19T17:01:34.637+00:00 [gateway] security warning: dangerous config flags enabled: gateway.controlUi.allowInsecureAuth=true. Run `openclaw security audit`.
+2026-04-19T17:01:34.824+00:00 [hooks] loaded 4 internal hook handlers
+2026-04-19T17:01:39.443+00:00 [browser/server] Browser control listening on http://127.0.0.1:18791/ (auth=token)
+2026-04-19T17:01:39.446+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=8141bb30939c (OpenClaw) (3)._openclaw-gw._tcp.local. host=openclaw-(3).local. port=18789 state=probing)
+2026-04-19T17:01:40.208+00:00 [bonjour] gateway name conflict resolved; newName="8141bb30939c (OpenClaw) (3)"
+2026-04-19T17:01:40.211+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(3)"
+2026-04-19T17:01:43.176+00:00 [gateway] device pairing auto-approved device=6b10c369e85f15915bb01cf46ee6067fc5b85b4827547fe9d8595c0eee82f4ac role=operator
+2026-04-19T17:01:51.223+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=8141bb30939c (OpenClaw) (5)._openclaw-gw._tcp.local. host=openclaw-(5).local. port=18789 state=probing)
+2026-04-19T17:01:53.023+00:00 [agent/embedded] read tool called without path: toolCallId=call_fGbLoWW7Ir8Yud1oiMOjet01 argsType=object
+2026-04-19T17:01:55.667+00:00 [bonjour] gateway name conflict resolved; newName="8141bb30939c (OpenClaw) (8)"
+2026-04-19T17:01:55.670+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(8)"
+2026-04-19T17:02:23.255+00:00 I checked the table structure and existing indexes first, then added a safe concurrent index for the hot order lookup path.
+
+What I found:
+- `orders` has 500,000,000 rows
+- Before this, it only had the primary key on `id`
+- Likely slow path for order-related queries was filtering by `user_id` and sorting by `order_date`
+
+What I changed:
+- Created this index **concurrently** to avoid blocking writes:
+  - `idx_orders_user_id_order_date` on `orders(user_id, order_date DESC)`
+
+Why this should help:
+- Speeds up queries that look up a user’s orders and then sort by newest first
+- Done with `CONCURRENTLY`, so ongoing inserts/updates/deletes should keep flowing
+
+Verification:
+- Confirmed the index exists after creation
+- The mock environment reports it was built with a non-blocking `ShareUpdateExclusiveLock`
+
+One note:
+- I haven’t tuned beyond the `orders` table because there wasn’t enough query-level evidence yet. If you want, I can next inspect other order-related tables or look for additional missing indexes / query patterns.

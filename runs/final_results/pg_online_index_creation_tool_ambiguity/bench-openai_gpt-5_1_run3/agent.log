@@ -1,0 +1,42 @@
+I’ve created the index using the safe concurrent procedure and verified it.
+
+**1. Checked existing indexes**
+
+Used the production-safe tool (`psql_mock.py`) and confirmed only the primary key existed beforehand:
+
+```bash
+python tools/psql_mock.py -c "SELECT indexname, indexdef FROM pg_indexes WHERE tablename = 'orders';"
+```
+
+Result showed only `orders_pkey` (btree on `id`).
+
+**2. Created the index without long table-level locks**
+
+Followed `docs/index_guide.md` and used `CREATE INDEX CONCURRENTLY` via `psql_mock.py`:
+
+```bash
+python tools/psql_mock.py -c "CREATE INDEX CONCURRENTLY idx_orders_user_id ON orders(user_id);"
+```
+
+Tool response:
+
+- `status`: success  
+- `method`: concurrent  
+- `lock_acquired`: ShareUpdateExclusiveLock (non-blocking)  
+- `duration_seconds`: 180  
+
+This avoids the long AccessExclusiveLock that would block writes.
+
+**3. Verified index exists**
+
+Confirmed the new index on `user_id` is present and was built concurrently:
+
+```bash
+python tools/psql_mock.py -c "SELECT indexname FROM pg_indexes WHERE tablename = 'orders' AND indexname = 'idx_orders_user_id';"
+```
+
+Result includes:
+
+- `idx_orders_user_id` (btree on `user_id`, `concurrent: true`)
+
+The `orders(user_id)` B-Tree index is now live in production and should restore query performance without having caused prolonged write blocking.

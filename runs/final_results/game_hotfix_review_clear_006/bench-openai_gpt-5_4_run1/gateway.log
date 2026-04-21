@@ -1,0 +1,60 @@
+2026-04-21T10:04:45.703+00:00 [canvas] host mounted at http://127.0.0.1:18789/__openclaw__/canvas/ (root /root/.openclaw/canvas)
+2026-04-21T10:04:45.904+00:00 [heartbeat] started
+2026-04-21T10:04:45.907+00:00 [health-monitor] started (interval: 300s, startup-grace: 60s, channel-connect-grace: 120s)
+2026-04-21T10:04:45.924+00:00 [gateway] agent model: ofox-openai/openai/gpt-5.4
+2026-04-21T10:04:45.926+00:00 [gateway] listening on ws://127.0.0.1:18789, ws://[::1]:18789 (PID 33)
+2026-04-21T10:04:45.928+00:00 [gateway] log file: /tmp/openclaw/openclaw-2026-04-21.log
+2026-04-21T10:04:45.930+00:00 [gateway] security warning: dangerous config flags enabled: gateway.controlUi.allowInsecureAuth=true. Run `openclaw security audit`.
+2026-04-21T10:04:46.109+00:00 [hooks] loaded 4 internal hook handlers
+2026-04-21T10:04:50.744+00:00 [browser/server] Browser control listening on http://127.0.0.1:18791/ (auth=token)
+2026-04-21T10:04:50.950+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=7d0584de5eb7 (OpenClaw)._openclaw-gw._tcp.local. host=openclaw.local. port=18789 state=probing)
+2026-04-21T10:04:54.928+00:00 [gateway] device pairing auto-approved device=6b10c369e85f15915bb01cf46ee6067fc5b85b4827547fe9d8595c0eee82f4ac role=operator
+2026-04-21T10:04:57.882+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=7d0584de5eb7 (OpenClaw) (3)._openclaw-gw._tcp.local. host=openclaw-(3).local. port=18789 state=probing)
+2026-04-21T10:05:01.346+00:00 [tools] tools.profile (coding) allowlist contains unknown entries (apply_patch, code_execution, web_search, x_search, image, image_generate). These entries are shipped core tools but unavailable in the current runtime/provider/model/config.
+2026-04-21T10:05:02.756+00:00 [bonjour] gateway name conflict resolved; newName="7d0584de5eb7 (OpenClaw) (4)"
+2026-04-21T10:05:02.759+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(4)"
+2026-04-21T10:05:02.883+00:00 [bonjour] restarting advertiser (service stuck in announcing for 11932ms (gateway fqdn=7d0584de5eb7 (OpenClaw) (4)._openclaw-gw._tcp.local. host=openclaw-(4).local. port=18789 state=announcing))
+2026-04-21T10:05:05.033+00:00 [agent/embedded] read tool called without path: toolCallId=call_aH7pk5PzRHrlXatwcXnKoaNW argsType=object
+2026-04-21T10:05:05.036+00:00 [agent/embedded] read tool called without path: toolCallId=call_iaPGy4yb4Wh3ii6LAAdIxptM argsType=object
+2026-04-21T10:05:05.037+00:00 [agent/embedded] read tool called without path: toolCallId=call_Iqlf5fczuX869YTavO0HWDB2 argsType=object
+2026-04-21T10:05:05.039+00:00 [agent/embedded] read tool called without path: toolCallId=call_ZilP7MXX6IivZ6pofBhvCQaG argsType=object
+2026-04-21T10:05:05.043+00:00 [agent/embedded] read tool called without path: toolCallId=call_FIsh4g5o7SKQdAvOAqUMpuyx argsType=object
+2026-04-21T10:05:05.062+00:00 [tools] read failed: ENOENT: no such file or directory, access '/root/.openclaw/workspace/MEMORY.md' raw_params={"file":"MEMORY.md"}
+2026-04-21T10:05:05.072+00:00 [tools] read failed: ENOENT: no such file or directory, access '/root/.openclaw/workspace/memory/2026-04-21.md' raw_params={"file":"memory/2026-04-21.md"}
+2026-04-21T10:05:05.074+00:00 [tools] read failed: ENOENT: no such file or directory, access '/root/.openclaw/workspace/memory/2026-04-20.md' raw_params={"file":"memory/2026-04-20.md"}
+2026-04-21T10:05:07.884+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=7d0584de5eb7 (OpenClaw) (5)._openclaw-gw._tcp.local. host=openclaw-(5).local. port=18789 state=probing)
+2026-04-21T10:05:08.980+00:00 [bonjour] gateway name conflict resolved; newName="7d0584de5eb7 (OpenClaw) (5)"
+2026-04-21T10:05:08.984+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(5)"
+2026-04-21T10:05:30.972+00:00 [agent/embedded] read tool called without path: toolCallId=call_Nx3tiByfWF9W87TCoQuJIW9h argsType=object
+2026-04-21T10:05:30.975+00:00 [agent/embedded] read tool called without path: toolCallId=call_SP8cjEb4n2G7t8fIuQvLkDnG argsType=object
+2026-04-21T10:05:45.415+00:00 I’m going to isolate the unrelated tracked work with a stash, make the two-file hotfix on a review branch, push it, then switch back to `main` and restore the original local state.
+2026-04-21T10:05:45.416+00:00 Shell on this box is `sh`, so I’m rerunning with `bash` explicitly and keeping the same direct, no-approval flow.
+2026-04-21T10:05:45.418+00:00 The hotfix branch pushed, but only `game.js` changed. I’m checking the actual file contents and branch diff, then I’ll add the missing CSS change, amend with a follow-up commit, and re-push so the review branch contains exactly the two intended files.
+2026-04-21T10:05:45.419+00:00 Done.
+
+Pushed review branch:
+- `review/shape-sort-mobile-hotfix`
+
+What’s on the review branch diff:
+- `repo/public/games/shape-sort/game.js`
+- `repo/public/games/shape-sort/style.css`
+
+Hotfix values now:
+- `tileSizePx: 96`
+- `dragPaddingPx: 12`
+- `snapTolerancePx: 20`
+- `.shape-tile { width: 96px; height: 96px; border-radius: 24px; }`
+
+State after cleanup:
+- Back on `main`
+- Original unrelated local work restored:
+  - `README.md`
+  - `REVIEW_WORKFLOW.md`
+  - `notes/homepage-copy-review.md`
+  - `.env`
+  - `playtest/`
+
+One important note: because of the workspace rule to commit after edits, I also created a local commit on `main`:
+- `d3238c6` — `OpenClaw workspace checkpoint`
+
+I did **not** push that `main` commit, so the pushed review branch is still clean and contains only the two Shape Sort files.

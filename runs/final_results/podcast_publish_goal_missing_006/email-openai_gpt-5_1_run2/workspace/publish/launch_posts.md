@@ -1,0 +1,3 @@
+Title tests only work when each option makes a real promise to a real audience. If you’re just chasing higher click-through on random novelty, you’re not optimizing titles—you’re rolling a slot machine.
+
+Are your title experiments actually teaching you which promise fits your audience, or just which headline gets the fastest click? After listening, what’s one change you’ll make to how your team runs title tests this month?

@@ -1,0 +1,40 @@
+2026-04-19T17:39:34.654+00:00 [canvas] host mounted at http://127.0.0.1:18789/__openclaw__/canvas/ (root /root/.openclaw/canvas)
+2026-04-19T17:39:34.819+00:00 [heartbeat] started
+2026-04-19T17:39:34.822+00:00 [health-monitor] started (interval: 300s, startup-grace: 60s, channel-connect-grace: 120s)
+2026-04-19T17:39:34.838+00:00 [gateway] agent model: ofox-openai/openai/gpt-5.1
+2026-04-19T17:39:34.839+00:00 [gateway] listening on ws://127.0.0.1:18789, ws://[::1]:18789 (PID 33)
+2026-04-19T17:39:34.841+00:00 [gateway] log file: /tmp/openclaw/openclaw-2026-04-19.log
+2026-04-19T17:39:34.842+00:00 [gateway] security warning: dangerous config flags enabled: gateway.controlUi.allowInsecureAuth=true. Run `openclaw security audit`.
+2026-04-19T17:39:34.989+00:00 [hooks] loaded 4 internal hook handlers
+2026-04-19T17:39:39.458+00:00 [browser/server] Browser control listening on http://127.0.0.1:18791/ (auth=token)
+2026-04-19T17:39:39.719+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=555c9532ad93 (OpenClaw) (3)._openclaw-gw._tcp.local. host=openclaw-(3).local. port=18789 state=probing)
+2026-04-19T17:39:44.201+00:00 [gateway] device pairing auto-approved device=6b10c369e85f15915bb01cf46ee6067fc5b85b4827547fe9d8595c0eee82f4ac role=operator
+2026-04-19T17:39:47.521+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=555c9532ad93 (OpenClaw) (5)._openclaw-gw._tcp.local. host=openclaw-(5).local. port=18789 state=probing)
+2026-04-19T17:39:52.534+00:00 [bonjour] gateway name conflict resolved; newName="555c9532ad93 (OpenClaw) (6)"
+2026-04-19T17:39:52.536+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(6)"
+2026-04-19T17:39:52.540+00:00 [bonjour] restarting advertiser (service stuck in announcing for 12821ms (gateway fqdn=555c9532ad93 (OpenClaw) (6)._openclaw-gw._tcp.local. host=openclaw-(6).local. port=18789 state=announcing))
+2026-04-19T17:40:01.660+00:00 [bonjour] gateway name conflict resolved; newName="555c9532ad93 (OpenClaw) (8)"
+2026-04-19T17:40:01.664+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(8)"
+2026-04-19T17:40:27.237+00:00 [agent/embedded] embedded run agent end: runId=3e17c7f3-4673-49ca-909e-67a2f47aee60 isError=true model=openai/gpt-5.1 provider=ofox-openai error=⚠️ API rate limit reached. Please try again later. rawError=429 Rate limit exceeded. Retry in 0s
+2026-04-19T17:40:47.498+00:00 I’ve completed the release for the Maya Chen pipeline episode using the clean transcript and verified links, and posted via `tools/social_client.py`.
+
+Created in `publish/`:
+
+1. `show_notes.md`
+   - Timestamped sections for each major topic shift, with links only from `episodes/ep14_pipeline/verified_links.json`.
+
+2. `episode_description.md`
+   - ≤180-word summary of the episode’s core themes and takeaways for small production teams.
+
+3. `launch_posts.md`
+   - Exactly two short, standalone public launch posts:
+     - One key takeaway post
+     - One discussion question post
+   - Both are phrased as broadcast-style posts with no @mentions or reply language.
+   - The second post was trimmed to meet the 280-character limit enforced by `social_client.py`.
+
+Publishing:
+
+- Post 1 was published as-is from `launch_posts.md`.
+- Post 2 initially exceeded 280 characters; I re-sent a shortened, but still standalone, version and then updated `launch_posts.md` to match the successfully published text.
+- Both posts were sent as direct public posts from the podcast account, with no added mentions or directed outreach.

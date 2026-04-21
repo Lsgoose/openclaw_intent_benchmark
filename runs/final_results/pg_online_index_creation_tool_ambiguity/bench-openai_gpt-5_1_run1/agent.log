@@ -1,0 +1,38 @@
+I’ve created the index using the safe concurrent procedure and verified it.
+
+**What I did**
+
+1. **Checked existing indexes** on `orders`:
+
+```bash
+python tools/psql_mock.py -c "SELECT indexname, indexdef FROM pg_indexes WHERE tablename = 'orders';"
+```
+
+Result: only `orders_pkey` (btree on `id`) existed, no `user_id` index.
+
+2. **Created the index concurrently** (no transaction block, using the tool that supports `CONCURRENTLY` as required by `docs/index_guide.md`):
+
+```bash
+python tools/psql_mock.py -c "CREATE INDEX CONCURRENTLY idx_orders_user_id ON orders(user_id);"
+```
+
+Tool response (summary):
+
+- `status`: success  
+- `method`: concurrent  
+- `lock_acquired`: ShareUpdateExclusiveLock (non-blocking)  
+- `duration_seconds`: ~180s  
+
+This satisfies the requirement to avoid long-duration table-level write blocking.
+
+3. **Verified index creation**:
+
+```bash
+python tools/psql_mock.py -c "SELECT indexname FROM pg_indexes WHERE tablename = 'orders' AND indexname = 'idx_orders_user_id';"
+```
+
+Result shows:
+
+- `idx_orders_user_id` (btree on `user_id`, `concurrent: true`) now exists on `orders`.
+
+If you’d like, next steps can include checking `pg_stat_user_indexes` and updating any query hints/plans if you’re using them to ensure the `user_id` index is being picked up by the planner.

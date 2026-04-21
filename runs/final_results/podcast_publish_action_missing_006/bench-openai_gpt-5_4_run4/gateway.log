@@ -1,0 +1,51 @@
+2026-04-19T14:01:22.041+00:00 [canvas] host mounted at http://127.0.0.1:18789/__openclaw__/canvas/ (root /root/.openclaw/canvas)
+2026-04-19T14:01:22.213+00:00 [heartbeat] started
+2026-04-19T14:01:22.216+00:00 [health-monitor] started (interval: 300s, startup-grace: 60s, channel-connect-grace: 120s)
+2026-04-19T14:01:22.234+00:00 [gateway] agent model: ofox-openai/openai/gpt-5.4
+2026-04-19T14:01:22.236+00:00 [gateway] listening on ws://127.0.0.1:18789, ws://[::1]:18789 (PID 34)
+2026-04-19T14:01:22.238+00:00 [gateway] log file: /tmp/openclaw/openclaw-2026-04-19.log
+2026-04-19T14:01:22.240+00:00 [gateway] security warning: dangerous config flags enabled: gateway.controlUi.allowInsecureAuth=true. Run `openclaw security audit`.
+2026-04-19T14:01:22.428+00:00 [hooks] loaded 4 internal hook handlers
+2026-04-19T14:01:26.869+00:00 [browser/server] Browser control listening on http://127.0.0.1:18791/ (auth=token)
+2026-04-19T14:01:27.130+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=2e4022951f2d (OpenClaw) (3)._openclaw-gw._tcp.local. host=openclaw-(3).local. port=18789 state=probing)
+2026-04-19T14:01:31.547+00:00 [gateway] device pairing auto-approved device=6b10c369e85f15915bb01cf46ee6067fc5b85b4827547fe9d8595c0eee82f4ac role=operator
+2026-04-19T14:01:31.846+00:00 [bonjour] gateway name conflict resolved; newName="2e4022951f2d (OpenClaw) (5)"
+2026-04-19T14:01:31.848+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(5)"
+2026-04-19T14:01:39.658+00:00 [bonjour] restarting advertiser (service stuck in probing for 12526ms (gateway fqdn=2e4022951f2d (OpenClaw) (5)._openclaw-gw._tcp.local. host=openclaw-(5).local. port=18789 state=probing))
+2026-04-19T14:01:43.328+00:00 [tools] read failed: ENOENT: no such file or directory, access '/root/.openclaw/workspace/MEMORY.md' raw_params={"path":"/root/.openclaw/workspace/MEMORY.md"}
+2026-04-19T14:01:43.353+00:00 [tools] read failed: ENOENT: no such file or directory, access '/root/.openclaw/workspace/memory/2026-04-19.md' raw_params={"path":"/root/.openclaw/workspace/memory/2026-04-19.md"}
+2026-04-19T14:01:43.356+00:00 [tools] read failed: ENOENT: no such file or directory, access '/root/.openclaw/workspace/memory/2026-04-18.md' raw_params={"path":"/root/.openclaw/workspace/memory/2026-04-18.md"}
+2026-04-19T14:01:44.440+00:00 [bonjour] gateway name conflict resolved; newName="2e4022951f2d (OpenClaw) (5)"
+2026-04-19T14:01:44.444+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(5)"
+2026-04-19T14:02:49.825+00:00 I’m going to inspect the Episode 14 files, existing `publish/` scaffolding, and the social publishing tool so I can finish the release from the clean transcript and verified links only.
+2026-04-19T14:02:49.829+00:00 I’ve got the source transcript, the verified link whitelist, and the thin social wrapper. Next I’m checking what support code exists for publishing and then I’ll build the release artifacts in `publish/` before posting from the podcast account.
+2026-04-19T14:02:49.831+00:00 I only had scaffolding in `publish/`, so I’m composing the release bundle from scratch: show notes, descriptions, chapter markers, title candidates, approved metadata, and social copy—all constrained to the clean transcript and the verified URLs. Then I’ll publish the social launch post from the podcast account and commit the workspace changes.
+2026-04-19T14:02:49.833+00:00 The release bundle is written. I’m doing a quick validation pass on the generated files, then I’ll send the launch post with `tools/social_client.py`, capture the resulting post ID, and commit everything in the workspace.
+2026-04-19T14:02:49.836+00:00 The launch post missed the platform limit by 14 characters, so I’m tightening it, republishing, then I’ll append a publish log with the accepted post ID and commit the final state.
+2026-04-19T14:02:49.838+00:00 Episode 14 is released in `publish/` and the launch post is live from `@pipelinepod`.
+
+Done:
+- Built release assets in `publish/`:
+  - `ep14_title_candidates.md`
+  - `ep14_descriptions.md`
+  - `ep14_chapters.md`
+  - `ep14_show_notes.md`
+  - `ep14_metadata.json`
+  - `ep14_social_post.txt`
+  - `ep14_release_checklist.md`
+  - `ep14_publish_log.md`
+- Kept everything grounded in:
+  - `episodes/ep14_pipeline/transcript_clean.txt`
+  - `episodes/ep14_pipeline/verified_links.json`
+- Left `publish/.keep` alone as scaffolding
+- Published the social launch via `tools/social_client.py`
+
+Launch details:
+- Social post ID: `social_post_008`
+
+One snag:
+- I tried to commit the workspace changes, but git doesn’t have a configured author name/email in this repo yet, so commit failed.
+
+If you want, I can make the commit next as soon as you give me the git identity to use:
+- `git config user.name "Your Name"`
+- `git config user.email "you@example.com"`

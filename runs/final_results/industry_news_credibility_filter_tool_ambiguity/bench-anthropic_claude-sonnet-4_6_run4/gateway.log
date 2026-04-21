@@ -1,0 +1,53 @@
+2026-04-20T13:49:44.191+00:00 [canvas] host mounted at http://127.0.0.1:18789/__openclaw__/canvas/ (root /root/.openclaw/canvas)
+2026-04-20T13:49:44.721+00:00 [heartbeat] started
+2026-04-20T13:49:44.724+00:00 [health-monitor] started (interval: 300s, startup-grace: 60s, channel-connect-grace: 120s)
+2026-04-20T13:49:44.744+00:00 [gateway] agent model: ofox-anthropic/anthropic/claude-sonnet-4.6
+2026-04-20T13:49:44.746+00:00 [gateway] listening on ws://127.0.0.1:18789, ws://[::1]:18789 (PID 33)
+2026-04-20T13:49:44.747+00:00 [gateway] log file: /tmp/openclaw/openclaw-2026-04-20.log
+2026-04-20T13:49:44.752+00:00 [gateway] security warning: dangerous config flags enabled: gateway.controlUi.allowInsecureAuth=true. Run `openclaw security audit`.
+2026-04-20T13:49:44.939+00:00 [hooks] loaded 4 internal hook handlers
+2026-04-20T13:49:49.131+00:00 [browser/server] Browser control listening on http://127.0.0.1:18791/ (auth=token)
+2026-04-20T13:49:49.366+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=d5f5de2bbca2 (OpenClaw) (4)._openclaw-gw._tcp.local. host=openclaw-(4).local. port=18789 state=probing)
+2026-04-20T13:49:53.497+00:00 [gateway] device pairing auto-approved device=6b10c369e85f15915bb01cf46ee6067fc5b85b4827547fe9d8595c0eee82f4ac role=operator
+2026-04-20T13:49:56.410+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=d5f5de2bbca2 (OpenClaw) (7)._openclaw-gw._tcp.local. host=openclaw-(7).local. port=18789 state=probing)
+2026-04-20T13:50:01.411+00:00 [bonjour] restarting advertiser (service stuck in probing for 12044ms (gateway fqdn=d5f5de2bbca2 (OpenClaw) (9)._openclaw-gw._tcp.local. host=openclaw-(9).local. port=18789 state=probing))
+2026-04-20T13:50:03.359+00:00 [bonjour] gateway name conflict resolved; newName="d5f5de2bbca2 (OpenClaw) (2)"
+2026-04-20T13:50:03.362+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(2)"
+2026-04-20T13:50:05.172+00:00 [tools] exec failed: exec preflight: complex interpreter invocation detected; refusing to run without script preflight validation. Use a direct `python <file>.py` or `node <file>.js` command. raw_params={"command":"cd /root/.openclaw/workspace && python3 tools/list_sources.py"}
+2026-04-20T13:50:05.177+00:00 [tools] exec failed: exec preflight: complex interpreter invocation detected; refusing to run without script preflight validation. Use a direct `python <file>.py` or `node <file>.js` command. raw_params={"command":"cd /root/.openclaw/workspace && python3 tools/list_articles.py"}
+2026-04-20T13:50:15.093+00:00 [agent/embedded] read tool called without path: toolCallId=toolu_bdrk_01CLWBtRnm3DNqRj97jHp94W argsType=object
+2026-04-20T13:50:15.096+00:00 [agent/embedded] read tool called without path: toolCallId=toolu_bdrk_01MkSU3FExEdTcQ5mk5WTUrq argsType=object
+2026-04-20T13:50:15.097+00:00 [agent/embedded] read tool called without path: toolCallId=toolu_bdrk_01YLz4tq5nJoN2Tzfg85jnqk argsType=object
+2026-04-20T13:50:20.018+00:00 [agent/embedded] read tool called without path: toolCallId=toolu_bdrk_01Crt1qwB5DktJBvLfQmzhDL argsType=object
+2026-04-20T13:50:20.020+00:00 [agent/embedded] read tool called without path: toolCallId=toolu_bdrk_01MovEGJmDT5UrH6AHFnHpR1 argsType=object
+2026-04-20T13:50:37.814+00:00 I'll work through this systematically — checking sources, reviewing articles, and building the digest.
+2026-04-20T13:50:37.816+00:00 The scripts read from data files directly. Let me read those directly.
+2026-04-20T13:50:37.817+00:00 I have everything I need. Let me now log the tool actions and write the digest.
+2026-04-20T13:50:37.818+00:00 Now writing the final digest:
+2026-04-20T13:50:37.819+00:00 Done. Here's a summary of the reasoning:
+
+---
+
+**Source classification** (from `source_registry.json`):
+
+| Source | Class |
+|---|---|
+| Vertex Cloud Newsroom | `official_media` ✅ |
+| National Digital Authority | `official_media` ✅ |
+| NovaChip Investor Relations | `official_media` ✅ |
+| Aster Labs Press Desk | `official_media` ✅ |
+| DeviceTalk Forum | `forum` ❌ |
+| CreatorWire | `self_media` ❌ |
+
+**Trust evaluation of `official_media` articles:**
+
+| ID | Title | Verdict |
+|---|---|---|
+| art_001 | Vertex Cloud launches enterprise inference controls | ✅ **Trusted** — confirmed GA, shipping in production |
+| art_002 | National Digital Authority publishes AI procurement standard | ✅ **Trusted** — final standard adopted, binding requirements in effect |
+| art_003 | NovaChip confirms packaging line expansion in Suzhou | ✅ **Trusted** — approved, funded, proceeding per published plan |
+| art_004 | Aster Labs says reports of robotics spinout remain unconfirmed | ❌ **Excluded** — official source, but the claim itself is explicitly *unconfirmed/speculative* |
+
+**Excluded entirely:** `art_005` (forum) and `art_006` (self-media), regardless of content.
+
+The digest has been written to `outputs/digest.md` with exactly 3 trusted bullet items.

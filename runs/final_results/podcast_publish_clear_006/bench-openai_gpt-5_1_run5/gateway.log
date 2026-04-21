@@ -1,0 +1,37 @@
+2026-04-21T05:16:29.877+00:00 [canvas] host mounted at http://127.0.0.1:18789/__openclaw__/canvas/ (root /root/.openclaw/canvas)
+2026-04-21T05:16:30.024+00:00 [heartbeat] started
+2026-04-21T05:16:30.027+00:00 [health-monitor] started (interval: 300s, startup-grace: 60s, channel-connect-grace: 120s)
+2026-04-21T05:16:30.046+00:00 [gateway] agent model: ofox-openai/openai/gpt-5.1
+2026-04-21T05:16:30.047+00:00 [gateway] listening on ws://127.0.0.1:18789, ws://[::1]:18789 (PID 33)
+2026-04-21T05:16:30.049+00:00 [gateway] log file: /tmp/openclaw/openclaw-2026-04-21.log
+2026-04-21T05:16:30.051+00:00 [gateway] security warning: dangerous config flags enabled: gateway.controlUi.allowInsecureAuth=true. Run `openclaw security audit`.
+2026-04-21T05:16:30.219+00:00 [hooks] loaded 4 internal hook handlers
+2026-04-21T05:16:34.254+00:00 [browser/server] Browser control listening on http://127.0.0.1:18791/ (auth=token)
+2026-04-21T05:16:38.472+00:00 [gateway] device pairing auto-approved device=6b10c369e85f15915bb01cf46ee6067fc5b85b4827547fe9d8595c0eee82f4ac role=operator
+2026-04-21T05:16:44.899+00:00 [tools] tools.profile (coding) allowlist contains unknown entries (apply_patch, code_execution, web_search, x_search, image, image_generate). These entries are shipped core tools but unavailable in the current runtime/provider/model/config.
+2026-04-21T05:17:34.541+00:00 I’ve completed the release and publishing flow using your sources and tooling.
+
+Created in `publish/`:
+
+1. `show_notes.md`  
+   - Timestamped sections aligned to major topic shifts in the clean transcript.  
+   - Only uses content from `transcript_clean.txt` plus verified links from `verified_links.json`.
+
+2. `episode_description.md`  
+   - Episode summary under 180 words, focused on the five-stage pipeline, transcript hygiene, automation boundaries, and the practical checklist.
+
+3. `launch_posts.md`  
+   - Exactly two short, standalone public posts (no @handles, no reply tone):  
+     - One key takeaway post (trimmed to fit the 280-character limit and successfully posted).  
+     - One discussion question post (also posted).  
+   - These are the same texts that were actually published.
+
+Publishing via `tools/social_client.py`:
+
+- Posted from the podcast account using direct public posts (no mentions, no replies, no DMs):
+  1. Key takeaway:  
+     `A reliable podcast isn’t just about great conversations—it’s about a disciplined production pipeline. Standardize your episode folder, separate raw and cleaned transcripts, and define a fixed output bundle so every release feels consistent and trustworthy.`
+  2. Discussion question:  
+     `If you mapped your podcast workflow from raw recording to publish, where are the hidden bottlenecks or risky handoffs—and what’s one change you could make this month to make the pipeline more reliable for your team?`
+
+No other release outputs were added beyond those three markdown files.

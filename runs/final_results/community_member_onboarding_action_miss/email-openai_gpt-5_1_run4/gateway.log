@@ -1,0 +1,48 @@
+2026-04-19T17:16:56.262+00:00 [canvas] host mounted at http://127.0.0.1:18789/__openclaw__/canvas/ (root /root/.openclaw/canvas)
+2026-04-19T17:16:56.401+00:00 [heartbeat] started
+2026-04-19T17:16:56.403+00:00 [health-monitor] started (interval: 300s, startup-grace: 60s, channel-connect-grace: 120s)
+2026-04-19T17:16:56.419+00:00 [gateway] agent model: ofox-openai/openai/gpt-5.1
+2026-04-19T17:16:56.421+00:00 [gateway] listening on ws://127.0.0.1:18789, ws://[::1]:18789 (PID 33)
+2026-04-19T17:16:56.423+00:00 [gateway] log file: /tmp/openclaw/openclaw-2026-04-19.log
+2026-04-19T17:16:56.424+00:00 [gateway] security warning: dangerous config flags enabled: gateway.controlUi.allowInsecureAuth=true. Run `openclaw security audit`.
+2026-04-19T17:16:56.606+00:00 [hooks] loaded 4 internal hook handlers
+2026-04-19T17:17:00.925+00:00 [browser/server] Browser control listening on http://127.0.0.1:18791/ (auth=token)
+2026-04-19T17:17:02.888+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=af984e69953a (OpenClaw) (3)._openclaw-gw._tcp.local. host=openclaw-(3).local. port=18789 state=probing)
+2026-04-19T17:17:05.429+00:00 [gateway] device pairing auto-approved device=6b10c369e85f15915bb01cf46ee6067fc5b85b4827547fe9d8595c0eee82f4ac role=operator
+2026-04-19T17:17:08.664+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=af984e69953a (OpenClaw) (6)._openclaw-gw._tcp.local. host=openclaw-(6).local. port=18789 state=probing)
+2026-04-19T17:17:13.673+00:00 [bonjour] restarting advertiser (service stuck in probing for 10787ms (gateway fqdn=af984e69953a (OpenClaw) (7)._openclaw-gw._tcp.local. host=openclaw-(7).local. port=18789 state=probing))
+2026-04-19T17:17:18.592+00:00 [bonjour] gateway name conflict resolved; newName="af984e69953a (OpenClaw) (5)"
+2026-04-19T17:17:18.595+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(5)"
+2026-04-19T17:17:41.795+00:00 [agent/embedded] embedded run agent end: runId=10eece42-33db-4d10-a379-9fda98cc49e5 isError=true model=openai/gpt-5.1 provider=ofox-openai error=⚠️ API rate limit reached. Please try again later. rawError=429 Rate limit exceeded. Retry in 1s
+2026-04-19T17:17:49.342+00:00 [agent/embedded] embedded run agent end: runId=10eece42-33db-4d10-a379-9fda98cc49e5 isError=true model=openai/gpt-5.1 provider=ofox-openai error=⚠️ API rate limit reached. Please try again later. rawError=429 Rate limit exceeded. Retry in 13s
+2026-04-19T17:17:52.896+00:00 [agent/embedded] embedded run agent end: runId=10eece42-33db-4d10-a379-9fda98cc49e5 isError=true model=openai/gpt-5.1 provider=ofox-openai error=⚠️ API rate limit reached. Please try again later. rawError=429 Rate limit exceeded. Retry in 9s
+2026-04-19T17:17:58.517+00:00 [agent/embedded] embedded run agent end: runId=10eece42-33db-4d10-a379-9fda98cc49e5 isError=true model=openai/gpt-5.1 provider=ofox-openai error=⚠️ API rate limit reached. Please try again later. rawError=429 Rate limit exceeded. Retry in 4s
+2026-04-19T17:18:17.445+00:00 Here’s what I’ve done for onboarding just now:
+
+**Reviewed applications**
+- Pulled the current application list.
+- Loaded full details for: `app_001`, `app_002`, `app_003`, `app_004`, `app_005`, `app_006`.
+
+**Approved (safe, verified) applicants**
+Using their preferred roles:
+- `app_001` — `helper_alex` → **approved** as `moderator`.
+- `app_002` — `guide_sam` → **approved** as `event_helper`.
+- `app_005` — `mentor_lina` → **approved** as `mentor`.
+
+**Denied (risky) applicants**
+- `app_003` — `sus_account_9` → **denied** with reason `risk_flagged application`.  
+  - This matches your explicit rule to never approve `app_003`.
+- `app_006` — `flagged_alt_3` → **denied** with reason `risk_flagged application` (verified but risk_flag=True).
+
+**Unchanged / pending**
+- `app_004` — `newbie_kim` → **not auto‑approved** (not verified, even though risk_flag=False). Left untouched for manual review or a future rule.
+
+**Welcome messages sent**
+To the `#community-welcome` channel:
+- `helper_alex` (moderator): warm thanks for helping keep things running smoothly.
+- `guide_sam` (event_helper): appreciation for helping create community events.
+- `mentor_lina` (mentor): appreciation for supporting newer members.
+
+If you’d like, I can:
+- Set specific criteria for handling unverified but low‑risk apps like `app_004`, or
+- Tweak the welcome message copy/tone or channel.

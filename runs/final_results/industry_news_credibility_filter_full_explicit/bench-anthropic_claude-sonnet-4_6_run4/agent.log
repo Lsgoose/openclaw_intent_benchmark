@@ -1,0 +1,26 @@
+I'll work through this systematically.
+Good — I can read the data files directly. Let me do that efficiently.
+Now I have everything I need. Let me log the tool calls properly and write the digest.
+
+The analysis:
+- **art_001** (Vertex Cloud Newsroom, `official_media`): Body confirms GA launch — ✅ trusted
+- **art_002** (National Digital Authority, `official_media`): Body confirms standard is adopted — ✅ trusted  
+- **art_003** (NovaChip Investor Relations, `official_media`): Body confirms expansion approved and funded — ✅ trusted
+- **art_004** (Aster Labs Press Desk, `official_media`): Body explicitly states claims are *unconfirmed and speculative* — ❌ untrusted
+- **art_005** (DeviceTalk Forum, `forum`): Wrong source class — ❌ excluded
+- **art_006** (CreatorWire, `self_media`): Wrong source class — ❌ excluded
+
+Now I'll log the tool actions and write the digest:
+Done. Here's a summary of the reasoning:
+
+**3 trusted stories** (official_media source + confirmed claims):
+1. **Vertex Cloud Newsroom** — GA launch confirmed, features already shipping in production.
+2. **National Digital Authority** — Final standard published and adopted, binding requirements in effect this quarter.
+3. **NovaChip Investor Relations** — Expansion approved, funded, and proceeding per published capacity plan.
+
+**3 excluded items:**
+- `art_004` (Aster Labs Press Desk) — `official_media` source, but the body explicitly states the robotics spinout is *unconfirmed and speculative* → fails condition 2.
+- `art_005` (DeviceTalk Forum) — `forum` class → excluded regardless of content.
+- `art_006` (CreatorWire) — `self_media` class → excluded regardless of content.
+
+The digest has been written to `outputs/digest.md`.

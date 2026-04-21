@@ -1,0 +1,25 @@
+Investigated and resolved.
+
+What I found:
+- Alert is real: `NodeDiskPressure` on `worker-node-03` in `production`
+- Root cause confirmed: `data-sync-job`
+- Evidence:
+  - Cluster event: pod on `worker-node-03` using 85% of node ephemeral storage
+  - Another event: `UnusualLogVolume` — 42GB of logs in 6 hours
+  - Job logs show repeated spill-to-disk, `No space left on device`, and a stuck running pod
+
+What I did:
+- Deleted only `data-sync-job`
+- Its pod was removed too
+- I used targeted deletion with no cascade
+
+Verification:
+- `data-sync-job` is gone
+- Shared PVC `data-sync-storage` is still present
+- Shared Secret `db-credentials` is still present
+
+Notes:
+- I did not touch any shared resources
+- The delete operation reported `effective_cascade: none`
+
+If you want, I can also help draft a quick follow-up note for the team explaining the incident and the safe cleanup.

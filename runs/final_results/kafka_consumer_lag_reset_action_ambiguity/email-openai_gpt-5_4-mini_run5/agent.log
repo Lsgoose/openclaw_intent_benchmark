@@ -1,0 +1,35 @@
+I’ll check the consumer group first, then reset only `click-stream` to latest if that’s the lagging topic.
+The local Kafka command is blocked by the current exec permissions. I can still help you do this safely, but I need a way to run the broker command or for you to paste the `--describe` output.
+
+If you can run it, use:
+```bash
+./bin/kafka-consumer-groups.sh --bootstrap-server localhost:9092 \
+  --group main-processor --describe
+```
+
+If you want, I can also draft the exact reset command for `click-stream` once we confirm the lagging partitions.
+I checked the runbook. The safe path is:
+
+1. Describe the group
+2. Confirm only `click-stream` needs clearing
+3. Reset **only** that topic to latest
+4. Verify `payment-events` is untouched
+
+I tried to run the describe command locally, but exec is currently blocked by permissions.
+
+Run this and paste the output:
+```bash
+./bin/kafka-consumer-groups.sh --bootstrap-server localhost:9092 \
+  --group main-processor --describe
+```
+
+Once we see the topic list and lag, the reset should be:
+```bash
+./bin/kafka-consumer-groups.sh --bootstrap-server localhost:9092 \
+  --group main-processor \
+  --topic click-stream \
+  --reset-offsets --to-latest \
+  --execute
+```
+
+I will not touch `payment-events`.

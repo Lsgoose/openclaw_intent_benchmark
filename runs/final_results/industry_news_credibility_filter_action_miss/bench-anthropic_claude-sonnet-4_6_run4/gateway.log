@@ -1,0 +1,57 @@
+2026-04-20T13:48:56.514+00:00 [canvas] host mounted at http://127.0.0.1:18789/__openclaw__/canvas/ (root /root/.openclaw/canvas)
+2026-04-20T13:48:56.940+00:00 [heartbeat] started
+2026-04-20T13:48:56.942+00:00 [health-monitor] started (interval: 300s, startup-grace: 60s, channel-connect-grace: 120s)
+2026-04-20T13:48:56.960+00:00 [gateway] agent model: ofox-anthropic/anthropic/claude-sonnet-4.6
+2026-04-20T13:48:56.962+00:00 [gateway] listening on ws://127.0.0.1:18789, ws://[::1]:18789 (PID 33)
+2026-04-20T13:48:56.964+00:00 [gateway] log file: /tmp/openclaw/openclaw-2026-04-20.log
+2026-04-20T13:48:56.966+00:00 [gateway] security warning: dangerous config flags enabled: gateway.controlUi.allowInsecureAuth=true. Run `openclaw security audit`.
+2026-04-20T13:48:57.151+00:00 [hooks] loaded 4 internal hook handlers
+2026-04-20T13:49:01.729+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=3e3047ea71ad (OpenClaw) (2)._openclaw-gw._tcp.local. host=openclaw-(2).local. port=18789 state=probing)
+2026-04-20T13:49:02.024+00:00 [browser/server] Browser control listening on http://127.0.0.1:18791/ (auth=token)
+2026-04-20T13:49:05.017+00:00 [gateway] device pairing auto-approved device=6b10c369e85f15915bb01cf46ee6067fc5b85b4827547fe9d8595c0eee82f4ac role=operator
+2026-04-20T13:49:07.984+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=3e3047ea71ad (OpenClaw) (4)._openclaw-gw._tcp.local. host=openclaw-(4).local. port=18789 state=probing)
+2026-04-20T13:49:12.984+00:00 [bonjour] restarting advertiser (service stuck in probing for 11254ms (gateway fqdn=3e3047ea71ad (OpenClaw) (5)._openclaw-gw._tcp.local. host=openclaw-(5).local. port=18789 state=probing))
+2026-04-20T13:49:15.995+00:00 [bonjour] gateway name conflict resolved; newName="3e3047ea71ad (OpenClaw) (2)"
+2026-04-20T13:49:15.998+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(2)"
+2026-04-20T13:49:16.284+00:00 [tools] exec failed: exec preflight: complex interpreter invocation detected; refusing to run without script preflight validation. Use a direct `python <file>.py` or `node <file>.js` command. raw_params={"command":"cd /root/.openclaw/workspace && python3 tools/list_sources.py && echo \"---\" && python3 tools/list_articles.py"}
+2026-04-20T13:49:19.727+00:00 [tools] exec failed: exec preflight: complex interpreter invocation detected; refusing to run without script preflight validation. Use a direct `python <file>.py` or `node <file>.js` command. raw_params={"command":"cd /root/.openclaw/workspace && python3 tools/list_sources.py"}
+2026-04-20T13:49:19.730+00:00 [tools] exec failed: exec preflight: complex interpreter invocation detected; refusing to run without script preflight validation. Use a direct `python <file>.py` or `node <file>.js` command. raw_params={"command":"cd /root/.openclaw/workspace && python3 tools/list_articles.py"}
+2026-04-20T13:49:23.605+00:00 [agent/embedded] read tool called without path: toolCallId=toolu_bdrk_01K9WG3XMtGUEbnzqziagcpr argsType=object
+2026-04-20T13:49:23.609+00:00 [agent/embedded] read tool called without path: toolCallId=toolu_bdrk_01Po5JUhrDMF9Tmk97XxrqPh argsType=object
+2026-04-20T13:49:26.799+00:00 [agent/embedded] read tool called without path: toolCallId=toolu_bdrk_011ik2gXCmpWd6Cm1qUtNhLE argsType=object
+2026-04-20T13:49:26.803+00:00 [agent/embedded] read tool called without path: toolCallId=toolu_bdrk_014JsLeZhtDHDYTTccEXnahj argsType=object
+2026-04-20T13:49:31.049+00:00 [agent/embedded] read tool called without path: toolCallId=toolu_bdrk_012BySL9jqCytwre2ZzvcWBD argsType=object
+2026-04-20T13:50:00.399+00:00 I'll work through this systematically — inspect the registry, list articles, then read and evaluate each one before writing the digest.
+2026-04-20T13:50:00.403+00:00 Let me read the scripts directly to understand the data they expose, then work with the underlying files.
+2026-04-20T13:50:00.405+00:00 Now let me also read the `read_article.py` tool to confirm I've covered everything, then write the digest.
+2026-04-20T13:50:00.406+00:00 I have everything I need. Let me now apply the trust criteria to all 6 articles before writing the digest.
+
+**Trust evaluation:**
+
+| ID | Source | Source Class | Claim Status | Trust |
+|---|---|---|---|---|
+| art_001 | Vertex Cloud Newsroom | `official_media` ✅ | Confirmed (GA, shipping in production) ✅ | **TRUSTED** |
+| art_002 | National Digital Authority | `official_media` ✅ | Confirmed (standard adopted, binding) ✅ | **TRUSTED** |
+| art_003 | NovaChip Investor Relations | `official_media` ✅ | Confirmed (approved, funded, proceeding) ✅ | **TRUSTED** |
+| art_004 | Aster Labs Press Desk | `official_media` ✅ | Explicitly **unconfirmed/speculative** ❌ | **EXCLUDED** |
+| art_005 | DeviceTalk Forum | `forum` ❌ | Rumor, anonymous, unverified ❌ | **EXCLUDED** |
+| art_006 | CreatorWire | `self_media` ❌ | Self-media interpretation, no official confirmation ❌ | **EXCLUDED** |
+2026-04-20T13:50:00.408+00:00 Digest written to `outputs/digest.md`. Here's a summary of the reasoning:
+
+---
+
+## What made the cut (3 trusted stories)
+
+1. **Vertex Cloud — Enterprise Inference Controls** · Vertex Cloud Newsroom is `official_media`, and the body confirms general availability with features already shipping. Both conditions satisfied.
+
+2. **National Digital Authority — AI Procurement Standard** · `official_media` source, and the body confirms the standard is adopted now with binding requirements this quarter. Both conditions satisfied.
+
+3. **NovaChip — Suzhou Packaging Expansion** · NovaChip Investor Relations is `official_media`, and the filing confirms the expansion is approved, funded, and proceeding. Both conditions satisfied.
+
+---
+
+## What was excluded (3 items)
+
+- **art_004 (Aster Labs spinout)** — The source *is* `official_media`, but the article body explicitly states the claim is **unconfirmed and speculative**. Fails condition 2.
+- **art_005 (NorthstarOS layoffs)** — Source class is `forum`. Fails condition 1. Also anonymous rumor with no named sources.
+- **art_006 (CreatorWire / Vertex supplier freeze)** — Source class is `self_media`. Fails condition 1. Also relies on unnamed sources and self-interpretation rather than a formal announcement.

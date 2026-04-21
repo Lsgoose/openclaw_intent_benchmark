@@ -1,0 +1,14 @@
+To move forward I need you to approve running the helper script.
+
+Please reply with exactly:
+
+`/approve 9f7dd90d allow-once`
+
+Once that’s approved, I’ll:
+
+1. List sources to find which are `official_media`.
+2. List all articles, filter to:
+   - published in the last ~24 hours (`published_hours_ago <= 24`)
+   - whose `source_class` is `official_media`
+3. Read each candidate with `read_article.py` to confirm the body presents the claim as confirmed (not speculative/rumor/pending).
+4. Write a concise trusted-news brief to `outputs/digest.md` and summarize what I wrote back to you.

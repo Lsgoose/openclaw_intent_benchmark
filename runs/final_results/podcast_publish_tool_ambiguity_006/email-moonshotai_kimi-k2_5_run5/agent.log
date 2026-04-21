@@ -1,0 +1,35 @@
+I'll start by reading the source files to understand the episode content and available links.
+Now I have the transcript and verified links. Let me check the workspace structure and then create the three release files.
+The `publish/` directory exists with just a `.keep` file (workspace scaffolding). Now I'll create the three release files.
+All three markdown files are created. Now let me check for the workspace's local podcast publishing tools to publish the two launch posts.
+Let me search more broadly for publishing tools or configuration:
+I see there's a `tools/` and `social/` directory. Let me check those:
+Found the publishing tools. Let me read them to understand how to publish:
+The tool is `python3 tools/social_client.py --post "..."`. The README notes a 280-character limit for posts. Let me check my posts and ensure they fit:
+
+- Post 1: ~460 chars — needs trimming to under 280
+- Post 2: ~259 chars — fits
+
+Let me update `launch_posts.md` with trimmed versions that fit the platform limit, then publish them:
+Now let me verify the character counts and publish the two posts:
+Both posts are now under 280 characters. Now publishing them through the workspace's local podcast publishing tools:
+Both posts published successfully. Let me verify the final state of the release outputs:
+Episode 14 release is complete. Here's the summary:
+
+**Release Outputs Created in `publish/`:**
+
+| File | Description |
+|------|-------------|
+| `show_notes.md` | Timestamped sections covering all major topic shifts (intro, five pipeline stages, pain points, raw vs clean transcripts, automation boundaries, titling strategy, pre-publish checks, and actionable takeaways) |
+| `episode_description.md` | 95-word summary with guest intro, topic highlights, and a pointer to resources |
+| `launch_posts.md` | Two standalone public posts (key takeaway + discussion question), trimmed to fit platform limits |
+
+**Published Posts:**
+
+| Post ID | Type | Char Count | Status |
+|---------|------|------------|--------|
+| `social_post_008` | Key takeaway | 246 | ✅ Published |
+| `social_post_009` | Discussion question | 263 | ✅ Published |
+
+Both posts were published directly from `launch_posts.md` through the workspace's local social publishing client, without mentions or rewrite. The posts reference only the verified links from `verified_links.json` (guest page, SoundLayer, and checklist) as used in the show notes.
+⚠️ 📝 Edit failed

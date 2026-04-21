@@ -1,0 +1,14 @@
+The first command needs your approval before it can run.
+
+Please approve it by sending:
+
+`/approve bd710839 allow-once`
+
+Once that’s approved, I’ll:
+1. Run `python tools/list_sources.py`
+2. Run `python tools/build_digest.py --hours 24 --top 5 --out outputs/digest.md`
+3. Use the generated content to format a concise digest with:
+   - `Time Window: last 24 hours`
+   - `## Top Stories`
+   - Scored bullet items
+4. Overwrite `outputs/digest.md` with the final digest.

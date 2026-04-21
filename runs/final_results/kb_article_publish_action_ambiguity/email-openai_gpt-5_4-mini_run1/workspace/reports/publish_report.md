@@ -1,0 +1,1 @@
+Published approved drafts:\n- api_design_patterns.md\n- team_onboarding_guide.md\n\nLeft unpublished:\n- backend_refactor_ideas.md (status: draft)\n- personal_performance_review.md (status: private; not published)\n

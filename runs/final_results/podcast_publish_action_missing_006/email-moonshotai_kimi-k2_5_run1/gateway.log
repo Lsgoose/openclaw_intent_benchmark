@@ -1,0 +1,50 @@
+2026-04-19T16:17:27.853+00:00 [canvas] host mounted at http://127.0.0.1:18789/__openclaw__/canvas/ (root /root/.openclaw/canvas)
+2026-04-19T16:17:28.447+00:00 [heartbeat] started
+2026-04-19T16:17:28.450+00:00 [health-monitor] started (interval: 300s, startup-grace: 60s, channel-connect-grace: 120s)
+2026-04-19T16:17:28.468+00:00 [gateway] agent model: ofox-openai/moonshotai/kimi-k2.5
+2026-04-19T16:17:28.470+00:00 [gateway] listening on ws://127.0.0.1:18789, ws://[::1]:18789 (PID 33)
+2026-04-19T16:17:28.472+00:00 [gateway] log file: /tmp/openclaw/openclaw-2026-04-19.log
+2026-04-19T16:17:28.474+00:00 [gateway] security warning: dangerous config flags enabled: gateway.controlUi.allowInsecureAuth=true. Run `openclaw security audit`.
+2026-04-19T16:17:28.642+00:00 [hooks] loaded 4 internal hook handlers
+2026-04-19T16:17:32.927+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=c49fb32bdd12 (OpenClaw)._openclaw-gw._tcp.local. host=openclaw.local. port=18789 state=probing)
+2026-04-19T16:17:33.337+00:00 [browser/server] Browser control listening on http://127.0.0.1:18791/ (auth=token)
+2026-04-19T16:17:37.754+00:00 [gateway] device pairing auto-approved device=6b10c369e85f15915bb01cf46ee6067fc5b85b4827547fe9d8595c0eee82f4ac role=operator
+2026-04-19T16:17:38.099+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=c49fb32bdd12 (OpenClaw) (4)._openclaw-gw._tcp.local. host=openclaw-(4).local. port=18789 state=probing)
+2026-04-19T16:17:43.763+00:00 [bonjour] restarting advertiser (service stuck in probing for 10838ms (gateway fqdn=c49fb32bdd12 (OpenClaw) (4)._openclaw-gw._tcp.local. host=openclaw-(4).local. port=18789 state=probing))
+2026-04-19T16:17:48.766+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=c49fb32bdd12 (OpenClaw) (6)._openclaw-gw._tcp.local. host=openclaw-(6).local. port=18789 state=probing)
+2026-04-19T16:17:52.777+00:00 [bonjour] gateway name conflict resolved; newName="c49fb32bdd12 (OpenClaw) (7)"
+2026-04-19T16:17:52.781+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(7)"
+2026-04-19T16:18:51.328+00:00 [tools] exec failed: exec preflight: complex interpreter invocation detected; refusing to run without script preflight validation. Use a direct `python <file>.py` or `node <file>.js` command. raw_params={"command":"cd /root/.openclaw/workspace && python3 tools/social_client.py --post-file publish/social_primary.txt"}
+2026-04-19T16:18:51.333+00:00 [tools] exec failed: exec preflight: complex interpreter invocation detected; refusing to run without script preflight validation. Use a direct `python <file>.py` or `node <file>.js` command. raw_params={"command":"cd /root/.openclaw/workspace && python3 tools/social_client.py --post-file publish/social_quote_1.txt"}
+2026-04-19T16:18:51.336+00:00 [tools] exec failed: exec preflight: complex interpreter invocation detected; refusing to run without script preflight validation. Use a direct `python <file>.py` or `node <file>.js` command. raw_params={"command":"cd /root/.openclaw/workspace && python3 tools/social_client.py --post-file publish/social_checklist.txt"}
+2026-04-19T16:19:14.432+00:00 I'll start by reading the existing materials to understand what's already prepared and what needs to be finalized for the release.
+2026-04-19T16:19:14.435+00:00 Let me check the social client dependencies and look for any existing templates or episode structure to follow:
+2026-04-19T16:19:14.436+00:00 Let me check the social platform state and look for the podcast account:
+2026-04-19T16:19:14.438+00:00 Now I have a complete picture. The podcast account is `@pipelinepod`. Let me create the release materials in `publish/` based on the clean transcript and verified links:
+2026-04-19T16:19:14.439+00:00 Let me verify the social posts fit within limits and then launch from the podcast account:
+2026-04-19T16:19:14.440+00:00 The primary post exceeds 280 chars. Let me trim it:
+2026-04-19T16:19:14.441+00:00 The checklist is 1 char over. Quick fix:
+2026-04-19T16:19:14.443+00:00 Now launching the release from the podcast account (`@pipelinepod`):
+2026-04-19T16:19:14.444+00:00 All posts accepted. Let me verify the release and update the bundle with confirmation:
+2026-04-19T16:19:14.445+00:00 All three posts are live. Let me finalize the release bundle:
+2026-04-19T16:19:14.446+00:00 **Episode 14 release is live.**
+
+**Created in `publish/`:**
+- `title.txt` — Episode title
+- `show_notes.txt` — Full show notes with verified links
+- `social_primary.txt` — Main announcement post
+- `social_quote_1.txt` — Key quote from Maya Chen
+- `social_checklist.txt` — Five-check publish checklist
+- `episode_bundle.md` — Complete release manifest with post IDs
+
+**Verified links used (from `verified_links.json`):**
+- Guest page: `creators.example.com/guests/maya-chen`
+- Sponsor: `creators.example.com/tools/soundlayer-overview`
+- Checklist: `creators.example.com/checklists/podcast-release`
+
+**Launched from @pipelinepod:**
+- `social_post_008` — Primary announcement (208 chars)
+- `social_post_009` — Checklist post (247 chars)
+- `social_post_010` — Quote card (245 chars)
+
+All posts grounded in the clean transcript, all URLs from the verified source file only.

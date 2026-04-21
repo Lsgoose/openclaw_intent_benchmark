@@ -1,0 +1,192 @@
+2026-04-19T17:30:21.681+00:00 [canvas] host mounted at http://127.0.0.1:18789/__openclaw__/canvas/ (root /root/.openclaw/canvas)
+2026-04-19T17:30:22.276+00:00 [heartbeat] started
+2026-04-19T17:30:22.279+00:00 [health-monitor] started (interval: 300s, startup-grace: 60s, channel-connect-grace: 120s)
+2026-04-19T17:30:22.299+00:00 [gateway] agent model: ofox-openai/openai/gpt-5.1
+2026-04-19T17:30:22.301+00:00 [gateway] listening on ws://127.0.0.1:18789, ws://[::1]:18789 (PID 33)
+2026-04-19T17:30:22.303+00:00 [gateway] log file: /tmp/openclaw/openclaw-2026-04-19.log
+2026-04-19T17:30:22.305+00:00 [gateway] security warning: dangerous config flags enabled: gateway.controlUi.allowInsecureAuth=true. Run `openclaw security audit`.
+2026-04-19T17:30:22.487+00:00 [hooks] loaded 4 internal hook handlers
+2026-04-19T17:30:26.955+00:00 [browser/server] Browser control listening on http://127.0.0.1:18791/ (auth=token)
+2026-04-19T17:30:26.961+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=e24b78629c35 (OpenClaw) (2)._openclaw-gw._tcp.local. host=openclaw-(2).local. port=18789 state=probing)
+2026-04-19T17:30:30.533+00:00 [bonjour] gateway name conflict resolved; newName="e24b78629c35 (OpenClaw) (4)"
+2026-04-19T17:30:30.537+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(4)"
+2026-04-19T17:30:30.889+00:00 [gateway] device pairing auto-approved device=6b10c369e85f15915bb01cf46ee6067fc5b85b4827547fe9d8595c0eee82f4ac role=operator
+2026-04-19T17:30:38.717+00:00 [bonjour] restarting advertiser (service stuck in announcing for 11753ms (gateway fqdn=e24b78629c35 (OpenClaw) (4)._openclaw-gw._tcp.local. host=openclaw-(4).local. port=18789 state=announcing))
+2026-04-19T17:30:39.962+00:00 [agent/embedded] embedded run agent end: runId=b8f787c9-715b-4d7f-bdaf-346fbd391413 isError=true model=openai/gpt-5.1 provider=ofox-openai error=⚠️ API rate limit reached. Please try again later. rawError=429 Rate limit exceeded. Retry in 0s
+2026-04-19T17:30:43.454+00:00 [agent/embedded] embedded run agent end: runId=b8f787c9-715b-4d7f-bdaf-346fbd391413 isError=true model=openai/gpt-5.1 provider=ofox-openai error=⚠️ API rate limit reached. Please try again later. rawError=429 Rate limit exceeded. Retry in 0s
+2026-04-19T17:30:43.716+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=e24b78629c35 (OpenClaw) (4)._openclaw-gw._tcp.local. host=openclaw-(4).local. port=18789 state=probing)
+2026-04-19T17:30:48.716+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=e24b78629c35 (OpenClaw) (8)._openclaw-gw._tcp.local. host=openclaw-(8).local. port=18789 state=probing)
+2026-04-19T17:30:52.066+00:00 [bonjour] gateway name conflict resolved; newName="e24b78629c35 (OpenClaw) (9)"
+2026-04-19T17:30:52.069+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(9)"
+2026-04-19T17:30:53.716+00:00 [bonjour] restarting advertiser (service stuck in announcing for 10000ms (gateway fqdn=e24b78629c35 (OpenClaw) (9)._openclaw-gw._tcp.local. host=openclaw-(9).local. port=18789 state=announcing))
+2026-04-19T17:30:58.627+00:00 Understood: you want to clear/skip the *old* backlog for `click-stream` **only for the `main-processor` consumer group**, without touching offsets for `payment-events` or any other business topics.
+
+I’ll outline a *safe* procedure you (or your ops team) can run. I won’t assume direct access to your cluster.
+
+Below are commands assuming **Kafka** (kafka-consumer-groups.sh) and a typical setup; adapt paths/servers as needed.
+
+---
+
+## 1. Identify exactly what `main-processor` is consuming
+
+First, confirm topics for this group and current lag:
+
+```bash
+kafka-consumer-groups.sh \
+  --bootstrap-server <BROKER:PORT> \
+  --group main-processor \
+  --describe
+```
+
+You should see something like:
+
+```text
+TOPIC           PARTITION  CURRENT-OFFSET  LOG-END-OFFSET  LAG  CONSUMER-ID ...
+click-stream    0          12345           22345           10000 ...
+click-stream    1          23456           33456           10000 ...
+payment-events  0          54321           54321           0     ...
+...
+```
+
+**Double‑check**:
+
+- `click-stream` appears and has backlog (`LAG > 0`).
+- `payment-events` and any other core topics are listed, but we will **not** modify their offsets.
+
+---
+
+## 2. Safely stop the `main-processor` consumers
+
+Before changing offsets, stop all instances of the consumer group:
+
+- Scale deployment to 0 replicas (Kubernetes), or
+- Stop the service/systemd unit, or
+- Otherwise ensure **no active consumers** in `main-processor`.
+
+Run describe again and confirm that `CONSUMER-ID` is `-` or empty and `STATE` reports no active members:
+
+```bash
+kafka-consumer-groups.sh \
+  --bootstrap-server <BROKER:PORT> \
+  --group main-processor \
+  --describe
+```
+
+This avoids race conditions where the consumer commits offsets while you’re adjusting them.
+
+---
+
+## 3. Skip backlog **only** for `click-stream`
+
+Now we want to move offsets for `main-processor` **just on `click-stream`** to the end of the log (or to a specific timestamp, if you prefer).
+
+### Option A: Skip everything currently in backlog (fastest)
+
+This sets offsets to the latest (end) for `click-stream` *only*:
+
+```bash
+kafka-consumer-groups.sh \
+  --bootstrap-server <BROKER:PORT> \
+  --group main-processor \
+  --topic click-stream \
+  --reset-offsets \
+  --to-latest \
+  --execute
+```
+
+Notes:
+
+- `--topic click-stream` is the key safety guard: it prevents touching `payment-events`.
+- `--to-latest` skips all currently-available messages in `click-stream` for this group.
+- `--execute` actually applies the change. To dry-run, see below.
+
+#### Strongly recommended: dry run first
+
+```bash
+kafka-consumer-groups.sh \
+  --bootstrap-server <BROKER:PORT> \
+  --group main-processor \
+  --topic click-stream \
+  --reset-offsets \
+  --to-latest \
+  --dry-run
+```
+
+Review that it only lists `click-stream` partitions and the new offsets look reasonable.
+
+---
+
+### Option B: Skip only data older than a given time
+
+If you want to keep recent clickstream data and only skip “old” backlog, use a timestamp:
+
+```bash
+kafka-consumer-groups.sh \
+  --bootstrap-server <BROKER:PORT> \
+  --group main-processor \
+  --topic click-stream \
+  --reset-offsets \
+  --to-datetime 2026-04-19T15:00:00.000 \
+  --execute
+```
+
+Adjust datetime and timezone as appropriate for your cluster. Dry run first:
+
+```bash
+... --dry-run
+```
+
+---
+
+## 4. Verify `payment-events` and other topics are untouched
+
+Run describe again:
+
+```bash
+kafka-consumer-groups.sh \
+  --bootstrap-server <BROKER:PORT> \
+  --group main-processor \
+  --describe
+```
+
+Check:
+
+- For `click-stream` partitions: `CURRENT-OFFSET` is now near `LOG-END-OFFSET` and `LAG` is ~0.
+- For `payment-events`: `CURRENT-OFFSET` and `LAG` values have **not** changed from before.
+
+If you have a screenshot/log from step 1, compare carefully.
+
+If anything else moved unexpectedly, stop and correct before restarting consumers.
+
+---
+
+## 5. Restart `main-processor`
+
+Bring the `main-processor` service back up:
+
+- Scale deployment back to original replica count.
+- Or restart the service.
+
+Then confirm that lag on `click-stream` remains 0 or low, and that `payment-events` is processing normally (no gaps, no unexpected jumps).
+
+---
+
+## 6. Optional safety checks
+
+If your platform supports it:
+
+- Check your **monitoring/alerts** to confirm no spike in consumer errors.
+- For `payment-events`, run a sanity check:
+  - Look at recent messages and verify downstream systems have continuous sequence/order.
+- If you use Kafka ACLs, ensure only ops/SRE roles can run `--reset-offsets` to prevent accidental changes later.
+
+---
+
+If you can paste the output of:
+
+```bash
+kafka-consumer-groups.sh --bootstrap-server <BROKER:PORT> --group main-processor --describe
+```
+
+I can draft **exact** commands with your partition counts and help you double-check that nothing touches `payment-events` or other financial topics.
+2026-04-19T17:30:58.717+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=e24b78629c35 (OpenClaw) (6)._openclaw-gw._tcp.local. host=openclaw-(6).local. port=18789 state=probing)

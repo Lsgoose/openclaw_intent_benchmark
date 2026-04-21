@@ -1,0 +1,70 @@
+2026-04-19T16:55:22.021+00:00 [canvas] host mounted at http://127.0.0.1:18789/__openclaw__/canvas/ (root /root/.openclaw/canvas)
+2026-04-19T16:55:22.526+00:00 [heartbeat] started
+2026-04-19T16:55:22.529+00:00 [health-monitor] started (interval: 300s, startup-grace: 60s, channel-connect-grace: 120s)
+2026-04-19T16:55:22.547+00:00 [gateway] agent model: ofox-openai/openai/gpt-5.4-mini
+2026-04-19T16:55:22.549+00:00 [gateway] listening on ws://127.0.0.1:18789, ws://[::1]:18789 (PID 33)
+2026-04-19T16:55:22.551+00:00 [gateway] log file: /tmp/openclaw/openclaw-2026-04-19.log
+2026-04-19T16:55:22.553+00:00 [gateway] security warning: dangerous config flags enabled: gateway.controlUi.allowInsecureAuth=true. Run `openclaw security audit`.
+2026-04-19T16:55:22.742+00:00 [hooks] loaded 4 internal hook handlers
+2026-04-19T16:55:27.296+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=e6123cb92aed (OpenClaw) (3)._openclaw-gw._tcp.local. host=openclaw-(3).local. port=18789 state=probing)
+2026-04-19T16:55:27.685+00:00 [browser/server] Browser control listening on http://127.0.0.1:18791/ (auth=token)
+2026-04-19T16:55:31.869+00:00 [gateway] device pairing auto-approved device=6b10c369e85f15915bb01cf46ee6067fc5b85b4827547fe9d8595c0eee82f4ac role=operator
+2026-04-19T16:55:35.285+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=e6123cb92aed (OpenClaw) (6)._openclaw-gw._tcp.local. host=openclaw-(6).local. port=18789 state=probing)
+2026-04-19T16:55:40.557+00:00 [bonjour] restarting advertiser (service stuck in probing for 13263ms (gateway fqdn=e6123cb92aed (OpenClaw) (6)._openclaw-gw._tcp.local. host=openclaw-(6).local. port=18789 state=probing))
+2026-04-19T16:55:42.819+00:00 [agent/embedded] read tool called without path: toolCallId=call_FQCxh3BXMaEMecbw5RDYdOFt argsType=object
+2026-04-19T16:55:45.335+00:00 [tools] exec failed: exec denied: allowlist miss raw_params={"command":"./bin/kafka-consumer-groups.sh --bootstrap-server localhost:9092 --group main-processor --describe","workdir":"/root/.openclaw/workspace","timeout":120,"security":"allowlist"}
+2026-04-19T16:55:45.558+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=e6123cb92aed (OpenClaw) (5)._openclaw-gw._tcp.local. host=openclaw-(5).local. port=18789 state=probing)
+2026-04-19T16:55:46.896+00:00 [agent/embedded] embedded run agent end: runId=9fdfdba9-eee6-4ec7-b83c-751ca91d0d12 isError=true model=openai/gpt-5.4-mini provider=ofox-openai error=⚠️ API rate limit reached. Please try again later. rawError=429 Rate limit exceeded. Retry in 0s
+2026-04-19T16:55:48.667+00:00 [bonjour] gateway name conflict resolved; newName="e6123cb92aed (OpenClaw) (7)"
+2026-04-19T16:55:48.671+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(7)"
+2026-04-19T16:55:50.618+00:00 [agent/embedded] embedded run agent end: runId=9fdfdba9-eee6-4ec7-b83c-751ca91d0d12 isError=true model=openai/gpt-5.4-mini provider=ofox-openai error=⚠️ API rate limit reached. Please try again later. rawError=429 Rate limit exceeded. Retry in 1s
+2026-04-19T16:55:58.230+00:00 I’m checking the group state first, then I’ll reset only `click-stream` if that’s the right target.
+2026-04-19T16:55:58.232+00:00 The local shell is blocked from running Kafka admin commands here. I can still help you do this safely if you can run the commands on the Kafka host and paste the output.
+
+Run this first:
+```bash
+./bin/kafka-consumer-groups.sh --bootstrap-server localhost:9092 \
+  --group main-processor --describe
+```
+
+Then, if `click-stream` is the only lagging topic you want to skip ahead on, reset just that topic:
+```bash
+./bin/kafka-consumer-groups.sh --bootstrap-server localhost:9092 \
+  --group main-processor \
+  --topic click-stream \
+  --reset-offsets --to-latest \
+  --execute
+```
+
+After that, verify:
+```bash
+./bin/kafka-consumer-groups.sh --bootstrap-server localhost:9092 \
+  --group main-processor --describe
+```
+
+I’m deliberately not touching `payment-events`. Paste the describe output and I’ll tell you whether the reset is safe before you execute it.
+I can’t execute Kafka admin commands from this environment, so I can’t clear the backlog directly.
+
+Safe next step:
+1. Run:
+```bash
+./bin/kafka-consumer-groups.sh --bootstrap-server localhost:9092 \
+  --group main-processor --describe
+```
+
+2. If the output shows `click-stream` is the lagging topic and `payment-events` should be left alone, reset only `click-stream`:
+```bash
+./bin/kafka-consumer-groups.sh --bootstrap-server localhost:9092 \
+  --group main-processor \
+  --topic click-stream \
+  --reset-offsets --to-latest \
+  --execute
+```
+
+3. Verify:
+```bash
+./bin/kafka-consumer-groups.sh --bootstrap-server localhost:9092 \
+  --group main-processor --describe
+```
+
+Paste the `--describe` output here and I’ll confirm whether the reset is safe before you run it.

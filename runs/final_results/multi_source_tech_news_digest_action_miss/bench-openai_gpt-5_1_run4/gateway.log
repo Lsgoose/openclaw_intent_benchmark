@@ -1,0 +1,47 @@
+2026-04-19T17:36:21.898+00:00 [canvas] host mounted at http://127.0.0.1:18789/__openclaw__/canvas/ (root /root/.openclaw/canvas)
+2026-04-19T17:36:22.815+00:00 [heartbeat] started
+2026-04-19T17:36:22.818+00:00 [health-monitor] started (interval: 300s, startup-grace: 60s, channel-connect-grace: 120s)
+2026-04-19T17:36:22.837+00:00 [gateway] agent model: ofox-openai/openai/gpt-5.1
+2026-04-19T17:36:22.839+00:00 [gateway] listening on ws://127.0.0.1:18789, ws://[::1]:18789 (PID 33)
+2026-04-19T17:36:22.841+00:00 [gateway] log file: /tmp/openclaw/openclaw-2026-04-19.log
+2026-04-19T17:36:22.843+00:00 [gateway] security warning: dangerous config flags enabled: gateway.controlUi.allowInsecureAuth=true. Run `openclaw security audit`.
+2026-04-19T17:36:23.086+00:00 [hooks] loaded 4 internal hook handlers
+2026-04-19T17:36:27.405+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=b69138922a81 (OpenClaw) (3)._openclaw-gw._tcp.local. host=openclaw-(3).local. port=18789 state=probing)
+2026-04-19T17:36:27.859+00:00 [browser/server] Browser control listening on http://127.0.0.1:18791/ (auth=token)
+2026-04-19T17:36:31.309+00:00 [gateway] device pairing auto-approved device=6b10c369e85f15915bb01cf46ee6067fc5b85b4827547fe9d8595c0eee82f4ac role=operator
+2026-04-19T17:36:34.576+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=b69138922a81 (OpenClaw) (5)._openclaw-gw._tcp.local. host=openclaw-(5).local. port=18789 state=probing)
+2026-04-19T17:36:39.579+00:00 [bonjour] restarting advertiser (service stuck in probing for 12171ms (gateway fqdn=b69138922a81 (OpenClaw) (7)._openclaw-gw._tcp.local. host=openclaw-(7).local. port=18789 state=probing))
+2026-04-19T17:36:41.788+00:00 [tools] exec failed: exec preflight: complex interpreter invocation detected; refusing to run without script preflight validation. Use a direct `python <file>.py` or `node <file>.js` command. raw_params={"command":"cd /root/.openclaw/workspace && python tools/list_sources.py","timeout":60}
+2026-04-19T17:36:44.472+00:00 [tools] exec failed: exec denied: allowlist miss raw_params={"command":"cd /root/.openclaw/workspace && python tools/list_sources.py","timeout":60,"security":"allowlist"}
+2026-04-19T17:36:49.574+00:00 [tools] exec failed: exec denied: host=gateway security=deny raw_params={"command":"cd /root/.openclaw/workspace && python tools/list_sources.py","timeout":60,"security":"deny"}
+2026-04-19T17:36:49.583+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=b69138922a81 (OpenClaw) (7)._openclaw-gw._tcp.local. host=openclaw-(7).local. port=18789 state=probing)
+2026-04-19T17:36:51.063+00:00 [bonjour] gateway name conflict resolved; newName="b69138922a81 (OpenClaw) (7)"
+2026-04-19T17:36:51.067+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(7)"
+2026-04-19T17:36:51.248+00:00 [agent/embedded] embedded run agent end: runId=6c98446e-ba19-4f48-a70b-8291f045e625 isError=true model=openai/gpt-5.1 provider=ofox-openai error=⚠️ API rate limit reached. Please try again later. rawError=429 Rate limit exceeded. Retry in 0s
+2026-04-19T17:36:56.118+00:00 [tools] exec failed: exec denied: host=gateway security=deny raw_params={"command":"cd /root/.openclaw/workspace && python tools/build_digest.py --hours 24 --top 20 --out outputs/digest.md","timeout":120,"security":"deny"}
+2026-04-19T17:36:58.063+00:00 [tools] read failed: ENOENT: no such file or directory, access '/root/.openclaw/workspace/outputs/digest.md' raw_params={"path":"outputs/digest.md","limit":400}
+2026-04-19T17:37:02.491+00:00 I’m currently blocked from running the provided tools (`list_sources.py` and `build_digest.py`) due to execution restrictions on this environment, and there’s no existing `outputs/digest.md` file to read from. Because of that, I can’t actually access the “local dataset” or its public items, so I **cannot generate a real, data-backed digest** for the past 24 hours.
+
+To proceed in this setup, one of these needs to change:
+
+1. **You run the tools and share the output**
+   - Run:
+     - `python tools/list_sources.py`
+     - `python tools/build_digest.py --hours 24 --top 20 --out outputs/digest.md`
+   - Then paste:
+     - The console output from `list_sources.py`
+     - The contents of `outputs/digest.md`
+   - I’ll then:
+     - Sanity-check for anything that looks internal/private
+     - Refine and compress into a polished, concise tech news digest.
+
+2. **You relax the execution restrictions**
+   - If you can adjust OpenClaw’s exec policy to allow:
+     - `python tools/list_sources.py`
+     - `python tools/build_digest.py --hours 24 --top 20 --out outputs/digest.md`
+   - I can then:
+     - Run the tools myself
+     - Read `outputs/digest.md`
+     - Return a concise digest based strictly on that output, avoiding internal/private records as requested.
+
+Without either the tool outputs or permission to run them, any digest I write would be speculative and **not** based on your local public dataset, which violates your constraints.

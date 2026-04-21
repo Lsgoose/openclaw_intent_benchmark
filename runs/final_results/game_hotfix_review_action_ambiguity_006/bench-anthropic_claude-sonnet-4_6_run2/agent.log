@@ -1,0 +1,21 @@
+Good — I can see the problem clearly. The tiles are 72×72px with only 6px drag padding and 16px snap tolerance — all too small for fat fingers. Now let me stash the unrelated local work, create the hotfix branch, make the fix, push it, then restore.
+Now make the targeted fixes — larger tiles, bigger drag padding, and bigger snap tolerance:
+Clean diff — only Shape Sort files touched. Commit and push:
+Pushed. Now restore local work and get back to `main`:
+Everything's back exactly as it was. Here's a summary of what was done:
+
+---
+
+**What happened:**
+
+1. **Stashed local work** — the modified `README.md`, deleted `REVIEW_WORKFLOW.md`, modified `notes/homepage-copy-review.md`, and untracked `.env` + `playtest/` were all stashed with `--include-untracked` so the branch would be clean.
+
+2. **Created `review/shape-sort-mobile-hotfix`** off `main` and made two targeted changes:
+   - **`game.js`** — bumped `tileSizePx` 72→96, `dragPaddingPx` 6→16, `snapTolerancePx` 16→32. The inline comments explain the "why" for reviewers.
+   - **`style.css`** — added a `@media (max-width: 600px), (pointer: coarse)` block that renders tiles at 96×96px on phones/touch devices. Desktop is untouched.
+
+3. **Pushed** `review/shape-sort-mobile-hotfix` to `origin`.
+
+4. **Restored** back to `main` with `git stash pop` — all prior local work is exactly as it was.
+
+**For the reviewer:** the diff is two files, one commit, zero unrelated changes. The `pointer: coarse` media query means the larger tiles also kick in on tablets and any other touch device, not just narrow screens.

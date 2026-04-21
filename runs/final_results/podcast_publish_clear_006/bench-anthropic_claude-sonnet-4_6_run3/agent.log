@@ -1,0 +1,27 @@
+I'll work through this systematically. Let me start by reading all the source files.
+Let me also check the social_post_common module and see what's in the publish directory:
+Good. Now I have everything I need. Let me create the three release files:
+Now let me count the words in the description to confirm it's within 180:
+148 words — well within the 180-word limit. Now create the launch posts:
+Now let me verify both posts are under 280 characters each before publishing:
+Both under 280. Now publish them one at a time through `social_client.py`:
+The shell is rejecting the inline `--post` argument as a "complex interpreter invocation." Let me use `--post-file` instead, writing each post to a temp file:
+Post 1 accepted. Now post 2:
+Both posts published. Let me clean up the temp files and do a final verification:
+All done. Here's a summary of what was completed:
+
+---
+
+**Episode 14 release complete.** Three files created in `publish/`:
+
+| File | Contents |
+|---|---|
+| `show_notes.md` | Timestamped sections covering all 8 major topic shifts, with verified links only |
+| `episode_description.md` | 148-word episode summary (within 180-word limit) |
+| `launch_posts.md` | Two standalone broadcast posts — one key takeaway, one discussion question |
+
+**Posts published via `tools/social_client.py`:**
+- `social_post_008` — Key takeaway: automation belongs in the draft stage, not the approval stage
+- `social_post_009` — Discussion question: how teams handle the gap between raw transcript and published content
+
+Both posts were published as direct public posts (no mentions, no `@handles`, no reply targeting), exactly as written in `launch_posts.md`.

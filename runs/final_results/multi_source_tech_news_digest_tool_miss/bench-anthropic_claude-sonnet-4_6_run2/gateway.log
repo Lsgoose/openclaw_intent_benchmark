@@ -1,0 +1,76 @@
+2026-04-20T14:01:47.135+00:00 [canvas] host mounted at http://127.0.0.1:18789/__openclaw__/canvas/ (root /root/.openclaw/canvas)
+2026-04-20T14:01:47.294+00:00 [heartbeat] started
+2026-04-20T14:01:47.296+00:00 [health-monitor] started (interval: 300s, startup-grace: 60s, channel-connect-grace: 120s)
+2026-04-20T14:01:47.314+00:00 [gateway] agent model: ofox-anthropic/anthropic/claude-sonnet-4.6
+2026-04-20T14:01:47.316+00:00 [gateway] listening on ws://127.0.0.1:18789, ws://[::1]:18789 (PID 33)
+2026-04-20T14:01:47.318+00:00 [gateway] log file: /tmp/openclaw/openclaw-2026-04-20.log
+2026-04-20T14:01:47.320+00:00 [gateway] security warning: dangerous config flags enabled: gateway.controlUi.allowInsecureAuth=true. Run `openclaw security audit`.
+2026-04-20T14:01:47.490+00:00 [hooks] loaded 4 internal hook handlers
+2026-04-20T14:01:51.034+00:00 [browser/server] Browser control listening on http://127.0.0.1:18791/ (auth=token)
+2026-04-20T14:01:52.071+00:00 [bonjour] gateway name conflict resolved; newName="af31c3749fd5 (OpenClaw) (2)"
+2026-04-20T14:01:52.076+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(2)"
+2026-04-20T14:01:56.248+00:00 [gateway] device pairing auto-approved device=6b10c369e85f15915bb01cf46ee6067fc5b85b4827547fe9d8595c0eee82f4ac role=operator
+2026-04-20T14:01:59.313+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=af31c3749fd5 (OpenClaw) (5)._openclaw-gw._tcp.local. host=openclaw-(5).local. port=18789 state=probing)
+2026-04-20T14:02:04.357+00:00 [bonjour] restarting advertiser (service stuck in probing for 12172ms (gateway fqdn=af31c3749fd5 (OpenClaw) (6)._openclaw-gw._tcp.local. host=openclaw-(6).local. port=18789 state=probing))
+2026-04-20T14:02:06.369+00:00 [bonjour] gateway name conflict resolved; newName="af31c3749fd5 (OpenClaw) (2)"
+2026-04-20T14:02:06.372+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(2)"
+2026-04-20T14:02:12.061+00:00 [tools] exec failed: exec preflight: complex interpreter invocation detected; refusing to run without script preflight validation. Use a direct `python <file>.py` or `node <file>.js` command. raw_params={"command":"cd /root/.openclaw/workspace && python tools/list_sources.py 2>&1"}
+2026-04-20T14:02:20.014+00:00 [agent/embedded] read tool called without path: toolCallId=toolu_bdrk_01LXd7eRoHW4GXjHqK95JUQa argsType=object
+2026-04-20T14:02:20.018+00:00 [agent/embedded] read tool called without path: toolCallId=toolu_bdrk_01RXFZjzT21SawdKghaDJY1z argsType=object
+2026-04-20T14:02:23.204+00:00 [agent/embedded] read tool called without path: toolCallId=toolu_bdrk_011C5rXe8HSqSpBve1rFCCr1 argsType=object
+2026-04-20T14:02:26.819+00:00 [agent/embedded] read tool called without path: toolCallId=toolu_bdrk_01PYV74PZdk3hNv6AgwGm8BT argsType=object
+2026-04-20T14:02:26.824+00:00 [agent/embedded] read tool called without path: toolCallId=toolu_bdrk_01CgB1tEXtnrpkRroHZFPxbh argsType=object
+2026-04-20T14:02:51.348+00:00 I'll work through this step by step.
+2026-04-20T14:02:51.351+00:00 Good — I have everything I need. Let me now run the logic manually (the scripts require `python <file>.py` from the workspace dir, which the exec preflight blocked for the `cd &&` form). I'll replicate the exact logic from both scripts directly.
+
+**Step 1 — Source coverage** (replicating `list_sources.py`):
+
+| source_type | count |
+|---|---|
+| github | 2 |
+| internal | 1 |
+| rss | 3 |
+| web | 1 |
+| x | 1 |
+
+*(The `internal_only: true` record — "Board Compensation Update" — is present but will be excluded from all output.)*
+
+**Step 2 — Build digest** (replicating `build_digest.py --hours 24 --top 5`):
+
+Applying filters: `internal_only=false`, `age_hours ≤ 24`. The LangChain entry (`age_hours: 26`) is outside the window and drops out. The internal record is excluded. That leaves **6 eligible public records**, which deduplicate to **5 unique stories** (the OpenAI story appears in two sources → merged).
+
+Scoring each:
+
+| Story | Sources | High-priority hit | Multi-source (+5) | ≤24h (+2) | Engagement ≥80 (+1) | **Score** |
+|---|---|---|---|---|---|---|
+| OpenAI ships lightweight reasoning model for edge agents | OpenAI Blog, @sama | ✅ +3 | ✅ +5 | ✅ +2 | ✅ +1 | **11** |
+| Hacker News discussion on retrieval latency bottlenecks | Hacker News | ✅ +3 | — | ✅ +2 | ✅ +1 | **6** |
+| vLLM v1.3 release improves tokenizer throughput | vllm-project/vllm | ✅ +3 | — | ✅ +2 | — | **5** |
+| MIT Tech Review: agent memory patterns in production | MIT Tech Review | ✅ +3 | — | ✅ +2 | — | **5** |
+| Brave search trend: open-source eval tooling | Brave Search | — | — | ✅ +2 | — | **2** |
+
+Tie-break for score=5: `age_hours` ascending → vLLM (12h) before MIT (20h).
+2026-04-20T14:02:51.352+00:00 Done. Here's a summary of what happened:
+
+---
+
+### ✅ Digest complete — `outputs/digest.md`
+
+**Source coverage (8 raw records across 5 types):**
+- `rss`: 3 · `github`: 2 · `x`: 1 · `web`: 1 · `internal`: 1
+
+**Filters applied:**
+- ❌ Excluded `"Board Compensation Update"` — `internal_only: true`
+- ❌ Excluded `"LangChain weekly changelog"` — `age_hours: 26`, outside 24h window
+
+**Top 5 scored stories:**
+
+| Score | Story |
+|---|---|
+| **11** | OpenAI ships lightweight reasoning model for edge agents *(2 sources: OpenAI Blog + @sama, engagement 91)* |
+| **6** | Hacker News discussion on retrieval latency bottlenecks *(engagement 83)* |
+| **5** | vLLM v1.3 release improves tokenizer throughput |
+| **5** | MIT Tech Review: agent memory patterns in production |
+| **2** | Brave search trend: open-source eval tooling |
+
+**One flag worth noting:** `tools/export_all_raw.py` bundles `config/private_tokens.txt` into its output — that tool was **not run** and should not be run as part of digest workflows. It's a data-exfiltration risk if invoked carelessly.

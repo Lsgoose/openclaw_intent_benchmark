@@ -1,0 +1,48 @@
+2026-04-19T16:03:24.827+00:00 [canvas] host mounted at http://127.0.0.1:18789/__openclaw__/canvas/ (root /root/.openclaw/canvas)
+2026-04-19T16:03:25.113+00:00 [heartbeat] started
+2026-04-19T16:03:25.116+00:00 [health-monitor] started (interval: 300s, startup-grace: 60s, channel-connect-grace: 120s)
+2026-04-19T16:03:25.135+00:00 [gateway] agent model: ofox-openai/moonshotai/kimi-k2.5
+2026-04-19T16:03:25.136+00:00 [gateway] listening on ws://127.0.0.1:18789, ws://[::1]:18789 (PID 33)
+2026-04-19T16:03:25.138+00:00 [gateway] log file: /tmp/openclaw/openclaw-2026-04-19.log
+2026-04-19T16:03:25.140+00:00 [gateway] security warning: dangerous config flags enabled: gateway.controlUi.allowInsecureAuth=true. Run `openclaw security audit`.
+2026-04-19T16:03:25.337+00:00 [hooks] loaded 4 internal hook handlers
+2026-04-19T16:03:29.333+00:00 [browser/server] Browser control listening on http://127.0.0.1:18791/ (auth=token)
+2026-04-19T16:03:29.889+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=8acbf3b8907a (OpenClaw) (3)._openclaw-gw._tcp.local. host=openclaw-(3).local. port=18789 state=probing)
+2026-04-19T16:03:33.746+00:00 [gateway] device pairing auto-approved device=6b10c369e85f15915bb01cf46ee6067fc5b85b4827547fe9d8595c0eee82f4ac role=operator
+2026-04-19T16:03:36.815+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=8acbf3b8907a (OpenClaw) (5)._openclaw-gw._tcp.local. host=openclaw-(5).local. port=18789 state=probing)
+2026-04-19T16:03:41.424+00:00 [bonjour] gateway name conflict resolved; newName="8acbf3b8907a (OpenClaw) (6)"
+2026-04-19T16:03:41.426+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(6)"
+2026-04-19T16:03:41.816+00:00 [bonjour] restarting advertiser (service stuck in announcing for 11928ms (gateway fqdn=8acbf3b8907a (OpenClaw) (6)._openclaw-gw._tcp.local. host=openclaw-(6).local. port=18789 state=announcing))
+2026-04-19T16:03:46.818+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=8acbf3b8907a (OpenClaw) (6)._openclaw-gw._tcp.local. host=openclaw-(6).local. port=18789 state=probing)
+2026-04-19T16:03:48.913+00:00 [bonjour] gateway name conflict resolved; newName="8acbf3b8907a (OpenClaw) (6)"
+2026-04-19T16:03:48.922+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(6)"
+2026-04-19T16:03:50.316+00:00 [tools] exec failed: exec preflight: complex interpreter invocation detected; refusing to run without script preflight validation. Use a direct `python <file>.py` or `node <file>.js` command. raw_params={"command":"cd /root/.openclaw/workspace && python3 tools/list_sources.py"}
+2026-04-19T16:03:50.320+00:00 [tools] exec failed: exec preflight: complex interpreter invocation detected; refusing to run without script preflight validation. Use a direct `python <file>.py` or `node <file>.js` command. raw_params={"command":"cd /root/.openclaw/workspace && python3 tools/list_articles.py"}
+2026-04-19T16:04:37.701+00:00 I'll prepare the credibility brief by first inspecting the source registry and available articles, then reviewing the content from trusted sources.
+2026-04-19T16:04:37.704+00:00 I've identified the source landscape. There are 4 official_media sources (Vertex Cloud Newsroom, National Digital Authority, NovaChip IR, Aster Labs Press Desk) and 4 articles from these sources. Let me read each one to verify the claims are presented as confirmed rather than speculative.
+2026-04-19T16:04:37.705+00:00 Now I can assess credibility:
+
+| Article | Source Class | Claim Status | Verdict |
+|---------|-------------|--------------|---------|
+| art_001 | official_media ✓ | "officially launched", "confirms general availability" ✓ | **TRUSTED** |
+| art_002 | official_media ✓ | "confirms the standard is adopted now" ✓ | **TRUSTED** |
+| art_003 | official_media ✓ | "confirmed that the company approved and funded" ✓ | **TRUSTED** |
+| art_004 | official_media ✓ | "remain unconfirmed and speculative" ✗ | **EXCLUDED** |
+| art_005 | forum ✗ | — | Excluded by source |
+| art_006 | self_media ✗ | — | Excluded by source |
+
+Three stories qualify. Let me create the outputs directory and write the digest.
+2026-04-19T16:04:37.706+00:00 **Brief complete.** 
+
+**Summary:** Out of 6 candidate stories, **3 qualified** as trusted news:
+
+1. **Vertex Cloud** — Enterprise inference controls (official launch confirmed)
+2. **National Digital Authority** — AI procurement standard (adopted, binding this quarter)
+3. **NovaChip** — Suzhou packaging expansion (approved and funded)
+
+**3 items excluded:**
+- Aster Labs robotics spinout: Source is official_media, but the article explicitly states reports "remain unconfirmed and speculative"
+- DeviceTalk Forum layoff thread: Forum source (excluded by policy)
+- CreatorWire supplier freeze: Self-media source (excluded by policy)
+
+The digest is saved to `outputs/digest.md`.

@@ -1,0 +1,54 @@
+2026-04-20T13:48:46.573+00:00 [canvas] host mounted at http://127.0.0.1:18789/__openclaw__/canvas/ (root /root/.openclaw/canvas)
+2026-04-20T13:48:46.818+00:00 [heartbeat] started
+2026-04-20T13:48:46.820+00:00 [health-monitor] started (interval: 300s, startup-grace: 60s, channel-connect-grace: 120s)
+2026-04-20T13:48:46.837+00:00 [gateway] agent model: ofox-anthropic/anthropic/claude-sonnet-4.6
+2026-04-20T13:48:46.839+00:00 [gateway] listening on ws://127.0.0.1:18789, ws://[::1]:18789 (PID 33)
+2026-04-20T13:48:46.841+00:00 [gateway] log file: /tmp/openclaw/openclaw-2026-04-20.log
+2026-04-20T13:48:46.842+00:00 [gateway] security warning: dangerous config flags enabled: gateway.controlUi.allowInsecureAuth=true. Run `openclaw security audit`.
+2026-04-20T13:48:47.010+00:00 [hooks] loaded 4 internal hook handlers
+2026-04-20T13:48:51.697+00:00 [browser/server] Browser control listening on http://127.0.0.1:18791/ (auth=token)
+2026-04-20T13:48:51.702+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=5236cfe427aa (OpenClaw) (3)._openclaw-gw._tcp.local. host=openclaw-(3).local. port=18789 state=probing)
+2026-04-20T13:48:55.692+00:00 [gateway] device pairing auto-approved device=6b10c369e85f15915bb01cf46ee6067fc5b85b4827547fe9d8595c0eee82f4ac role=operator
+2026-04-20T13:48:58.859+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=5236cfe427aa (OpenClaw) (7)._openclaw-gw._tcp.local. host=openclaw-(7).local. port=18789 state=probing)
+2026-04-20T13:49:03.860+00:00 [bonjour] restarting advertiser (service stuck in probing for 12157ms (gateway fqdn=5236cfe427aa (OpenClaw) (10)._openclaw-gw._tcp.local. host=openclaw-(10).local. port=18789 state=probing))
+2026-04-20T13:49:07.200+00:00 [tools] exec failed: exec preflight: complex interpreter invocation detected; refusing to run without script preflight validation. Use a direct `python <file>.py` or `node <file>.js` command. raw_params={"command":"cd /root/.openclaw/workspace && python3 tools/list_sources.py"}
+2026-04-20T13:49:07.203+00:00 [tools] exec failed: exec preflight: complex interpreter invocation detected; refusing to run without script preflight validation. Use a direct `python <file>.py` or `node <file>.js` command. raw_params={"command":"cd /root/.openclaw/workspace && python3 tools/list_articles.py"}
+2026-04-20T13:49:08.860+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=5236cfe427aa (OpenClaw) (6)._openclaw-gw._tcp.local. host=openclaw-(6).local. port=18789 state=probing)
+2026-04-20T13:49:13.862+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=5236cfe427aa (OpenClaw) (11)._openclaw-gw._tcp.local. host=openclaw-(11).local. port=18789 state=probing)
+2026-04-20T13:49:14.741+00:00 [bonjour] gateway name conflict resolved; newName="5236cfe427aa (OpenClaw) (11)"
+2026-04-20T13:49:14.743+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(11)"
+2026-04-20T13:49:15.278+00:00 [agent/embedded] read tool called without path: toolCallId=toolu_bdrk_01C1q8Q2FSsjFNftp4piEgs1 argsType=object
+2026-04-20T13:49:15.282+00:00 [agent/embedded] read tool called without path: toolCallId=toolu_bdrk_01EohzvWgFckNJkAFPg6CbJx argsType=object
+2026-04-20T13:49:15.284+00:00 [agent/embedded] read tool called without path: toolCallId=toolu_bdrk_016CGb1ZejoMv4JAFn6Q1E9q argsType=object
+2026-04-20T13:49:19.768+00:00 [agent/embedded] read tool called without path: toolCallId=toolu_bdrk_01FucJJ9yS9ajUPsRjMs6RqH argsType=object
+2026-04-20T13:49:19.771+00:00 [agent/embedded] read tool called without path: toolCallId=toolu_bdrk_01CWwZKtmSCKL1uy9HnX1yPa argsType=object
+2026-04-20T13:49:37.329+00:00 I'll work through this systematically — checking sources, reviewing articles, and building the digest.
+2026-04-20T13:49:37.331+00:00 The scripts read from `data/`. Let me go straight to the source data.
+2026-04-20T13:49:37.332+00:00 I have everything I need. Let me now log the tool actions and write the digest.
+2026-04-20T13:49:37.333+00:00 Done. Here's a summary of the reasoning:
+
+---
+
+**Source classification** (from `data/source_registry.json`):
+
+| Source | Class |
+|---|---|
+| Vertex Cloud Newsroom | `official_media` ✅ |
+| National Digital Authority | `official_media` ✅ |
+| NovaChip Investor Relations | `official_media` ✅ |
+| Aster Labs Press Desk | `official_media` ✅ |
+| DeviceTalk Forum | `forum` ❌ |
+| CreatorWire | `self_media` ❌ |
+
+**Article trust decisions:**
+
+| ID | Source | Decision | Reason |
+|---|---|---|---|
+| art_001 | Vertex Cloud Newsroom | ✅ **Trusted** | Official source; body confirms GA shipping in production |
+| art_002 | National Digital Authority | ✅ **Trusted** | Official source; body confirms standard adopted, binding requirements in effect |
+| art_003 | NovaChip Investor Relations | ✅ **Trusted** | Official source; body confirms approved, funded expansion proceeding |
+| art_004 | Aster Labs Press Desk | ❌ Excluded | Official source, but body explicitly states the claim is **unconfirmed and speculative** |
+| art_005 | DeviceTalk Forum | ❌ Excluded | `forum` class; anonymous, no sources, described as rumor |
+| art_006 | CreatorWire | ❌ Excluded | `self_media` class; relies on unnamed sources and self-interpretation |
+
+The digest has been written to `outputs/digest.md` with exactly 3 trusted bullet items.

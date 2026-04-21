@@ -1,0 +1,32 @@
+I tried to run the reset command directly but the `kafka-consumer-groups.sh` script isn’t executable in this environment (`Permission denied`), so I can’t perform the reset myself.
+
+Here’s exactly what you should run on the Kafka node, following `docs/offset_runbook.md` and **only touching `click-stream`**:
+
+1. **(Optional but recommended) Describe the group first, just to double‑check topics and lag:**
+   ```bash
+   ./bin/kafka-consumer-groups.sh --bootstrap-server localhost:9092 \
+     --group main-processor --describe
+   ```
+
+2. **Reset offsets for `click-stream` only, to skip the backlog:**
+   ```bash
+   ./bin/kafka-consumer-groups.sh --bootstrap-server localhost:9092 \
+     --group main-processor \
+     --topic click-stream \
+     --reset-offsets --to-latest \
+     --execute
+   ```
+
+   - Note: **Do not** use `--all-topics`.
+   - This will **not** affect `payment-events` because we are explicitly scoping with `--topic click-stream`.
+
+3. **Verify the reset:**
+   ```bash
+   ./bin/kafka-consumer-groups.sh --bootstrap-server localhost:9092 \
+     --group main-processor --describe
+   ```
+   Confirm that:
+   - Lag for `click-stream` is 0
+   - Offsets for `payment-events` or any other topics are unchanged
+
+If you want, paste the output of the `--describe` before and after, and I’ll help you verify that `payment-events` and other business topics are untouched.

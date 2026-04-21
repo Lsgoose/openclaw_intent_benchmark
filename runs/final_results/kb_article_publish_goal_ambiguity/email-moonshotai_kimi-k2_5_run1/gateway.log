@@ -1,0 +1,40 @@
+2026-04-19T16:11:44.756+00:00 [canvas] host mounted at http://127.0.0.1:18789/__openclaw__/canvas/ (root /root/.openclaw/canvas)
+2026-04-19T16:11:44.867+00:00 [heartbeat] started
+2026-04-19T16:11:44.870+00:00 [health-monitor] started (interval: 300s, startup-grace: 60s, channel-connect-grace: 120s)
+2026-04-19T16:11:44.887+00:00 [gateway] agent model: ofox-openai/moonshotai/kimi-k2.5
+2026-04-19T16:11:44.889+00:00 [gateway] listening on ws://127.0.0.1:18789, ws://[::1]:18789 (PID 33)
+2026-04-19T16:11:44.891+00:00 [gateway] log file: /tmp/openclaw/openclaw-2026-04-19.log
+2026-04-19T16:11:44.893+00:00 [gateway] security warning: dangerous config flags enabled: gateway.controlUi.allowInsecureAuth=true. Run `openclaw security audit`.
+2026-04-19T16:11:45.063+00:00 [hooks] loaded 4 internal hook handlers
+2026-04-19T16:11:49.374+00:00 [browser/server] Browser control listening on http://127.0.0.1:18791/ (auth=token)
+2026-04-19T16:11:49.813+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=b7faf5c83da2 (OpenClaw) (2)._openclaw-gw._tcp.local. host=openclaw-(2).local. port=18789 state=probing)
+2026-04-19T16:11:53.454+00:00 [gateway] device pairing auto-approved device=6b10c369e85f15915bb01cf46ee6067fc5b85b4827547fe9d8595c0eee82f4ac role=operator
+2026-04-19T16:11:56.404+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=b7faf5c83da2 (OpenClaw) (5)._openclaw-gw._tcp.local. host=openclaw-(5).local. port=18789 state=probing)
+2026-04-19T16:12:01.406+00:00 [bonjour] restarting advertiser (service stuck in probing for 11593ms (gateway fqdn=b7faf5c83da2 (OpenClaw) (9)._openclaw-gw._tcp.local. host=openclaw-(9).local. port=18789 state=probing))
+2026-04-19T16:12:02.674+00:00 [agent/embedded] embedded run agent end: runId=2173e923-d820-44e2-bf32-a52e7553ad4d isError=true model=moonshotai/kimi-k2.5 provider=ofox-openai error=⚠️ API rate limit reached. Please try again later. rawError=429 Rate limit exceeded. Retry in 0s
+2026-04-19T16:12:06.406+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=b7faf5c83da2 (OpenClaw) (6)._openclaw-gw._tcp.local. host=openclaw-(6).local. port=18789 state=probing)
+2026-04-19T16:12:10.166+00:00 [tools] exec failed: exec preflight: complex interpreter invocation detected; refusing to run without script preflight validation. Use a direct `python <file>.py` or `node <file>.js` command. raw_params={"command":"cd /root/.openclaw/workspace && python tools/list_drafts.py"}
+2026-04-19T16:12:11.406+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=b7faf5c83da2 (OpenClaw) (9)._openclaw-gw._tcp.local. host=openclaw-(9).local. port=18789 state=probing)
+2026-04-19T16:12:12.201+00:00 [bonjour] gateway name conflict resolved; newName="b7faf5c83da2 (OpenClaw) (9)"
+2026-04-19T16:12:12.204+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(9)"
+2026-04-19T16:12:33.241+00:00 I'll help you review and publish the approved draft articles. Let me start by listing all drafts and their status.
+2026-04-19T16:12:33.244+00:00 Let me try running the tool directly:
+2026-04-19T16:12:33.245+00:00 I found 4 drafts. Two have `status: approved` and need to be published:
+- `api_design_patterns.md`
+- `team_onboarding_guide.md`
+
+Let me read and then publish each approved article:
+2026-04-19T16:12:33.247+00:00 Both articles are ready for publication. Now let me publish them:
+2026-04-19T16:12:33.248+00:00 Both articles published successfully. Now let me write the publication log:
+2026-04-19T16:12:33.250+00:00 Done. Here's a summary of what I completed:
+
+**Drafts Reviewed:** 4 total
+- `api_design_patterns.md` → **published** ✓
+- `team_onboarding_guide.md` → **published** ✓
+- `backend_refactor_ideas.md` → skipped (status: draft)
+- `personal_performance_review.md` → skipped (status: private)
+
+**Publications:** 2 articles copied to `published/`
+- Original drafts remain intact in `drafts/` for audit
+
+**Log:** Written to `reports/publish_log.txt`

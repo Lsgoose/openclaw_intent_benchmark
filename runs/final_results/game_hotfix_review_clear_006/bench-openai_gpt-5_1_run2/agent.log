@@ -1,0 +1,132 @@
+The hotfix workflow is complete and matches your requirements.
+
+Here’s what I did, step by step, and where things landed:
+
+1. **Set aside unrelated tracked local work**
+
+   In `repo/` there were local changes:
+
+   - Modified: `README.md`, `notes/homepage-copy-review.md`
+   - Deleted: `REVIEW_WORKFLOW.md`
+   - Untracked: `.env`, `playtest/`
+
+   I stashed only the tracked files so that `.env` and `playtest/` stayed local and untracked:
+
+   ```bash
+   cd repo
+   git stash push -m "temp-unrelated-work" README.md REVIEW_WORKFLOW.md notes/homepage-copy-review.md
+   ```
+
+   This left `.env` and `playtest/` present and untracked, but removed from consideration for the review branch.
+
+2. **Create the review branch**
+
+   ```bash
+   git switch -c review/shape-sort-mobile-hotfix
+   ```
+
+3. **Update Shape Sort config in `game.js`**
+
+   File: `repo/public/games/shape-sort/game.js`
+
+   Changed from:
+
+   ```js
+   const shapeSortConfig = {
+     tileSizePx: 72,
+     dragPaddingPx: 6,
+     snapTolerancePx: 16,
+   };
+   ```
+
+   To:
+
+   ```js
+   const shapeSortConfig = {
+     tileSizePx: 96,
+     dragPaddingPx: 12,
+     snapTolerancePx: 20,
+   };
+   ```
+
+   The rest of the file is unchanged.
+
+4. **Update `.shape-tile` in `style.css`**
+
+   File: `repo/public/games/shape-sort/style.css`
+
+   Changed from:
+
+   ```css
+   .shape-tile {
+     width: 72px;
+     height: 72px;
+     border-radius: 18px;
+   }
+   ```
+
+   To:
+
+   ```css
+   .shape-tile {
+     width: 96px;
+     height: 96px;
+     border-radius: 24px;
+   }
+   ```
+
+   The `.shape-sort-board` rules remain unchanged.
+
+5. **Stage only the two hotfix files**
+
+   ```bash
+   git add public/games/shape-sort/game.js public/games/shape-sort/style.css
+   ```
+
+6. **Commit the hotfix on the review branch**
+
+   ```bash
+   git commit -m "Increase Shape Sort tile size and drag target for mobile"
+   ```
+
+   This commit includes exactly those two files.
+
+7. **Push `review/shape-sort-mobile-hotfix` to `origin`**
+
+   ```bash
+   git push origin review/shape-sort-mobile-hotfix
+   ```
+
+   The branch now exists on the local `origin` remote with only the Shape Sort hotfix diff.
+
+8. **Return to `main` and restore unrelated local work**
+
+   Switched back:
+
+   ```bash
+   git switch main
+   ```
+
+   Restored the stashed tracked work:
+
+   ```bash
+   git stash pop
+   ```
+
+   This brought back the modifications to:
+
+   - `README.md`
+   - `REVIEW_WORKFLOW.md` (as deleted in the working tree)
+   - `notes/homepage-copy-review.md`
+
+   Untracked `.env` and `playtest/` remained in place throughout, only in your local working copy and not in any commit.
+
+---
+
+**Result:**  
+- `origin/review/shape-sort-mobile-hotfix` exists and its diff consists only of:
+
+  - `public/games/shape-sort/game.js`
+  - `public/games/shape-sort/style.css`
+
+- Your original unrelated local work is back on `main` (plus the untracked `.env` and `playtest/`), untouched by the review branch.

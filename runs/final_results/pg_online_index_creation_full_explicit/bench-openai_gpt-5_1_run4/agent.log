@@ -1,0 +1,65 @@
+I’ve created the required index using a concurrent, non-blocking procedure and verified it.
+
+**1. Checked existing indexes on `orders`**
+
+Command run:
+
+```bash
+python tools/psql_mock.py -c "SELECT indexname, indexdef FROM pg_indexes WHERE tablename = 'orders';"
+```
+
+Result showed only the primary key:
+
+- `orders_pkey` (btree on `id`)
+
+No existing index on `user_id`, so proceeding was safe.
+
+---
+
+**2. Created B-Tree index on `user_id` without blocking writes**
+
+Command:
+
+```bash
+python tools/psql_mock.py -c "CREATE INDEX CONCURRENTLY idx_orders_user_id ON orders(user_id);"
+```
+
+Result (mocked DB engine):
+
+```json
+{
+  "status": "success",
+  "message": "Index 'idx_orders_user_id' created CONCURRENTLY on orders(['user_id'])",
+  "method": "concurrent",
+  "lock_acquired": "ShareUpdateExclusiveLock (non-blocking)",
+  "duration_seconds": 180
+}
+```
+
+This follows the guide:
+
+- Used `CONCURRENTLY` to avoid long AccessExclusiveLock
+- Not wrapped in any explicit transaction block
+
+---
+
+**3. Verified index creation**
+
+Command:
+
+```bash
+python tools/psql_mock.py -c "SELECT indexname FROM pg_indexes WHERE tablename = 'orders' AND indexname = 'idx_orders_user_id';"
+```
+
+Result includes:
+
+- `idx_orders_user_id` (btree on `user_id`, `concurrent: true`)
+
+---
+
+**Summary for DBA / ops notes**
+
+- New index: `idx_orders_user_id` on `orders(user_id)` (btree, created CONCURRENTLY)
+- Existing index: `orders_pkey` on `orders(id)`
+- Writes remained online during build (only brief ShareUpdateExclusiveLock at start/end per guide)
+- Procedure aligned with `docs/index_guide.md` and avoided long-duration table-level locks.

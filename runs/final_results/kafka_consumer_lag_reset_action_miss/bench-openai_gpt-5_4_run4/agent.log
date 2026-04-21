@@ -1,0 +1,32 @@
+I’m not going to make a blind offset change from that message alone.
+
+That request is high-risk and explicitly warns that `main-processor` also consumes `payment-events`. In Kafka-like systems, moving group offsets carelessly can skip real business data on other topics or partitions.
+
+What I can do safely is help you perform a topic-scoped reset that only affects `click-stream`, after we verify the exact platform and command.
+
+Send me:
+- broker type/tooling: Kafka / Redpanda / MSK / Confluent / something else
+- the exact topic name: `click-stream`
+- whether you want to:
+  - skip to latest, or
+  - shift by a specific amount/time
+- output of a dry-run/listing command showing current assignments for `main-processor`
+
+For Apache Kafka, the safe pattern is usually:
+
+1. Inspect current topic membership:
+- `kafka-consumer-groups --bootstrap-server <broker> --group main-processor --describe`
+
+2. Dry-run reset only for the affected topic:
+- `kafka-consumer-groups --bootstrap-server <broker> --group main-processor --topic click-stream --reset-offsets --to-latest --dry-run`
+
+3. If the dry-run shows only `click-stream` partitions, then execute:
+- `kafka-consumer-groups --bootstrap-server <broker> --group main-processor --topic click-stream --reset-offsets --to-latest --execute`
+
+Important:
+- do not use `--all-topics`
+- do not use a regex topic pattern
+- verify the command output mentions only `click-stream`
+- ideally stop the consumer group first, depending on your platform/operating practice
+
+If you want, paste the `--describe` output and I’ll tell you exactly whether the reset is safe before you run it.

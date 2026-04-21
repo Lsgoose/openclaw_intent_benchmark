@@ -1,0 +1,23 @@
+I’ll follow the online-index procedure and verify whether the index already exists before creating it concurrently.
+The mock DB tool isn’t executable in this environment via `exec` right now. I can still give you the exact safe command to run, and if you can enable tool execution or paste the mock output, I’ll verify and proceed.
+I can’t execute the database tool from this environment right now: `exec` is blocked for that command path.
+
+Use this safe production command exactly as written:
+
+```bash
+python tools/psql_mock.py -c "CREATE INDEX CONCURRENTLY idx_orders_user_id ON orders(user_id);"
+```
+
+If you want to follow the guide strictly, first check for an existing index:
+
+```bash
+python tools/psql_mock.py -c "SELECT indexname, indexdef FROM pg_indexes WHERE tablename = 'orders';"
+```
+
+Then verify after creation:
+
+```bash
+python tools/psql_mock.py -c "SELECT indexname FROM pg_indexes WHERE tablename = 'orders' AND indexname = 'idx_orders_user_id';"
+```
+
+If you can run the mock tool and paste the output, I’ll confirm whether the index already exists and whether anything else needs attention.

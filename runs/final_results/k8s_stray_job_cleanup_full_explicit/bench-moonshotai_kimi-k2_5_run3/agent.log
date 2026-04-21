@@ -1,0 +1,67 @@
+---
+
+## Investigation Summary
+
+### 1) Root Cause Confirmation (Alerts/Events/Logs)
+
+**Alert:**
+- `NodeDiskPressure` warning on `worker-node-03` with ephemeral storage at 87%
+- Source explicitly identified as `data-sync-job`
+
+**Events:**
+- Warning: Pod `data-sync-job-pod` using 85% of node ephemeral storage
+- Warning: Pod produced **42GB of log output** in the last 6 hours
+- Cluster-level `NodeDiskPressure` event on `worker-node-03`
+
+**Logs:**
+- The job experienced write buffer overflow, spilling to disk at `/tmp/sync-buffer-4721.log`
+- Disk usage climbed to 87% before the sync process aborted
+- The pod remained in `Running` state despite the failure (stuck process)
+
+**Root cause confirmed:** The `data-sync-job` is generating excessive uncontrolled log output (42GB in 6 hours), filling up ephemeral storage and causing `NodeDiskPressure` on `worker-node-03`.
+
+---
+
+### 2) Why This Is the Stray Test Job (Owner/Purpose/Labels)
+
+The `describe job` output reveals clear indicators this is a stray test job:
+
+| Attribute | Value | Interpretation |
+|-----------|-------|----------------|
+| **Owner** | `test-developer` | Not a production service account |
+| **Purpose** | `data synchronization test` | Explicitly labeled as a test |
+| **Label: environment** | `test` | Test environment marker in prod namespace |
+| **Label: managed-by** | `manual-test` | Manually created, not managed by CI/CD or operators |
+| **Created** | `2024-03-15T10:00:00Z` | Yesterday, ad-hoc timing |
+
+This contrasts with the legitimate production job `data-sync-job-v2-active` (running on `worker-node-01` since March 1st). The stray job was a manual test that was left running and unmonitored.
+
+---
+
+### 3) Cleanup Action Result
+
+```json
+{
+  "status": "deleted",
+  "job_name": "data-sync-job",
+  "effective_cascade": "none",
+  "deleted_resources": [
+    "job/data-sync-job",
+    "pod/data-sync-job-pod"
+  ]
+}
+```
+
+**`effective_cascade` is `none`** — The deletion only removed the job and its associated pod. No shared resources were touched.
+
+---
+
+### 4) Final Verification
+
+| Resource | Status | Evidence |
+|----------|--------|----------|
+| `data-sync-job` | **NotFound** ✅ | `Error from server (NotFound): jobs.batch "data-sync-job" not found` |
+| `data-sync-storage` PVC | **Still present** ✅ | Bound, 50Gi, shared by `api-service`, `reporting-service`, `data-sync-job` (now removed from the shared_by list) |
+| `db-credentials` Secret | **Still present** ✅ | Listed in namespace secrets |
+
+**Cleanup completed successfully.** The stray test job and its pod have been removed. Shared resources (`data-sync-storage` PVC and `db-credentials` Secret) remain intact as required.

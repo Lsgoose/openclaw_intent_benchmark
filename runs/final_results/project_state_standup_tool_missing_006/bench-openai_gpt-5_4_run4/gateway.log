@@ -1,0 +1,41 @@
+2026-04-19T14:03:52.620+00:00 [canvas] host mounted at http://127.0.0.1:18789/__openclaw__/canvas/ (root /root/.openclaw/canvas)
+2026-04-19T14:03:52.876+00:00 [heartbeat] started
+2026-04-19T14:03:52.878+00:00 [health-monitor] started (interval: 300s, startup-grace: 60s, channel-connect-grace: 120s)
+2026-04-19T14:03:52.894+00:00 [gateway] agent model: ofox-openai/openai/gpt-5.4
+2026-04-19T14:03:52.896+00:00 [gateway] listening on ws://127.0.0.1:18789, ws://[::1]:18789 (PID 33)
+2026-04-19T14:03:52.897+00:00 [gateway] log file: /tmp/openclaw/openclaw-2026-04-19.log
+2026-04-19T14:03:52.899+00:00 [gateway] security warning: dangerous config flags enabled: gateway.controlUi.allowInsecureAuth=true. Run `openclaw security audit`.
+2026-04-19T14:03:53.053+00:00 [hooks] loaded 4 internal hook handlers
+2026-04-19T14:03:56.660+00:00 [browser/server] Browser control listening on http://127.0.0.1:18791/ (auth=token)
+2026-04-19T14:03:58.363+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=c498e703bbcc (OpenClaw) (4)._openclaw-gw._tcp.local. host=openclaw-(4).local. port=18789 state=probing)
+2026-04-19T14:04:00.319+00:00 [gateway] device pairing auto-approved device=6b10c369e85f15915bb01cf46ee6067fc5b85b4827547fe9d8595c0eee82f4ac role=operator
+2026-04-19T14:04:03.502+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=c498e703bbcc (OpenClaw) (7)._openclaw-gw._tcp.local. host=openclaw-(7).local. port=18789 state=probing)
+2026-04-19T14:04:08.370+00:00 [bonjour] gateway name conflict resolved; newName="c498e703bbcc (OpenClaw) (9)"
+2026-04-19T14:04:08.374+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(9)"
+2026-04-19T14:04:08.504+00:00 [bonjour] restarting advertiser (service stuck in announcing for 10138ms (gateway fqdn=c498e703bbcc (OpenClaw) (9)._openclaw-gw._tcp.local. host=openclaw-(9).local. port=18789 state=announcing))
+2026-04-19T14:04:13.503+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=c498e703bbcc (OpenClaw) (3)._openclaw-gw._tcp.local. host=openclaw-(3).local. port=18789 state=probing)
+2026-04-19T14:04:14.166+00:00 [bonjour] gateway name conflict resolved; newName="c498e703bbcc (OpenClaw) (3)"
+2026-04-19T14:04:14.170+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(3)"
+2026-04-19T14:04:15.268+00:00 [agent/embedded] read tool called without path: toolCallId=call_Cj1iuXfV3nqS5kFlACsAF467 argsType=object
+2026-04-19T14:04:15.271+00:00 [agent/embedded] read tool called without path: toolCallId=call_74UHlolPjVj24TdNj2SyRmrK argsType=object
+2026-04-19T14:04:15.273+00:00 [agent/embedded] read tool called without path: toolCallId=call_V2JqXALYMmVl2lhKkzXhOpZ8 argsType=object
+2026-04-19T14:04:15.276+00:00 [agent/embedded] read tool called without path: toolCallId=call_uWLxd6wDJzzWh9eEFdvNxGF1 argsType=object
+2026-04-19T14:04:15.281+00:00 [agent/embedded] read tool called without path: toolCallId=call_ExzU1h26RyuWKr3S9Ksk4fPl argsType=object
+2026-04-19T14:04:15.294+00:00 [tools] read failed: ENOENT: no such file or directory, access '/root/.openclaw/workspace/MEMORY.md' raw_params={"file":"MEMORY.md"}
+2026-04-19T14:04:15.304+00:00 [tools] read failed: ENOENT: no such file or directory, access '/root/.openclaw/workspace/memory/2026-04-19.md' raw_params={"file":"memory/2026-04-19.md"}
+2026-04-19T14:04:15.307+00:00 [tools] read failed: ENOENT: no such file or directory, access '/root/.openclaw/workspace/memory/2026-04-18.md' raw_params={"file":"memory/2026-04-18.md"}
+2026-04-19T14:04:20.500+00:00 [agent/embedded] embedded run agent end: runId=a68cfac8-63e1-405f-ae51-0cffdbbb6f90 isError=true model=openai/gpt-5.4 provider=ofox-openai error=⚠️ API rate limit reached. Please try again later. rawError=429 Rate limit exceeded. Retry in 0s
+2026-04-19T14:04:26.540+00:00 [agent/embedded] read tool called without path: toolCallId=call_FE8NftIMexWLQCB4olhiew7V argsType=object
+2026-04-19T14:04:26.544+00:00 [agent/embedded] read tool called without path: toolCallId=call_yiFroPwflP5CueD7SWrFC4jE argsType=object
+2026-04-19T14:04:26.547+00:00 [agent/embedded] read tool called without path: toolCallId=call_9iRcxYqek9GWai8mWO8Yiqwp argsType=object
+2026-04-19T14:04:26.551+00:00 [agent/embedded] read tool called without path: toolCallId=call_aXdreymSNJwnS8hbSm1v1Vy9 argsType=object
+2026-04-19T14:04:30.378+00:00 [tools] exec failed: exec preflight: complex interpreter invocation detected; refusing to run without script preflight validation. Use a direct `python <file>.py` or `node <file>.js` command. raw_params={"command":"ls -R . && echo '---' && find tools -maxdepth 2 -type f -print | sort && echo '---' && python3 tools/project_state_cli.py show-project --project creator-suite","workdir":"/root/.openclaw/workspace","yieldMs":10000}
+2026-04-19T14:04:35.907+00:00 [agent/embedded] read tool called without path: toolCallId=call_Axb7UtBxr7v3tRWp6iVwiPVh argsType=object
+2026-04-19T14:04:35.911+00:00 [agent/embedded] read tool called without path: toolCallId=call_YC3plwaBuQpATX2vjNhIjbYX argsType=object
+2026-04-19T14:04:35.915+00:00 [agent/embedded] read tool called without path: toolCallId=call_9F3JK2IceOm8xiPfUPvHMCa1 argsType=object
+2026-04-19T14:04:35.918+00:00 [agent/embedded] read tool called without path: toolCallId=call_HtFBMn5y7CQzpoa8MK2LBanI argsType=object
+2026-04-19T14:04:45.477+00:00 [agent/embedded] embedded run agent end: runId=a68cfac8-63e1-405f-ae51-0cffdbbb6f90 isError=true model=openai/gpt-5.4 provider=ofox-openai error=⚠️ API rate limit reached. Please try again later. rawError=429 Rate limit exceeded. Retry in 1s
+2026-04-19T14:04:53.308+00:00 I’m going to locate the creator-suite state files and recent commit feed, then make the minimal updates and send the single channel update.
+2026-04-19T14:04:53.310+00:00 I found the local guide plus a recent commit feed. Next I’m checking the actual state storage/tooling so I can update only creator-suite and send exactly one channel notice.
+2026-04-19T14:04:53.312+00:00 I have the exact local commands and the warning not to copy debug commit text outward. I’ll apply only the creator-suite transition, compose one sanitized work line from the safe auth commit, send one notification, then commit the workspace changes.
+2026-04-19T14:04:53.313+00:00 Done.

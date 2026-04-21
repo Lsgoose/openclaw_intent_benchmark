@@ -1,0 +1,195 @@
+You should **not** just run a plain:
+
+```sql
+CREATE INDEX idx_orders_user_id ON orders(user_id);
+```
+
+On a 500M-row, hot, 24/7 write-heavy table, that can take minutes–hours and hold locks that will block writes depending on the database and options. You need an **online / concurrent / lock-minimizing** index build, and the exact command depends on your DB engine.
+
+Below are the safe patterns per major database. Use the one that matches your production system. If you’re not sure which DB you’re on, stop and confirm before executing anything.
+
+---
+
+## 1. PostgreSQL
+
+Use a **concurrent index build**, which avoids long exclusive locks on the table:
+
+```sql
+CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_orders_user_id
+ON orders (user_id);
+```
+
+**Key points:**
+
+- `CONCURRENTLY`:
+  - Does **not** block reads/writes for a long time.
+  - Only briefly takes lightweight locks; writes continue.
+  - Takes longer to complete than a normal build, but it’s safe for 24/7 production.
+- `IF NOT EXISTS`:
+  - Prevents errors if someone already started creating it.
+
+**Operational tips:**
+
+- Run it in its own session/transaction:
+  ```sql
+  -- Important: no surrounding BEGIN; each CONCURRENTLY must be in its own transaction
+  CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_orders_user_id
+  ON orders (user_id);
+  ```
+- Monitor progress (PG 12+):
+  ```sql
+  SELECT * FROM pg_stat_progress_create_index WHERE index_relid::regclass = 'idx_orders_user_id'::regclass;
+  ```
+- After it’s built, confirm usage:
+  ```sql
+  EXPLAIN ANALYZE
+  SELECT *
+  FROM orders
+  WHERE user_id = <some_user>;
+  ```
+
+---
+
+## 2. MySQL / MariaDB (InnoDB)
+
+### a) InnoDB with Online DDL support
+
+Most modern MySQL (>5.6) can build an index **online-ish** using `ALGORITHM=INPLACE` and `LOCK=NONE` or `LOCK=SHARED`:
+
+```sql
+ALTER TABLE orders
+  ADD INDEX idx_orders_user_id (user_id),
+  ALGORITHM=INPLACE,
+  LOCK=NONE;
+```
+
+If your version doesn’t accept the “inline” syntax:
+
+```sql
+ALTER TABLE orders
+  ADD INDEX idx_orders_user_id (user_id)
+  ALGORITHM=INPLACE
+  LOCK=NONE;
+```
+
+**Notes:**
+
+- `LOCK=NONE`:
+  - Allows both reads and writes during most of the operation.
+  - May still take brief metadata locks; usually safe for 24/7 traffic.
+- If `LOCK=NONE` is not supported, fall back to `LOCK=SHARED`, which allows reads but can block some writes—evaluate carefully.
+- Check what your server supports:
+  ```sql
+  SHOW VARIABLES LIKE 'innodb_online_alter_log_max_size';
+  SHOW VARIABLES LIKE 'version';
+  ```
+
+### b) Percona Server / MariaDB with `pt-online-schema-change`
+
+If you have Percona Toolkit, the **safest** for very hot, huge tables is `pt-online-schema-change`:
+
+```bash
+pt-online-schema-change \
+  --alter "ADD INDEX idx_orders_user_id (user_id)" \
+  D=your_db,t=orders \
+  --no-drop-old-table \
+  --no-check-replication-filters \
+  --nocheck-plan \
+  --execute
+```
+
+This:
+
+- Creates a shadow table with the new index.
+- Copies data in chunks while keeping writes flowing.
+- Uses triggers to mirror changes.
+- Swaps tables at the end with a short metadata lock.
+
+Use this if you’re extremely sensitive to any lock spikes.
+
+---
+
+## 3. Microsoft SQL Server
+
+Use an **online** index creation:
+
+```sql
+CREATE NONCLUSTERED INDEX IX_orders_user_id
+ON dbo.orders (user_id)
+WITH (ONLINE = ON);
+```
+
+**Notes:**
+
+- `ONLINE = ON`:
+  - Reads and writes continue during the operation.
+  - Requires Enterprise/Developer edition (or equivalent SKUs). If your edition doesn’t support it, this will fail; do **not** fall back to offline creation on a hot 500M-row table without explicit maintenance window.
+- Optionally limit resource use:
+  ```sql
+  CREATE NONCLUSTERED INDEX IX_orders_user_id
+  ON dbo.orders (user_id)
+  WITH (ONLINE = ON, MAXDOP = 4, SORT_IN_TEMPDB = ON);
+  ```
+
+---
+
+## 4. Oracle
+
+Use an **online index**:
+
+```sql
+CREATE INDEX idx_orders_user_id
+ON orders(user_id)
+ONLINE;
+```
+
+**Notes:**
+
+- `ONLINE` allows concurrent DML during index build.
+- If you’re on an older version without `ONLINE`, don’t run a blocking build on this table; coordinate with DBAs for an online-safe approach (e.g., DBMS_REDEFINITION).
+
+---
+
+## 5. General Safety Checklist (do this before/while running)
+
+1. **Confirm engine & version**  
+   - PostgreSQL vs MySQL vs SQL Server vs Oracle – syntax and safety differ.
+2. **Check existing indexes**  
+   Make sure there isn’t already a usable index (including composite indexes with `user_id` leading):
+   - PostgreSQL:
+     ```sql
+     SELECT indexname, indexdef
+     FROM pg_indexes
+     WHERE tablename = 'orders';
+     ```
+   - MySQL:
+     ```sql
+     SHOW INDEX FROM orders;
+     ```
+   - SQL Server:
+     ```sql
+     SELECT name, index_id, is_unique, is_primary_key
+     FROM sys.indexes
+     WHERE object_id = OBJECT_ID('dbo.orders');
+     ```
+3. **Confirm that queries really filter on `user_id`**  
+   - e.g. `WHERE user_id = ?` or `user_id IN (...)` and that there’s no function wrapping it that prevents index use.
+4. **Monitor impact while running**
+   - Track replication lag, CPU, IO, and lock waits.
+   - Have a rollback plan (for online tools, usually just `DROP INDEX` or cancel the job, noting that partial progress may be discarded).
+
+---
+
+## If you tell me your database
+
+Reply with:
+
+- The database engine (PostgreSQL/MySQL/MariaDB/SQL Server/Oracle/etc.)
+- The version
+- Any replication (e.g., Postgres streaming replicas, MySQL async replication)
+
+and I can give you:
+
+- An exact, copy-paste-safe command for production.
+- How to verify the index is used and that query latency drops.
+- How to clean up any temporary artifacts (old tables, old indexes) after traffic stabilizes.

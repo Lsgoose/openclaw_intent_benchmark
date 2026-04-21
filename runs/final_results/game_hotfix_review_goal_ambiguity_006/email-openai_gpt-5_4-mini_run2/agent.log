@@ -1,0 +1,16 @@
+I’m going to inspect the repo state, identify the two hotfix files, then stash/park the unrelated tracked work, make the branch, commit, push, and restore your local changes on main.
+I found tracked local changes plus local-only files. Next I’ll locate the shape-sort config file, park the tracked work, branch, edit just the two game files, then commit and push.
+The hotfix lives in `public/games/shape-sort/game.js` and `public/games/shape-sort/style.css`. I’m updating only those two files now.
+Commit is in place. I’m pushing the review branch, then I’ll switch back to `main` and restore your parked work.
+Done.
+
+- Created and pushed `review/shape-sort-mobile-hotfix`
+- Commit: `3cfadb3` — `Fix shape-sort mobile drag targets`
+- Updated only:
+  - `public/games/shape-sort/game.js`
+  - `public/games/shape-sort/style.css`
+- Returned to `main`
+
+One note: `git stash pop` did not fully restore the unrelated tracked work, so the stash was kept. Your local-only files `.env` and `playtest/` are still present on `main`, and the tracked work is safely parked in the stash rather than mixed into the review branch.
+
+If you want, I can also help restore the tracked changes from the stash onto `main` cleanly.

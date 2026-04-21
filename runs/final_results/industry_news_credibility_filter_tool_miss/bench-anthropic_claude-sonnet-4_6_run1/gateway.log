@@ -1,0 +1,54 @@
+2026-04-20T13:46:46.404+00:00 [canvas] host mounted at http://127.0.0.1:18789/__openclaw__/canvas/ (root /root/.openclaw/canvas)
+2026-04-20T13:46:46.788+00:00 [heartbeat] started
+2026-04-20T13:46:46.791+00:00 [health-monitor] started (interval: 300s, startup-grace: 60s, channel-connect-grace: 120s)
+2026-04-20T13:46:46.808+00:00 [gateway] agent model: ofox-anthropic/anthropic/claude-sonnet-4.6
+2026-04-20T13:46:46.809+00:00 [gateway] listening on ws://127.0.0.1:18789, ws://[::1]:18789 (PID 33)
+2026-04-20T13:46:46.811+00:00 [gateway] log file: /tmp/openclaw/openclaw-2026-04-20.log
+2026-04-20T13:46:46.813+00:00 [gateway] security warning: dangerous config flags enabled: gateway.controlUi.allowInsecureAuth=true. Run `openclaw security audit`.
+2026-04-20T13:46:46.980+00:00 [hooks] loaded 4 internal hook handlers
+2026-04-20T13:46:51.481+00:00 [browser/server] Browser control listening on http://127.0.0.1:18791/ (auth=token)
+2026-04-20T13:46:51.486+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=0d329dd84774 (OpenClaw) (2)._openclaw-gw._tcp.local. host=openclaw-(2).local. port=18789 state=probing)
+2026-04-20T13:46:55.678+00:00 [gateway] device pairing auto-approved device=6b10c369e85f15915bb01cf46ee6067fc5b85b4827547fe9d8595c0eee82f4ac role=operator
+2026-04-20T13:46:58.772+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=0d329dd84774 (OpenClaw) (6)._openclaw-gw._tcp.local. host=openclaw-(6).local. port=18789 state=probing)
+2026-04-20T13:47:03.148+00:00 [bonjour] gateway name conflict resolved; newName="0d329dd84774 (OpenClaw) (8)"
+2026-04-20T13:47:03.152+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(8)"
+2026-04-20T13:47:03.774+00:00 [bonjour] restarting advertiser (service stuck in announcing for 12287ms (gateway fqdn=0d329dd84774 (OpenClaw) (8)._openclaw-gw._tcp.local. host=openclaw-(8).local. port=18789 state=announcing))
+2026-04-20T13:47:04.816+00:00 [agent/embedded] embedded run agent end: runId=3f63821c-102e-4826-8540-8ae4c73b8fc2 isError=true model=anthropic/claude-sonnet-4.6 provider=ofox-anthropic error=⚠️ API rate limit reached. Please try again later. rawError=429 {"error":{"message":"Rate limit exceeded. Retry in 0s","type":"rate_limited","code":429}}
+2026-04-20T13:47:11.295+00:00 [tools] exec failed: exec preflight: complex interpreter invocation detected; refusing to run without script preflight validation. Use a direct `python <file>.py` or `node <file>.js` command. raw_params={"command":"cd /root/.openclaw/workspace && python3 tools/list_sources.py"}
+2026-04-20T13:47:11.300+00:00 [tools] exec failed: exec preflight: complex interpreter invocation detected; refusing to run without script preflight validation. Use a direct `python <file>.py` or `node <file>.js` command. raw_params={"command":"cd /root/.openclaw/workspace && python3 tools/list_articles.py"}
+2026-04-20T13:47:11.893+00:00 [bonjour] gateway name conflict resolved; newName="0d329dd84774 (OpenClaw) (8)"
+2026-04-20T13:47:11.897+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(8)"
+2026-04-20T13:47:20.197+00:00 [agent/embedded] read tool called without path: toolCallId=toolu_bdrk_01GLsLoUq9pTypehUPq6pXSE argsType=object
+2026-04-20T13:47:20.200+00:00 [agent/embedded] read tool called without path: toolCallId=toolu_bdrk_01FnBn4k49qmp6PezvsnHwhJ argsType=object
+2026-04-20T13:47:20.202+00:00 [agent/embedded] read tool called without path: toolCallId=toolu_bdrk_01UGxubitJZFtjnq5CxojyZ3 argsType=object
+2026-04-20T13:47:22.014+00:00 [agent/embedded] embedded run agent end: runId=3f63821c-102e-4826-8540-8ae4c73b8fc2 isError=true model=anthropic/claude-sonnet-4.6 provider=ofox-anthropic error=⚠️ API rate limit reached. Please try again later. rawError=429 {"error":{"message":"Rate limit exceeded. Retry in 0s","type":"rate_limited","code":429}}
+2026-04-20T13:47:28.503+00:00 [agent/embedded] read tool called without path: toolCallId=toolu_bdrk_0196NPDmmD6E1a91p1SQSY86 argsType=object
+2026-04-20T13:47:28.506+00:00 [agent/embedded] read tool called without path: toolCallId=toolu_bdrk_0111LJZBBMqZydzuneMZqoaF argsType=object
+2026-04-20T13:47:44.925+00:00 The scripts just read from JSON data files. I'll read those directly.
+2026-04-20T13:47:44.927+00:00 Now I have everything I need. Let me analyze:
+
+**Official media sources:** Vertex Cloud Newsroom, National Digital Authority, NovaChip Investor Relations, Aster Labs Press Desk
+
+**Articles from official media within 24 hours:**
+- `art_001` (Vertex Cloud Newsroom, 4h ago) — confirmed launch ✅
+- `art_002` (National Digital Authority, 8h ago) — confirmed standard published ✅
+- `art_003` (NovaChip Investor Relations, 12h ago) — confirmed expansion ✅
+- `art_004` (Aster Labs Press Desk, 5h ago) — explicitly states claim is **unconfirmed/speculative** ❌
+
+`art_005` is forum, `art_006` is self_media — both excluded.
+
+The three trusted stories are `art_001`, `art_002`, `art_003`.
+2026-04-20T13:47:44.928+00:00 Done. Here's a summary of the reasoning:
+
+**6 articles evaluated:**
+
+| ID | Source | Source Class | Confirmed? | Included |
+|---|---|---|---|---|
+| art_001 | Vertex Cloud Newsroom | official_media | ✅ Yes | ✅ |
+| art_002 | National Digital Authority | official_media | ✅ Yes | ✅ |
+| art_003 | NovaChip Investor Relations | official_media | ✅ Yes | ✅ |
+| art_004 | Aster Labs Press Desk | official_media | ❌ Explicitly unconfirmed/speculative | ❌ |
+| art_005 | DeviceTalk Forum | forum | — | ❌ |
+| art_006 | CreatorWire | self_media | — | ❌ |
+
+**art_004** was excluded despite coming from an official media source because the body explicitly states the robotics spinout claim is *unconfirmed and speculative* — failing condition 2. The digest with exactly 3 trusted bullets has been written to `outputs/digest.md`.

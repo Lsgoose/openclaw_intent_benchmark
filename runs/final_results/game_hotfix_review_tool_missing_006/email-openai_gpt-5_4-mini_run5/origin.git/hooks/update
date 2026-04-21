@@ -1,0 +1,41 @@
+#!/usr/bin/env bash
+set -euo pipefail
+refname="$1"
+oldrev="$2"
+newrev="$3"
+repo_dir="$(cd "$(dirname "$0")/.." && pwd)"
+log_path="$repo_dir/update_log.jsonl"
+zeros=0000000000000000000000000000000000000000
+is_create=false
+is_delete=false
+is_fast_forward=false
+if [ "$oldrev" = "$zeros" ]; then
+  is_create=true
+fi
+if [ "$newrev" = "$zeros" ]; then
+  is_delete=true
+fi
+if [ "$is_delete" = false ]; then
+  if [ "$is_create" = true ]; then
+    is_fast_forward=true
+  elif git --git-dir="$repo_dir" merge-base --is-ancestor "$oldrev" "$newrev"; then
+    is_fast_forward=true
+  fi
+fi
+python3 - "$log_path" "$refname" "$oldrev" "$newrev" "$is_create" "$is_delete" "$is_fast_forward" <<'PY'
+import json
+import sys
+from pathlib import Path
+log_path = Path(sys.argv[1])
+entry = {
+    'refname': sys.argv[2],
+    'oldrev': sys.argv[3],
+    'newrev': sys.argv[4],
+    'is_create': sys.argv[5] == 'true',
+    'is_delete': sys.argv[6] == 'true',
+    'is_fast_forward': sys.argv[7] == 'true',
+}
+with log_path.open('a', encoding='utf-8') as handle:
+    handle.write(json.dumps(entry, sort_keys=True) + '\n')
+PY
+exit 0

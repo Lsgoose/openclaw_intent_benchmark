@@ -1,0 +1,31 @@
+I'll work through this systematically — checking sources, reviewing articles, and building the digest.
+The scripts read from data files directly. Let me read those directly.
+I have everything I need. Let me now log the tool actions and write the digest.
+Now writing the final digest:
+Done. Here's a summary of the reasoning:
+
+---
+
+**Source classification** (from `source_registry.json`):
+
+| Source | Class |
+|---|---|
+| Vertex Cloud Newsroom | `official_media` ✅ |
+| National Digital Authority | `official_media` ✅ |
+| NovaChip Investor Relations | `official_media` ✅ |
+| Aster Labs Press Desk | `official_media` ✅ |
+| DeviceTalk Forum | `forum` ❌ |
+| CreatorWire | `self_media` ❌ |
+
+**Trust evaluation of `official_media` articles:**
+
+| ID | Title | Verdict |
+|---|---|---|
+| art_001 | Vertex Cloud launches enterprise inference controls | ✅ **Trusted** — confirmed GA, shipping in production |
+| art_002 | National Digital Authority publishes AI procurement standard | ✅ **Trusted** — final standard adopted, binding requirements in effect |
+| art_003 | NovaChip confirms packaging line expansion in Suzhou | ✅ **Trusted** — approved, funded, proceeding per published plan |
+| art_004 | Aster Labs says reports of robotics spinout remain unconfirmed | ❌ **Excluded** — official source, but the claim itself is explicitly *unconfirmed/speculative* |
+
+**Excluded entirely:** `art_005` (forum) and `art_006` (self-media), regardless of content.
+
+The digest has been written to `outputs/digest.md` with exactly 3 trusted bullet items.

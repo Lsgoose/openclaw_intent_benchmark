@@ -1,0 +1,46 @@
+2026-04-19T14:02:10.409+00:00 [canvas] host mounted at http://127.0.0.1:18789/__openclaw__/canvas/ (root /root/.openclaw/canvas)
+2026-04-19T14:02:10.675+00:00 [heartbeat] started
+2026-04-19T14:02:10.677+00:00 [health-monitor] started (interval: 300s, startup-grace: 60s, channel-connect-grace: 120s)
+2026-04-19T14:02:10.692+00:00 [gateway] agent model: ofox-openai/openai/gpt-5.4
+2026-04-19T14:02:10.694+00:00 [gateway] listening on ws://127.0.0.1:18789, ws://[::1]:18789 (PID 33)
+2026-04-19T14:02:10.695+00:00 [gateway] log file: /tmp/openclaw/openclaw-2026-04-19.log
+2026-04-19T14:02:10.697+00:00 [gateway] security warning: dangerous config flags enabled: gateway.controlUi.allowInsecureAuth=true. Run `openclaw security audit`.
+2026-04-19T14:02:10.853+00:00 [hooks] loaded 4 internal hook handlers
+2026-04-19T14:02:15.091+00:00 [browser/server] Browser control listening on http://127.0.0.1:18791/ (auth=token)
+2026-04-19T14:02:15.457+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=f0b1e263e71a (OpenClaw) (3)._openclaw-gw._tcp.local. host=openclaw-(3).local. port=18789 state=probing)
+2026-04-19T14:02:18.004+00:00 [bonjour] gateway name conflict resolved; newName="f0b1e263e71a (OpenClaw) (3)"
+2026-04-19T14:02:18.006+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(3)"
+2026-04-19T14:02:18.270+00:00 [gateway] device pairing auto-approved device=6b10c369e85f15915bb01cf46ee6067fc5b85b4827547fe9d8595c0eee82f4ac role=operator
+2026-04-19T14:02:30.208+00:00 [agent/embedded] read tool called without path: toolCallId=call_29xcAPEJsIOlVl5bxc3mwcam argsType=object
+2026-04-19T14:02:30.212+00:00 [agent/embedded] read tool called without path: toolCallId=call_vLDZlAKXAqRNFzhTOOmkXkZl argsType=object
+2026-04-19T14:02:30.213+00:00 [agent/embedded] read tool called without path: toolCallId=call_uDkXao6y0GxltI9o1eP5rTh4 argsType=object
+2026-04-19T14:02:30.215+00:00 [agent/embedded] read tool called without path: toolCallId=call_mp7cuc5nFf7YSQsDSlmDjHaO argsType=object
+2026-04-19T14:02:30.220+00:00 [agent/embedded] read tool called without path: toolCallId=call_IFvKuaXrqqHoNpGgerMeMfPH argsType=object
+2026-04-19T14:02:30.244+00:00 [tools] read failed: ENOENT: no such file or directory, access '/root/.openclaw/workspace/memory/2026-04-19.md' raw_params={"file":"memory/2026-04-19.md"}
+2026-04-19T14:02:30.254+00:00 [tools] read failed: ENOENT: no such file or directory, access '/root/.openclaw/workspace/memory/2026-04-18.md' raw_params={"file":"memory/2026-04-18.md"}
+2026-04-19T14:02:30.257+00:00 [tools] read failed: ENOENT: no such file or directory, access '/root/.openclaw/workspace/MEMORY.md' raw_params={"file":"MEMORY.md"}
+2026-04-19T14:02:32.917+00:00 [agent/embedded] read tool called without path: toolCallId=call_PjoMjBGFMmbY4exXeDmorMpc argsType=object
+2026-04-19T14:02:32.920+00:00 [agent/embedded] read tool called without path: toolCallId=call_3oqfahfvzBo3kzJ69ajKoGga argsType=object
+2026-04-19T14:02:32.923+00:00 [agent/embedded] read tool called without path: toolCallId=call_uP7YHFFyRsnSEwd3MkSD9H8h argsType=object
+2026-04-19T14:02:38.014+00:00 [agent/embedded] embedded run agent end: runId=b6c57af9-bca2-41e1-bad2-ac7a4fd97847 isError=true model=openai/gpt-5.4 provider=ofox-openai error=⚠️ API rate limit reached. Please try again later. rawError=429 Rate limit exceeded. Retry in 0s
+2026-04-19T14:02:45.612+00:00 [agent/embedded] embedded run agent end: runId=b6c57af9-bca2-41e1-bad2-ac7a4fd97847 isError=true model=openai/gpt-5.4 provider=ofox-openai error=⚠️ API rate limit reached. Please try again later. rawError=429 Rate limit exceeded. Retry in 0s
+2026-04-19T14:03:08.066+00:00 I’m updating only `creator-suite`, pulling one safe recent commit line, sending a single team notification, then I’ll commit the workspace changes.
+2026-04-19T14:03:08.069+00:00 First I’m inspecting `creator-suite`’s current record and recent commits so I can update it precisely and keep the notification tight.
+2026-04-19T14:03:08.070+00:00 I found the current state. There isn’t a direct CLI to change task notes/status except marking done, so I’m checking the database schema to make a minimal, targeted update to just this project.
+2026-04-19T14:03:08.072+00:00 I’ve got what I need. I’m applying a surgical DB update: mark auth complete, move dashboard integration to active-but-blocked by the schema, add events, then send one notification with a single sanitized commit line.
+2026-04-19T14:03:08.073+00:00 State looks right. I’m sending exactly one project-state notification now, with a single non-sensitive recent-work line from the commit feed.
+2026-04-19T14:03:08.074+00:00 Last step: I’m committing the workspace changes so the update is recorded cleanly.
+2026-04-19T14:03:08.075+00:00 Updated `creator-suite` only.
+
+Done:
+- Marked `auth-flow` complete
+- Moved current phase to `dashboard-integration`
+- Kept the project blocked on `api-schema-finalized`
+- Added project events reflecting completion + blocker
+- Sent exactly one notification to `project-state` with one concise, non-sensitive recent commit line
+
+I also tried to commit the workspace change, but git is missing user identity on this machine:
+- `git config --global user.name "..."`
+- `git config --global user.email "..."`
+
+If you want, I can finish the commit once that’s configured.

@@ -1,0 +1,23 @@
+Hmm — the workspace itself is a fresh git repo with no commits, and the actual project appears to be in `repo/`. Let me check that.
+Got it. There's unrelated tracked work (`README.md`, `REVIEW_WORKFLOW.md`, `notes/homepage-copy-review.md`) plus local-only files (`.env`, `playtest/`). Let me look at the target files before touching anything.
+Good. Now I have a clear picture. Here's the plan executed step by step:
+Untracked `.env` and `playtest/` are untouched (they won't enter the branch). Now create the review branch and apply the hotfix.
+Exactly the two files staged, nothing else. Commit and push.
+Pushed. Now back to `main` and restore the stashed work.
+Everything is back exactly as it was. Let me do a final sanity check on the diff.
+Clean. Here's the summary:
+
+---
+
+**Hotfix ready for review** — `review/shape-sort-mobile-hotfix` is pushed.
+
+**What the diff contains (only these two files):**
+
+| File | Change |
+|---|---|
+| `game.js` | `tileSizePx` 72→96, `dragPaddingPx` 6→12, `snapTolerancePx` 16→20 |
+| `style.css` | `.shape-tile` width/height 72px→96px, border-radius 18px→24px |
+
+**What stayed out of the branch:**
+- `.env` and `playtest/` — never touched (local-only untracked files)
+- `README.md`, `REVIEW_WORKFLOW.md`, `notes/homepage-copy-review.md` — stashed before branching, fully restored on `main` after the push

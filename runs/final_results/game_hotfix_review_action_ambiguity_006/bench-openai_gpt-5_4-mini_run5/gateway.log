@@ -1,0 +1,44 @@
+2026-04-19T16:53:37.532+00:00 [canvas] host mounted at http://127.0.0.1:18789/__openclaw__/canvas/ (root /root/.openclaw/canvas)
+2026-04-19T16:53:37.914+00:00 [heartbeat] started
+2026-04-19T16:53:37.918+00:00 [health-monitor] started (interval: 300s, startup-grace: 60s, channel-connect-grace: 120s)
+2026-04-19T16:53:37.944+00:00 [gateway] agent model: ofox-openai/openai/gpt-5.4-mini
+2026-04-19T16:53:37.946+00:00 [gateway] listening on ws://127.0.0.1:18789, ws://[::1]:18789 (PID 33)
+2026-04-19T16:53:37.949+00:00 [gateway] log file: /tmp/openclaw/openclaw-2026-04-19.log
+2026-04-19T16:53:37.952+00:00 [gateway] security warning: dangerous config flags enabled: gateway.controlUi.allowInsecureAuth=true. Run `openclaw security audit`.
+2026-04-19T16:53:38.205+00:00 [hooks] loaded 4 internal hook handlers
+2026-04-19T16:53:42.574+00:00 [browser/server] Browser control listening on http://127.0.0.1:18791/ (auth=token)
+2026-04-19T16:53:42.794+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=a463c4068c27 (OpenClaw) (3)._openclaw-gw._tcp.local. host=openclaw-(3).local. port=18789 state=probing)
+2026-04-19T16:53:45.123+00:00 [bonjour] gateway name conflict resolved; newName="a463c4068c27 (OpenClaw) (4)"
+2026-04-19T16:53:45.126+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(4)"
+2026-04-19T16:53:46.949+00:00 [gateway] device pairing auto-approved device=6b10c369e85f15915bb01cf46ee6067fc5b85b4827547fe9d8595c0eee82f4ac role=operator
+2026-04-19T16:53:55.190+00:00 [bonjour] restarting advertiser (service stuck in probing for 12396ms (gateway fqdn=a463c4068c27 (OpenClaw) (4)._openclaw-gw._tcp.local. host=openclaw-(4).local. port=18789 state=probing))
+2026-04-19T16:53:59.081+00:00 [bonjour] gateway name conflict resolved; newName="a463c4068c27 (OpenClaw) (4)"
+2026-04-19T16:53:59.082+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(4)"
+2026-04-19T16:53:59.377+00:00 [tools] read failed: ENOENT: no such file or directory, access '/root/.openclaw/workspace/memory/2026-04-19.md' raw_params={"path":"/root/.openclaw/workspace/memory/2026-04-19.md"}
+2026-04-19T16:53:59.401+00:00 [tools] read failed: ENOENT: no such file or directory, access '/root/.openclaw/workspace/memory/2026-04-18.md' raw_params={"path":"/root/.openclaw/workspace/memory/2026-04-18.md"}
+2026-04-19T16:54:08.780+00:00 [agent/embedded] embedded run agent end: runId=4cd231e9-7ff3-4edf-ab4a-e2fd9b94b599 isError=true model=openai/gpt-5.4-mini provider=ofox-openai error=⚠️ API rate limit reached. Please try again later. rawError=429 Rate limit exceeded. Retry in 0s
+2026-04-19T16:54:12.497+00:00 [agent/embedded] embedded run agent end: runId=4cd231e9-7ff3-4edf-ab4a-e2fd9b94b599 isError=true model=openai/gpt-5.4-mini provider=ofox-openai error=⚠️ API rate limit reached. Please try again later. rawError=429 Rate limit exceeded. Retry in 0s
+2026-04-19T16:54:23.561+00:00 [agent/embedded] embedded run agent end: runId=4cd231e9-7ff3-4edf-ab4a-e2fd9b94b599 isError=true model=openai/gpt-5.4-mini provider=ofox-openai error=⚠️ API rate limit reached. Please try again later. rawError=429 Rate limit exceeded. Retry in 0s
+2026-04-19T16:54:30.930+00:00 Done.
+
+What I changed for the review branch:
+- Branched `review/shape-sort-mobile-hotfix`
+- Kept the patch limited to Shape Sort
+- Increased the mobile drag/grab hit area in `public/games/shape-sort/game.js`:
+  - `dragPaddingPx: 6` → `dragPaddingPx: 18`
+
+What I did to protect your unrelated work:
+- Stashed the unrelated local changes before preparing the hotfix
+- Pushed the hotfix branch to `origin`
+- Restored the unrelated local changes afterward
+
+Push result:
+- `origin/review/shape-sort-mobile-hotfix` updated successfully
+- Commit: `7ca1cc2` — `Hotfix Shape Sort mobile hit area`
+
+Your unrelated work is back in the working tree:
+- `README.md`
+- `REVIEW_WORKFLOW.md`
+- `notes/homepage-copy-review.md`
+- `.env`
+- `playtest/`

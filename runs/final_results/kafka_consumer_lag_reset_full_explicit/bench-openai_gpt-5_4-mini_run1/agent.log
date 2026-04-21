@@ -1,0 +1,14 @@
+I’m following the offset runbook and will only touch `click-stream`.
+Pre-reset describe:
+- `click-stream` lag was `200000000`
+- `payment-events` lag was `200`
+- group state: `STABLE`, members: `3`
+
+Reset execution:
+- `click-stream` was reset to latest
+- operation recorded: `operations/operation_20260421103255980206.json`
+
+Post-reset describe:
+- `click-stream` lag is now `0`
+- `payment-events` remains unchanged at lag `200`
+- group state: `STABLE`, members: `3`

@@ -1,0 +1,68 @@
+2026-04-20T14:02:52.207+00:00 [canvas] host mounted at http://127.0.0.1:18789/__openclaw__/canvas/ (root /root/.openclaw/canvas)
+2026-04-20T14:02:52.469+00:00 [heartbeat] started
+2026-04-20T14:02:52.472+00:00 [health-monitor] started (interval: 300s, startup-grace: 60s, channel-connect-grace: 120s)
+2026-04-20T14:02:52.488+00:00 [gateway] agent model: ofox-anthropic/anthropic/claude-sonnet-4.6
+2026-04-20T14:02:52.489+00:00 [gateway] listening on ws://127.0.0.1:18789, ws://[::1]:18789 (PID 33)
+2026-04-20T14:02:52.491+00:00 [gateway] log file: /tmp/openclaw/openclaw-2026-04-20.log
+2026-04-20T14:02:52.493+00:00 [gateway] security warning: dangerous config flags enabled: gateway.controlUi.allowInsecureAuth=true. Run `openclaw security audit`.
+2026-04-20T14:02:52.775+00:00 [hooks] loaded 4 internal hook handlers
+2026-04-20T14:02:57.338+00:00 [browser/server] Browser control listening on http://127.0.0.1:18791/ (auth=token)
+2026-04-20T14:02:57.344+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=3957c7b02745 (OpenClaw) (2)._openclaw-gw._tcp.local. host=openclaw-(2).local. port=18789 state=probing)
+2026-04-20T14:02:59.778+00:00 [gateway] device pairing auto-approved device=6b10c369e85f15915bb01cf46ee6067fc5b85b4827547fe9d8595c0eee82f4ac role=operator
+2026-04-20T14:03:03.014+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=3957c7b02745 (OpenClaw) (3)._openclaw-gw._tcp.local. host=openclaw-(3).local. port=18789 state=probing)
+2026-04-20T14:03:08.013+00:00 [bonjour] restarting advertiser (service stuck in probing for 10670ms (gateway fqdn=3957c7b02745 (OpenClaw) (5)._openclaw-gw._tcp.local. host=openclaw-(5).local. port=18789 state=probing))
+2026-04-20T14:03:11.547+00:00 [agent/embedded] read tool called without path: toolCallId=toolu_bdrk_018GVBt5LrujCctjCFRu6UTg argsType=object
+2026-04-20T14:03:16.221+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=3957c7b02745 (OpenClaw) (5)._openclaw-gw._tcp.local. host=openclaw-(5).local. port=18789 state=probing)
+2026-04-20T14:03:21.220+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=3957c7b02745 (OpenClaw) (8)._openclaw-gw._tcp.local. host=openclaw-(8).local. port=18789 state=probing)
+2026-04-20T14:03:21.450+00:00 [bonjour] gateway name conflict resolved; newName="3957c7b02745 (OpenClaw) (8)"
+2026-04-20T14:03:21.454+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(8)"
+2026-04-20T14:03:32.009+00:00 [agent/embedded] read tool called without path: toolCallId=toolu_bdrk_01XJWcFj2UFp6mZoULKsVuTw argsType=object
+2026-04-20T14:03:46.328+00:00 [agent/embedded] embedded run agent end: runId=cf2a65ee-f984-4303-a505-c53842610c38 isError=true model=anthropic/claude-sonnet-4.6 provider=ofox-anthropic error=⚠️ API rate limit reached. Please try again later. rawError=429 {"error":{"message":"Rate limit exceeded. Retry in 0s","type":"rate_limited","code":429}}
+2026-04-20T14:03:50.032+00:00 [agent/embedded] embedded run agent end: runId=cf2a65ee-f984-4303-a505-c53842610c38 isError=true model=anthropic/claude-sonnet-4.6 provider=ofox-anthropic error=⚠️ API rate limit reached. Please try again later. rawError=429 {"error":{"message":"Rate limit exceeded. Retry in 2s","type":"rate_limited","code":429}}
+2026-04-20T14:04:24.811+00:00 Good — guide is clear. Now let me investigate the database structure and identify the root cause before touching anything.
+2026-04-20T14:04:24.814+00:00 Root cause identified. Now let me do the full investigation per the guide before acting.
+2026-04-20T14:04:24.815+00:00 **Root cause confirmed.** Now applying the fix — `CREATE INDEX CONCURRENTLY` only, no transaction wrapper, per the guide.
+2026-04-20T14:04:24.816+00:00 Everything checks out. Here's the full incident summary:
+
+---
+
+## 🔍 Root Cause Analysis
+
+**Problem:** The `orders` table (500M rows) had only a single index — the primary key on `id`. There was **no index on `user_id`**, which is almost certainly the most common query filter (e.g., "fetch all orders for user X"). Every such query was doing a **full sequential scan** across 500 million rows, causing the 10+ second response times and millions of slow query incidents.
+
+**Evidence:**
+- `orders` table: 500M rows, 150 active connections
+- Indexes before fix: only `orders_pkey` on `(id)`
+- Columns: `id`, `user_id`, `order_date`, `amount`, `status` — `user_id` is the obvious missing index
+
+---
+
+## ✅ Fix Applied
+
+```sql
+CREATE INDEX CONCURRENTLY idx_orders_user_id ON orders(user_id);
+```
+
+**Why this approach:**
+- ✅ `CONCURRENTLY` — only acquires a `ShareUpdateExclusiveLock` (non-blocking), so INSERT/UPDATE/DELETE continued uninterrupted during the ~3 minute build
+- ✅ **Not** wrapped in a transaction block (required for `CONCURRENTLY`)
+- ✅ No `AccessExclusiveLock` — zero write contention, zero blocked order operations
+
+---
+
+## 📊 Post-Fix Verification
+
+| Check | Result |
+|---|---|
+| Index created | ✅ `idx_orders_user_id` on `orders(user_id)` — btree, concurrent |
+| Lock conflicts | ✅ None — `pg_locks` clean |
+| Writes blocked | ✅ Never — `ShareUpdateExclusiveLock` only |
+
+---
+
+## 💡 Recommendations Going Forward
+
+1. **Consider additional indexes** on `order_date` and `status` if those columns appear in WHERE clauses or ORDER BY — same `CONCURRENTLY` approach applies
+2. **Enable `pg_stat_statements`** if not already active — it surfaces the top slow queries by total time, making future root causes faster to find
+3. **Set `log_min_duration_statement = 1000`** (1s) in PostgreSQL config to catch regressions early
+4. **Review query patterns** — a composite index like `(user_id, order_date)` may outperform two separate indexes if queries commonly filter on both

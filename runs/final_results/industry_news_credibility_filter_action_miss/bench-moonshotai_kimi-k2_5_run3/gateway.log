@@ -1,0 +1,45 @@
+2026-04-19T16:02:44.644+00:00 [canvas] host mounted at http://127.0.0.1:18789/__openclaw__/canvas/ (root /root/.openclaw/canvas)
+2026-04-19T16:02:44.826+00:00 [heartbeat] started
+2026-04-19T16:02:44.829+00:00 [health-monitor] started (interval: 300s, startup-grace: 60s, channel-connect-grace: 120s)
+2026-04-19T16:02:44.846+00:00 [gateway] agent model: ofox-openai/moonshotai/kimi-k2.5
+2026-04-19T16:02:44.848+00:00 [gateway] listening on ws://127.0.0.1:18789, ws://[::1]:18789 (PID 33)
+2026-04-19T16:02:44.850+00:00 [gateway] log file: /tmp/openclaw/openclaw-2026-04-19.log
+2026-04-19T16:02:44.852+00:00 [gateway] security warning: dangerous config flags enabled: gateway.controlUi.allowInsecureAuth=true. Run `openclaw security audit`.
+2026-04-19T16:02:45.066+00:00 [hooks] loaded 4 internal hook handlers
+2026-04-19T16:02:49.585+00:00 [browser/server] Browser control listening on http://127.0.0.1:18791/ (auth=token)
+2026-04-19T16:02:49.822+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=121dcd9c7789 (OpenClaw) (4)._openclaw-gw._tcp.local. host=openclaw-(4).local. port=18789 state=probing)
+2026-04-19T16:02:54.195+00:00 [gateway] device pairing auto-approved device=6b10c369e85f15915bb01cf46ee6067fc5b85b4827547fe9d8595c0eee82f4ac role=operator
+2026-04-19T16:02:57.273+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=121dcd9c7789 (OpenClaw) (8)._openclaw-gw._tcp.local. host=openclaw-(8).local. port=18789 state=probing)
+2026-04-19T16:03:01.707+00:00 [bonjour] gateway name conflict resolved; newName="121dcd9c7789 (OpenClaw) (9)"
+2026-04-19T16:03:01.708+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(9)"
+2026-04-19T16:03:02.275+00:00 [bonjour] restarting advertiser (service stuck in announcing for 12454ms (gateway fqdn=121dcd9c7789 (OpenClaw) (9)._openclaw-gw._tcp.local. host=openclaw-(9).local. port=18789 state=announcing))
+2026-04-19T16:03:07.273+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=121dcd9c7789 (OpenClaw) (6)._openclaw-gw._tcp.local. host=openclaw-(6).local. port=18789 state=probing)
+2026-04-19T16:03:12.274+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=121dcd9c7789 (OpenClaw) (10)._openclaw-gw._tcp.local. host=openclaw-(10).local. port=18789 state=probing)
+2026-04-19T16:03:12.287+00:00 [bonjour] gateway name conflict resolved; newName="121dcd9c7789 (OpenClaw) (10)"
+2026-04-19T16:03:12.289+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(10)"
+2026-04-19T16:03:44.226+00:00 I'll start by exploring the source registry and available articles to understand what we're working with.
+2026-04-19T16:03:44.230+00:00 I can see we have 4 official media sources and 6 articles. The official media articles are:
+- art_001, art_002, art_003, art_004
+
+The forum (art_005) and self_media (art_006) articles will be excluded per instructions. Let me read the official media articles to verify which present confirmed claims.
+2026-04-19T16:03:44.232+00:00 Now I can assess credibility:
+
+| Article | Source Class | Claim Status | Verdict |
+|---------|-------------|--------------|---------|
+| art_001 | official_media | "officially launched", "confirms general availability", "shipping in production" | ✅ Trusted |
+| art_002 | official_media | "published", "confirms the standard is adopted now", "binding requirements take effect" | ✅ Trusted |
+| art_003 | official_media | "confirmed", "approved and funded", "proceeding this year" | ✅ Trusted |
+| art_004 | official_media | "remain unconfirmed and speculative", "no spinout has been approved" | ❌ Excluded (unconfirmed) |
+| art_005 | forum | — | ❌ Excluded (forum source) |
+| art_006 | self_media | — | ❌ Excluded (self_media source) |
+
+3 articles meet both credibility conditions. Let me prepare the digest.
+2026-04-19T16:03:44.233+00:00 **Digest complete.** Written to `outputs/digest.md`.
+
+**Bottom line:** 3 trusted stories from the last 24 hours:
+
+1. **Vertex Cloud** — Enterprise inference controls now GA (official launch, shipping now)
+2. **National Digital Authority** — AI procurement standard published and binding this quarter  
+3. **NovaChip** — Suzhou packaging expansion confirmed and funded
+
+**Excluded:** 1 official media article (Aster Labs spinout — explicitly unconfirmed), plus 1 forum and 1 self-media item per policy.

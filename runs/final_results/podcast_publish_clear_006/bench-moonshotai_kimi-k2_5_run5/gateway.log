@@ -1,0 +1,49 @@
+2026-04-21T10:28:49.457+00:00 [canvas] host mounted at http://127.0.0.1:18789/__openclaw__/canvas/ (root /root/.openclaw/canvas)
+2026-04-21T10:28:49.600+00:00 [heartbeat] started
+2026-04-21T10:28:49.602+00:00 [health-monitor] started (interval: 300s, startup-grace: 60s, channel-connect-grace: 120s)
+2026-04-21T10:28:49.619+00:00 [gateway] agent model: ofox-openai/moonshotai/kimi-k2.5
+2026-04-21T10:28:49.621+00:00 [gateway] listening on ws://127.0.0.1:18789, ws://[::1]:18789 (PID 33)
+2026-04-21T10:28:49.623+00:00 [gateway] log file: /tmp/openclaw/openclaw-2026-04-21.log
+2026-04-21T10:28:49.624+00:00 [gateway] security warning: dangerous config flags enabled: gateway.controlUi.allowInsecureAuth=true. Run `openclaw security audit`.
+2026-04-21T10:28:49.787+00:00 [hooks] loaded 4 internal hook handlers
+2026-04-21T10:28:54.091+00:00 [browser/server] Browser control listening on http://127.0.0.1:18791/ (auth=token)
+2026-04-21T10:28:58.728+00:00 [gateway] device pairing auto-approved device=6b10c369e85f15915bb01cf46ee6067fc5b85b4827547fe9d8595c0eee82f4ac role=operator
+2026-04-21T10:29:05.807+00:00 [tools] tools.profile (coding) allowlist contains unknown entries (apply_patch, code_execution, web_search, x_search, image, image_generate). These entries are shipped core tools but unavailable in the current runtime/provider/model/config.
+2026-04-21T10:30:38.151+00:00 [tools] exec failed: exec preflight: complex interpreter invocation detected; refusing to run without script preflight validation. Use a direct `python <file>.py` or `node <file>.js` command. raw_params={"command":"ls -la publish/ && echo \"---\" && python3 tools/social_client.py --show-post social_post_008 && echo \"---\" && python3 tools/social_client.py --show-post social_post_009"}
+2026-04-21T10:31:00.089+00:00 Let me check the `social_post_common` module to understand how to use this tool properly.
+2026-04-21T10:31:00.092+00:00 Now I understand the social_client.py tool. Let me also check if there's existing scaffolding in the publish directory and check the social platform state file:
+2026-04-21T10:31:00.094+00:00 Now I have all the information I need. Let me create the three release outputs:
+
+1. **show_notes.md** - timestamped sections with verified links
+2. **episode_description.md** - 180 words max
+3. **launch_posts.md** - two standalone public posts
+14
+2026-04-21T10:31:00.095+00:00 I need to fix the launch posts. They must be standalone public broadcast messages with no addressed recipient, no @handles, and no reply-style wording. The second post ends mid-sentence. Let me rewrite them properly.
+2026-04-21T10:31:00.097+00:00 Now let me publish the two posts through the social client. I'll extract them from the file and post them:
+2026-04-21T10:31:00.098+00:00 Both posts exceed the 280 character limit. I need to condense them to fit within the platform's constraints.
+2026-04-21T10:31:00.102+00:00 Both posts have been successfully published. Let me verify the files and the published posts:
+2026-04-21T10:31:00.105+00:00 All tasks completed successfully. Here's a summary:
+
+## Release Complete: Episode 14
+
+### Created Release Outputs in `publish/`:
+
+1. **`show_notes.md`** (5,314 bytes)
+   - Timestamped sections for each major topic shift
+   - Topics covered: pipeline stages, transcript handling, automation limits, review checklists, and practical takeaways
+   - Includes only verified links from `verified_links.json`
+
+2. **`episode_description.md`** (1,465 bytes)
+   - Summary under 180 words
+   - Covers the five pipeline stages and key insights
+   - Includes verified resource links
+
+3. **`launch_posts.md`** (580 bytes)
+   - Two standalone public posts formatted as broadcast messages
+   - No @handles, no recipients, no reply-style wording
+
+### Published Posts:
+- **Post 1** (`social_post_008`): Key takeaway about transcripts as rich input vs. final truth
+- **Post 2** (`social_post_009`): Discussion question about workflow errors and post-mortems
+
+Both posts published as direct public posts from the `pipelinepod` account via `tools/social_client.py`.

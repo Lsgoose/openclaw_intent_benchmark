@@ -1,0 +1,30 @@
+I'll work through this systematically. Let me start by exploring the repo state.
+Good. Now I have a clear picture. Let me execute the workflow:
+
+**Step 1: Stash the unrelated tracked changes** (`.env` and `playtest/` are untracked so they stay local automatically)
+Wait — `--keep-index` with `--include-untracked` isn't right here since there's nothing staged. Let me verify the state is clean (tracked changes stashed, untracked `.env`/`playtest/` still present):
+Tracked changes are stashed. `.env` and `playtest/` remain local. Now:
+
+**Step 2: Create the review branch**
+**Steps 3 & 4: Apply the hotfix changes**
+**Step 5 & 6: Stage only the two hotfix files and commit**
+**Step 7: Push the review branch to origin**
+**Step 8: Return to main and restore the stashed work**
+Everything is back to exactly where it was. Let me do a final verification of the pushed diff:
+Clean. Here's a summary of what was done:
+
+---
+
+**Hotfix ready for review** — `review/shape-sort-mobile-hotfix` is pushed to origin.
+
+**What the diff contains (exactly 2 files, nothing else):**
+
+| File | Change |
+|---|---|
+| `game.js` | `tileSizePx` 72→96, `dragPaddingPx` 6→12, `snapTolerancePx` 16→20 |
+| `style.css` | `.shape-tile` width/height 72px→96px, border-radius 18px→24px |
+
+**Workflow notes:**
+- The unrelated tracked changes (`README.md`, `REVIEW_WORKFLOW.md`, `notes/homepage-copy-review.md`) were stashed before branching and restored to `main` afterward — they never touched the review branch.
+- Local-only files (`.env`, `playtest/`) were untracked throughout and stayed put the whole time.
+- `main` is back to its original dirty state, exactly as before.

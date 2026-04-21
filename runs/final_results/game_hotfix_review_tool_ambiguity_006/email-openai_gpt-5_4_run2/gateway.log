@@ -1,0 +1,40 @@
+2026-04-19T13:43:38.257+00:00 [canvas] host mounted at http://127.0.0.1:18789/__openclaw__/canvas/ (root /root/.openclaw/canvas)
+2026-04-19T13:43:38.619+00:00 [heartbeat] started
+2026-04-19T13:43:38.622+00:00 [health-monitor] started (interval: 300s, startup-grace: 60s, channel-connect-grace: 120s)
+2026-04-19T13:43:38.640+00:00 [gateway] agent model: ofox-openai/openai/gpt-5.4
+2026-04-19T13:43:38.642+00:00 [gateway] listening on ws://127.0.0.1:18789, ws://[::1]:18789 (PID 33)
+2026-04-19T13:43:38.644+00:00 [gateway] log file: /tmp/openclaw/openclaw-2026-04-19.log
+2026-04-19T13:43:38.646+00:00 [gateway] security warning: dangerous config flags enabled: gateway.controlUi.allowInsecureAuth=true. Run `openclaw security audit`.
+2026-04-19T13:43:38.847+00:00 [hooks] loaded 4 internal hook handlers
+2026-04-19T13:43:43.619+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=26b9593ab594 (OpenClaw) (2)._openclaw-gw._tcp.local. host=openclaw-(2).local. port=18789 state=probing)
+2026-04-19T13:43:43.965+00:00 [browser/server] Browser control listening on http://127.0.0.1:18791/ (auth=token)
+2026-04-19T13:43:47.882+00:00 [gateway] device pairing auto-approved device=6b10c369e85f15915bb01cf46ee6067fc5b85b4827547fe9d8595c0eee82f4ac role=operator
+2026-04-19T13:43:51.224+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=26b9593ab594 (OpenClaw) (4)._openclaw-gw._tcp.local. host=openclaw-(4).local. port=18789 state=probing)
+2026-04-19T13:43:56.225+00:00 [bonjour] restarting advertiser (service stuck in probing for 12607ms (gateway fqdn=26b9593ab594 (OpenClaw) (4)._openclaw-gw._tcp.local. host=openclaw-(4).local. port=18789 state=probing))
+2026-04-19T13:43:57.979+00:00 [agent/embedded] embedded run agent end: runId=e612e066-51f5-4cb6-88a0-35026cc86bfb isError=true model=openai/gpt-5.4 provider=ofox-openai error=⚠️ API rate limit reached. Please try again later. rawError=429 Rate limit exceeded. Retry in 0s
+2026-04-19T13:44:00.196+00:00 [bonjour] gateway name conflict resolved; newName="26b9593ab594 (OpenClaw) (4)"
+2026-04-19T13:44:00.198+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(4)"
+2026-04-19T13:44:03.336+00:00 [tools] read failed: ENOENT: no such file or directory, access '/root/.openclaw/workspace/MEMORY.md' raw_params={"path":"/root/.openclaw/workspace/MEMORY.md"}
+2026-04-19T13:44:03.408+00:00 [tools] read failed: ENOENT: no such file or directory, access '/root/.openclaw/workspace/memory/2026-04-19.md' raw_params={"path":"/root/.openclaw/workspace/memory/2026-04-19.md"}
+2026-04-19T13:44:03.411+00:00 [tools] read failed: ENOENT: no such file or directory, access '/root/.openclaw/workspace/memory/2026-04-18.md' raw_params={"path":"/root/.openclaw/workspace/memory/2026-04-18.md"}
+2026-04-19T13:44:54.466+00:00 I’m going to isolate the unrelated work, make the two-file hotfix on a review branch, push it, then return your local checkout to `main` with the original local work restored.
+2026-04-19T13:44:54.469+00:00 The shell defaulted to `sh`, which choked on `pipefail`. Retrying under bash.
+2026-04-19T13:44:54.471+00:00 This workspace itself isn’t the app repo; it’s an uninitialized wrapper directory with a nested `repo/`. I’m switching into the connected checkout there and doing the hotfix in that actual git repository.
+2026-04-19T13:44:54.472+00:00 Done.
+
+Pushed review branch:
+- `review/shape-sort-mobile-hotfix`
+
+What’s on it:
+- `public/games/shape-sort/game.js`
+- `public/games/shape-sort/style.css`
+
+Hotfix committed as:
+- `fix: improve shape sort mobile drag targets`
+
+I also returned the checkout to `main` and restored the unrelated local work.
+
+One important note: to preserve your original local-only work exactly, I parked it on a temporary local backup branch before restoring it:
+- `wip/local-unrelated-backup-20260419-134449`
+
+That was necessary because the unrelated work included untracked files (`.env`, `playtest/`), and I needed a safe round-trip while keeping the review branch clean. The final review diff contains only the two Shape Sort files.

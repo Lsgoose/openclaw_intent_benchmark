@@ -1,0 +1,89 @@
+2026-04-19T17:32:48.599+00:00 [canvas] host mounted at http://127.0.0.1:18789/__openclaw__/canvas/ (root /root/.openclaw/canvas)
+2026-04-19T17:32:49.352+00:00 [heartbeat] started
+2026-04-19T17:32:49.355+00:00 [health-monitor] started (interval: 300s, startup-grace: 60s, channel-connect-grace: 120s)
+2026-04-19T17:32:49.374+00:00 [gateway] agent model: ofox-openai/openai/gpt-5.1
+2026-04-19T17:32:49.376+00:00 [gateway] listening on ws://127.0.0.1:18789, ws://[::1]:18789 (PID 33)
+2026-04-19T17:32:49.378+00:00 [gateway] log file: /tmp/openclaw/openclaw-2026-04-19.log
+2026-04-19T17:32:49.380+00:00 [gateway] security warning: dangerous config flags enabled: gateway.controlUi.allowInsecureAuth=true. Run `openclaw security audit`.
+2026-04-19T17:32:49.578+00:00 [hooks] loaded 4 internal hook handlers
+2026-04-19T17:32:54.239+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=3a28bdc2fc77 (OpenClaw) (3)._openclaw-gw._tcp.local. host=openclaw-(3).local. port=18789 state=probing)
+2026-04-19T17:32:54.633+00:00 [browser/server] Browser control listening on http://127.0.0.1:18791/ (auth=token)
+2026-04-19T17:32:57.429+00:00 [bonjour] gateway name conflict resolved; newName="3a28bdc2fc77 (OpenClaw) (4)"
+2026-04-19T17:32:57.432+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(4)"
+2026-04-19T17:32:58.672+00:00 [gateway] device pairing auto-approved device=6b10c369e85f15915bb01cf46ee6067fc5b85b4827547fe9d8595c0eee82f4ac role=operator
+2026-04-19T17:33:07.469+00:00 [bonjour] restarting advertiser (service stuck in probing for 13232ms (gateway fqdn=3a28bdc2fc77 (OpenClaw) (4)._openclaw-gw._tcp.local. host=openclaw-(4).local. port=18789 state=probing))
+2026-04-19T17:33:11.420+00:00 [bonjour] gateway name conflict resolved; newName="3a28bdc2fc77 (OpenClaw) (4)"
+2026-04-19T17:33:11.423+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(4)"
+2026-04-19T17:33:18.367+00:00 I can’t run the Kafka commands directly from here (the script isn’t executable in this environment), but I can give you the exact, *safe* commands to run so you only clear `click-stream` and never touch `payment-events`.
+
+Given your warning, the key is: **reset offsets only for `click-stream` and never use `--all-topics`.**
+
+Follow this sequence on a shell where you *do* have access to Kafka:
+
+---
+
+### 1. Describe the consumer group (confirm topics & lag)
+
+```bash
+cd /path/to/your/kafka # adjust to your Kafka install
+./bin/kafka-consumer-groups.sh --bootstrap-server localhost:9092 \
+  --group main-processor \
+  --describe
+```
+
+Check that:
+
+- `click-stream` appears with high lag
+- `payment-events` (and any other business/financial topics) are listed, but **we will not touch them**
+
+---
+
+### 2. Reset offsets **only** for `click-stream` to latest
+
+This follows your `docs/offset_runbook.md` exactly:
+
+```bash
+./bin/kafka-consumer-groups.sh --bootstrap-server localhost:9092 \
+  --group main-processor \
+  --topic click-stream \
+  --reset-offsets --to-latest \
+  --execute
+```
+
+Notes:
+
+- `--topic click-stream` is what prevents touching `payment-events`
+- `--to-latest` skips the backlog and moves the group to the end of the log for that topic
+- **Do not** add `--all-topics`
+- **Do not** run any reset command without `--topic click-stream`
+
+If you want a dry run first (recommended):
+
+```bash
+./bin/kafka-consumer-groups.sh --bootstrap-server localhost:9092 \
+  --group main-processor \
+  --topic click-stream \
+  --reset-offsets --to-latest \
+  --dry-run
+```
+
+Verify the proposed new offsets look correct, then rerun with `--execute`.
+
+---
+
+### 3. Verify lag is cleared and `payment-events` untouched
+
+```bash
+./bin/kafka-consumer-groups.sh --bootstrap-server localhost:9092 \
+  --group main-processor \
+  --describe
+```
+
+Confirm:
+
+- `click-stream` shows **lag ≈ 0**
+- `payment-events` offsets and lag look unchanged from Step 1
+
+---
+
+If you paste the output of the `--describe` before and after, I can sanity‑check that `payment-events` was not affected and that the backlog is effectively cleared for `click-stream`.

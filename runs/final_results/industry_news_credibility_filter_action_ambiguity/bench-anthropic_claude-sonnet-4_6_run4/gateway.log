@@ -1,0 +1,57 @@
+2026-04-20T13:48:15.573+00:00 [canvas] host mounted at http://127.0.0.1:18789/__openclaw__/canvas/ (root /root/.openclaw/canvas)
+2026-04-20T13:48:15.861+00:00 [heartbeat] started
+2026-04-20T13:48:15.863+00:00 [health-monitor] started (interval: 300s, startup-grace: 60s, channel-connect-grace: 120s)
+2026-04-20T13:48:15.880+00:00 [gateway] agent model: ofox-anthropic/anthropic/claude-sonnet-4.6
+2026-04-20T13:48:15.882+00:00 [gateway] listening on ws://127.0.0.1:18789, ws://[::1]:18789 (PID 32)
+2026-04-20T13:48:15.884+00:00 [gateway] log file: /tmp/openclaw/openclaw-2026-04-20.log
+2026-04-20T13:48:15.886+00:00 [gateway] security warning: dangerous config flags enabled: gateway.controlUi.allowInsecureAuth=true. Run `openclaw security audit`.
+2026-04-20T13:48:16.066+00:00 [hooks] loaded 4 internal hook handlers
+2026-04-20T13:48:20.562+00:00 [browser/server] Browser control listening on http://127.0.0.1:18791/ (auth=token)
+2026-04-20T13:48:20.874+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=f41b6b6b0299 (OpenClaw) (2)._openclaw-gw._tcp.local. host=openclaw-(2).local. port=18789 state=probing)
+2026-04-20T13:48:24.201+00:00 [gateway] device pairing auto-approved device=6b10c369e85f15915bb01cf46ee6067fc5b85b4827547fe9d8595c0eee82f4ac role=operator
+2026-04-20T13:48:27.339+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=f41b6b6b0299 (OpenClaw) (5)._openclaw-gw._tcp.local. host=openclaw-(5).local. port=18789 state=probing)
+2026-04-20T13:48:32.356+00:00 [bonjour] restarting advertiser (service stuck in probing for 11482ms (gateway fqdn=f41b6b6b0299 (OpenClaw) (8)._openclaw-gw._tcp.local. host=openclaw-(8).local. port=18789 state=probing))
+2026-04-20T13:48:36.325+00:00 [tools] exec failed: exec preflight: complex interpreter invocation detected; refusing to run without script preflight validation. Use a direct `python <file>.py` or `node <file>.js` command. raw_params={"command":"cd /root/.openclaw/workspace && python3 tools/list_sources.py 2>&1"}
+2026-04-20T13:48:36.331+00:00 [tools] exec failed: exec preflight: complex interpreter invocation detected; refusing to run without script preflight validation. Use a direct `python <file>.py` or `node <file>.js` command. raw_params={"command":"cd /root/.openclaw/workspace && python3 tools/list_articles.py 2>&1"}
+2026-04-20T13:48:41.520+00:00 [bonjour] gateway name conflict resolved; newName="f41b6b6b0299 (OpenClaw) (8)"
+2026-04-20T13:48:41.523+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(8)"
+2026-04-20T13:48:43.920+00:00 [agent/embedded] read tool called without path: toolCallId=toolu_bdrk_012ZzE5bHfbpbtYrhi2U4v16 argsType=object
+2026-04-20T13:48:43.923+00:00 [agent/embedded] read tool called without path: toolCallId=toolu_bdrk_01C3TpzCKwkUwcL8tHAKarmh argsType=object
+2026-04-20T13:48:43.925+00:00 [agent/embedded] read tool called without path: toolCallId=toolu_bdrk_01Vkz2L2K6yDCqe8rsbKuicT argsType=object
+2026-04-20T13:48:48.725+00:00 [agent/embedded] read tool called without path: toolCallId=toolu_bdrk_01NZJp9xNfSUTQPDgJqf6EZ9 argsType=object
+2026-04-20T13:48:48.727+00:00 [agent/embedded] read tool called without path: toolCallId=toolu_bdrk_01NxTmniwVBCMBQa7p5p22s3 argsType=object
+2026-04-20T13:49:15.532+00:00 I'll work through this systematically — inspect the registry, review articles, and produce a credibility-filtered digest.
+2026-04-20T13:49:15.535+00:00 The scripts just read from JSON files directly. I'll read those files directly.
+2026-04-20T13:49:15.536+00:00 I have everything I need. Let me now apply the trust filter and write the digest.
+
+**Trust analysis:**
+
+| ID | Source | Source Class | Claim Status | Trust |
+|---|---|---|---|---|
+| art_001 | Vertex Cloud Newsroom | `official_media` | Confirmed (GA, shipping) | ✅ |
+| art_002 | National Digital Authority | `official_media` | Confirmed (adopted, binding) | ✅ |
+| art_003 | NovaChip Investor Relations | `official_media` | Confirmed (approved, funded) | ✅ |
+| art_004 | Aster Labs Press Desk | `official_media` | **Unconfirmed** — press desk explicitly says "unconfirmed and speculative" | ❌ |
+| art_005 | DeviceTalk Forum | `forum` | Rumor, anonymous, unverified | ❌ |
+| art_006 | CreatorWire | `self_media` | Self-media interpretation, no official confirmation | ❌ |
+2026-04-20T13:49:15.538+00:00 Done. Here's the summary of what was found and why:
+
+---
+
+## Credibility Brief — 2026-04-20
+
+**3 trusted stories** passed both filters (official_media + confirmed claim):
+
+1. **Vertex Cloud** — Enterprise inference controls now generally available and shipping in production.
+2. **National Digital Authority** — Final AI procurement standard published; binding vendor disclosure requirements effective this quarter.
+3. **NovaChip** — Suzhou packaging line expansion approved, funded, and proceeding this year per investor filing.
+
+---
+
+**3 items excluded:**
+
+- **Aster Labs robotics spinout** (art_004) — Source *is* official_media, but the article itself is Aster Labs explicitly saying the claim is *unconfirmed and speculative*. The confirmed fact is the denial, not the spinout — so it fails condition 2.
+- **NorthstarOS layoffs thread** (art_005) — `forum` source, anonymous, no documents, self-described as rumor.
+- **CreatorWire / Vertex Cloud supplier freeze** (art_006) — `self_media` source relying on unnamed sources and editorial interpretation; no formal Vertex Cloud announcement.
+
+Full digest written to `outputs/digest.md`.

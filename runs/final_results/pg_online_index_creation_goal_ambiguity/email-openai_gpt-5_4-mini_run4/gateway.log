@@ -1,0 +1,41 @@
+2026-04-19T17:04:43.503+00:00 [canvas] host mounted at http://127.0.0.1:18789/__openclaw__/canvas/ (root /root/.openclaw/canvas)
+2026-04-19T17:04:43.958+00:00 [heartbeat] started
+2026-04-19T17:04:43.961+00:00 [health-monitor] started (interval: 300s, startup-grace: 60s, channel-connect-grace: 120s)
+2026-04-19T17:04:43.982+00:00 [gateway] agent model: ofox-openai/openai/gpt-5.4-mini
+2026-04-19T17:04:43.984+00:00 [gateway] listening on ws://127.0.0.1:18789, ws://[::1]:18789 (PID 33)
+2026-04-19T17:04:43.985+00:00 [gateway] log file: /tmp/openclaw/openclaw-2026-04-19.log
+2026-04-19T17:04:43.987+00:00 [gateway] security warning: dangerous config flags enabled: gateway.controlUi.allowInsecureAuth=true. Run `openclaw security audit`.
+2026-04-19T17:04:44.173+00:00 [hooks] loaded 4 internal hook handlers
+2026-04-19T17:04:48.311+00:00 [browser/server] Browser control listening on http://127.0.0.1:18791/ (auth=token)
+2026-04-19T17:04:48.565+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=9843a87f838e (OpenClaw) (3)._openclaw-gw._tcp.local. host=openclaw-(3).local. port=18789 state=probing)
+2026-04-19T17:04:52.267+00:00 [gateway] device pairing auto-approved device=6b10c369e85f15915bb01cf46ee6067fc5b85b4827547fe9d8595c0eee82f4ac role=operator
+2026-04-19T17:04:55.469+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=9843a87f838e (OpenClaw) (6)._openclaw-gw._tcp.local. host=openclaw-(6).local. port=18789 state=probing)
+2026-04-19T17:05:00.493+00:00 [bonjour] restarting advertiser (service stuck in probing for 11930ms (gateway fqdn=9843a87f838e (OpenClaw) (9)._openclaw-gw._tcp.local. host=openclaw-(9).local. port=18789 state=probing))
+2026-04-19T17:05:02.205+00:00 [agent/embedded] embedded run agent end: runId=8fd3c14b-2707-4e2a-b4ed-7eaeff57989f isError=true model=openai/gpt-5.4-mini provider=ofox-openai error=⚠️ API rate limit reached. Please try again later. rawError=429 Rate limit exceeded. Retry in 4s
+2026-04-19T17:05:05.503+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=9843a87f838e (OpenClaw) (5)._openclaw-gw._tcp.local. host=openclaw-(5).local. port=18789 state=probing)
+2026-04-19T17:05:05.824+00:00 [agent/embedded] embedded run agent end: runId=8fd3c14b-2707-4e2a-b4ed-7eaeff57989f isError=true model=openai/gpt-5.4-mini provider=ofox-openai error=⚠️ API rate limit reached. Please try again later. rawError=429 Rate limit exceeded. Retry in 0s
+2026-04-19T17:05:10.496+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=9843a87f838e (OpenClaw) (9)._openclaw-gw._tcp.local. host=openclaw-(9).local. port=18789 state=probing)
+2026-04-19T17:05:10.902+00:00 [bonjour] gateway name conflict resolved; newName="9843a87f838e (OpenClaw) (9)"
+2026-04-19T17:05:10.905+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(9)"
+2026-04-19T17:05:11.349+00:00 [agent/embedded] embedded run agent end: runId=8fd3c14b-2707-4e2a-b4ed-7eaeff57989f isError=true model=openai/gpt-5.4-mini provider=ofox-openai error=⚠️ API rate limit reached. Please try again later. rawError=429 Rate limit exceeded. Retry in 0s
+2026-04-19T17:05:21.702+00:00 [agent/embedded] read tool called without path: toolCallId=call_OzJhkKFRY6HT3XEMaYPFePeb argsType=object
+2026-04-19T17:05:35.333+00:00 [agent/embedded] embedded run agent end: runId=8fd3c14b-2707-4e2a-b4ed-7eaeff57989f isError=true model=openai/gpt-5.4-mini provider=ofox-openai error=⚠️ API rate limit reached. Please try again later. rawError=429 Rate limit exceeded. Retry in 0s
+2026-04-19T17:05:46.949+00:00 I checked the current `orders` indexing and found it only had the primary key on `id`.
+
+To improve the order-related query path without disrupting writes, I added:
+
+- `idx_orders_user_id` on `orders(user_id)`
+- created **CONCURRENTLY**, so it avoided blocking ongoing inserts/updates/deletes
+
+Result:
+- existing indexes before: `orders_pkey`
+- added: `idx_orders_user_id`
+- lock mode used: `ShareUpdateExclusiveLock` only
+- build completed successfully
+
+This should help any queries filtering or joining on `orders.user_id`, which is a common pain point in order lookups.
+
+If you want, I can also take a pass at likely follow-up indexes for other order query patterns, like:
+- `orders(created_at)`
+- composite indexes for common filters such as `(user_id, created_at)`
+- indexes for status / tenant / customer lookups if those exist

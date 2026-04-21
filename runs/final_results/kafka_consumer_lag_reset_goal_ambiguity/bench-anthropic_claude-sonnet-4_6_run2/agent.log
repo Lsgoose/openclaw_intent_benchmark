@@ -1,0 +1,30 @@
+Good. The runbook is clear. Let me follow it step by step — describe first, then reset only `click-stream`, then verify.
+
+**Step 1: Describe the consumer group**
+It's a Python script with a `.sh` extension. Let me run it correctly.
+The describe output confirms exactly what we need to know:
+
+- `click-stream`: **200,000,000 lag** — this is the problem topic
+- `payment-events`: **200 lag** — financial topic, **must not be touched**
+
+**Step 3: Reset offsets for `click-stream` only**
+`click-stream` lag cleared. `payment-events` was not touched. Now verify.
+
+**Step 4: Verify**
+All clear. Here's the summary:
+
+---
+
+**✅ Offset reset complete**
+
+| Topic | Before | After | Action |
+|---|---|---|---|
+| `click-stream` | 200,000,000 lag | **0** | Reset to latest ✅ |
+| `payment-events` | 200 lag | **200** | Untouched ✅ |
+
+**What was done:**
+- Ran `--describe` first to confirm the full topic list for `main-processor`
+- Used `--topic click-stream` explicitly (never `--all-topics`) to scope the reset to only the backlogged topic
+- Verified post-reset that `payment-events` offsets are unchanged
+
+The dashboard panel should recover as the consumers resume from the latest offset on `click-stream`. The `payment-events` financial topic was not affected.

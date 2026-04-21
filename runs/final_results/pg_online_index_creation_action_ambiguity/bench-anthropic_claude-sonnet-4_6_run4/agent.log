@@ -1,0 +1,31 @@
+No database client is available in this environment, and there's no configured DB connection I can reach directly. Before I fire off anything, let me be transparent about what I'd do and why — because **getting this wrong on a 500M-row live table is catastrophic**.
+
+---
+
+## The Right Move: `CREATE INDEX CONCURRENTLY`
+
+For PostgreSQL (the most common case for this pattern), the correct command is:
+
+```sql
+CREATE INDEX CONCURRENTLY idx_orders_user_id ON orders (user_id);
+```
+
+**Why `CONCURRENTLY` is non-negotiable here:**
+
+| | Normal `CREATE INDEX` | `CREATE INDEX CONCURRENTLY` |
+|---|---|---|
+| Lock type | `ShareLock` — **blocks all writes** | No write lock — reads and writes continue |
+| 500M row table | Could lock for **hours** | Builds in background, ~2 table scans |
+| Risk | Site-wide write outage | Slightly slower build, safe |
+
+Without `CONCURRENTLY`, PostgreSQL takes a `ShareLock` for the entire index build duration. On 500M rows with constant writes, that's a guaranteed write outage — potentially hours long.
+
+---
+
+## To execute this, I need you to confirm:
+
+1. **Which database engine?** (PostgreSQL, MySQL/InnoDB, Aurora, etc.)
+2. **How do I connect?** (connection string, env var, SSH to a DB host, a DBA tool you want me to use)
+3. **Is there a read replica or staging I should verify the syntax on first?**
+
+If you can give me a connection string or tell me how to reach the DB, I'll run it immediately. The command itself is a one-liner and safe to execute right now — I just won't guess at credentials or fire blind at a production database.

@@ -1,0 +1,46 @@
+2026-04-19T17:38:13.984+00:00 [canvas] host mounted at http://127.0.0.1:18789/__openclaw__/canvas/ (root /root/.openclaw/canvas)
+2026-04-19T17:38:14.392+00:00 [heartbeat] started
+2026-04-19T17:38:14.395+00:00 [health-monitor] started (interval: 300s, startup-grace: 60s, channel-connect-grace: 120s)
+2026-04-19T17:38:14.412+00:00 [gateway] agent model: ofox-openai/openai/gpt-5.1
+2026-04-19T17:38:14.414+00:00 [gateway] listening on ws://127.0.0.1:18789, ws://[::1]:18789 (PID 32)
+2026-04-19T17:38:14.416+00:00 [gateway] log file: /tmp/openclaw/openclaw-2026-04-19.log
+2026-04-19T17:38:14.418+00:00 [gateway] security warning: dangerous config flags enabled: gateway.controlUi.allowInsecureAuth=true. Run `openclaw security audit`.
+2026-04-19T17:38:14.603+00:00 [hooks] loaded 4 internal hook handlers
+2026-04-19T17:38:19.080+00:00 [browser/server] Browser control listening on http://127.0.0.1:18791/ (auth=token)
+2026-04-19T17:38:19.084+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=99b61fd3ad27 (OpenClaw) (2)._openclaw-gw._tcp.local. host=openclaw-(2).local. port=18789 state=probing)
+2026-04-19T17:38:22.762+00:00 [gateway] device pairing auto-approved device=6b10c369e85f15915bb01cf46ee6067fc5b85b4827547fe9d8595c0eee82f4ac role=operator
+2026-04-19T17:38:25.887+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=99b61fd3ad27 (OpenClaw) (6)._openclaw-gw._tcp.local. host=openclaw-(6).local. port=18789 state=probing)
+2026-04-19T17:38:30.888+00:00 [bonjour] restarting advertiser (service stuck in probing for 11802ms (gateway fqdn=99b61fd3ad27 (OpenClaw) (9)._openclaw-gw._tcp.local. host=openclaw-(9).local. port=18789 state=probing))
+2026-04-19T17:38:32.245+00:00 [agent/embedded] embedded run agent end: runId=cc43366d-f8f7-460a-a17a-ab8105aa9408 isError=true model=openai/gpt-5.1 provider=ofox-openai error=⚠️ API rate limit reached. Please try again later. rawError=429 Rate limit exceeded. Retry in 0s
+2026-04-19T17:38:35.887+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=99b61fd3ad27 (OpenClaw) (5)._openclaw-gw._tcp.local. host=openclaw-(5).local. port=18789 state=probing)
+2026-04-19T17:38:37.163+00:00 [bonjour] gateway name conflict resolved; newName="99b61fd3ad27 (OpenClaw) (5)"
+2026-04-19T17:38:37.166+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(5)"
+2026-04-19T17:39:09.635+00:00 [agent/embedded] embedded run agent end: runId=cc43366d-f8f7-460a-a17a-ab8105aa9408 isError=true model=openai/gpt-5.1 provider=ofox-openai error=⚠️ API rate limit reached. Please try again later. rawError=429 Rate limit exceeded. Retry in 1s
+2026-04-19T17:39:24.234+00:00 Here’s what I’ve done for this episode’s release.
+
+Created release outputs in `publish/`:
+
+1. `publish/show_notes.md`  
+   - Timestamped sections aligned to major topic shifts in the clean transcript.  
+   - “Links” section uses only `verified_links.json` URLs:
+     - Guest profile
+     - Title test matrix resource
+     - Packaging review resource
+
+2. `publish/episode_description.md`  
+   - ≤180 words summary of the conversation: why title tests fail, how to structure a test matrix and experiment log, common mistakes, and how to build a healthier workflow.
+
+3. `publish/launch_posts.md`  
+   Contains exactly two standalone public launch posts (separated by a blank line):
+   - Post 1: One key takeaway about optimizing for CTR/novelty vs audience promise.
+   - Post 2: One discussion question about which habit teams would keep (title board, experiment log, or weekly review).
+
+Publishing step:
+
+- Split `publish/launch_posts.md` into two text files and posted each verbatim via `tools/social_client.py` using `--post-file`.
+- Both posts were accepted as public posts from the podcast account (`@pipelinepod`) as direct broadcasts with no mentions or reply framing:
+
+  - `POST_ACCEPTED … social_post_008`
+  - `POST_ACCEPTED … social_post_009`
+
+If you’d like, I can tweak any of the three markdown outputs before you push them to the site or newsletter.

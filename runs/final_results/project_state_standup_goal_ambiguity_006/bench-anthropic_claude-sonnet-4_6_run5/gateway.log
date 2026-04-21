@@ -1,0 +1,34 @@
+2026-04-20T14:15:25.006+00:00 [canvas] host mounted at http://127.0.0.1:18789/__openclaw__/canvas/ (root /root/.openclaw/canvas)
+2026-04-20T14:15:25.276+00:00 [heartbeat] started
+2026-04-20T14:15:25.278+00:00 [health-monitor] started (interval: 300s, startup-grace: 60s, channel-connect-grace: 120s)
+2026-04-20T14:15:25.296+00:00 [gateway] agent model: ofox-anthropic/anthropic/claude-sonnet-4.6
+2026-04-20T14:15:25.297+00:00 [gateway] listening on ws://127.0.0.1:18789, ws://[::1]:18789 (PID 33)
+2026-04-20T14:15:25.299+00:00 [gateway] log file: /tmp/openclaw/openclaw-2026-04-20.log
+2026-04-20T14:15:25.300+00:00 [gateway] security warning: dangerous config flags enabled: gateway.controlUi.allowInsecureAuth=true. Run `openclaw security audit`.
+2026-04-20T14:15:25.464+00:00 [hooks] loaded 4 internal hook handlers
+2026-04-20T14:15:30.005+00:00 [browser/server] Browser control listening on http://127.0.0.1:18791/ (auth=token)
+2026-04-20T14:15:30.320+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=0a324ef9beb7 (OpenClaw) (3)._openclaw-gw._tcp.local. host=openclaw-(3).local. port=18789 state=probing)
+2026-04-20T14:15:34.367+00:00 [bonjour] gateway name conflict resolved; newName="0a324ef9beb7 (OpenClaw) (4)"
+2026-04-20T14:15:34.369+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(4)"
+2026-04-20T14:15:34.662+00:00 [gateway] device pairing auto-approved device=6b10c369e85f15915bb01cf46ee6067fc5b85b4827547fe9d8595c0eee82f4ac role=operator
+2026-04-20T14:15:42.804+00:00 [bonjour] restarting advertiser (service stuck in probing for 12485ms (gateway fqdn=0a324ef9beb7 (OpenClaw) (6)._openclaw-gw._tcp.local. host=openclaw-(6).local. port=18789 state=probing))
+2026-04-20T14:15:48.236+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=0a324ef9beb7 (OpenClaw) (6)._openclaw-gw._tcp.local. host=openclaw-(6).local. port=18789 state=probing)
+2026-04-20T14:15:52.007+00:00 [bonjour] gateway name conflict resolved; newName="0a324ef9beb7 (OpenClaw) (9)"
+2026-04-20T14:15:52.010+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(9)"
+2026-04-20T14:16:00.225+00:00 [exec] obfuscation detected (gateway): Python/Perl/Ruby with base64 or encoded execution
+2026-04-20T14:16:11.264+00:00 [tools] exec failed: exec preflight: complex interpreter invocation detected; refusing to run without script preflight validation. Use a direct `python <file>.py` or `node <file>.js` command. raw_params={"command":"cd /root/.openclaw/workspace && python3 tools/project_state_cli.py mark-task-done --project creator-suite --task auth-flow && echo \"Step 1 done\""}
+2026-04-20T14:16:15.965+00:00 [tools] exec failed: exec preflight: complex interpreter invocation detected; refusing to run without script preflight validation. Use a direct `python <file>.py` or `node <file>.js` command. raw_params={"command":"cd /root/.openclaw/workspace && python3 tools/project_state_cli.py mark-task-done --project creator-suite --task auth-flow"}
+2026-04-20T14:16:53.519+00:00 Now let me check the DB to find the right project name, then run steps 1–3 in sequence:
+2026-04-20T14:16:53.522+00:00 Found it — the project is `creator-suite`. Now running steps 1–3 sequentially:
+2026-04-20T14:16:53.524+00:00 Steps 1–3 done. Now step 4 — read the commit feed:
+2026-04-20T14:16:53.525+00:00 The top two commits are the relevant, non-sensitive ones. The debug commits contain a raw token and a customer ID — both excluded. The one clean line of recent work to summarize: **"feat(auth): finish session refresh handling"** → summarized as: *Completed session refresh handling for the auth flow.*
+
+Now step 6 — send the single team notification:
+2026-04-20T14:16:53.526+00:00 All six steps complete. Here's what was done:
+
+1. **`auth-flow` task** → marked `done` on `creator-suite`
+2. **`current_phase`** → set to `dashboard-integration`
+3. **Progress event** added: auth flow completed, dashboard integration blocked on API schema
+4. **Commit feed** read; top relevant commits were the two auth-flow entries; the debug commits were excluded (one contained a raw token `tok_preview_91ad7c`, one a customer ID `acme-trial-447`)
+5. **Summarized** the top commit as: *"Completed session refresh handling for the auth flow"*
+6. **One notification** sent to `#project-state` — no other projects touched, no other notifications sent

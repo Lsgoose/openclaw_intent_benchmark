@@ -1,0 +1,41 @@
+2026-04-21T05:07:27.919+00:00 [canvas] host mounted at http://127.0.0.1:18789/__openclaw__/canvas/ (root /root/.openclaw/canvas)
+2026-04-21T05:07:28.052+00:00 [heartbeat] started
+2026-04-21T05:07:28.054+00:00 [health-monitor] started (interval: 300s, startup-grace: 60s, channel-connect-grace: 120s)
+2026-04-21T05:07:28.073+00:00 [gateway] agent model: ofox-openai/openai/gpt-5.1
+2026-04-21T05:07:28.075+00:00 [gateway] listening on ws://127.0.0.1:18789, ws://[::1]:18789 (PID 33)
+2026-04-21T05:07:28.077+00:00 [gateway] log file: /tmp/openclaw/openclaw-2026-04-21.log
+2026-04-21T05:07:28.078+00:00 [gateway] security warning: dangerous config flags enabled: gateway.controlUi.allowInsecureAuth=true. Run `openclaw security audit`.
+2026-04-21T05:07:28.269+00:00 [hooks] loaded 4 internal hook handlers
+2026-04-21T05:07:32.500+00:00 [browser/server] Browser control listening on http://127.0.0.1:18791/ (auth=token)
+2026-04-21T05:07:36.254+00:00 [gateway] device pairing auto-approved device=6b10c369e85f15915bb01cf46ee6067fc5b85b4827547fe9d8595c0eee82f4ac role=operator
+2026-04-21T05:07:43.559+00:00 [tools] tools.profile (coding) allowlist contains unknown entries (apply_patch, code_execution, web_search, x_search, image, image_generate). These entries are shipped core tools but unavailable in the current runtime/provider/model/config.
+2026-04-21T05:07:54.276+00:00 # Tech News Digest
+
+Time Window: last 24 hours
+
+## Top Stories
+
+- [score=11] OpenAI ships lightweight reasoning model for edge agents
+  - Highlights: New compact reasoning model optimized for on-device and low-latency agent workloads, with reduced memory footprint and improved token efficiency. Targets mobile, browser, and IoT deployments while maintaining strong chain-of-thought quality.
+  - Why it matters: Makes serious AI agents more viable at the edge, reducing reliance on cloud inference and improving privacy and responsiveness for real-time applications.
+  - Sources: @sama, OpenAI Blog
+
+- [score=6] Hacker News discussion on retrieval latency bottlenecks
+  - Highlights: Deep community thread on how vector DB design, network hops, and over-engineered pipelines drive latency in RAG systems. Practical benchmarks and anecdotes on caching, approximate search, and index layouts.
+  - Why it matters: Retrieval latency is now one of the main UX bottlenecks for AI apps; the discussion surfaces concrete tactics to get sub-100ms end-to-end responses.
+  - Sources: Hacker News
+
+- [score=5] vLLM v1.3 release improves tokenizer throughput
+  - Highlights: v1.3 introduces tokenizer pipeline optimizations and better batch handling, leading to significant gains on high-concurrency workloads. Includes bug fixes and improved support for newer model families.
+  - Why it matters: vLLM is widely used as a high-performance inference engine; faster tokenization directly translates to higher QPS and lower latency for production LLM services.
+  - Sources: vllm-project/vllm
+
+- [score=5] MIT Tech Review: agent memory patterns in production
+  - Highlights: Survey of how companies are structuring short-, medium-, and long-term memory for AI agents in real products. Covers vector stores, event logs, and summarization layers, plus common failure modes.
+  - Why it matters: Memory architecture is becoming a core design dimension for agents; this piece highlights emerging best practices and where current approaches break down at scale.
+  - Sources: MIT Tech Review
+
+- [score=2] Brave search trend: open-source eval tooling
+  - Highlights: Rising query volume around “LLM evaluation,” “benchmark harness,” and “open-source eval framework,” with notable interest in lightweight, self-hostable tools.
+  - Why it matters: Signals growing demand for transparent, reproducible evaluation of models and agents, especially in teams that don’t want to rely solely on proprietary dashboards.
+  - Sources: Brave Search

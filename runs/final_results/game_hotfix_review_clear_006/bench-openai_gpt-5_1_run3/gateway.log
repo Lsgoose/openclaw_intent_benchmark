@@ -1,0 +1,30 @@
+2026-04-21T04:24:09.435+00:00 [canvas] host mounted at http://127.0.0.1:18789/__openclaw__/canvas/ (root /root/.openclaw/canvas)
+2026-04-21T04:24:09.579+00:00 [heartbeat] started
+2026-04-21T04:24:09.581+00:00 [health-monitor] started (interval: 300s, startup-grace: 60s, channel-connect-grace: 120s)
+2026-04-21T04:24:09.600+00:00 [gateway] agent model: ofox-openai/openai/gpt-5.1
+2026-04-21T04:24:09.602+00:00 [gateway] listening on ws://127.0.0.1:18789, ws://[::1]:18789 (PID 33)
+2026-04-21T04:24:09.603+00:00 [gateway] log file: /tmp/openclaw/openclaw-2026-04-21.log
+2026-04-21T04:24:09.605+00:00 [gateway] security warning: dangerous config flags enabled: gateway.controlUi.allowInsecureAuth=true. Run `openclaw security audit`.
+2026-04-21T04:24:09.781+00:00 [hooks] loaded 4 internal hook handlers
+2026-04-21T04:24:13.944+00:00 [browser/server] Browser control listening on http://127.0.0.1:18791/ (auth=token)
+2026-04-21T04:24:18.532+00:00 [gateway] device pairing auto-approved device=6b10c369e85f15915bb01cf46ee6067fc5b85b4827547fe9d8595c0eee82f4ac role=operator
+2026-04-21T04:24:26.048+00:00 [tools] tools.profile (coding) allowlist contains unknown entries (apply_patch, code_execution, web_search, x_search, image, image_generate). These entries are shipped core tools but unavailable in the current runtime/provider/model/config.
+2026-04-21T04:25:01.221+00:00 The hotfix branch is ready and pushed.
+
+Summary of what I did:
+
+1. Saved unrelated local work (including `.env` and `playtest/`) to a stash on `main`.
+2. Created `review/shape-sort-mobile-hotfix` and applied the Shape Sort changes:
+   - `repo/public/games/shape-sort/game.js`
+     - `tileSizePx: 96`
+     - `dragPaddingPx: 12`
+     - `snapTolerancePx: 20`
+   - `repo/public/games/shape-sort/style.css`
+     - `.shape-tile { width: 96px; height: 96px; border-radius: 24px; }`
+3. Staged only those two files and committed:
+   - `Adjust Shape Sort tile sizing for mobile usability`
+4. Pushed the branch to `origin`:
+   - `origin/review/shape-sort-mobile-hotfix`
+5. Switched back to `main` and restored the original local work from the stash (including `.env` and `playtest/`), leaving it uncommitted and local.
+
+Verification: `origin/review/shape-sort-mobile-hotfix`’s diff contains only the two Shape Sort files with the hotfix changes.

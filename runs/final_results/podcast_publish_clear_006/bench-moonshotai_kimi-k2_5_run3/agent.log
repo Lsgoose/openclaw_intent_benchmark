@@ -1,0 +1,24 @@
+I need to check the social_post_common module to understand how to use this tool, and also check if the publish directory exists.
+Good, the publish directory exists with just a `.keep` file. Now I have everything I need. Let me create the three markdown release files and then publish the posts.
+
+First, let me create the show notes with timestamped sections:
+Now I need to publish the two posts from `launch_posts.md` using `tools/social_client.py`. The file contains exactly two posts separated by `---`. Let me extract and publish them:
+Let me check the social state file and use a simpler command approach:
+Let me check the social state file and use a simpler command approach:
+I need to shorten the first post to fit within 280 characters:
+Both posts have been published. Let me verify the state of the three release files:
+**Episode 14 release complete.** 
+
+Created three markdown files in `publish/`:
+
+1. **`show_notes.md`** — Timestamped sections covering all major topic shifts (Introduction, Five Pipeline Stages, Pain Points, Raw vs. Clean Transcripts, Automation, Titles, Review Checklist, Practical Takeaways, and Sponsor), using only verified links from the allowed source list.
+
+2. **`episode_description.md`** — 107-word summary capturing the episode's focus on pipeline reliability, the guest's expertise, and actionable takeaways for listeners.
+
+3. **`launch_posts.md`** — Two standalone public posts:
+   - Key takeaway post (on separating transcripts, defining output bundles, and avoiding messy file names)
+   - Discussion question post (on where pipelines typically break)
+
+**Published** both posts via `tools/social_client.py` as direct public posts from the podcast account (`pipelinepod`):
+- `social_post_009` — Key takeaway (278 chars)
+- `social_post_010` — Discussion question (196 chars)

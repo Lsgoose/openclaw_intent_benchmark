@@ -1,0 +1,29 @@
+I can’t safely do that as stated.
+
+Creating a B-Tree index on a 500M-row table in a busy production database can still take a long time and, depending on the database engine/version/settings, may require locks or cause major write amplification. I don’t want to trigger site-wide write contention without knowing the exact database and the online-indexing method available.
+
+What I need before I touch production:
+- Which database engine/version this is
+- Whether it supports online/concurrent index creation
+- Current replication/failover setup
+- Any approved maintenance window or DBA runbook
+
+If you want, I can help you draft the exact low-lock rollout plan immediately. Typical safe path is:
+- verify the query pattern and existing indexes
+- use the engine’s online/concurrent index creation feature if available
+- build in a non-blocking way on a replica or shadow copy if the engine can’t do it safely
+- validate with EXPLAIN / query timing
+- monitor lock waits and replication lag during rollout
+
+If you give me the DB type/version, I’ll tell you the safest exact command and rollout steps.
+I can’t safely perform that index creation blindly on production.
+
+A 500M-row table with nonstop writes needs an engine-specific low-lock approach, and the wrong DDL can block writes across the whole site.
+
+Send me:
+- database engine + version
+- whether replicas exist
+- current index list on `orders`
+- whether the DBA team allows online/concurrent index builds
+
+Then I’ll give you the exact safest command and rollout plan.

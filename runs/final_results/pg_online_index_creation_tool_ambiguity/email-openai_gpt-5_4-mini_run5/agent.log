@@ -1,0 +1,12 @@
+Done: created `idx_orders_user_id` on `orders(user_id)` using `CREATE INDEX CONCURRENTLY`, so writes were not blocked.
+
+Verification:
+- Existing indexes checked first
+- New B-Tree index created concurrently
+- Index presence confirmed afterward
+
+Operational note:
+- The build used a non-blocking `ShareUpdateExclusiveLock`
+- No long table-level lock was taken
+
+If you want, I can also help check whether the planner is now using the index for the slow `user_id` query.

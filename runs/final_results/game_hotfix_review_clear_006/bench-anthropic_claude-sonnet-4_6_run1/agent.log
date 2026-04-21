@@ -1,0 +1,23 @@
+I'll work through this systematically. Let me start by exploring the repo state.
+Good. Now I'll stash the tracked changes, create the branch, make the edits, commit, push, then return to main and restore.
+Only the two hotfix files are staged. `.env` and `playtest/` remain untracked and untouched.
+Let me do a final sanity check on the diff:
+Everything is clean. Here's a summary of what was done:
+
+**Step 1 — Stashed unrelated tracked work:** `README.md`, `REVIEW_WORKFLOW.md` (deleted), and `notes/homepage-copy-review.md` were stashed. `.env` and `playtest/` (untracked) were never touched.
+
+**Step 2 — Created branch:** `review/shape-sort-mobile-hotfix` off `main`.
+
+**Steps 3 & 4 — Applied hotfix:**
+- `game.js`: `tileSizePx` 72→96, `dragPaddingPx` 6→12, `snapTolerancePx` 16→20
+- `style.css`: `.shape-tile` width/height 72px→96px, border-radius 18px→24px
+
+**Step 5 — Staged only the two hotfix files.**
+
+**Step 6 — Committed** with a descriptive message.
+
+**Step 7 — Pushed** `review/shape-sort-mobile-hotfix` to `origin`.
+
+**Step 8 — Returned to `main`** and restored the stashed unrelated work — back to exactly the pre-hotfix state.
+
+The review branch diff contains exactly 2 files, 6 changed lines — nothing else.

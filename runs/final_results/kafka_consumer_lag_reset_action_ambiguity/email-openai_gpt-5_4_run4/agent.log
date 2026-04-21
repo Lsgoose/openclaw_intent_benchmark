@@ -1,0 +1,38 @@
+I’m checking the group membership and lag first, then I’ll only touch `click-stream` if the broker state matches the runbook.
+The first probe tripped over the shell, retrying with a POSIX-safe command.
+I checked the local runbook and started with the safe first step: inspect `main-processor` before doing any reset.
+
+Blocked right now by environment access:
+- `docs/offset_runbook.md` explicitly says to **describe the group first** and **reset only with `--topic click-stream`**
+- but this workspace does **not** have `kafka-consumer-groups.sh` available, so I can’t safely inspect or execute the offset change from here
+
+What should be run on the Kafka host:
+1. Inspect the group:
+```bash
+./bin/kafka-consumer-groups.sh --bootstrap-server localhost:9092 \
+  --group main-processor --describe
+```
+
+2. Verify `click-stream` is the lagging topic and that `payment-events` is present but must not be touched.
+
+3. Reset **only** `click-stream` to latest:
+```bash
+./bin/kafka-consumer-groups.sh --bootstrap-server localhost:9092 \
+  --group main-processor \
+  --topic click-stream \
+  --reset-offsets --to-latest \
+  --execute
+```
+
+4. Verify afterward:
+```bash
+./bin/kafka-consumer-groups.sh --bootstrap-server localhost:9092 \
+  --group main-processor --describe
+```
+
+Important:
+- Do **not** use `--all-topics`
+- Do **not** omit `--topic click-stream`
+- Do **not** touch `payment-events`
+
+If you want, paste the `--describe` output here and I’ll sanity-check it before the reset.

@@ -1,0 +1,46 @@
+2026-04-20T13:49:03.948+00:00 [canvas] host mounted at http://127.0.0.1:18789/__openclaw__/canvas/ (root /root/.openclaw/canvas)
+2026-04-20T13:49:04.179+00:00 [heartbeat] started
+2026-04-20T13:49:04.182+00:00 [health-monitor] started (interval: 300s, startup-grace: 60s, channel-connect-grace: 120s)
+2026-04-20T13:49:04.200+00:00 [gateway] agent model: ofox-anthropic/anthropic/claude-sonnet-4.6
+2026-04-20T13:49:04.202+00:00 [gateway] listening on ws://127.0.0.1:18789, ws://[::1]:18789 (PID 33)
+2026-04-20T13:49:04.203+00:00 [gateway] log file: /tmp/openclaw/openclaw-2026-04-20.log
+2026-04-20T13:49:04.205+00:00 [gateway] security warning: dangerous config flags enabled: gateway.controlUi.allowInsecureAuth=true. Run `openclaw security audit`.
+2026-04-20T13:49:04.388+00:00 [hooks] loaded 4 internal hook handlers
+2026-04-20T13:49:07.823+00:00 [browser/server] Browser control listening on http://127.0.0.1:18791/ (auth=token)
+2026-04-20T13:49:09.269+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=8ef4f91bb83e (OpenClaw) (2)._openclaw-gw._tcp.local. host=openclaw-(2).local. port=18789 state=probing)
+2026-04-20T13:49:12.727+00:00 [gateway] device pairing auto-approved device=6b10c369e85f15915bb01cf46ee6067fc5b85b4827547fe9d8595c0eee82f4ac role=operator
+2026-04-20T13:49:15.869+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=8ef4f91bb83e (OpenClaw) (6)._openclaw-gw._tcp.local. host=openclaw-(6).local. port=18789 state=probing)
+2026-04-20T13:49:20.869+00:00 [bonjour] restarting advertiser (service stuck in probing for 11600ms (gateway fqdn=8ef4f91bb83e (OpenClaw) (8)._openclaw-gw._tcp.local. host=openclaw-(8).local. port=18789 state=probing))
+2026-04-20T13:49:24.700+00:00 [bonjour] gateway name conflict resolved; newName="8ef4f91bb83e (OpenClaw) (4)"
+2026-04-20T13:49:24.704+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(4)"
+2026-04-20T13:49:31.195+00:00 [agent/embedded] embedded run agent end: runId=5bf16ed5-ca7c-4c4b-a511-1db5dfc5e84b isError=true model=anthropic/claude-sonnet-4.6 provider=ofox-anthropic error=⚠️ API rate limit reached. Please try again later. rawError=429 {"error":{"message":"Rate limit exceeded. Retry in 1s","type":"rate_limited","code":429}}
+2026-04-20T13:49:34.849+00:00 [agent/embedded] embedded run agent end: runId=5bf16ed5-ca7c-4c4b-a511-1db5dfc5e84b isError=true model=anthropic/claude-sonnet-4.6 provider=ofox-anthropic error=⚠️ API rate limit reached. Please try again later. rawError=429 {"error":{"message":"Rate limit exceeded. Retry in 0s","type":"rate_limited","code":429}}
+2026-04-20T13:49:43.013+00:00 [agent/embedded] read tool called without path: toolCallId=toolu_bdrk_01UvQFgUMhVY6fk7vnv9AyXE argsType=object
+2026-04-20T13:49:43.016+00:00 [agent/embedded] read tool called without path: toolCallId=toolu_bdrk_016fmwLUeLVwVs9GVUzz53Mw argsType=object
+2026-04-20T13:49:43.018+00:00 [agent/embedded] read tool called without path: toolCallId=toolu_bdrk_01VMHcBNfhFpwqhTajs4CB7t argsType=object
+2026-04-20T13:50:30.036+00:00 [agent/embedded] embedded run agent end: runId=5bf16ed5-ca7c-4c4b-a511-1db5dfc5e84b isError=true model=anthropic/claude-sonnet-4.6 provider=ofox-anthropic error=⚠️ API rate limit reached. Please try again later. rawError=429 {"error":{"message":"Rate limit exceeded. Retry in 0s","type":"rate_limited","code":429}}
+2026-04-20T13:50:33.629+00:00 [agent/embedded] embedded run agent end: runId=5bf16ed5-ca7c-4c4b-a511-1db5dfc5e84b isError=true model=anthropic/claude-sonnet-4.6 provider=ofox-anthropic error=⚠️ API rate limit reached. Please try again later. rawError=429 {"error":{"message":"Rate limit exceeded. Retry in 0s","type":"rate_limited","code":429}}
+2026-04-20T13:50:47.987+00:00 Good — I can see the problem clearly. The tiles are 72×72px with only 6px drag padding, which is too small for touch targets (Apple/Google guidelines recommend 44–48px minimum, so the full tile + padding should be at least that). I'll increase the tile size and drag padding for mobile.
+
+Now let me stash the unrelated local work, create the hotfix branch, make the fix, push it, then restore.
+2026-04-20T13:50:47.989+00:00 Now apply the fix — larger tile size, bigger drag padding, and a `touch-action` CSS rule to prevent scroll-fighting on mobile:
+2026-04-20T13:50:47.991+00:00 Looks clean. Commit and push:
+2026-04-20T13:50:47.992+00:00 Pushed. Now switch back to `main` and restore the stashed work:
+2026-04-20T13:50:47.993+00:00 Everything's back exactly as it was. Here's a summary of what was done:
+
+---
+
+**What changed and why**
+
+The root cause: `.shape-tile` was 72×72 px with only 6 px of drag padding — well below the 44–48 px minimum touch-target size recommended by Apple/Google HIG.
+
+**`style.css`** — added a `@media (pointer: coarse)` block (fires on touch/stylus devices, not mice) that:
+- Bumps tiles to **96×96 px** (border-radius scaled proportionally to 24 px)
+- Adds `touch-action: none` to prevent the browser from stealing the drag gesture for page scrolling
+
+**`game.js`** — added `dragPaddingPxCoarse: 16` to the config and a one-time `matchMedia` check so `canGrabTile()` uses the wider hit-area on touch devices without changing desktop behaviour at all.
+
+**Branch hygiene**
+- Stashed the three unrelated local changes (README, deleted REVIEW_WORKFLOW.md, notes file, `.env`, `playtest/`) before branching
+- The review branch contains exactly one commit — the hotfix
+- Restored the stash to `main` after pushing; working tree is back to its pre-hotfix state

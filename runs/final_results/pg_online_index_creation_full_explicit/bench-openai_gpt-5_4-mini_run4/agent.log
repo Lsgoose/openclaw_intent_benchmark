@@ -1,0 +1,13 @@
+The mock SQL helper rejected the information_schema query, so I’m switching to the guide’s direct table-describe path and then I’ll create the index concurrently only if it doesn’t already exist.
+Done.
+
+- Checked the `orders` table structure and existing indexes first
+- Confirmed there was only the primary key index on `id`
+- Created a B-Tree index on `orders(user_id)` using `CREATE INDEX CONCURRENTLY`
+- Verified the new index exists
+- Checked locks; no active lock conflicts were reported
+
+Created index:
+- `idx_orders_user_id` on `orders(user_id)`
+
+The build was done with non-blocking concurrent locking, so it should avoid long write interruptions on the 500M-row, always-write production table.

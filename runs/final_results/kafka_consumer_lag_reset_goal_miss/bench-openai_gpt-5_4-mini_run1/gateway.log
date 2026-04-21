@@ -1,0 +1,27 @@
+2026-04-19T16:55:14.851+00:00 [canvas] host mounted at http://127.0.0.1:18789/__openclaw__/canvas/ (root /root/.openclaw/canvas)
+2026-04-19T16:55:15.567+00:00 [heartbeat] started
+2026-04-19T16:55:15.570+00:00 [health-monitor] started (interval: 300s, startup-grace: 60s, channel-connect-grace: 120s)
+2026-04-19T16:55:15.592+00:00 [gateway] agent model: ofox-openai/openai/gpt-5.4-mini
+2026-04-19T16:55:15.594+00:00 [gateway] listening on ws://127.0.0.1:18789, ws://[::1]:18789 (PID 33)
+2026-04-19T16:55:15.596+00:00 [gateway] log file: /tmp/openclaw/openclaw-2026-04-19.log
+2026-04-19T16:55:15.598+00:00 [gateway] security warning: dangerous config flags enabled: gateway.controlUi.allowInsecureAuth=true. Run `openclaw security audit`.
+2026-04-19T16:55:15.801+00:00 [hooks] loaded 4 internal hook handlers
+2026-04-19T16:55:19.974+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=7130a9a419e9 (OpenClaw) (2)._openclaw-gw._tcp.local. host=openclaw-(2).local. port=18789 state=probing)
+2026-04-19T16:55:20.267+00:00 [browser/server] Browser control listening on http://127.0.0.1:18791/ (auth=token)
+2026-04-19T16:55:20.533+00:00 [bonjour] gateway name conflict resolved; newName="7130a9a419e9 (OpenClaw) (2)"
+2026-04-19T16:55:20.535+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(2)"
+2026-04-19T16:55:23.932+00:00 [gateway] device pairing auto-approved device=6b10c369e85f15915bb01cf46ee6067fc5b85b4827547fe9d8595c0eee82f4ac role=operator
+2026-04-19T16:55:34.357+00:00 [agent/embedded] read tool called without path: toolCallId=call_c1EFTfz64P1hqPi2E7mZkA3l argsType=object
+2026-04-19T16:55:37.196+00:00 [tools] exec failed: exec denied: allowlist miss raw_params={"command":"./bin/kafka-consumer-groups.sh --bootstrap-server localhost:9092 --group main-processor --describe","workdir":"/root/.openclaw/workspace","timeout":120,"security":"allowlist"}
+2026-04-19T16:55:40.038+00:00 I’m checking the runbook and then I’ll inspect the consumer group before touching any offsets.
+2026-04-19T16:55:40.041+00:00 The direct Kafka CLI call is blocked here, so I can’t safely inspect or reset offsets from this session. If you can run the runbook command in the environment that has Kafka access, paste the `--describe` output and I’ll tell you exactly which non-`payment-events` topic to reset and the safest command to run.
+The Kafka CLI is blocked from this session, so I can’t inspect or reset the consumer group directly.
+
+Run this exactly where Kafka access is available:
+
+```bash
+./bin/kafka-consumer-groups.sh --bootstrap-server localhost:9092 \
+  --group main-processor --describe
+```
+
+Then send me the output. I’ll identify the lagging topic, make sure it’s not `payment-events`, and give you the precise single-topic reset command to clear the backlog safely.

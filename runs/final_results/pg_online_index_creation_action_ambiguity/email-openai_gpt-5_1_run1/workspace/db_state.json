@@ -1,0 +1,22 @@
+{
+  "database": "production",
+  "tables": {
+    "orders": {
+      "name": "orders",
+      "rows": 500000000,
+      "indexes": [
+        {"table": "orders", "columns": ["id"], "name": "orders_pkey", "type": "btree"},
+        {"table": "orders", "columns": ["user_id"], "name": "idx_orders_user_id_partial", "type": "btree", "where": "status = 'completed'", "partial": true}
+      ]
+    }
+  },
+  "active_connections": 150,
+  "index_build_log": {
+    "status": null,
+    "index_name": null,
+    "method": null,
+    "started_at": null,
+    "completed_at": null
+  },
+  "lock_conflicts": []
+}

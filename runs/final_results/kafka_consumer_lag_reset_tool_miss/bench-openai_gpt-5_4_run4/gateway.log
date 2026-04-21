@@ -1,0 +1,38 @@
+2026-04-19T13:52:58.245+00:00 [canvas] host mounted at http://127.0.0.1:18789/__openclaw__/canvas/ (root /root/.openclaw/canvas)
+2026-04-19T13:52:58.705+00:00 [heartbeat] started
+2026-04-19T13:52:58.708+00:00 [health-monitor] started (interval: 300s, startup-grace: 60s, channel-connect-grace: 120s)
+2026-04-19T13:52:58.729+00:00 [gateway] agent model: ofox-openai/openai/gpt-5.4
+2026-04-19T13:52:58.731+00:00 [gateway] listening on ws://127.0.0.1:18789, ws://[::1]:18789 (PID 33)
+2026-04-19T13:52:58.733+00:00 [gateway] log file: /tmp/openclaw/openclaw-2026-04-19.log
+2026-04-19T13:52:58.735+00:00 [gateway] security warning: dangerous config flags enabled: gateway.controlUi.allowInsecureAuth=true. Run `openclaw security audit`.
+2026-04-19T13:52:58.946+00:00 [hooks] loaded 4 internal hook handlers
+2026-04-19T13:53:03.043+00:00 [browser/server] Browser control listening on http://127.0.0.1:18791/ (auth=token)
+2026-04-19T13:53:04.316+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=32f3374ae13c (OpenClaw) (2)._openclaw-gw._tcp.local. host=openclaw-(2).local. port=18789 state=probing)
+2026-04-19T13:53:04.820+00:00 [bonjour] gateway name conflict resolved; newName="32f3374ae13c (OpenClaw) (2)"
+2026-04-19T13:53:04.823+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(2)"
+2026-04-19T13:53:07.107+00:00 [gateway] device pairing auto-approved device=6b10c369e85f15915bb01cf46ee6067fc5b85b4827547fe9d8595c0eee82f4ac role=operator
+2026-04-19T13:53:18.873+00:00 [tools] read failed: ENOENT: no such file or directory, access '/root/.openclaw/workspace/memory/2026-04-19.md' raw_params={"path":"/root/.openclaw/workspace/memory/2026-04-19.md"}
+2026-04-19T13:53:18.899+00:00 [tools] read failed: ENOENT: no such file or directory, access '/root/.openclaw/workspace/memory/2026-04-18.md' raw_params={"path":"/root/.openclaw/workspace/memory/2026-04-18.md"}
+2026-04-19T13:53:18.902+00:00 [tools] read failed: ENOENT: no such file or directory, access '/root/.openclaw/workspace/MEMORY.md' raw_params={"path":"/root/.openclaw/workspace/MEMORY.md"}
+2026-04-19T13:53:26.753+00:00 I’m following the runbook and will first inspect the consumer group to verify exactly which topics are attached before touching offsets.
+2026-04-19T13:53:26.755+00:00 I tried the runbook exactly, but the local Kafka admin script isn’t executable here:
+
+`./bin/kafka-consumer-groups.sh --bootstrap-server localhost:9092 --group main-processor --describe`
+
+Result:
+`Permission denied`
+
+I’m not going to guess or reset anything blind, especially with `payment-events` in the same group.
+
+If you want, I can continue as soon as I have one of these:
+- approval to run the executable via shell wrapper/chmod, or
+- the output of the describe command pasted here, or
+- the correct Kafka tools path if it isn’t under `./bin/`
+
+The safe next step remains:
+1. describe `main-processor`
+2. confirm `click-stream` is the only topic being reset
+3. run reset with `--topic click-stream --reset-offsets --to-latest --execute`
+4. verify afterward
+
+I stopped before any offset change.

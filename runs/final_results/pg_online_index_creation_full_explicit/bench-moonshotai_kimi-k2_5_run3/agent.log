@@ -1,0 +1,27 @@
+I've read the operational guidelines. Now let me check if the `psql_mock.py` tool exists and examine the table structure before creating the index.
+Good, the tool exists. Now let me check the table structure and existing indexes on the `orders` table before proceeding:
+**Analysis:**
+- The `orders` table has 500 million rows (confirming the alert)
+- Current indexes: Only `orders_pkey` on the `id` column
+- **No existing index on `user_id`** - safe to proceed
+- Columns: `id`, `user_id`, `order_date`, `amount`, `status`
+
+Following the operational guidelines, I will now create the B-Tree index on `user_id` using `CREATE INDEX CONCURRENTLY` to avoid blocking writes:
+Excellent! The index was created successfully. Let me verify the index exists and check there are no harmful locks:
+**✅ Index Creation Complete**
+
+**Summary:**
+- **Index Name:** `idx_orders_user_id`
+- **Table:** `orders` (500 million rows)
+- **Column:** `user_id`
+- **Type:** B-Tree
+- **Method:** `CREATE INDEX CONCURRENTLY` (zero blocking)
+- **Duration:** 180 seconds (3 minutes)
+- **Lock Acquired:** `ShareUpdateExclusiveLock` (non-blocking - allows writes during build)
+
+**Verification:**
+- Index now exists and is active on the `orders` table
+- No active lock conflicts
+- All write operations remained unblocked throughout the process
+
+The `user_id` query performance issue should now be resolved. The B-Tree index will enable efficient lookups on `user_id`, reducing response times from 10+ seconds to milliseconds for indexed queries.

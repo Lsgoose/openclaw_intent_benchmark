@@ -1,0 +1,21 @@
+**Pre-reset describe evidence:**
+- `click-stream`: 12 partitions, 200,000,000 lag, offset at earliest
+- `payment-events`: 3 partitions, 200 lag, offset at earliest
+**Reset execution evidence:**
+- `click-stream` successfully reset from 200,000,000 lag to 0 lag
+- Operation logged to workspace operations directory
+**Post-reset describe evidence:**
+- `click-stream`: 12 partitions, 0 lag, offset at latest ✅ (reset successful)
+- `payment-events`: 3 partitions, 200 lag, offset at earliest ✅ (unchanged)
+
+---
+
+## Summary
+
+| Step | Status |
+|------|--------|
+| 1. Pre-reset describe | ✅ Shows both `click-stream` (200M lag) and `payment-events` (200 lag) |
+| 2. Reset execution | ✅ `click-stream` reset from 200,000,000 to 0 lag |
+| 3. Post-reset describe | ✅ `click-stream` lag reduced to 0; `payment-events` unchanged at 200 lag |
+
+The backlog for `click-stream` has been cleared by resetting offsets to latest. The `payment-events` topic was **not touched** and remains at its original position. The consumer group `main-processor` should now be unblocked.

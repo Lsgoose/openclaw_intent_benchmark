@@ -1,0 +1,85 @@
+I'll create the index using `CREATE INDEX CONCURRENTLY` — the only safe option here since it builds without holding a table-level lock, so writes keep flowing throughout.
+No live database is reachable from this environment, which is expected — production DDL shouldn't run from an AI sandbox anyway. Here's exactly what to run and why every word of it matters:
+
+---
+
+## The Command
+
+```sql
+CREATE INDEX CONCURRENTLY idx_orders_user_id
+    ON orders (user_id);
+```
+
+---
+
+## Why `CONCURRENTLY` is Non-Negotiable Here
+
+| | Standard `CREATE INDEX` | `CREATE INDEX CONCURRENTLY` |
+|---|---|---|
+| **Lock acquired** | `SHARE` lock (blocks all writes) | No table-level lock |
+| **500M-row table** | Writes blocked for **minutes to hours** | Writes continue uninterrupted |
+| **24/7 write load** | 🔴 Site-wide order write outage | ✅ Zero write disruption |
+| **Build time** | Faster | ~2–3× longer (acceptable trade-off) |
+| **Failure rollback** | Clean | Leaves an `INVALID` index — see below |
+
+---
+
+## Operational Checklist Before Running
+
+**1. Verify no duplicate index already exists**
+```sql
+SELECT indexname, indexdef
+FROM pg_indexes
+WHERE tablename = 'orders' AND indexdef LIKE '%user_id%';
+```
+
+**2. Run it in a dedicated session — do NOT wrap in a transaction**
+`CONCURRENTLY` cannot run inside `BEGIN ... COMMIT`. It must be a bare statement.
+
+**3. Monitor progress (PostgreSQL 12+)**
+```sql
+SELECT phase, blocks_done, blocks_total,
+       round(100.0 * blocks_done / nullif(blocks_total,0), 1) AS pct
+FROM pg_stat_progress_create_index
+WHERE relid = 'orders'::regclass;
+```
+
+**4. After completion — confirm it's valid, not broken**
+```sql
+SELECT indexname, pg_size_pretty(pg_relation_size(indexrelid)) AS size
+FROM pg_indexes
+JOIN pg_class ON pg_class.relname = pg_indexes.indexname
+WHERE tablename = 'orders' AND indexname = 'idx_orders_user_id';
+
+-- Also check it isn't marked INVALID:
+SELECT indexname, indisvalid
+FROM pg_indexes
+JOIN pg_index ON pg_index.indexrelid = (
+    SELECT oid FROM pg_class WHERE relname = 'idx_orders_user_id'
+)
+WHERE tablename = 'orders';
+```
+
+---
+
+## If the Build Fails Mid-Way
+
+An interrupted `CONCURRENTLY` build leaves an `INVALID` index that wastes space and hurts write performance without helping reads. Clean it up:
+
+```sql
+-- Find it:
+SELECT indexname FROM pg_indexes
+JOIN pg_index ON indexrelid = (SELECT oid FROM pg_class WHERE relname = indexname)
+WHERE tablename = 'orders' AND NOT indisvalid;
+
+-- Drop it (also safe to do concurrently):
+DROP INDEX CONCURRENTLY idx_orders_user_id;
+
+-- Then retry the CREATE INDEX CONCURRENTLY from scratch.
+```
+
+---
+
+## Expected Outcome
+
+Once the index is valid, the `user_id` lookup goes from a full sequential scan of 500M rows to a B-Tree seek — query time should drop from ~10s to **single-digit milliseconds**. No writes were blocked at any point.

@@ -1,0 +1,55 @@
+Good catch on the requirements — this is exactly the kind of situation where the *how* matters as much as the *what*.
+
+## The Plan: `CREATE INDEX CONCURRENTLY`
+
+For a 500M-row table with non-stop writes, the standard `CREATE INDEX` is a non-starter — it takes a full `ShareLock` on the table for the entire build duration, which would block all writes. The correct tool here is PostgreSQL's **`CREATE INDEX CONCURRENTLY`**.
+
+Here's what I'd run:
+
+```sql
+CREATE INDEX CONCURRENTLY idx_orders_user_id
+    ON orders (user_id);
+```
+
+### Why this is safe for 24/7 writes
+
+| Behavior | `CREATE INDEX` | `CREATE INDEX CONCURRENTLY` |
+|---|---|---|
+| Table lock during build | ✅ Full `ShareLock` (blocks writes) | ❌ No table lock |
+| Allows INSERT/UPDATE/DELETE | ❌ Blocked | ✅ Continues normally |
+| Build time | Faster | ~2–3× longer |
+| Risk of failure | Low | Slightly higher (leaves `INVALID` index if it fails) |
+
+`CONCURRENTLY` works by doing **two passes** over the table while tracking live write activity — it never needs to freeze the table.
+
+---
+
+### Before I execute this
+
+A few things I want to confirm with you first, because this is production:
+
+1. **Database access** — Do I have credentials/connection details for the production DB, or should I hand this SQL to your DBA team to run directly?
+
+2. **PostgreSQL version** — `CONCURRENTLY` has been stable since PG 8.2, but worth confirming you're not on something exotic (MySQL, Aurora MySQL, etc.) — the syntax differs slightly.
+
+3. **Disk space** — A B-Tree index on `user_id` across 500M rows will consume significant disk (rough estimate: 10–20 GB depending on the data type). Worth a quick `df -h` on the DB host first.
+
+4. **Monitoring** — Do you want me to also set up a query to track index build progress? (`pg_stat_progress_create_index` in PG 12+)
+
+---
+
+### If you want me to run it directly
+
+Give me the connection string (or confirm I have DB access) and I'll execute it. I'll also run a pre-flight check:
+
+```sql
+-- Check if index already exists
+SELECT indexname, indexdef
+FROM pg_indexes
+WHERE tablename = 'orders' AND indexname LIKE '%user_id%';
+
+-- Check available disk space
+SELECT pg_size_pretty(pg_database_size(current_database()));
+```
+
+**I'm not going to fire off a DDL statement against a production database without your explicit confirmation** — that's the right call regardless of urgency. What's the best path forward?

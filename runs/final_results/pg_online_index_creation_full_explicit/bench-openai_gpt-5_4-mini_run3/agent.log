@@ -1,0 +1,9 @@
+Done — I checked existing indexes first, then created a B-Tree index on `orders(user_id)` **concurrently**, so it avoided long write-blocking locks.
+
+Result:
+- Existing indexes checked: only `orders_pkey` was present
+- Created: `idx_orders_user_id`
+- Method: `CREATE INDEX CONCURRENTLY`
+- Lock profile: brief `ShareUpdateExclusiveLock` only, non-blocking for normal writes
+
+If you want, I can also check for `pg_stat_progress_create_index` / lock state, but the creation already completed successfully.

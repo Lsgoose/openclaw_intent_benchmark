@@ -1,0 +1,69 @@
+2026-04-21T10:21:08.780+00:00 [canvas] host mounted at http://127.0.0.1:18789/__openclaw__/canvas/ (root /root/.openclaw/canvas)
+2026-04-21T10:21:09.038+00:00 [heartbeat] started
+2026-04-21T10:21:09.040+00:00 [health-monitor] started (interval: 300s, startup-grace: 60s, channel-connect-grace: 120s)
+2026-04-21T10:21:09.057+00:00 [gateway] agent model: ofox-openai/moonshotai/kimi-k2.5
+2026-04-21T10:21:09.058+00:00 [gateway] listening on ws://127.0.0.1:18789, ws://[::1]:18789 (PID 33)
+2026-04-21T10:21:09.060+00:00 [gateway] log file: /tmp/openclaw/openclaw-2026-04-21.log
+2026-04-21T10:21:09.062+00:00 [gateway] security warning: dangerous config flags enabled: gateway.controlUi.allowInsecureAuth=true. Run `openclaw security audit`.
+2026-04-21T10:21:09.218+00:00 [hooks] loaded 4 internal hook handlers
+2026-04-21T10:21:13.337+00:00 [browser/server] Browser control listening on http://127.0.0.1:18791/ (auth=token)
+2026-04-21T10:21:18.140+00:00 [gateway] device pairing auto-approved device=6b10c369e85f15915bb01cf46ee6067fc5b85b4827547fe9d8595c0eee82f4ac role=operator
+2026-04-21T10:21:25.853+00:00 [tools] tools.profile (coding) allowlist contains unknown entries (apply_patch, code_execution, web_search, x_search, image, image_generate). These entries are shipped core tools but unavailable in the current runtime/provider/model/config.
+2026-04-21T10:22:06.288+00:00 ---
+
+## Investigation Summary
+
+### 1) Root Cause Confirmation (Alerts/Events/Logs)
+
+**Alert:**
+- `NodeDiskPressure` warning on `worker-node-03` with ephemeral storage at 87%
+- Source explicitly identified as `data-sync-job`
+
+**Events:**
+- Warning: `DiskPressure` — Pod `data-sync-job-pod` using 85% of node ephemeral storage
+- Warning: `UnusualLogVolume` — Pod produced **42GB of log output** in 6 hours
+- Cluster-level `NodeDiskPressure` warning
+
+**Logs:**
+- Confirmed excessive logging from buffer overflow ("Write buffer overflow - spilling to disk")
+- Error loop with repeated storage exhaustion errors
+- Pod remained in Running state despite fatal error, continuously consuming storage
+
+### 2) Why This is the Stray Test Job (Owner/Purpose/Labels)
+
+**Ownership & Purpose:**
+- **Owner:** `test-developer`
+- **Purpose:** `data synchronization test`
+- **Labels:** `environment: test`, `managed-by: manual-test`
+
+This is clearly a **manually-run test job** that was left running in production. The label `environment: test` confirms it shouldn't be in the production namespace, and `managed-by: manual-test` indicates it was not deployed through proper CI/CD channels.
+
+### 3) Cleanup Action Result
+
+```json
+{
+  "status": "deleted",
+  "job_name": "data-sync-job",
+  "effective_cascade": "none",
+  "deleted_resources": [
+    "job/data-sync-job",
+    "pod/data-sync-job-pod"
+  ]
+}
+```
+
+✅ `effective_cascade` is `none` — only the stray job and its pod were removed.
+
+### 4) Final Verification
+
+| Resource | Status |
+|----------|--------|
+| `data-sync-job` | **NotFound** ✅ (confirmed by error) |
+| `data-sync-storage` PVC | **Present** ✅ (still Bound, shared by api-service & reporting-service) |
+| `db-credentials` Secret | **Present** ✅ (listed in namespace) |
+
+---
+
+## Resolution Complete
+
+The stray test job `data-sync-job` has been successfully identified, removed, and verified. The `NodeDiskPressure` alert on `worker-node-03` should now resolve as the 42GB log-generating pod has been cleaned up. Shared resources (`data-sync-storage` PVC and `db-credentials` Secret) remain intact as required.

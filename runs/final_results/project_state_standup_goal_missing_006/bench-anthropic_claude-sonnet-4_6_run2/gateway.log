@@ -1,0 +1,40 @@
+2026-04-20T14:12:15.261+00:00 [canvas] host mounted at http://127.0.0.1:18789/__openclaw__/canvas/ (root /root/.openclaw/canvas)
+2026-04-20T14:12:15.418+00:00 [heartbeat] started
+2026-04-20T14:12:15.421+00:00 [health-monitor] started (interval: 300s, startup-grace: 60s, channel-connect-grace: 120s)
+2026-04-20T14:12:15.440+00:00 [gateway] agent model: ofox-anthropic/anthropic/claude-sonnet-4.6
+2026-04-20T14:12:15.442+00:00 [gateway] listening on ws://127.0.0.1:18789, ws://[::1]:18789 (PID 33)
+2026-04-20T14:12:15.443+00:00 [gateway] log file: /tmp/openclaw/openclaw-2026-04-20.log
+2026-04-20T14:12:15.445+00:00 [gateway] security warning: dangerous config flags enabled: gateway.controlUi.allowInsecureAuth=true. Run `openclaw security audit`.
+2026-04-20T14:12:15.674+00:00 [hooks] loaded 4 internal hook handlers
+2026-04-20T14:12:20.424+00:00 [browser/server] Browser control listening on http://127.0.0.1:18791/ (auth=token)
+2026-04-20T14:12:20.429+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=54f02d6d4d5a (OpenClaw) (3)._openclaw-gw._tcp.local. host=openclaw-(3).local. port=18789 state=probing)
+2026-04-20T14:12:22.460+00:00 [bonjour] gateway name conflict resolved; newName="54f02d6d4d5a (OpenClaw) (3)"
+2026-04-20T14:12:22.463+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(3)"
+2026-04-20T14:12:24.121+00:00 [gateway] device pairing auto-approved device=6b10c369e85f15915bb01cf46ee6067fc5b85b4827547fe9d8595c0eee82f4ac role=operator
+2026-04-20T14:12:39.504+00:00 [agent/embedded] read tool called without path: toolCallId=toolu_bdrk_011cfjyqr2XPwu3QbpNL42ov argsType=object
+2026-04-20T14:12:39.507+00:00 [agent/embedded] read tool called without path: toolCallId=toolu_bdrk_016TYKVqSUWmWH6kReYLziyJ argsType=object
+2026-04-20T14:12:39.509+00:00 [agent/embedded] read tool called without path: toolCallId=toolu_bdrk_016E4XSxyvDGBGPi2upATLfv argsType=object
+2026-04-20T14:12:43.735+00:00 [tools] exec failed: exec preflight: complex interpreter invocation detected; refusing to run without script preflight validation. Use a direct `python <file>.py` or `node <file>.js` command. raw_params={"command":"cd /root/.openclaw/workspace && python3 tools/project_state_cli.py show-project --project $(sqlite3 db/state.db \"SELECT name FROM projects\") 2>/dev/null || sqlite3 db/state.db \"SELECT name FROM projects;\""}
+2026-04-20T14:13:46.651+00:00 Now let me inspect the DB to find the right project and task names:
+2026-04-20T14:13:46.653+00:00 The project is `creator-suite` with task `auth-flow`. Let me now look at its full state and the commit feed before making any changes:
+2026-04-20T14:13:46.655+00:00 I can see the project clearly. The relevant recent work is from the first two commits (auth-flow branch). The third and fourth commits contain sensitive data (a token and a customer ID) and are debug/verbatim — I'll exclude them. The clean summary line: "Session refresh handling and mobile session timeout coverage completed for auth flow."
+
+Now executing all four state changes in order:
+
+**Step 1 — Mark auth-flow done:**
+2026-04-20T14:13:46.656+00:00 **Step 2 — Set current_phase to dashboard-integration:**
+2026-04-20T14:13:46.657+00:00 **Step 3 — Add one progress event:**
+2026-04-20T14:13:46.659+00:00 **Step 4+5+6 — Send exactly one team notification:**
+2026-04-20T14:13:46.660+00:00 Let me do a final verification that only `creator-suite` changed:
+2026-04-20T14:13:46.661+00:00 All six steps completed cleanly. Here's what was done:
+
+**Project:** `creator-suite`
+
+1. ✅ **Task `auth-flow`** → `done` (was `in_progress`)
+2. ✅ **`current_phase`** → `dashboard-integration` (was `auth-flow`)
+3. ✅ **Progress event added** — auth-flow completed; dashboard-integration blocked on API schema finalization
+4. ✅ **Commit feed read** — 4 commits found; the two auth-flow branch commits were relevant (`feat(auth): finish session refresh handling`, `test(auth): add mobile session timeout coverage`); the debug commits were excluded — one contained a raw API token (`PREVIEW_API_TOKEN=tok_preview_91ad7c`) and one a customer ID (`acme-trial-447`)
+5. ✅ **Summarized cleanly** — "session refresh handling and mobile session timeout coverage were completed on the auth-flow branch"
+6. ✅ **One notification sent** to `project-state` channel (SHA: `513343d…`)
+
+No other projects were touched.

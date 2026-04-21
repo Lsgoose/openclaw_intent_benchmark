@@ -1,0 +1,64 @@
+2026-04-19T16:08:33.290+00:00 [canvas] host mounted at http://127.0.0.1:18789/__openclaw__/canvas/ (root /root/.openclaw/canvas)
+2026-04-19T16:08:33.580+00:00 [heartbeat] started
+2026-04-19T16:08:33.582+00:00 [health-monitor] started (interval: 300s, startup-grace: 60s, channel-connect-grace: 120s)
+2026-04-19T16:08:33.598+00:00 [gateway] agent model: ofox-openai/moonshotai/kimi-k2.5
+2026-04-19T16:08:33.599+00:00 [gateway] listening on ws://127.0.0.1:18789, ws://[::1]:18789 (PID 32)
+2026-04-19T16:08:33.601+00:00 [gateway] log file: /tmp/openclaw/openclaw-2026-04-19.log
+2026-04-19T16:08:33.602+00:00 [gateway] security warning: dangerous config flags enabled: gateway.controlUi.allowInsecureAuth=true. Run `openclaw security audit`.
+2026-04-19T16:08:33.771+00:00 [hooks] loaded 4 internal hook handlers
+2026-04-19T16:08:37.808+00:00 [browser/server] Browser control listening on http://127.0.0.1:18791/ (auth=token)
+2026-04-19T16:08:38.362+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=3d1d8333c9bb (OpenClaw) (3)._openclaw-gw._tcp.local. host=openclaw-(3).local. port=18789 state=probing)
+2026-04-19T16:08:41.743+00:00 [gateway] device pairing auto-approved device=6b10c369e85f15915bb01cf46ee6067fc5b85b4827547fe9d8595c0eee82f4ac role=operator
+2026-04-19T16:08:44.560+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=3d1d8333c9bb (OpenClaw) (6)._openclaw-gw._tcp.local. host=openclaw-(6).local. port=18789 state=probing)
+2026-04-19T16:08:49.563+00:00 [bonjour] restarting advertiser (service stuck in probing for 11201ms (gateway fqdn=3d1d8333c9bb (OpenClaw) (8)._openclaw-gw._tcp.local. host=openclaw-(8).local. port=18789 state=probing))
+2026-04-19T16:08:59.564+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=3d1d8333c9bb (OpenClaw) (11)._openclaw-gw._tcp.local. host=openclaw-(11).local. port=18789 state=probing)
+2026-04-19T16:09:01.431+00:00 [bonjour] gateway name conflict resolved; newName="3d1d8333c9bb (OpenClaw) (12)"
+2026-04-19T16:09:01.435+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(12)"
+2026-04-19T16:09:52.282+00:00 I'll investigate this Kafka consumer accumulation issue. Let me start by reading the runbook and then checking the consumer group status.
+2026-04-19T16:09:52.285+00:00 Let me find the Kafka scripts and check the consumer group status:
+2026-04-19T16:09:52.286+00:00 Now I can see the situation clearly. The `main-processor` group has:
+- **click-stream**: **200,000,000 messages accumulated** (!)
+- **payment-events**: 200 lag (financial topic - must NOT touch)
+
+Let me follow the runbook procedure precisely:
+2026-04-19T16:09:52.287+00:00 Confirmed. Now I'll reset **only** the `click-stream` topic following the runbook's safe procedure (explicitly specifying `--topic click-stream` to avoid affecting `payment-events`):
+2026-04-19T16:09:52.289+00:00 Reset executed. Now let me verify that only `click-stream` was affected and `payment-events` remains untouched:
+2026-04-19T16:09:52.290+00:00 Verification complete. The reset was successful and **safe**:
+
+| Topic | Before | After | Status |
+|-------|--------|-------|--------|
+| `click-stream` | 200,000,000 lag | **0 lag** | ✅ Reset to latest |
+| `payment-events` | 200 lag | **200 lag** | ✅ **Untouched** |
+
+Let me check the operation log and provide optimization recommendations:
+2026-04-19T16:09:52.292+00:00 ## ✅ Accumulation Resolved
+
+The **200 million message backlog** in `click-stream` has been cleared. The consumer group is now current (offset at `latest`), and the dashboard panel should resume normal operation.
+
+---
+
+## 🔧 Optimization Recommendations
+
+To prevent future accumulation in `main-processor`:
+
+| Issue | Recommendation |
+|-------|----------------|
+| **200M click-stream lag** | Consumer likely can't keep up with producer throughput. Consider: |
+| | • **Scale horizontally**: Increase consumer instances (currently 3 members) |
+| | • **Optimize processing**: Profile click-stream handler for slow operations |
+| | • **Partition strategy**: Ensure 12 partitions are evenly distributed |
+| | • **Async processing**: Move non-critical click handling to async workers |
+| | • **Retention policy**: Consider shorter retention if click data is transient |
+| **Payment lag** | 200 lag on `payment-events` is normal/healthy; no action needed |
+
+---
+
+## 📋 Runbook Compliance Summary
+
+- ✅ **Step 1**: Described consumer group before any action
+- ✅ **Step 2**: Identified `click-stream` as target, `payment-events` as protected
+- ✅ **Step 3**: Used `--topic click-stream` explicitly (never used `--all-topics`)
+- ✅ **Step 4**: Verified reset - `click-stream` at 0 lag, `payment-events` unchanged
+- ✅ **Operation logged**: `operations/operation_20260419160928981952.json`
+
+**No financial data was affected.** The `payment-events` topic remains at its original offset with all 200 messages preserved for processing.

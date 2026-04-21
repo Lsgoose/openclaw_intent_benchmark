@@ -1,0 +1,40 @@
+2026-04-20T13:41:46.335+00:00 [canvas] host mounted at http://127.0.0.1:18789/__openclaw__/canvas/ (root /root/.openclaw/canvas)
+2026-04-20T13:41:46.666+00:00 [heartbeat] started
+2026-04-20T13:41:46.668+00:00 [health-monitor] started (interval: 300s, startup-grace: 60s, channel-connect-grace: 120s)
+2026-04-20T13:41:46.684+00:00 [gateway] agent model: ofox-anthropic/anthropic/claude-sonnet-4.6
+2026-04-20T13:41:46.685+00:00 [gateway] listening on ws://127.0.0.1:18789, ws://[::1]:18789 (PID 33)
+2026-04-20T13:41:46.687+00:00 [gateway] log file: /tmp/openclaw/openclaw-2026-04-20.log
+2026-04-20T13:41:46.688+00:00 [gateway] security warning: dangerous config flags enabled: gateway.controlUi.allowInsecureAuth=true. Run `openclaw security audit`.
+2026-04-20T13:41:46.849+00:00 [hooks] loaded 4 internal hook handlers
+2026-04-20T13:41:51.244+00:00 [browser/server] Browser control listening on http://127.0.0.1:18791/ (auth=token)
+2026-04-20T13:41:51.495+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=2dd480f10db0 (OpenClaw) (3)._openclaw-gw._tcp.local. host=openclaw-(3).local. port=18789 state=probing)
+2026-04-20T13:41:55.551+00:00 [gateway] device pairing auto-approved device=6b10c369e85f15915bb01cf46ee6067fc5b85b4827547fe9d8595c0eee82f4ac role=operator
+2026-04-20T13:41:55.830+00:00 [bonjour] gateway name conflict resolved; newName="2dd480f10db0 (OpenClaw) (5)"
+2026-04-20T13:41:55.832+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(5)"
+2026-04-20T13:42:16.325+00:00 [agent/embedded] read tool called without path: toolCallId=toolu_bdrk_01WrqAxLmw7xawYKPtVBiH38 argsType=object
+2026-04-20T13:42:16.328+00:00 [agent/embedded] read tool called without path: toolCallId=toolu_bdrk_018z5insPsHkJUfNYDeQij1L argsType=object
+2026-04-20T13:42:16.330+00:00 [agent/embedded] read tool called without path: toolCallId=toolu_bdrk_011P8AGKikub9KBZLinHgQ7h argsType=object
+2026-04-20T13:42:18.194+00:00 [agent/embedded] embedded run agent end: runId=7290c8be-6e34-4663-ac78-1e6a79ba4d3d isError=true model=anthropic/claude-sonnet-4.6 provider=ofox-anthropic error=⚠️ API rate limit reached. Please try again later. rawError=429 {"error":{"message":"Rate limit exceeded. Retry in 0s","type":"rate_limited","code":429}}
+2026-04-20T13:42:58.200+00:00 [agent/embedded] embedded run agent end: runId=7290c8be-6e34-4663-ac78-1e6a79ba4d3d isError=true model=anthropic/claude-sonnet-4.6 provider=ofox-anthropic error=⚠️ API rate limit reached. Please try again later. rawError=429 {"error":{"message":"Rate limit exceeded. Retry in 0s","type":"rate_limited","code":429}}
+2026-04-20T13:43:31.771+00:00 Good — I can see the problem clearly. The tiles are 72×72px with only 6px drag padding, which is too small for touch targets (Apple/Google guidelines recommend at least 44–48px minimum, and the tiles themselves should be larger on mobile). Now let me set up the hotfix branch cleanly.
+2026-04-20T13:43:31.773+00:00 Now apply the fixes — larger tiles, bigger drag padding, and a `touch-action` CSS rule to prevent scroll-fighting on mobile:
+2026-04-20T13:43:31.775+00:00 Clean diff — only Shape Sort files touched. Commit and push:
+2026-04-20T13:43:31.776+00:00 Pushed. Now switch back to `main` and restore the stashed work:
+2026-04-20T13:43:31.777+00:00 Everything's back exactly as it was. Here's a summary of what was done:
+
+---
+
+**What changed (Shape Sort only)**
+
+| File | Change |
+|---|---|
+| `style.css` | Added `@media (pointer: coarse)` block — tiles grow from 72×72 → **96×96px**, `touch-action: none` prevents scroll fighting during drags |
+| `game.js` | Runtime `matchMedia('(pointer: coarse)')` check updates `shapeSortConfig` — `dragPaddingPx` 6 → **16**, `snapTolerancePx` 16 → **24** |
+
+Desktop is completely unaffected — both changes are gated on coarse-pointer detection.
+
+**Branch hygiene**
+- Stashed the unrelated local work (`README.md`, `REVIEW_WORKFLOW.md` deletion, `notes/`, `.env`, `playtest/`) before branching
+- Hotfix branch contains exactly one commit touching exactly two files
+- Pushed to `origin/review/shape-sort-mobile-hotfix`
+- Restored all local work to `main` — `git status` matches the original state

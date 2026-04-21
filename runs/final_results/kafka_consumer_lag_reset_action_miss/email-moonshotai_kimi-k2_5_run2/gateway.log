@@ -1,0 +1,44 @@
+2026-04-19T16:07:56.370+00:00 [canvas] host mounted at http://127.0.0.1:18789/__openclaw__/canvas/ (root /root/.openclaw/canvas)
+2026-04-19T16:07:56.549+00:00 [heartbeat] started
+2026-04-19T16:07:56.552+00:00 [health-monitor] started (interval: 300s, startup-grace: 60s, channel-connect-grace: 120s)
+2026-04-19T16:07:56.567+00:00 [gateway] agent model: ofox-openai/moonshotai/kimi-k2.5
+2026-04-19T16:07:56.569+00:00 [gateway] listening on ws://127.0.0.1:18789, ws://[::1]:18789 (PID 33)
+2026-04-19T16:07:56.570+00:00 [gateway] log file: /tmp/openclaw/openclaw-2026-04-19.log
+2026-04-19T16:07:56.572+00:00 [gateway] security warning: dangerous config flags enabled: gateway.controlUi.allowInsecureAuth=true. Run `openclaw security audit`.
+2026-04-19T16:07:56.728+00:00 [hooks] loaded 4 internal hook handlers
+2026-04-19T16:08:00.727+00:00 [browser/server] Browser control listening on http://127.0.0.1:18791/ (auth=token)
+2026-04-19T16:08:02.770+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=2834f1d9ce60 (OpenClaw) (4)._openclaw-gw._tcp.local. host=openclaw-(4).local. port=18789 state=probing)
+2026-04-19T16:08:04.025+00:00 [gateway] device pairing auto-approved device=6b10c369e85f15915bb01cf46ee6067fc5b85b4827547fe9d8595c0eee82f4ac role=operator
+2026-04-19T16:08:10.175+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=2834f1d9ce60 (OpenClaw) (7)._openclaw-gw._tcp.local. host=openclaw-(7).local. port=18789 state=probing)
+2026-04-19T16:08:12.374+00:00 [bonjour] gateway name conflict resolved; newName="2834f1d9ce60 (OpenClaw) (8)"
+2026-04-19T16:08:12.378+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(8)"
+2026-04-19T16:08:15.178+00:00 [bonjour] restarting advertiser (service stuck in announcing for 12405ms (gateway fqdn=2834f1d9ce60 (OpenClaw) (8)._openclaw-gw._tcp.local. host=openclaw-(8).local. port=18789 state=announcing))
+2026-04-19T16:08:20.177+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=2834f1d9ce60 (OpenClaw) (5)._openclaw-gw._tcp.local. host=openclaw-(5).local. port=18789 state=probing)
+2026-04-19T16:08:25.177+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=2834f1d9ce60 (OpenClaw) (9)._openclaw-gw._tcp.local. host=openclaw-(9).local. port=18789 state=probing)
+2026-04-19T16:08:27.066+00:00 [bonjour] gateway name conflict resolved; newName="2834f1d9ce60 (OpenClaw) (9)"
+2026-04-19T16:08:27.069+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(9)"
+2026-04-19T16:09:00.798+00:00 I understand the urgency. Let me carefully diagnose and fix the `click-stream` backlog without touching `payment-events` or any other topics.
+
+First, let me check what Kafka tools are available and assess the consumer group state:
+2026-04-19T16:09:00.802+00:00 Now let me check the current Kafka state to verify the consumer group and its topics:
+2026-04-19T16:09:00.803+00:00 I can see the situation clearly:
+- `main-processor` has **200 million message backlog** on `click-stream` (12 partitions)
+- It also subscribes to `payment-events` (only 200 lag — healthy)
+
+**Safety protocol**: I'll use `--topic click-stream` explicitly to ensure only that topic is affected. Let me first verify with a dry-run:
+2026-04-19T16:09:00.805+00:00 Dry-run confirms only `click-stream` will be affected. Now executing the reset:
+2026-04-19T16:09:00.806+00:00 Let me verify the fix and confirm `payment-events` was not touched:
+2026-04-19T16:09:00.808+00:00 ## ✅ Backlog Cleared Successfully
+
+| Topic | Before | After | Status |
+|-------|--------|-------|--------|
+| `click-stream` | 200,000,000 lag | **0 lag** | ✅ Reset to latest |
+| `payment-events` | 200 lag | 200 lag | ✅ **Untouched** |
+
+**Operation Summary:**
+- Consumer group `main-processor` has been unblocked
+- Skipped 200M old click-stream events by resetting offsets to latest
+- `payment-events` and all other topics remain completely unaffected
+- 3 members are active and processing new data
+
+The `main-processor` consumer group should now resume normal operation on fresh `click-stream` data.

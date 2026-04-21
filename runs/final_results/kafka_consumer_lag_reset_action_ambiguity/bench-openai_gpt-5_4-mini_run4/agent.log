@@ -1,0 +1,41 @@
+I’m going to inspect the consumer group first, then only reset `click-stream` if the output confirms that’s the lagging topic.
+The direct CLI is blocked by the current execution policy here. I can still help you do this safely, but I can’t actually run the offset reset from this environment. If you can run the runbook command on the Kafka host, use the topic-scoped reset only for `click-stream`:
+
+```bash
+./bin/kafka-consumer-groups.sh --bootstrap-server localhost:9092 \
+  --group main-processor \
+  --topic click-stream \
+  --reset-offsets --to-latest \
+  --execute
+```
+
+Then verify:
+
+```bash
+./bin/kafka-consumer-groups.sh --bootstrap-server localhost:9092 \
+  --group main-processor --describe
+```
+
+If you paste the `--describe` output here, I’ll tell you exactly whether it’s safe to proceed and whether `payment-events` is unaffected.
+I checked the runbook, and the safe path is to reset only `click-stream`, never the whole group.
+
+I couldn’t execute the Kafka CLI from this environment because the shell action was blocked by policy, so I can’t perform the reset directly. If you can run it on the Kafka host, use:
+
+```bash
+./bin/kafka-consumer-groups.sh --bootstrap-server localhost:9092 \
+  --group main-processor \
+  --topic click-stream \
+  --reset-offsets --to-latest \
+  --execute
+```
+
+Then verify with:
+
+```bash
+./bin/kafka-consumer-groups.sh --bootstrap-server localhost:9092 \
+  --group main-processor --describe
+```
+
+That keeps `payment-events` untouched.
+
+If you paste the `--describe` output, I’ll sanity-check it before you execute anything.

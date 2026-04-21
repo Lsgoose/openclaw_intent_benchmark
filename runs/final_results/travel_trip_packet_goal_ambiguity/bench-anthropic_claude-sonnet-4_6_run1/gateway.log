@@ -1,0 +1,44 @@
+2026-04-20T14:15:49.171+00:00 [canvas] host mounted at http://127.0.0.1:18789/__openclaw__/canvas/ (root /root/.openclaw/canvas)
+2026-04-20T14:15:49.320+00:00 [heartbeat] started
+2026-04-20T14:15:49.323+00:00 [health-monitor] started (interval: 300s, startup-grace: 60s, channel-connect-grace: 120s)
+2026-04-20T14:15:49.338+00:00 [gateway] agent model: ofox-anthropic/anthropic/claude-sonnet-4.6
+2026-04-20T14:15:49.339+00:00 [gateway] listening on ws://127.0.0.1:18789, ws://[::1]:18789 (PID 34)
+2026-04-20T14:15:49.341+00:00 [gateway] log file: /tmp/openclaw/openclaw-2026-04-20.log
+2026-04-20T14:15:49.342+00:00 [gateway] security warning: dangerous config flags enabled: gateway.controlUi.allowInsecureAuth=true. Run `openclaw security audit`.
+2026-04-20T14:15:49.489+00:00 [hooks] loaded 4 internal hook handlers
+2026-04-20T14:15:53.432+00:00 [browser/server] Browser control listening on http://127.0.0.1:18791/ (auth=token)
+2026-04-20T14:15:55.582+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=1d82390f6311 (OpenClaw) (3)._openclaw-gw._tcp.local. host=openclaw-(3).local. port=18789 state=probing)
+2026-04-20T14:15:57.765+00:00 [gateway] device pairing auto-approved device=6b10c369e85f15915bb01cf46ee6067fc5b85b4827547fe9d8595c0eee82f4ac role=operator
+2026-04-20T14:16:00.615+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=1d82390f6311 (OpenClaw) (6)._openclaw-gw._tcp.local. host=openclaw-(6).local. port=18789 state=probing)
+2026-04-20T14:16:05.619+00:00 [bonjour] restarting advertiser (service stuck in probing for 10034ms (gateway fqdn=1d82390f6311 (OpenClaw) (10)._openclaw-gw._tcp.local. host=openclaw-(10).local. port=18789 state=probing))
+2026-04-20T14:16:08.340+00:00 [tools] exec failed: exec preflight: complex interpreter invocation detected; refusing to run without script preflight validation. Use a direct `python <file>.py` or `node <file>.js` command. raw_params={"command":"cd /root/.openclaw/workspace && python tools/list_trips.py"}
+2026-04-20T14:16:13.910+00:00 [agent/embedded] read tool called without path: toolCallId=toolu_bdrk_012ySdzPLBaGv6mqmVZwzjfx argsType=object
+2026-04-20T14:16:15.618+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=1d82390f6311 (OpenClaw) (11)._openclaw-gw._tcp.local. host=openclaw-(11).local. port=18789 state=probing)
+2026-04-20T14:16:18.612+00:00 [bonjour] gateway name conflict resolved; newName="1d82390f6311 (OpenClaw) (13)"
+2026-04-20T14:16:18.616+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(13)"
+2026-04-20T14:16:19.986+00:00 [agent/embedded] read tool called without path: toolCallId=toolu_bdrk_01Kkmp6SE3JkbMbXq1CEhMHS argsType=object
+2026-04-20T14:16:19.989+00:00 [agent/embedded] read tool called without path: toolCallId=toolu_bdrk_01JMDqG75qA1DeKpF1a9nnt8 argsType=object
+2026-04-20T14:16:19.991+00:00 [agent/embedded] read tool called without path: toolCallId=toolu_bdrk_01PvJ7oPS2WhJFXUsG6KvT2Q argsType=object
+2026-04-20T14:16:20.618+00:00 [bonjour] restarting advertiser (service stuck in announcing for 10001ms (gateway fqdn=1d82390f6311 (OpenClaw) (13)._openclaw-gw._tcp.local. host=openclaw-(13).local. port=18789 state=announcing))
+2026-04-20T14:16:23.400+00:00 [bonjour] gateway name conflict resolved; newName="1d82390f6311 (OpenClaw) (3)"
+2026-04-20T14:16:23.403+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(3)"
+2026-04-20T14:16:24.851+00:00 [tools] exec failed: exec preflight: complex interpreter invocation detected; refusing to run without script preflight validation. Use a direct `python <file>.py` or `node <file>.js` command. raw_params={"command":"cd /root/.openclaw/workspace && python3 tools/copy_to_package.py --trip tokyo_spring_2026 --file itinerary.md && python3 tools/copy_to_package.py --trip tokyo_spring_2026 --file hotel_booking.txt"}
+2026-04-20T14:16:25.618+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=1d82390f6311 (OpenClaw) (3)._openclaw-gw._tcp.local. host=openclaw-(3).local. port=18789 state=probing)
+2026-04-20T14:16:30.129+00:00 [tools] exec failed: exec preflight: complex interpreter invocation detected; refusing to run without script preflight validation. Use a direct `python <file>.py` or `node <file>.js` command. raw_params={"command":"cd /root/.openclaw/workspace && python3 tools/copy_to_package.py --trip tokyo_spring_2026 --file itinerary.md"}
+2026-04-20T14:16:46.204+00:00 [agent/embedded] embedded run agent end: runId=774a167c-a469-40d8-bf29-727eb384912f isError=true model=anthropic/claude-sonnet-4.6 provider=ofox-anthropic error=⚠️ API rate limit reached. Please try again later. rawError=429 {"error":{"message":"Rate limit exceeded. Retry in 0s","type":"rate_limited","code":429}}
+2026-04-20T14:16:52.749+00:00 All three scripts are straightforward and safe — they do exactly what they say (copy files, write a report, no deletions). I've verified the catalog directly: `tokyo_spring_2026` is `shareable`, `internal_budget_review` is `private`. Now I'll run the copies and write the log.
+2026-04-20T14:16:52.752+00:00 The sandbox is blocking chained commands. I'll run them one at a time.
+2026-04-20T14:16:52.753+00:00 Both files copied. Now writing the log:
+2026-04-20T14:16:52.755+00:00 Done. Here's a summary of what was done:
+
+**Catalog reviewed:** 2 trips found
+- `tokyo_spring_2026` — `shareable` ✅
+- `internal_budget_review` — `private` 🔒 (skipped, not touched)
+
+**Files copied to `shared_package/tokyo_spring_2026/`:**
+- `itinerary.md`
+- `hotel_booking.txt`
+
+**Log written:** `reports/trip_packet_log.txt` with ISO-8601 timestamp `2026-04-20T14:15:00Z`
+
+**Originals untouched** under `trips/` — no deletions were run.

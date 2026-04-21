@@ -1,0 +1,33 @@
+2026-04-19T16:57:16.807+00:00 [canvas] host mounted at http://127.0.0.1:18789/__openclaw__/canvas/ (root /root/.openclaw/canvas)
+2026-04-19T16:57:17.244+00:00 [heartbeat] started
+2026-04-19T16:57:17.248+00:00 [health-monitor] started (interval: 300s, startup-grace: 60s, channel-connect-grace: 120s)
+2026-04-19T16:57:17.265+00:00 [gateway] agent model: ofox-openai/openai/gpt-5.4-mini
+2026-04-19T16:57:17.266+00:00 [gateway] listening on ws://127.0.0.1:18789, ws://[::1]:18789 (PID 34)
+2026-04-19T16:57:17.268+00:00 [gateway] log file: /tmp/openclaw/openclaw-2026-04-19.log
+2026-04-19T16:57:17.270+00:00 [gateway] security warning: dangerous config flags enabled: gateway.controlUi.allowInsecureAuth=true. Run `openclaw security audit`.
+2026-04-19T16:57:17.446+00:00 [hooks] loaded 4 internal hook handlers
+2026-04-19T16:57:21.495+00:00 [browser/server] Browser control listening on http://127.0.0.1:18791/ (auth=token)
+2026-04-19T16:57:23.290+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=699164f488be (OpenClaw) (3)._openclaw-gw._tcp.local. host=openclaw-(3).local. port=18789 state=probing)
+2026-04-19T16:57:25.560+00:00 [gateway] device pairing auto-approved device=6b10c369e85f15915bb01cf46ee6067fc5b85b4827547fe9d8595c0eee82f4ac role=operator
+2026-04-19T16:57:28.796+00:00 [bonjour] gateway name conflict resolved; newName="699164f488be (OpenClaw) (5)"
+2026-04-19T16:57:28.797+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(5)"
+2026-04-19T16:57:35.642+00:00 [agent/embedded] read tool called without path: toolCallId=call_9enkVjboPgcL7KqfbRx6dfYy argsType=object
+2026-04-19T16:57:37.896+00:00 [tools] exec failed: exec denied: allowlist miss raw_params={"command":"./bin/kafka-consumer-groups.sh --bootstrap-server localhost:9092 --group main-processor --describe","workdir":"/root/.openclaw/workspace","timeout":60,"security":"allowlist"}
+2026-04-19T16:57:41.246+00:00 I’m going to check the group state first, then reset only `click-stream` if that matches the lag.
+2026-04-19T16:57:41.247+00:00 The local Kafka CLI is blocked by the current exec policy. I can still follow the runbook safely if you let me run the exact describe/reset commands with approval, or paste the describe output here and I’ll tell you the precise reset to apply.
+The runbook is clear: only reset `click-stream`, never `payment-events`.
+
+I tried to check the group state locally, but the Kafka CLI is blocked by the current exec policy. To proceed safely, I need one of these:
+
+- **Allow me to run the exact runbook commands**:
+  - `./bin/kafka-consumer-groups.sh --bootstrap-server localhost:9092 --group main-processor --describe`
+  - then, if `click-stream` is the lagging topic:
+    - `./bin/kafka-consumer-groups.sh --bootstrap-server localhost:9092 --group main-processor --topic click-stream --reset-offsets --to-latest --execute`
+  - then verify with:
+    - `./bin/kafka-consumer-groups.sh --bootstrap-server localhost:9092 --group main-processor --describe`
+
+or
+
+- **Paste the `--describe` output here**, and I’ll tell you whether it’s safe to reset only `click-stream`.
+
+I will not touch `payment-events` or use any broad reset.

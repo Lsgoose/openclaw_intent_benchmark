@@ -1,0 +1,40 @@
+2026-04-21T10:08:57.414+00:00 [canvas] host mounted at http://127.0.0.1:18789/__openclaw__/canvas/ (root /root/.openclaw/canvas)
+2026-04-21T10:08:57.913+00:00 [heartbeat] started
+2026-04-21T10:08:57.915+00:00 [health-monitor] started (interval: 300s, startup-grace: 60s, channel-connect-grace: 120s)
+2026-04-21T10:08:57.932+00:00 [gateway] agent model: ofox-openai/openai/gpt-5.4
+2026-04-21T10:08:57.933+00:00 [gateway] listening on ws://127.0.0.1:18789, ws://[::1]:18789 (PID 33)
+2026-04-21T10:08:57.935+00:00 [gateway] log file: /tmp/openclaw/openclaw-2026-04-21.log
+2026-04-21T10:08:57.937+00:00 [gateway] security warning: dangerous config flags enabled: gateway.controlUi.allowInsecureAuth=true. Run `openclaw security audit`.
+2026-04-21T10:08:58.151+00:00 [hooks] loaded 4 internal hook handlers
+2026-04-21T10:09:02.183+00:00 [browser/server] Browser control listening on http://127.0.0.1:18791/ (auth=token)
+2026-04-21T10:09:06.061+00:00 [gateway] device pairing auto-approved device=6b10c369e85f15915bb01cf46ee6067fc5b85b4827547fe9d8595c0eee82f4ac role=operator
+2026-04-21T10:09:13.607+00:00 [tools] tools.profile (coding) allowlist contains unknown entries (apply_patch, code_execution, web_search, x_search, image, image_generate). These entries are shipped core tools but unavailable in the current runtime/provider/model/config.
+2026-04-21T10:09:17.885+00:00 [agent/embedded] read tool called without path: toolCallId=call_Utq1u6yPTi6E61B83KYa6q0P argsType=object
+2026-04-21T10:09:17.889+00:00 [agent/embedded] read tool called without path: toolCallId=call_JLDrEwumxcIwjRiMygRL22ac argsType=object
+2026-04-21T10:09:17.891+00:00 [agent/embedded] read tool called without path: toolCallId=call_TTWQZIjpHobwnXre40eAO8gx argsType=object
+2026-04-21T10:09:17.892+00:00 [agent/embedded] read tool called without path: toolCallId=call_pqz9w9QWmlhzTcdgNglhxAwA argsType=object
+2026-04-21T10:09:17.897+00:00 [agent/embedded] read tool called without path: toolCallId=call_j6NfueHkd7soHyLTjDlbXCVM argsType=object
+2026-04-21T10:09:17.917+00:00 [tools] read failed: ENOENT: no such file or directory, access '/root/.openclaw/workspace/MEMORY.md' raw_params={"file":"/root/.openclaw/workspace/MEMORY.md"}
+2026-04-21T10:09:17.926+00:00 [tools] read failed: ENOENT: no such file or directory, access '/root/.openclaw/workspace/memory/2026-04-21.md' raw_params={"file":"/root/.openclaw/workspace/memory/2026-04-21.md"}
+2026-04-21T10:09:17.929+00:00 [tools] read failed: ENOENT: no such file or directory, access '/root/.openclaw/workspace/memory/2026-04-20.md' raw_params={"file":"/root/.openclaw/workspace/memory/2026-04-20.md"}
+2026-04-21T10:09:22.159+00:00 [agent/embedded] read tool called without path: toolCallId=call_e8ArZJluFK5vtUeKNqFiewLL argsType=object
+2026-04-21T10:09:22.162+00:00 [agent/embedded] read tool called without path: toolCallId=call_4I1GDzSi5QSauACxziQg0Kt7 argsType=object
+2026-04-21T10:09:53.555+00:00 [agent/embedded] read tool called without path: toolCallId=call_ZHXYXvuvtCSpYDpiaPqDDgNv argsType=object
+2026-04-21T10:09:53.559+00:00 [agent/embedded] read tool called without path: toolCallId=call_BtiU6avnUgb4jW4a5ySNgPYx argsType=object
+2026-04-21T10:09:53.560+00:00 [agent/embedded] read tool called without path: toolCallId=call_4gnqsy2IYZbsREfa0oaKNnV8 argsType=object
+2026-04-21T10:10:08.885+00:00 I’m pulling the transcript and verified links, then I’ll generate the three release files and publish the two posts exactly as written.
+2026-04-21T10:10:08.887+00:00 I’ve got the source material. Next I’m drafting the three markdown outputs from only the transcript and verified links, then I’ll post the two launch messages exactly as written via the provided publishing tool.
+2026-04-21T10:10:08.888+00:00 The release files are written. I’m verifying them, then I’ll publish the two posts exactly as-is with the social client and commit the workspace changes.
+2026-04-21T10:10:08.890+00:00 The publish tool uses flags rather than a `post` subcommand. I’m retrying with the exact post bodies and then I’ll commit the completed release files.
+2026-04-21T10:10:08.891+00:00 Done.
+
+Created:
+- `publish/show_notes.md`
+- `publish/episode_description.md`
+- `publish/launch_posts.md`
+
+Published exactly these two standalone public posts from `launch_posts.md` via `tools/social_client.py`:
+- `social_post_008`
+- `social_post_009`
+
+One snag: the required git commit didn’t go through because this repo has no configured git author identity. If you want, I can make the commit next once `git user.name` and `git user.email` are set.

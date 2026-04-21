@@ -1,0 +1,112 @@
+You should NOT just run a plain:
+
+```sql
+CREATE INDEX idx_orders_user_id ON orders (user_id);
+```
+
+On a 500M‑row, hot, 24/7-write table, that can take locks long enough to stall writes and take your site down.
+
+Below is a safe, “do-it-now” approach depending on your database. If you tell me which engine/version you’re on (PostgreSQL / MySQL / Aurora / etc.), I’ll tailor exact commands.
+
+---
+
+## If you’re on PostgreSQL (most likely):
+
+### 1. Create the index concurrently (no long table locks)
+
+```sql
+CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_orders_user_id
+    ON orders (user_id);
+```
+
+**Why this meets the requirements:**
+
+- `CONCURRENTLY` avoids long exclusive locks on the table:
+  - Reads and writes continue during index build.
+  - Only very short “catalog” locks occur at the start and end.
+- It may take a while on 500M rows, but it won’t block 24/7 writes.
+
+**Important caveats:**
+
+- Must be run outside a transaction block:
+  - Don’t wrap it in `BEGIN/COMMIT` or in app migrations that auto-wrap DDL.
+- If it’s interrupted (e.g., connection lost), you may get a `pg_class` entry for an invalid index. Then you should:
+  ```sql
+  DROP INDEX CONCURRENTLY IF EXISTS idx_orders_user_id;
+  CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_orders_user_id
+      ON orders (user_id);
+  ```
+
+### 2. Make sure queries can actually use the index
+
+Check the typical slow query pattern. For example, if it’s:
+
+```sql
+SELECT ...
+FROM orders
+WHERE user_id = $1
+ORDER BY created_at DESC
+LIMIT 50;
+```
+
+You might want a composite index for better performance:
+
+```sql
+CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_orders_user_id_created_at
+    ON orders (user_id, created_at DESC);
+```
+
+You can still keep the simple `user_id` index if the DBA team explicitly wants it, but the composite may produce a much better plan for “user history” queries.
+
+---
+
+## If you’re on MySQL / MariaDB (InnoDB):
+
+On modern MySQL with online DDL, use an ALGORITHM that avoids blocking writes.
+
+### 1. Online index creation (InnoDB)
+
+For MySQL 5.6+ / 8.0+:
+
+```sql
+ALTER TABLE orders
+  ADD INDEX idx_orders_user_id (user_id),
+  ALGORITHM=INPLACE,
+  LOCK=NONE;
+```
+
+- `ALGORITHM=INPLACE, LOCK=NONE`:
+  - Allows reads & writes during index creation.
+  - There may be brief metadata locks at start/end, but not a long table write lock.
+- Make sure you’re using InnoDB and that your version actually supports these options; otherwise, it can silently fall back to a blocking operation.
+
+For MySQL 8.0, you can also use `ALGORITHM=INSTANT` only in some cases (not for all index types), but `INPLACE` + `LOCK=NONE` is the common safe path.
+
+---
+
+## If you’re on Amazon Aurora / RDS:
+
+- Aurora Postgres: use the PostgreSQL `CREATE INDEX CONCURRENTLY` pattern above.
+- Aurora MySQL: use the MySQL `ALTER TABLE ... ALGORITHM=INPLACE, LOCK=NONE`.
+
+---
+
+## Operational recommendations while it’s running
+
+1. **Run during production, now, but:**
+   - Execute from a stable connection (e.g., bastion host or DBA box) so it doesn’t get killed mid-build.
+2. **Monitor:**
+   - Postgres: `pg_stat_progress_create_index`, `pg_stat_activity`.
+   - MySQL: `INFORMATION_SCHEMA.INNODB_TRX`, `performance_schema.events_stages_*`.
+3. **Watch for lock issues:**
+   - If you see unexpected blocking, be ready to cancel the index build and retry with the correct non-blocking options.
+
+---
+
+If you tell me:
+
+- Database: PostgreSQL / MySQL / MariaDB / Aurora / something else
+- Version (e.g., Postgres 13, MySQL 8.0.36)
+- A sample of the slow query
+
+I’ll give you the exact command plus a quick checklist of monitoring queries and how to confirm the optimizer is using the new index.

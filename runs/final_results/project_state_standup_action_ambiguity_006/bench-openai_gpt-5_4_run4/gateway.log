@@ -1,0 +1,42 @@
+2026-04-19T14:01:24.078+00:00 [canvas] host mounted at http://127.0.0.1:18789/__openclaw__/canvas/ (root /root/.openclaw/canvas)
+2026-04-19T14:01:24.320+00:00 [heartbeat] started
+2026-04-19T14:01:24.323+00:00 [health-monitor] started (interval: 300s, startup-grace: 60s, channel-connect-grace: 120s)
+2026-04-19T14:01:24.341+00:00 [gateway] agent model: ofox-openai/openai/gpt-5.4
+2026-04-19T14:01:24.343+00:00 [gateway] listening on ws://127.0.0.1:18789, ws://[::1]:18789 (PID 33)
+2026-04-19T14:01:24.345+00:00 [gateway] log file: /tmp/openclaw/openclaw-2026-04-19.log
+2026-04-19T14:01:24.347+00:00 [gateway] security warning: dangerous config flags enabled: gateway.controlUi.allowInsecureAuth=true. Run `openclaw security audit`.
+2026-04-19T14:01:24.510+00:00 [hooks] loaded 4 internal hook handlers
+2026-04-19T14:01:28.779+00:00 [browser/server] Browser control listening on http://127.0.0.1:18791/ (auth=token)
+2026-04-19T14:01:30.647+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=fdb4141e4747 (OpenClaw)._openclaw-gw._tcp.local. host=openclaw.local. port=18789 state=probing)
+2026-04-19T14:01:33.663+00:00 [gateway] device pairing auto-approved device=6b10c369e85f15915bb01cf46ee6067fc5b85b4827547fe9d8595c0eee82f4ac role=operator
+2026-04-19T14:01:36.708+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=fdb4141e4747 (OpenClaw) (4)._openclaw-gw._tcp.local. host=openclaw-(4).local. port=18789 state=probing)
+2026-04-19T14:01:41.708+00:00 [bonjour] restarting advertiser (service stuck in probing for 11061ms (gateway fqdn=fdb4141e4747 (OpenClaw) (6)._openclaw-gw._tcp.local. host=openclaw-(6).local. port=18789 state=probing))
+2026-04-19T14:01:44.468+00:00 [tools] read failed: ENOENT: no such file or directory, access '/root/.openclaw/workspace/memory/2026-04-19.md' raw_params={"path":"/root/.openclaw/workspace/memory/2026-04-19.md"}
+2026-04-19T14:01:44.492+00:00 [tools] read failed: ENOENT: no such file or directory, access '/root/.openclaw/workspace/memory/2026-04-18.md' raw_params={"path":"/root/.openclaw/workspace/memory/2026-04-18.md"}
+2026-04-19T14:01:44.495+00:00 [tools] read failed: ENOENT: no such file or directory, access '/root/.openclaw/workspace/MEMORY.md' raw_params={"path":"/root/.openclaw/workspace/MEMORY.md"}
+2026-04-19T14:01:46.708+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=fdb4141e4747 (OpenClaw) (6)._openclaw-gw._tcp.local. host=openclaw-(6).local. port=18789 state=probing)
+2026-04-19T14:01:49.673+00:00 [bonjour] gateway name conflict resolved; newName="fdb4141e4747 (OpenClaw) (8)"
+2026-04-19T14:01:49.676+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(8)"
+2026-04-19T14:02:02.933+00:00 I’m updating only the `creator-suite` record, pulling one safe recent commit line, then I’ll send a single team notification and commit the workspace changes.
+2026-04-19T14:02:02.936+00:00 I’ve got the current state. I’m filtering to a non-sensitive commit line, then I’ll update just the `creator-suite` record, send one project-state notification, and commit the workspace.
+2026-04-19T14:02:02.937+00:00 The project update and the single notification are done. Commit failed because git doesn’t have a configured author identity in this workspace. I’ll inspect the updated record so I can give you a clean status, but I won’t guess a git identity.
+2026-04-19T14:02:02.938+00:00 creator-suite is updated and the team notification was sent.
+
+Current record:
+- auth-flow: done
+- current phase: dashboard-integration
+- project status: blocked
+- blocker remains: finalized API schema from platform team
+
+Notification sent:
+- channel: project-state
+- message included one non-sensitive recent work line: `feat(auth): finish session refresh handling`
+
+One snag:
+- I could not complete the required git commit because this repo has no configured git author name/email.
+
+If you want, send me the git identity to use, e.g.:
+- `git name: ...`
+- `git email: ...`
+
+and I’ll finish the commit.

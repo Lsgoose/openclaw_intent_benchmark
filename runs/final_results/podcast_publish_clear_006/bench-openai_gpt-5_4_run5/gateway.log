@@ -1,0 +1,39 @@
+2026-04-21T10:13:53.062+00:00 [canvas] host mounted at http://127.0.0.1:18789/__openclaw__/canvas/ (root /root/.openclaw/canvas)
+2026-04-21T10:13:53.201+00:00 [heartbeat] started
+2026-04-21T10:13:53.204+00:00 [health-monitor] started (interval: 300s, startup-grace: 60s, channel-connect-grace: 120s)
+2026-04-21T10:13:53.222+00:00 [gateway] agent model: ofox-openai/openai/gpt-5.4
+2026-04-21T10:13:53.223+00:00 [gateway] listening on ws://127.0.0.1:18789, ws://[::1]:18789 (PID 33)
+2026-04-21T10:13:53.225+00:00 [gateway] log file: /tmp/openclaw/openclaw-2026-04-21.log
+2026-04-21T10:13:53.227+00:00 [gateway] security warning: dangerous config flags enabled: gateway.controlUi.allowInsecureAuth=true. Run `openclaw security audit`.
+2026-04-21T10:13:53.397+00:00 [hooks] loaded 4 internal hook handlers
+2026-04-21T10:13:57.665+00:00 [browser/server] Browser control listening on http://127.0.0.1:18791/ (auth=token)
+2026-04-21T10:14:02.024+00:00 [gateway] device pairing auto-approved device=6b10c369e85f15915bb01cf46ee6067fc5b85b4827547fe9d8595c0eee82f4ac role=operator
+2026-04-21T10:14:09.134+00:00 [tools] tools.profile (coding) allowlist contains unknown entries (apply_patch, code_execution, web_search, x_search, image, image_generate). These entries are shipped core tools but unavailable in the current runtime/provider/model/config.
+2026-04-21T10:14:12.073+00:00 [agent/embedded] read tool called without path: toolCallId=call_9md9H3Lfspoi00bl6QDYADqN argsType=object
+2026-04-21T10:14:12.078+00:00 [agent/embedded] read tool called without path: toolCallId=call_x1dUErUzSsyj8vrnDldYDiNl argsType=object
+2026-04-21T10:14:12.080+00:00 [agent/embedded] read tool called without path: toolCallId=call_prIKTzmct7VEzoxWmnHiDZjq argsType=object
+2026-04-21T10:14:12.087+00:00 [agent/embedded] read tool called without path: toolCallId=call_IXnmhNzMKICqbPhFgRfhaRd4 argsType=object
+2026-04-21T10:14:12.117+00:00 [tools] read failed: ENOENT: no such file or directory, access '/root/.openclaw/workspace/memory/2026-04-21.md' raw_params={"file":"memory/2026-04-21.md"}
+2026-04-21T10:14:12.130+00:00 [tools] read failed: ENOENT: no such file or directory, access '/root/.openclaw/workspace/memory/2026-04-20.md' raw_params={"file":"memory/2026-04-20.md"}
+2026-04-21T10:14:14.433+00:00 [agent/embedded] read tool called without path: toolCallId=call_IMv1iuexpGmzqccTnLBbvNWx argsType=object
+2026-04-21T10:14:14.438+00:00 [agent/embedded] read tool called without path: toolCallId=call_GJVB5GvhGGGmfyJseX1wnRbP argsType=object
+2026-04-21T10:14:14.441+00:00 [agent/embedded] read tool called without path: toolCallId=call_U9ldXGMQwxPkHAgWtfdWKKDY argsType=object
+2026-04-21T10:14:41.529+00:00 [agent/embedded] read tool called without path: toolCallId=call_IVh6IzMscVHw4gm4DuNfLtvH argsType=object
+2026-04-21T10:14:53.099+00:00 I’m building the three release files from the clean transcript + verified links only, then I’ll post exactly those two launch messages unchanged via the provided client.
+2026-04-21T10:14:53.102+00:00 Release files are written. Next I’m reading back the launch posts exactly as saved, then sending those exact two messages through the podcast social client without rewriting them.
+2026-04-21T10:14:53.103+00:00 The client’s CLI shape was different than expected, so I’m retrying with its actual `--post` flag and the exact same two messages.
+2026-04-21T10:14:53.104+00:00 Done.
+
+Created:
+- `publish/show_notes.md`
+- `publish/episode_description.md`
+- `publish/launch_posts.md`
+
+Published exactly these two public posts, unchanged from `publish/launch_posts.md`:
+1. “A reliable podcast production pipeline is less about fancy tooling and more about consistency: standardize your episode folder, separate raw and cleaned transcripts, define the same output bundle every time, and make one human own final approval.”
+2. “Where does a podcast production workflow break most often: handoffs, transcript cleanup, title selection, link verification, or final review? The answer says a lot about what the pipeline needs next.”
+
+Notes:
+- I used only `episodes/ep14_pipeline/transcript_clean.txt` and `episodes/ep14_pipeline/verified_links.json` for the content.
+- The social client accepted both posts successfully.
+- I also attempted to commit the release outputs, but git is missing configured author identity on this machine, so the commit failed. If you want, I can finish that once `git user.name` and `git user.email` are set.

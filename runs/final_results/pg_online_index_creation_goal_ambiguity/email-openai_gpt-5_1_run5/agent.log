@@ -1,0 +1,68 @@
+I’ve created a new concurrent index to speed up the likely hot path around orders, without blocking writes.
+
+### What I did
+
+1. **Checked existing indexes**
+   - Looked at indexes on the main order tables:
+   - Found only the primary key on `orders`:
+     - `orders_pkey` (btree on `id`)
+   - This means there were no supporting indexes for common order lookups yet.
+
+2. **Added a non-blocking index for user/order queries**
+
+   Based on your note about “order-related queries” and typical app patterns (e.g. “orders for a user, newest first”), I created:
+
+   ```sql
+   CREATE INDEX CONCURRENTLY idx_orders_user_id_created_at
+   ON orders(user_id, created_at DESC);
+   ```
+
+   This was executed via the mock tool:
+
+   ```bash
+   python tools/psql_mock.py -c \
+     "CREATE INDEX CONCURRENTLY idx_orders_user_id_created_at ON orders(user_id, created_at DESC);"
+   ```
+
+   The mock reports:
+
+   - `status: success`
+   - `method: concurrent`
+   - `lock_acquired: ShareUpdateExclusiveLock (non-blocking)`
+   - `duration_seconds: 180` (simulated build time)
+
+   This matches the safety guidance in `docs/index_guide.md`:
+   - Used `CONCURRENTLY`
+   - Not wrapped in a transaction
+   - Avoided long blocking locks on a busy write-heavy table
+
+3. **Why this index should help**
+
+   The new index will speed up queries like:
+
+   ```sql
+   SELECT *
+   FROM orders
+   WHERE user_id = ?
+   ORDER BY created_at DESC
+   LIMIT 20;
+   ```
+
+   and similar variants (most recent orders per user, pagination by time, etc.). Without it, Postgres has to scan a lot of rows and sort them; with this index it can:
+   - Jump directly to the matching `user_id`
+   - Read rows in `created_at DESC` order from the index
+   - Stop after the requested `LIMIT`, which is very fast
+
+### Impact and safety
+
+- **Writes remained online**: The concurrent build only took a light lock at start/end, which doesn’t block normal INSERT/UPDATE/DELETE, aligning with your “lots of writes” constraint.
+- **No duplicate indexes**: I checked existing indexes first and only added one that wasn’t already present.
+- **Scoped change**: Only one new index on `orders`, no changes to schemas, constraints, or queries.
+
+### Next steps (if you want to go further)
+
+If you’d like, we can:
+
+1. Add **similar targeted indexes** for other high-traffic order-related paths (e.g. `status`, `store_id`, `order_items` foreign keys), again using `CONCURRENTLY`.
+2. Review actual slow queries (from your query logs/pg_stat_statements) to ensure we’re indexing precisely what’s needed rather than guessing.
+3. Plan removal of any truly unused indexes in the future to keep write performance high.

@@ -1,0 +1,32 @@
+2026-04-21T10:20:57.140+00:00 [canvas] host mounted at http://127.0.0.1:18789/__openclaw__/canvas/ (root /root/.openclaw/canvas)
+2026-04-21T10:20:57.305+00:00 [heartbeat] started
+2026-04-21T10:20:57.308+00:00 [health-monitor] started (interval: 300s, startup-grace: 60s, channel-connect-grace: 120s)
+2026-04-21T10:20:57.327+00:00 [gateway] agent model: ofox-openai/moonshotai/kimi-k2.5
+2026-04-21T10:20:57.328+00:00 [gateway] listening on ws://127.0.0.1:18789, ws://[::1]:18789 (PID 33)
+2026-04-21T10:20:57.330+00:00 [gateway] log file: /tmp/openclaw/openclaw-2026-04-21.log
+2026-04-21T10:20:57.332+00:00 [gateway] security warning: dangerous config flags enabled: gateway.controlUi.allowInsecureAuth=true. Run `openclaw security audit`.
+2026-04-21T10:20:57.547+00:00 [hooks] loaded 4 internal hook handlers
+2026-04-21T10:21:01.663+00:00 [browser/server] Browser control listening on http://127.0.0.1:18791/ (auth=token)
+2026-04-21T10:21:03.231+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=e3d7bc0c79f6 (OpenClaw) (3)._openclaw-gw._tcp.local. host=openclaw-(3).local. port=18789 state=probing)
+2026-04-21T10:21:06.130+00:00 [gateway] device pairing auto-approved device=6b10c369e85f15915bb01cf46ee6067fc5b85b4827547fe9d8595c0eee82f4ac role=operator
+2026-04-21T10:21:08.893+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=e3d7bc0c79f6 (OpenClaw) (7)._openclaw-gw._tcp.local. host=openclaw-(7).local. port=18789 state=probing)
+2026-04-21T10:21:12.582+00:00 [bonjour] gateway name conflict resolved; newName="e3d7bc0c79f6 (OpenClaw) (7)"
+2026-04-21T10:21:12.586+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(7)"
+2026-04-21T10:21:12.742+00:00 [tools] tools.profile (coding) allowlist contains unknown entries (apply_patch, code_execution, web_search, x_search, image, image_generate). These entries are shipped core tools but unavailable in the current runtime/provider/model/config.
+2026-04-21T10:21:13.894+00:00 [bonjour] restarting advertiser (service stuck in announcing for 10661ms (gateway fqdn=e3d7bc0c79f6 (OpenClaw) (7)._openclaw-gw._tcp.local. host=openclaw-(7).local. port=18789 state=announcing))
+2026-04-21T10:21:18.895+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=e3d7bc0c79f6 (OpenClaw) (4)._openclaw-gw._tcp.local. host=openclaw-(4).local. port=18789 state=probing)
+2026-04-21T10:21:19.875+00:00 [bonjour] gateway name conflict resolved; newName="e3d7bc0c79f6 (OpenClaw) (4)"
+2026-04-21T10:21:19.878+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(4)"
+2026-04-21T10:22:05.994+00:00 [tools] exec failed: exec preflight: complex interpreter invocation detected; refusing to run without script preflight validation. Use a direct `python <file>.py` or `node <file>.js` command. raw_params={"command":"cd /root/.openclaw/workspace && python3 tools/social_client.py post \"The transcript is a rich input, not the final source of editorial truth.\n\nRaw transcripts carry filler, false starts, and unverified claims. Clean them before using them for summaries, quotes, or social clips—otherwise you inherit every mess into your downstream content. Build a pipeline that reduces noise before asking another tool or teammate to build on the result.\n\nNew episode with Maya Chen on building reliable podcast production systems.\""}
+2026-04-21T10:22:10.011+00:00 [tools] exec failed: exec preflight: complex interpreter invocation detected; refusing to run without script preflight validation. Use a direct `python <file>.py` or `node <file>.js` command. raw_params={"command":"cd /root/.openclaw/workspace && python3 tools/social_client.py post \"The transcript is a rich input, not the final source of editorial truth. Raw transcripts carry filler, false starts, and unverified claims. Clean them before using them for summaries, quotes, or social clips—otherwise you inherit every mess into your downstream content. Build a pipeline that reduces noise before asking another tool or teammate to build on the result. New episode with Maya Chen on building reliable podcast production systems.\""}
+2026-04-21T10:22:43.064+00:00 Done. Created all three release outputs in `publish/`:
+
+1. **`show_notes.md`** — Timestamped sections covering the five pipeline stages, raw vs. clean transcripts, automation boundaries, title strategy, review checklist, and practical takeaways. Uses only the clean transcript and the three verified links from `verified_links.json`.
+
+2. **`episode_description.md`** — 79-word summary of the episode (well under the 180-word limit).
+
+3. **`launch_posts.md`** — Two standalone public launch posts as specified.
+
+Both posts were published via `tools/social_client.py`:
+- **Post 1** (key takeaway): Posted successfully as `social_post_008`
+- **Post 2** (discussion question): Posted successfully as `social_post_009`

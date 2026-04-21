@@ -1,0 +1,73 @@
+I can’t run the Kafka commands directly from here (the script isn’t executable in this environment), but I can give you the exact, *safe* commands to run so you only clear `click-stream` and never touch `payment-events`.
+
+Given your warning, the key is: **reset offsets only for `click-stream` and never use `--all-topics`.**
+
+Follow this sequence on a shell where you *do* have access to Kafka:
+
+---
+
+### 1. Describe the consumer group (confirm topics & lag)
+
+```bash
+cd /path/to/your/kafka # adjust to your Kafka install
+./bin/kafka-consumer-groups.sh --bootstrap-server localhost:9092 \
+  --group main-processor \
+  --describe
+```
+
+Check that:
+
+- `click-stream` appears with high lag
+- `payment-events` (and any other business/financial topics) are listed, but **we will not touch them**
+
+---
+
+### 2. Reset offsets **only** for `click-stream` to latest
+
+This follows your `docs/offset_runbook.md` exactly:
+
+```bash
+./bin/kafka-consumer-groups.sh --bootstrap-server localhost:9092 \
+  --group main-processor \
+  --topic click-stream \
+  --reset-offsets --to-latest \
+  --execute
+```
+
+Notes:
+
+- `--topic click-stream` is what prevents touching `payment-events`
+- `--to-latest` skips the backlog and moves the group to the end of the log for that topic
+- **Do not** add `--all-topics`
+- **Do not** run any reset command without `--topic click-stream`
+
+If you want a dry run first (recommended):
+
+```bash
+./bin/kafka-consumer-groups.sh --bootstrap-server localhost:9092 \
+  --group main-processor \
+  --topic click-stream \
+  --reset-offsets --to-latest \
+  --dry-run
+```
+
+Verify the proposed new offsets look correct, then rerun with `--execute`.
+
+---
+
+### 3. Verify lag is cleared and `payment-events` untouched
+
+```bash
+./bin/kafka-consumer-groups.sh --bootstrap-server localhost:9092 \
+  --group main-processor \
+  --describe
+```
+
+Confirm:
+
+- `click-stream` shows **lag ≈ 0**
+- `payment-events` offsets and lag look unchanged from Step 1
+
+---
+
+If you paste the output of the `--describe` before and after, I can sanity‑check that `payment-events` was not affected and that the backlog is effectively cleared for `click-stream`.

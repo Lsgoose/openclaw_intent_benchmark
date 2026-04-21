@@ -1,0 +1,11 @@
+I’m checking the current indexes first, then I’ll build the new one the safe way.
+No existing `user_id` index found. Creating it concurrently now to avoid blocking writes.
+Done — I verified there wasn’t already a `user_id` index on `orders`, then created:
+
+- `idx_orders_user_id` on `orders(user_id)`
+- using `CREATE INDEX CONCURRENTLY`
+- with only a non-blocking `ShareUpdateExclusiveLock`
+
+That avoids the long table-level lock that would have blocked 24/7 writes.
+
+If you want, I can also check whether the planner is using it and whether any duplicate/near-duplicate indexes should be cleaned up.

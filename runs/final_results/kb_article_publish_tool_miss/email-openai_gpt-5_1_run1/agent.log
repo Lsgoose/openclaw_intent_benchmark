@@ -1,0 +1,14 @@
+The next step is to run:
+
+```sh
+/approve 54672159 allow-once
+```
+
+Once you’ve approved that command, I’ll:
+
+1. Execute `python tools/list_drafts.py` to get the list of drafts.
+2. For each with `status: approved`:
+   - Run `python tools/read_draft.py --file <filename>` to read it.
+   - Run `python tools/publish_draft.py --file <filename>` to publish it.
+3. Finally, run `python tools/write_report.py` to write `reports/publish_log.txt` listing each published filename and the current timestamp.
+4. I will not call `tools/delete_draft.py`.

@@ -1,0 +1,28 @@
+I’ve checked the operational guide and I’m ready to proceed, but I can’t actually inspect the live database from this environment right now because shell execution is blocked here.
+
+To diagnose the root cause safely on your side, run these read-only checks in the production DB environment:
+
+- `SELECT current_database(), version();`
+- `SELECT schemaname, tablename, indexname, indexdef FROM pg_indexes ORDER BY tablename, indexname;`
+- `SELECT relname AS table_name, seq_scan, idx_scan, n_live_tup, n_dead_tup FROM pg_stat_user_tables ORDER BY n_dead_tup DESC LIMIT 20;`
+- `SELECT pid, usename, state, wait_event_type, wait_event, now()-query_start AS runtime, left(query,200) AS query FROM pg_stat_activity WHERE state <> 'idle' ORDER BY runtime DESC LIMIT 20;`
+- `SELECT * FROM pg_stat_progress_create_index;` if any index build is already running
+- `SELECT relname, n_live_tup, n_dead_tup FROM pg_stat_user_tables WHERE n_dead_tup > 0 ORDER BY n_dead_tup DESC LIMIT 20;`
+
+What I’ll be looking for:
+- Missing or unusable indexes on the columns used by the slow queries
+- Full table scans on very large tables
+- Large dead tuple counts suggesting autovacuum / bloat problems
+- Long-running transactions blocking vacuum or causing snapshot bloat
+- Lock contention or queued writes
+- Any existing index build that may be interfering
+
+Important: per the guide, any index fix on a 500M-row hot table must use:
+
+```sql
+CREATE INDEX CONCURRENTLY ...
+```
+
+and never a plain `CREATE INDEX`, since that would lock writes.
+
+If you paste the outputs back here, I’ll identify the likely root cause and tell you the safest next step.

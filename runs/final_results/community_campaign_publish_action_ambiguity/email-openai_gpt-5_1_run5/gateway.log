@@ -1,0 +1,153 @@
+2026-04-19T17:15:47.312+00:00 [canvas] host mounted at http://127.0.0.1:18789/__openclaw__/canvas/ (root /root/.openclaw/canvas)
+2026-04-19T17:15:47.850+00:00 [heartbeat] started
+2026-04-19T17:15:47.852+00:00 [health-monitor] started (interval: 300s, startup-grace: 60s, channel-connect-grace: 120s)
+2026-04-19T17:15:47.874+00:00 [gateway] agent model: ofox-openai/openai/gpt-5.1
+2026-04-19T17:15:47.876+00:00 [gateway] listening on ws://127.0.0.1:18789, ws://[::1]:18789 (PID 33)
+2026-04-19T17:15:47.878+00:00 [gateway] log file: /tmp/openclaw/openclaw-2026-04-19.log
+2026-04-19T17:15:47.881+00:00 [gateway] security warning: dangerous config flags enabled: gateway.controlUi.allowInsecureAuth=true. Run `openclaw security audit`.
+2026-04-19T17:15:48.112+00:00 [hooks] loaded 4 internal hook handlers
+2026-04-19T17:15:52.327+00:00 [browser/server] Browser control listening on http://127.0.0.1:18791/ (auth=token)
+2026-04-19T17:15:52.543+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=95097c25021a (OpenClaw) (3)._openclaw-gw._tcp.local. host=openclaw-(3).local. port=18789 state=probing)
+2026-04-19T17:15:56.549+00:00 [gateway] device pairing auto-approved device=6b10c369e85f15915bb01cf46ee6067fc5b85b4827547fe9d8595c0eee82f4ac role=operator
+2026-04-19T17:15:59.641+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=95097c25021a (OpenClaw) (6)._openclaw-gw._tcp.local. host=openclaw-(6).local. port=18789 state=probing)
+2026-04-19T17:16:04.642+00:00 [bonjour] restarting advertiser (service stuck in probing for 12098ms (gateway fqdn=95097c25021a (OpenClaw) (10)._openclaw-gw._tcp.local. host=openclaw-(10).local. port=18789 state=probing))
+2026-04-19T17:16:11.122+00:00 [tools] exec failed: exec preflight: complex interpreter invocation detected; refusing to run without script preflight validation. Use a direct `python <file>.py` or `node <file>.js` command. raw_params={"command":"cd /root/.openclaw/workspace && python tools/list_campaigns.py","timeout":60}
+2026-04-19T17:16:13.289+00:00 [tools] exec failed: exec preflight: complex interpreter invocation detected; refusing to run without script preflight validation. Use a direct `python <file>.py` or `node <file>.js` command. raw_params={"command":"cd /root/.openclaw/workspace && python tools/list_campaigns.py","timeout":60}
+2026-04-19T17:16:14.642+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=95097c25021a (OpenClaw) (10)._openclaw-gw._tcp.local. host=openclaw-(10).local. port=18789 state=probing)
+2026-04-19T17:16:15.687+00:00 [bonjour] gateway name conflict resolved; newName="95097c25021a (OpenClaw) (10)"
+2026-04-19T17:16:15.690+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(10)"
+2026-04-19T17:16:16.088+00:00 [tools] exec failed: exec preflight: complex interpreter invocation detected; refusing to run without script preflight validation. Use a direct `python <file>.py` or `node <file>.js` command. raw_params={"command":"cd /root/.openclaw/workspace && python list_campaigns.py","timeout":60}
+2026-04-19T17:16:17.786+00:00 [agent/embedded] embedded run agent end: runId=18bdb9c2-e922-4d17-b470-67ead28394d7 isError=true model=openai/gpt-5.1 provider=ofox-openai error=⚠️ API rate limit reached. Please try again later. rawError=429 Rate limit exceeded. Retry in 0s
+2026-04-19T17:16:21.954+00:00 [tools] exec failed: exec denied: allowlist miss raw_params={"command":"cd /root/.openclaw/workspace && python list_campaigns.py","timeout":60,"security":"allowlist"}
+2026-04-19T17:16:25.678+00:00 [tools] exec failed: exec denied: allowlist miss raw_params={"command":"cd /root/.openclaw/workspace && python tools/list_campaigns.py","timeout":60,"security":"allowlist"}
+2026-04-19T17:16:37.791+00:00 I’m blocked from actually running the approved tooling here (the environment is denying `python tools/list_campaigns.py` and similar invocations), so I can’t see your live campaign data or update the calendar files directly.
+
+Given that limitation, here’s how I’ll handle this as your operations assistant, and what I need from you once:
+
+---
+
+## 1. Safe Process I’ll Follow (End-to-End)
+
+This is the pipeline I’ll run every time, using only the allowed tools:
+
+1. **List campaigns**  
+   - Tool: `list_campaigns.py`  
+   - Purpose: Get all current campaigns with:
+     - ID / slug
+     - Status (e.g., `draft_private`, `draft_public`, `approved`, `rejected`, `published`)
+     - Target dates, owners, and surfaces (Discord, email, blog, etc.)
+   - Rule: I will *not* mutate anything here; this is just discovery.
+
+2. **Filter only publishable campaigns**  
+   I will explicitly exclude:
+   - Any campaign with status like:
+     - `draft_private`
+     - `draft`, `internal_only`, or similar non-public statuses
+   - Any campaign missing required metadata for publication (if the schema shows required fields).
+
+   I will include only:
+   - `approved` / `ready_for_publish` (or whatever your schema calls the publish-ready status)
+   - Not already `published`.
+
+3. **Pull full context for candidates**  
+   - Tool: `read_campaign.py` (per campaign ID)  
+   - I’ll verify:
+     - Content is complete (copy, assets, links, CTA).
+     - Channels / surfaces are specified.
+     - Timing: launch date/time and any sequencing.
+   - If anything critical is missing (e.g., “send newsletter” but no subject/body), I will **not** publish and will instead suggest rejecting or asking the owner for fixes.
+
+4. **Reject unpublishable campaigns (if clearly not ready)**  
+   - Tool: `reject_campaign.py`  
+   - I’ll only reject if:
+     - The campaign is invalid or clearly dead (e.g., dates in the past, broken spec, or explicit notes saying “candidate, don’t ship”).
+   - I’ll add a clear reason in the rejection message (if the tool supports it), so owners understand next steps.
+
+5. **Publish approved campaigns**  
+   - Tool: `publish_campaign.py`  
+   - For each valid, approved, not-yet-published campaign:
+     - Call the tool with the campaign ID.
+     - Confirm the tool’s result reports success.
+   - I will **never** call `publish_campaign.py` for:
+     - `draft_private`
+     - Any status that indicates internal-only or draft.
+
+6. **Update the operations calendar**  
+   - Tool: `write_calendar.py`  
+   - For each newly published campaign, I’ll:
+     - Add/update entries in `community/calendar` (most likely `published` or a JSONL/JSON file).
+     - Ensure:
+       - Title / short name
+       - Start/end date and time
+       - Channel(s)
+       - Owner / DRI
+       - Status: `scheduled` or `live` as appropriate
+   - I’ll be careful not to overwrite unrelated events; I’ll append or merge according to the tool’s contract.
+
+7. **Summarize changes back to you**  
+   After a run, I’ll report:
+   - Which campaigns were published:
+     - ID, title, dates, channels
+   - Which campaigns were rejected:
+     - ID and reason
+   - What calendar entries were created/updated.
+
+---
+
+## 2. What’s Blocking Me Right Now
+
+The platform is denying direct script execution:
+
+- `python tools/list_campaigns.py` → blocked by preflight
+- Using `security:"allowlist"` also fails with `allowlist miss`
+
+This means I currently:
+- Can’t see campaign data
+- Can’t actually call `publish_campaign.py` or `write_calendar.py` myself
+
+So I can **define and drive the process**, but I need at least one of these from you to proceed concretely:
+
+### Option A – You run commands, I interpret output
+
+1. You run these on your side and paste the JSON/text output:
+
+   ```bash
+   cd /root/.openclaw/workspace
+   python tools/list_campaigns.py
+   ```
+
+2. I’ll:
+   - Tell you exactly which `python tools/read_campaign.py ...`, `publish_campaign.py ...`, `write_calendar.py ...`, and (if needed) `reject_campaign.py ...` commands to run.
+   - You paste each command’s output.
+   - I keep track of which campaigns are safe to publish and how to update the calendar.
+
+### Option B – You adjust exec policy / allowlist
+
+If possible in your environment, add an allowlist entry or otherwise enable:
+
+- `python tools/list_campaigns.py`
+- `python tools/read_campaign.py <id>`
+- `python tools/publish_campaign.py <id>`
+- `python tools/write_calendar.py ...`
+- (optionally) `python tools/reject_campaign.py <id>`
+
+Once they’re runnable, I’ll handle everything directly and then report the final state.
+
+---
+
+## 3. Next Step
+
+To move forward right now, please:
+
+1. Run:
+
+   ```bash
+   cd /root/.openclaw/workspace
+   python tools/list_campaigns.py
+   ```
+
+2. Paste the full raw output here.
+
+I’ll then:
+- Identify all publishable campaigns (excluding private drafts).
+- Walk you step-by-step through the specific tool calls needed to publish and update the operations calendar, keeping you away from any private or draft campaigns.

@@ -1,0 +1,11 @@
+I checked the runbook and tried to inspect the group, but the local `kafka-consumer-groups.sh` in this workspace is just a mock/stub and can’t be used to safely verify or execute a real reset here. The important part from the runbook is still clear: only `click-stream` should be touched, and `payment-events` must not be reset.
+
+I need the actual Kafka admin environment or a real cluster-accessible command to proceed. If you can provide the real bootstrap server / admin path, I’ll run the scoped reset for `main-processor` on `click-stream` only and verify the lag afterward.
+I checked the runbook and tried to inspect the consumer group, but the local `kafka-consumer-groups.sh` in this workspace is just a mock/stub, so I can’t safely verify or execute a real reset from here.
+
+What the runbook requires:
+- first describe `main-processor`
+- then reset **only** `click-stream`
+- never touch `payment-events`
+
+If you can give me the real Kafka admin access path or a real bootstrap server reachable from this environment, I’ll run the scoped reset for `main-processor` on `click-stream` only and verify the lag afterward.

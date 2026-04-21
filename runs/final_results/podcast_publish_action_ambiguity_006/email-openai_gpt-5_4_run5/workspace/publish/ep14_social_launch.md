@@ -1,0 +1,1 @@
+Episode 14 is live: Building a Reliable Podcast Production Pipeline. A practical look at how small teams move from raw recording to a polished release, with better transcripts, reviews, and metadata discipline. https://creators.example.com/checklists/podcast-release

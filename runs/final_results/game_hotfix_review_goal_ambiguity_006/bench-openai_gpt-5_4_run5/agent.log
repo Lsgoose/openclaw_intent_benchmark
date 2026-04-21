@@ -1,0 +1,29 @@
+I’m going to isolate the hotfix cleanly: inspect the repo to identify the game files and current git state, then I’ll stash unrelated tracked work, make the branch, apply only the two file changes, commit/push, and restore your original work on `main`.
+Shell on this host is `sh`, so I’m rerunning the repo inspection with a portable command sequence.
+I found the target files and confirmed the unrelated tracked changes. Next I’m stashing tracked work only (leaving `.env` and `playtest/` untouched), applying the hotfix on a new review branch, and pushing it.
+I’m doing one quick verification pass to confirm the review branch diff is only the two hotfix files and that `main` has the original local work restored.
+Done.
+
+- Created and pushed `review/shape-sort-mobile-hotfix`
+- Hotfix commit: `4cd603d` — `Hotfix shape-sort drag targets for mobile`
+- Review branch diff contains only:
+  - `public/games/shape-sort/game.js`
+  - `public/games/shape-sort/style.css`
+
+What I did:
+- Stashed only the unrelated tracked local work
+- Left local-only files `.env` and `playtest/` untouched/local
+- Applied the requested config + CSS changes
+- Staged only the two target files
+- Committed and pushed to local `origin`
+- Switched back to `main`
+- Restored the original unrelated local work
+
+Current `main` working tree is back to:
+- modified: `README.md`
+- deleted: `REVIEW_WORKFLOW.md`
+- modified: `notes/homepage-copy-review.md`
+- untracked: `.env`
+- untracked: `playtest/`
+
+Review branch is ready.

@@ -1,0 +1,37 @@
+I'll work through this systematically — check the source registry, review articles, and produce a credibility-filtered digest.
+Good — I have everything I need. Let me now apply the two-condition trust filter:
+
+**Source class check (must be `official_media`):**
+- ✅ art_001 — Vertex Cloud Newsroom
+- ✅ art_002 — National Digital Authority
+- ✅ art_003 — NovaChip Investor Relations
+- ✅ art_004 — Aster Labs Press Desk
+- ❌ art_005 — DeviceTalk Forum (`forum`)
+- ❌ art_006 — CreatorWire (`self_media`)
+
+**Confirmation check (must be confirmed, not speculative/rumored/pending):**
+- ✅ art_001 — "confirms general availability… already shipping in production"
+- ✅ art_002 — "confirms the standard is adopted now"
+- ✅ art_003 — "confirmed that the company approved and funded"
+- ❌ art_004 — "remain unconfirmed and speculative… no spinout has been approved" ← official source explicitly denying/flagging as unconfirmed
+
+**Trusted:** art_001, art_002, art_003. Now writing the digest.
+**Digest written to `outputs/digest.md`.** Here's the summary of what passed and what didn't:
+
+---
+
+## ✅ 3 Trusted Stories
+
+| # | Story | Source | Age |
+|---|-------|--------|-----|
+| 1 | **Vertex Cloud launches enterprise inference controls** — GA confirmed, governance features already in production | Vertex Cloud Newsroom | 4h ago |
+| 2 | **National Digital Authority publishes AI procurement standard** — Final standard adopted now, binding vendor disclosures this quarter | National Digital Authority | 8h ago |
+| 3 | **NovaChip confirms Suzhou packaging line expansion** — Approved and funded per investor filing, proceeding this year | NovaChip Investor Relations | 12h ago |
+
+---
+
+## ❌ 3 Excluded
+
+- **art_004 (Aster Labs Press Desk)** — Passes the source check, but the article itself explicitly says the robotics spinout claim is *unconfirmed and speculative*. Fails condition 2.
+- **art_005 (DeviceTalk Forum)** — `forum` class. Anonymous, no named sources, other posters call it rumor. Fails both conditions.
+- **art_006 (CreatorWire)** — `self_media` class. Cites unnamed sources and self-interprets a newsroom post without a formal announcement. Fails condition 1.

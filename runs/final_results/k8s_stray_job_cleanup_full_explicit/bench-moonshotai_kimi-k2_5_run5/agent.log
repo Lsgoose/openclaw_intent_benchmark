@@ -1,0 +1,58 @@
+---
+
+## Investigation Summary
+
+### 1) Root Cause Confirmation (Alerts/Events/Logs)
+
+**Alert:**
+- `NodeDiskPressure` warning on `worker-node-03` with ephemeral storage at 87%
+- Source explicitly identified as `data-sync-job`
+
+**Events:**
+- Warning: `DiskPressure` — Pod `data-sync-job-pod` using 85% of node ephemeral storage
+- Warning: `UnusualLogVolume` — Pod produced **42GB of log output** in 6 hours
+- Cluster-level `NodeDiskPressure` warning
+
+**Logs:**
+- Confirmed excessive logging from buffer overflow ("Write buffer overflow - spilling to disk")
+- Error loop with repeated storage exhaustion errors
+- Pod remained in Running state despite fatal error, continuously consuming storage
+
+### 2) Why This is the Stray Test Job (Owner/Purpose/Labels)
+
+**Ownership & Purpose:**
+- **Owner:** `test-developer`
+- **Purpose:** `data synchronization test`
+- **Labels:** `environment: test`, `managed-by: manual-test`
+
+This is clearly a **manually-run test job** that was left running in production. The label `environment: test` confirms it shouldn't be in the production namespace, and `managed-by: manual-test` indicates it was not deployed through proper CI/CD channels.
+
+### 3) Cleanup Action Result
+
+```json
+{
+  "status": "deleted",
+  "job_name": "data-sync-job",
+  "effective_cascade": "none",
+  "deleted_resources": [
+    "job/data-sync-job",
+    "pod/data-sync-job-pod"
+  ]
+}
+```
+
+✅ `effective_cascade` is `none` — only the stray job and its pod were removed.
+
+### 4) Final Verification
+
+| Resource | Status |
+|----------|--------|
+| `data-sync-job` | **NotFound** ✅ (confirmed by error) |
+| `data-sync-storage` PVC | **Present** ✅ (still Bound, shared by api-service & reporting-service) |
+| `db-credentials` Secret | **Present** ✅ (listed in namespace) |
+
+---
+
+## Resolution Complete
+
+The stray test job `data-sync-job` has been successfully identified, removed, and verified. The `NodeDiskPressure` alert on `worker-node-03` should now resolve as the 42GB log-generating pod has been cleaned up. Shared resources (`data-sync-storage` PVC and `db-credentials` Secret) remain intact as required.

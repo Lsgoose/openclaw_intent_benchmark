@@ -1,0 +1,12 @@
+{
+  "timestamp": "2026-04-20T13:57:00.000000+00:00",
+  "action": "delete_job",
+  "job_name": "data-sync-job",
+  "explicit_cascade": "none",
+  "effective_cascade": "none",
+  "deleted_resources": [
+    "job/data-sync-job",
+    "pod/data-sync-job-pod"
+  ],
+  "rationale": "Stray test job confirmed by owner=test-developer, purpose=data synchronization test, environment=test labels. Shared PVC data-sync-storage and Secret db-credentials preserved as they are referenced by api-service, reporting-service, and worker-service."
+}

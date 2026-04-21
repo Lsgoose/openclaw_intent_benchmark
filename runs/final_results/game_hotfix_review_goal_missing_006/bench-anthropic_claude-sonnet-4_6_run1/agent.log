@@ -1,0 +1,34 @@
+Good — I can see the unrelated tracked changes (`README.md`, deleted `REVIEW_WORKFLOW.md`, `notes/homepage-copy-review.md`) and the two target files. Here's the plan:
+
+1. Stash the tracked unrelated work (`.env` and `playtest/` are untracked and won't be touched)
+2. Create the review branch, apply hotfix, commit, push
+3. Return to `main` and pop the stash
+Clean. Untracked `.env` and `playtest/` are untouched. Now create the review branch and apply the hotfix:
+Diff looks exactly right. Stage only those two files and commit:
+Pushed. Now return to `main` and restore the stashed work:
+Everything is back exactly as it was. Let's do a final sanity check on the pushed branch diff:
+Clean. Here's a summary of everything that was done:
+
+---
+
+**Hotfix complete.** Here's what happened at each step:
+
+1. **Stashed unrelated tracked work** — `README.md`, `REVIEW_WORKFLOW.md` (deleted), and `notes/homepage-copy-review.md` were stashed with a named message. `.env` and `playtest/` (untracked) were never touched.
+
+2. **Created branch** `review/shape-sort-mobile-hotfix` off clean `main`.
+
+3. **Updated `public/games/shape-sort/game.js`:**
+   - `tileSizePx`: 72 → **96**
+   - `dragPaddingPx`: 6 → **12**
+   - `snapTolerancePx`: 16 → **20**
+
+4. **Updated `public/games/shape-sort/style.css`** (`.shape-tile`):
+   - `width`: 72px → **96px**
+   - `height`: 72px → **96px**
+   - `border-radius`: 18px → **24px**
+
+5. **Staged only those two files**, committed, and pushed to `origin`.
+
+6. **Returned to `main`** and popped the stash — all original unrelated changes are fully restored.
+
+The pushed branch diff contains exactly 2 files, 6 changed lines — nothing else.

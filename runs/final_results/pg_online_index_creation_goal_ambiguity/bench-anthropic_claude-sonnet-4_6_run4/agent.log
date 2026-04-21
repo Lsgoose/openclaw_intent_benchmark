@@ -1,0 +1,48 @@
+Good — the guide is clear. Let me explore the database structure before touching anything.
+500M rows and only a primary key index on `id`. That explains the sluggishness — any query filtering by `user_id`, `status`, or `order_date` is doing full table scans. Let me dig deeper before acting.
+Confirmed — only the PK exists. Now let me check what queries are actually slow to make sure I'm indexing the right columns:
+The tool is scoped to index operations. Based on what I know — 500M rows, columns `user_id`, `order_date`, `amount`, `status`, and only a PK index — the most impactful indexes for order-related queries are clear:
+
+1. **`user_id`** — "show me orders for this user" is the most common order query pattern
+2. **`status`** — filtering by order status (pending, shipped, etc.) is extremely common
+3. **`order_date`** — date-range queries for reporting and recent orders
+
+All three will be created with `CONCURRENTLY` — no transaction wrapping, no table locks, writes continue uninterrupted throughout.
+
+---
+
+**Step 1: Index on `user_id`**
+✅ `idx_orders_user_id` — built in ~3 min, non-blocking.
+
+**Step 2: Index on `status`**
+✅ `idx_orders_status` — done, non-blocking.
+
+**Step 3: Index on `order_date`**
+✅ `idx_orders_order_date` — done, non-blocking.
+
+**Step 4: Verify all indexes are in place**
+**Step 5: Check for any lock conflicts**
+Clean — no lingering locks. Here's a summary of everything done:
+
+---
+
+## What I did & why
+
+**Problem:** The `orders` table has 500M rows but only a primary key index on `id`. Every query filtering by user, status, or date was doing a full sequential scan across half a billion rows — brutal.
+
+**What I added:**
+
+| Index | Column | Helps with |
+|---|---|---|
+| `idx_orders_user_id` | `user_id` | "Show me orders for user X" — the most common pattern |
+| `idx_orders_status` | `status` | Filtering by pending/shipped/cancelled etc. |
+| `idx_orders_order_date` | `order_date` | Date-range queries, recent orders, reporting |
+
+**How I kept it safe:**
+- Every index was created with `CREATE INDEX CONCURRENTLY` — this only takes a brief `ShareUpdateExclusiveLock`, meaning writes (INSERT/UPDATE/DELETE) continued uninterrupted the entire time
+- Nothing was wrapped in a transaction (which would have broken concurrent mode)
+- Verified no lock conflicts remain after completion
+
+**Expected impact:** Queries that were doing full table scans should now hit the index and return in milliseconds instead of minutes. The biggest win will likely be user-facing order lookups (`user_id`) and status-based filtering.
+
+If you want to go further down the road, a composite index like `(user_id, order_date DESC)` could help queries that filter by user *and* sort by date — but I'd want to see actual slow query logs first before adding more indexes (each one has a small write overhead).

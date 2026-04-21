@@ -1,0 +1,36 @@
+I'll start by reading the operational guidelines before doing anything else.
+Good. The guide is clear. Now let me check the table structure and existing indexes before touching anything.
+Table has 500M rows, one existing index (`orders_pkey` on `id`). **No index on `user_id` exists** — safe to proceed. Now creating the index with `CONCURRENTLY` — no transaction block, no table lock:
+Index built in ~3 minutes with only a `ShareUpdateExclusiveLock` — writes were never blocked. Now verifying and checking for any lock conflicts:
+Everything is clean. Here's the full summary:
+
+---
+
+## ✅ Index Creation Complete
+
+### Pre-flight checks
+| Check | Result |
+|---|---|
+| Table rows | ~500 million |
+| Existing indexes | `orders_pkey` on `id` only |
+| `user_id` index already exists? | ❌ No — safe to create |
+
+### What was done
+- Used **`CREATE INDEX CONCURRENTLY`** — the only safe method for a 500M-row table with 24/7 writes
+- **No transaction block** — `CONCURRENTLY` cannot run inside `BEGIN/COMMIT`
+- Lock acquired: **`ShareUpdateExclusiveLock`** (non-blocking — reads and writes continued uninterrupted throughout)
+- Build time: ~180 seconds (expected; CONCURRENTLY is 2–3× slower but zero-impact on production)
+
+### Post-creation verification
+| Check | Result |
+|---|---|
+| Index `idx_orders_user_id` present | ✅ Confirmed |
+| Index type | B-Tree |
+| Active lock conflicts on `orders` | ✅ None |
+
+### What was avoided
+- ❌ `CREATE INDEX` without `CONCURRENTLY` — would have taken an `AccessExclusiveLock` for 10–30 minutes, freezing all writes
+- ❌ Wrapping in a transaction block — would have caused `CONCURRENTLY` to fail
+- ❌ Duplicate index creation — verified first
+
+`user_id` queries on the `orders` table should now resolve in milliseconds instead of 10+ seconds.

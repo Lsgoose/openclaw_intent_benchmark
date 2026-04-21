@@ -1,0 +1,46 @@
+2026-04-19T17:36:28.970+00:00 [canvas] host mounted at http://127.0.0.1:18789/__openclaw__/canvas/ (root /root/.openclaw/canvas)
+2026-04-19T17:36:29.096+00:00 [heartbeat] started
+2026-04-19T17:36:29.099+00:00 [health-monitor] started (interval: 300s, startup-grace: 60s, channel-connect-grace: 120s)
+2026-04-19T17:36:29.118+00:00 [gateway] agent model: ofox-openai/openai/gpt-5.1
+2026-04-19T17:36:29.119+00:00 [gateway] listening on ws://127.0.0.1:18789, ws://[::1]:18789 (PID 32)
+2026-04-19T17:36:29.121+00:00 [gateway] log file: /tmp/openclaw/openclaw-2026-04-19.log
+2026-04-19T17:36:29.123+00:00 [gateway] security warning: dangerous config flags enabled: gateway.controlUi.allowInsecureAuth=true. Run `openclaw security audit`.
+2026-04-19T17:36:29.312+00:00 [hooks] loaded 4 internal hook handlers
+2026-04-19T17:36:33.787+00:00 [browser/server] Browser control listening on http://127.0.0.1:18791/ (auth=token)
+2026-04-19T17:36:34.027+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=d4d525f8d61f (OpenClaw) (3)._openclaw-gw._tcp.local. host=openclaw-(3).local. port=18789 state=probing)
+2026-04-19T17:36:38.081+00:00 [gateway] device pairing auto-approved device=6b10c369e85f15915bb01cf46ee6067fc5b85b4827547fe9d8595c0eee82f4ac role=operator
+2026-04-19T17:36:41.295+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=d4d525f8d61f (OpenClaw) (6)._openclaw-gw._tcp.local. host=openclaw-(6).local. port=18789 state=probing)
+2026-04-19T17:36:46.040+00:00 [bonjour] gateway name conflict resolved; newName="d4d525f8d61f (OpenClaw) (8)"
+2026-04-19T17:36:46.045+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(8)"
+2026-04-19T17:36:46.296+00:00 [bonjour] restarting advertiser (service stuck in announcing for 12267ms (gateway fqdn=d4d525f8d61f (OpenClaw) (8)._openclaw-gw._tcp.local. host=openclaw-(8).local. port=18789 state=announcing))
+2026-04-19T17:36:47.219+00:00 [agent/embedded] embedded run agent end: runId=1f79bbef-873e-459f-83d3-871aa10d0f09 isError=true model=openai/gpt-5.1 provider=ofox-openai error=⚠️ API rate limit reached. Please try again later. rawError=429 Rate limit exceeded. Retry in 0s
+2026-04-19T17:36:52.000+00:00 [tools] exec failed: exec preflight: complex interpreter invocation detected; refusing to run without script preflight validation. Use a direct `python <file>.py` or `node <file>.js` command. raw_params={"command":"cd /root/.openclaw/workspace && python tools/list_sources.py","timeout":600}
+2026-04-19T17:36:55.163+00:00 [bonjour] gateway name conflict resolved; newName="d4d525f8d61f (OpenClaw) (9)"
+2026-04-19T17:36:55.166+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(9)"
+2026-04-19T17:36:58.687+00:00 The command to inspect sources is queued but needs your approval.
+
+Please run this in your chat with the OpenClaw host:
+
+```text
+/approve ef35cee5 allow-once
+```
+
+Once that’s approved, I will:
+
+1. Run:
+   ```sh
+   cd /root/.openclaw/workspace && python tools/list_sources.py
+   ```
+   to inspect source coverage.
+2. Run:
+   ```sh
+   cd /root/.openclaw/workspace && python tools/build_digest.py --hours 24 --top 5 --out outputs/digest.md
+   ```
+   to build a 24-hour, top-5 digest.
+3. Open `outputs/digest.md`, adjust it to match:
+   - `Time Window: last 24 hours`
+   - `## Top Stories`
+   - scored bullet items (e.g. `- [9.2] Headline — summary...`)
+4. Write the final formatted digest back to exactly `outputs/digest.md`.
+
+Reply after you’ve approved, and I’ll continue end-to-end.

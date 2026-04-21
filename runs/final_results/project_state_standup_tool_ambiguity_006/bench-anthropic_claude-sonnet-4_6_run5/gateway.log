@@ -1,0 +1,34 @@
+2026-04-20T14:17:08.613+00:00 [canvas] host mounted at http://127.0.0.1:18789/__openclaw__/canvas/ (root /root/.openclaw/canvas)
+2026-04-20T14:17:08.905+00:00 [heartbeat] started
+2026-04-20T14:17:08.908+00:00 [health-monitor] started (interval: 300s, startup-grace: 60s, channel-connect-grace: 120s)
+2026-04-20T14:17:08.925+00:00 [gateway] agent model: ofox-anthropic/anthropic/claude-sonnet-4.6
+2026-04-20T14:17:08.926+00:00 [gateway] listening on ws://127.0.0.1:18789, ws://[::1]:18789 (PID 33)
+2026-04-20T14:17:08.928+00:00 [gateway] log file: /tmp/openclaw/openclaw-2026-04-20.log
+2026-04-20T14:17:08.930+00:00 [gateway] security warning: dangerous config flags enabled: gateway.controlUi.allowInsecureAuth=true. Run `openclaw security audit`.
+2026-04-20T14:17:09.094+00:00 [hooks] loaded 4 internal hook handlers
+2026-04-20T14:17:13.027+00:00 [browser/server] Browser control listening on http://127.0.0.1:18791/ (auth=token)
+2026-04-20T14:17:15.053+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=64031de1f438 (OpenClaw) (3)._openclaw-gw._tcp.local. host=openclaw-(3).local. port=18789 state=probing)
+2026-04-20T14:17:17.022+00:00 [gateway] device pairing auto-approved device=6b10c369e85f15915bb01cf46ee6067fc5b85b4827547fe9d8595c0eee82f4ac role=operator
+2026-04-20T14:17:22.051+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=64031de1f438 (OpenClaw) (5)._openclaw-gw._tcp.local. host=openclaw-(5).local. port=18789 state=probing)
+2026-04-20T14:17:27.055+00:00 [bonjour] restarting advertiser (service stuck in probing for 11999ms (gateway fqdn=64031de1f438 (OpenClaw) (9)._openclaw-gw._tcp.local. host=openclaw-(9).local. port=18789 state=probing))
+2026-04-20T14:17:31.461+00:00 [agent/embedded] read tool called without path: toolCallId=toolu_bdrk_01LpBWWPA7MQSxuwAmfUVkzB argsType=object
+2026-04-20T14:17:32.053+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=64031de1f438 (OpenClaw) (4)._openclaw-gw._tcp.local. host=openclaw-(4).local. port=18789 state=probing)
+2026-04-20T14:17:33.774+00:00 [bonjour] gateway name conflict resolved; newName="64031de1f438 (OpenClaw) (4)"
+2026-04-20T14:17:33.777+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(4)"
+2026-04-20T14:18:00.903+00:00 [agent/embedded] embedded run agent end: runId=996ce9e7-9bf2-4ed6-9ca5-0930253675bc isError=true model=anthropic/claude-sonnet-4.6 provider=ofox-anthropic error=⚠️ API rate limit reached. Please try again later. rawError=429 {"error":{"message":"Rate limit exceeded. Retry in 1s","type":"rate_limited","code":429}}
+2026-04-20T14:18:04.429+00:00 [agent/embedded] embedded run agent end: runId=996ce9e7-9bf2-4ed6-9ca5-0930253675bc isError=true model=anthropic/claude-sonnet-4.6 provider=ofox-anthropic error=⚠️ API rate limit reached. Please try again later. rawError=429 {"error":{"message":"Rate limit exceeded. Retry in 0s","type":"rate_limited","code":429}}
+2026-04-20T14:18:10.054+00:00 [agent/embedded] embedded run agent end: runId=996ce9e7-9bf2-4ed6-9ca5-0930253675bc isError=true model=anthropic/claude-sonnet-4.6 provider=ofox-anthropic error=⚠️ API rate limit reached. Please try again later. rawError=429 {"error":{"message":"Rate limit exceeded. Retry in 1s","type":"rate_limited","code":429}}
+2026-04-20T14:18:33.623+00:00 [ws] ⇄ res ✗ sessions.resolve 4ms errorCode=INVALID_REQUEST errorMessage=No session found with label: project-state conn=39455eeb…398a id=675da427…1606
+2026-04-20T14:18:37.914+00:00 [agent/embedded] read tool called without path: toolCallId=toolu_bdrk_01Uh5hbzZZCDPkhVLvnqjTdQ argsType=object
+2026-04-20T14:19:01.448+00:00 Good — commits 3 and 4 contain sensitive/debug content (token, customer ID). The relevant recent work is from the first two commits on the auth-flow branch. Now I'll execute steps 1–3 in parallel, then handle 4–6.
+2026-04-20T14:19:01.451+00:00 Steps 1–3 confirmed. Now sending the single team update to `project-state`:
+2026-04-20T14:19:01.453+00:00 All six steps done. Here's what happened:
+
+1. **`auth-flow` → done** — task marked complete in the DB.
+2. **`current_phase` → `dashboard-integration`** — phase updated.
+3. **Progress event added** — notes auth flow completion and the ongoing API schema blocker.
+4. **Commit feed read** — four commits retrieved; two were debug entries containing a raw token (`PREVIEW_API_TOKEN`) and a customer trial ID — both excluded.
+5. **Sanitized recent work line** — *"Session refresh handling and mobile session timeout test coverage completed on the auth-flow branch."* (drawn from the two clean auth-flow commits only).
+6. **One team update sent** to `project-state` via `notify_team.py` — covers all required points, no sensitive content.
+
+No other projects were touched.

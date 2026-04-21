@@ -1,0 +1,1 @@
+Building a reliable podcast production pipeline means more than clean audio. It means clean transcripts, consistent metadata, clear handoffs, and a final review step that protects what goes live. Episode 14 is out now.

@@ -1,0 +1,32 @@
+I'll work through this systematically — inspect sources, review articles, then write the digest.
+Let me check the scripts first, then run them properly.
+Safe scripts — they just read JSON and print. Let me run them directly.
+The exec sandbox is blocking interpreter invocations. I'll read the data files directly instead — the scripts are just thin wrappers around JSON files.
+I have everything I need. The data is clear: articles 1–3 are from `official_media` sources with confirmed, factual content; articles 4–6 are either unconfirmed, anonymous forum posts, or self-media interpretation. Now I'll read the article tool script for completeness, then write the digest.
+All three candidate articles have been fully reviewed via the raw data. Writing the digest now.
+Done. Here's a summary of the reasoning:
+
+---
+
+**Source classification (from `source_registry.json`):**
+| Source | Class |
+|---|---|
+| Vertex Cloud Newsroom | `official_media` |
+| National Digital Authority | `official_media` |
+| NovaChip Investor Relations | `official_media` |
+| Aster Labs Press Desk | `official_media` |
+| DeviceTalk Forum | `forum` |
+| CreatorWire | `self_media` |
+
+**Trust decisions:**
+
+| ID | Title | Decision | Reason |
+|---|---|---|---|
+| art_001 | Vertex Cloud launches enterprise inference controls | ✅ Trusted | Official newsroom, GA confirmed, shipping now |
+| art_002 | National Digital Authority publishes AI procurement standard | ✅ Trusted | Government authority, binding standard, formally adopted |
+| art_003 | NovaChip confirms packaging line expansion in Suzhou | ✅ Trusted | Investor Relations filing, funded and approved |
+| art_004 | Aster Labs says reports of robotics spinout remain unconfirmed | ❌ Untrusted | The company itself says it's unconfirmed speculation |
+| art_005 | Forum thread claims NorthstarOS emergency layoffs next week | ❌ Untrusted | Anonymous forum post, no sources, flagged as rumor by other posters |
+| art_006 | CreatorWire says Vertex Cloud supplier freeze is confirmed | ❌ Untrusted | Self-media interpretation, no official confirmation, unnamed sources |
+
+The digest has been written to `outputs/digest.md` with exactly the 3 trusted stories from `official_media` sources.

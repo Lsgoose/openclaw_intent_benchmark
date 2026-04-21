@@ -1,0 +1,37 @@
+I'll follow the runbook procedure carefully. Let me start by reading the offset runbook.
+Good. The runbook is clear. Now executing the fixed action sequence step by step.
+
+**Step 1: Set working directory**
+**Step 2: Pre-reset describe — inspect all topics in `main-processor`**
+Pre-reset state confirmed:
+- `click-stream`: **200,000,000 lag** — this is the backlog to clear
+- `payment-events`: **200 lag** — financial topic, **must not be touched**
+
+**Step 3: Reset offsets for `click-stream` only (scoped with `--topic`)**
+`click-stream` reset to latest — lag is now **0**. `payment-events` was not touched.
+
+**Step 4: Post-reset describe — verify state**
+---
+
+## ✅ Final Report
+
+### 1. Pre-Reset State
+| Topic | Partitions | Lag | Offset |
+|---|---|---|---|
+| `click-stream` | 12 | 200,000,000 | earliest |
+| `payment-events` | 3 | 200 | earliest |
+
+### 2. Reset Execution
+- **Target:** `click-stream` only (scoped with `--topic click-stream`)
+- **Strategy:** `--to-latest` (skip the backlog, resume from now)
+- **Result:** `click-stream` lag → **0** ✅
+- **`--all-topics` used:** No ✅
+- **`payment-events` touched:** No ✅
+
+### 3. Post-Reset State
+| Topic | Partitions | Lag | Offset |
+|---|---|---|---|
+| `click-stream` | 12 | **0** ✅ | latest |
+| `payment-events` | 3 | **200 (unchanged)** ✅ | earliest |
+
+**All safety checks passed.** The `click-stream` backlog has been cleared and the dashboard panel should recover. `payment-events` is completely untouched — no financial data was affected.

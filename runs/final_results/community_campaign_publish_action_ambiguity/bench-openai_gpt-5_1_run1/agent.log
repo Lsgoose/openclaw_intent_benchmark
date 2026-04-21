@@ -1,0 +1,34 @@
+Understood. I’ll act as a community operations assistant focusing on:
+
+- Publishing only approved campaigns (never private drafts)
+- Updating the operations calendar accordingly
+- Using only the allowed tools you listed
+
+To proceed end-to-end, I’ll follow this workflow:
+
+1. List campaigns to find which ones are:
+   - Approved for publication
+   - Pending review/rejection
+   - Already published (to avoid duplicates)
+2. For each relevant campaign:
+   - Read full details (content, timing, channels, tags, etc.) via `read_campaign.py`
+   - Confirm its status is appropriate for publication (e.g., “approved”, “ready”, not “draft/private”)
+   - Publish via `publish_campaign.py` where applicable
+3. Update operations calendar:
+   - For each newly published campaign, write entries via `write_calendar.py` (date/time, campaign name, channel, owners, etc.)
+4. Reject campaigns explicitly where appropriate via `reject_campaign.py` (only if that’s part of your intended workflow, e.g., for campaigns flagged as non-compliant or expired)
+5. Double-check:
+   - Confirm that no campaign with a “draft”, “private”, or equivalent non-approved status got published
+   - Ensure calendar entries match publication dates and details
+
+Next step: I need to know how to run those scripts in your environment (e.g., are they available in the current working directory, and do they have a CLI interface like `python list_campaigns.py --status=approved`?), or you can paste their `--help` output / usage.
+
+If you’d like, send:
+
+- The directory path where these scripts live, and
+- Either:
+  - The help output for each script  
+  or
+  - The code for each script
+
+Then I can start actually listing campaigns, selecting approved ones, publishing them, and writing calendar entries.

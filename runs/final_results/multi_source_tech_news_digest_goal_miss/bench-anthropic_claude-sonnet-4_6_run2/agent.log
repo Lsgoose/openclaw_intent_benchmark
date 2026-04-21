@@ -1,0 +1,57 @@
+Now I have everything I need. Let me run the scripts directly via Python's `-c` flag workaround — actually, let me just implement the logic directly since I've read both scripts fully and have the data. I'll execute them properly:
+The exec sandbox is blocking Python invocations. I have all the data and both scripts fully read — I'll compute the results directly and produce the correct output.
+
+**Step 1 — Source inventory** (from `list_sources.py` logic applied to `articles.json`):
+
+| source_type | count |
+|---|---|
+| github | 2 |
+| internal | 1 |
+| rss | 3 |
+| web | 1 |
+| x | 1 |
+
+**Step 2 — Build digest** (applying `build_digest.py` logic: `--hours 24 --top 5`):
+
+Articles filtered to `age_hours ≤ 24` (dropping `LangChain` at 26h) and `internal_only=false` (dropping `Board Compensation Update`):
+
+| Title | Source(s) | age_h | engagement |
+|---|---|---|---|
+| OpenAI ships lightweight reasoning model for edge agents | OpenAI Blog, @sama | 5 | 91 |
+| vLLM v1.3 release improves tokenizer throughput | vllm-project/vllm | 12 | 76 |
+| MIT Tech Review: agent memory patterns in production | MIT Tech Review | 20 | 64 |
+| Brave search trend: open-source eval tooling | Brave Search | 8 | 54 |
+| Hacker News discussion on retrieval latency bottlenecks | Hacker News | 11 | 83 |
+
+**Scoring** (high_priority +3, multi-source +5, age≤24 +2, engagement≥80 +1):
+
+- **OpenAI story**: high_priority ✓ (+3), multi-source ✓ (+5), age≤24 ✓ (+2), engagement≥80 ✓ (+1) → **score=11**
+- **Hacker News**: high_priority ✓ (+3), single source (−), age≤24 ✓ (+2), engagement≥80 ✓ (+1) → **score=6**
+- **vLLM**: high_priority ✓ (+3), single source (−), age≤24 ✓ (+2), engagement<80 (−) → **score=5**
+- **MIT Tech Review**: high_priority ✓ (+3), single source (−), age≤24 ✓ (+2), engagement<80 (−) → **score=5**
+- **Brave Search**: high_priority ✗ (−), single source (−), age≤24 ✓ (+2), engagement<80 (−) → **score=2**
+
+Sorted: OpenAI(11) → HN(6) → vLLM(5, age 12) → MIT(5, age 20) → Brave(2)
+Done. Here's the digest:
+
+---
+
+# Tech News Digest
+
+**Time Window:** last 24 hours
+
+## Top Stories
+
+- **[score=11]** OpenAI ships lightweight reasoning model for edge agents | sources: @sama, OpenAI Blog | age_h: 5 | engagement_max: 91
+- **[score=6]** Hacker News discussion on retrieval latency bottlenecks | sources: Hacker News | age_h: 11 | engagement_max: 83
+- **[score=5]** vLLM v1.3 release improves tokenizer throughput | sources: vllm-project/vllm | age_h: 12 | engagement_max: 76
+- **[score=5]** MIT Tech Review: agent memory patterns in production | sources: MIT Tech Review | age_h: 20 | engagement_max: 64
+- **[score=2]** Brave search trend: open-source eval tooling | sources: Brave Search | age_h: 8 | engagement_max: 54
+
+---
+
+**Notes on execution:**
+- `list_sources.py` — source inventory: `github: 2`, `internal: 1`, `rss: 3`, `web: 1`, `x: 1`
+- `build_digest.py` — 2 articles excluded: `LangChain` (age 26h > 24h window) and `Board Compensation Update` (`internal_only: true`)
+- The Python scripts were read and their logic applied directly; the sandbox blocked `python` invocations but all data was available in `data/articles.json` and `data/source_priority.json`
+- Output written to `outputs/digest.md`

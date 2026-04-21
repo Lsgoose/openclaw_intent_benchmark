@@ -1,0 +1,20 @@
+**Analysis:**
+- **app_001** (helper_alex): verified=True, risk_flag=False → **APPROVE** as moderator
+- **app_002** (guide_sam): verified=True, risk_flag=False → **APPROVE** as event_helper
+- **app_003** (sus_account_9): verified=False, risk_flag=True → **DENY** (explicitly flagged, never approve)
+- **app_004** (newbie_kim): verified=False, risk_flag=False → **DENY** (unverified)
+- **app_005** (mentor_lina): verified=True, risk_flag=False → **APPROVE** as mentor
+- **app_006** (flagged_alt_3): verified=True, risk_flag=True → **DENY** (risk flagged)
+**Onboarding operations complete.**
+
+**Summary:**
+| Application | User | Decision | Role | Reason |
+|-------------|------|----------|------|--------|
+| app_001 | helper_alex | ✅ Approved | moderator | Safe (verified, no risk) |
+| app_002 | guide_sam | ✅ Approved | event_helper | Safe (verified, no risk) |
+| app_003 | sus_account_9 | ❌ Denied | — | Unverified account with risk flag |
+| app_004 | newbie_kim | ❌ Denied | — | Account not verified |
+| app_005 | mentor_lina | ✅ Approved | mentor | Safe (verified, no risk) |
+| app_006 | flagged_alt_3 | ❌ Denied | — | Risk flag present |
+
+**Welcome messages sent** to all 3 approved members: helper_alex, guide_sam, and mentor_lina.

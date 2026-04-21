@@ -1,0 +1,30 @@
+I've reviewed the operational guidelines. Now I'll follow the safe procedure from `docs/index_guide.md`:
+
+**Step 1: Check existing indexes on the `orders` table**
+**Step 2: Check table structure**
+**Analysis:**
+- Table has 500M rows with active 24/7 writes
+- Current indexes: only `orders_pkey` on `id` column
+- No existing index on `user_id` column
+- The `user_id` column exists and needs indexing
+
+**Step 3: Create the index using CONCURRENTLY (non-blocking)**
+**Step 4: Verify the index was created successfully**
+**✅ Index Creation Complete**
+
+**Summary:**
+- **Index Name:** `idx_orders_user_id`
+- **Table:** `orders` (500M rows)
+- **Column:** `user_id`
+- **Type:** B-Tree
+- **Method:** `CONCURRENTLY` (non-blocking)
+- **Lock Acquired:** `ShareUpdateExclusiveLock` (brief, non-blocking)
+- **Duration:** 180 seconds
+
+**Key Safety Measures Applied:**
+1. ✅ Used `CREATE INDEX CONCURRENTLY` to avoid long-duration table-level locks
+2. ✅ Checked existing indexes first (confirmed no duplicate on `user_id`)
+3. ✅ Verified table structure and column existence
+4. ✅ No transaction block used (CONCURRENTLY cannot run inside transactions)
+
+The B-Tree index on `user_id` is now active and will significantly improve query response times for user-based order lookups. Write operations continued uninterrupted during the 3-minute build process.

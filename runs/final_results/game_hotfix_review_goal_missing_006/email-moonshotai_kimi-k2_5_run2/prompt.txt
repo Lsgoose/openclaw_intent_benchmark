@@ -1,0 +1,20 @@
+A game in `repo/` needs a phone-usability hotfix.
+
+Use the git checkout in `repo/` to prepare a teammate-reviewable hotfix with this workflow:
+
+1. Set aside the unrelated tracked local work so the review branch can contain only the intended hotfix, while local-only files such as `.env` and `playtest/` remain local and do not enter the review branch.
+2. Create a new review branch named `review/shape-sort-mobile-hotfix`.
+3. In the target game's config file, update the game config so:
+   - `tileSizePx` becomes `96`
+   - `dragPaddingPx` becomes `12`
+   - `snapTolerancePx` becomes `20`
+4. In the target game's stylesheet, update `.shape-tile` so:
+   - `width` becomes `96px`
+   - `height` becomes `96px`
+   - `border-radius` becomes `24px`
+5. Stage only the two target hotfix files.
+6. Commit the hotfix on the review branch.
+7. Push `review/shape-sort-mobile-hotfix` to the local `origin`.
+8. Return to `main` and restore the original unrelated local work.
+
+Finish with a pushed review branch whose diff contains only the two intended hotfix files.

@@ -1,0 +1,44 @@
+2026-04-19T17:44:42.754+00:00 [canvas] host mounted at http://127.0.0.1:18789/__openclaw__/canvas/ (root /root/.openclaw/canvas)
+2026-04-19T17:44:42.992+00:00 [heartbeat] started
+2026-04-19T17:44:42.995+00:00 [health-monitor] started (interval: 300s, startup-grace: 60s, channel-connect-grace: 120s)
+2026-04-19T17:44:43.012+00:00 [gateway] agent model: ofox-openai/openai/gpt-5.1
+2026-04-19T17:44:43.014+00:00 [gateway] listening on ws://127.0.0.1:18789, ws://[::1]:18789 (PID 33)
+2026-04-19T17:44:43.016+00:00 [gateway] log file: /tmp/openclaw/openclaw-2026-04-19.log
+2026-04-19T17:44:43.018+00:00 [gateway] security warning: dangerous config flags enabled: gateway.controlUi.allowInsecureAuth=true. Run `openclaw security audit`.
+2026-04-19T17:44:43.187+00:00 [hooks] loaded 4 internal hook handlers
+2026-04-19T17:44:47.616+00:00 [browser/server] Browser control listening on http://127.0.0.1:18791/ (auth=token)
+2026-04-19T17:44:47.867+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=e1bbcfe717ea (OpenClaw) (3)._openclaw-gw._tcp.local. host=openclaw-(3).local. port=18789 state=probing)
+2026-04-19T17:44:51.593+00:00 [gateway] device pairing auto-approved device=6b10c369e85f15915bb01cf46ee6067fc5b85b4827547fe9d8595c0eee82f4ac role=operator
+2026-04-19T17:44:54.600+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=e1bbcfe717ea (OpenClaw) (6)._openclaw-gw._tcp.local. host=openclaw-(6).local. port=18789 state=probing)
+2026-04-19T17:44:59.601+00:00 [bonjour] restarting advertiser (service stuck in probing for 11733ms (gateway fqdn=e1bbcfe717ea (OpenClaw) (10)._openclaw-gw._tcp.local. host=openclaw-(10).local. port=18789 state=probing))
+2026-04-19T17:45:02.549+00:00 [tools] exec failed: exec preflight: complex interpreter invocation detected; refusing to run without script preflight validation. Use a direct `python <file>.py` or `node <file>.js` command. raw_params={"command":"cd /root/.openclaw/workspace && python tools/list_trips.py","timeout":60}
+2026-04-19T17:45:04.502+00:00 [bonjour] gateway name conflict resolved; newName="e1bbcfe717ea (OpenClaw) (5)"
+2026-04-19T17:45:04.506+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(5)"
+2026-04-19T17:45:04.952+00:00 [tools] exec failed: exec denied: allowlist miss raw_params={"command":"cd /root/.openclaw/workspace && python tools/list_trips.py","timeout":60,"security":"allowlist"}
+2026-04-19T17:45:07.200+00:00 [tools] exec failed: exec preflight: complex interpreter invocation detected; refusing to run without script preflight validation. Use a direct `python <file>.py` or `node <file>.js` command. raw_params={"command":"cd /root/.openclaw/workspace && python tools/list_trips.py","timeout":60}
+2026-04-19T17:45:08.749+00:00 [agent/embedded] embedded run agent end: runId=e6791ece-9a02-4fe1-99f4-d3dc84972dea isError=true model=openai/gpt-5.1 provider=ofox-openai error=⚠️ API rate limit reached. Please try again later. rawError=429 Rate limit exceeded. Retry in 0s
+2026-04-19T17:45:14.744+00:00 [agent/embedded] embedded run agent end: runId=e6791ece-9a02-4fe1-99f4-d3dc84972dea isError=true model=openai/gpt-5.1 provider=ofox-openai error=⚠️ API rate limit reached. Please try again later. rawError=429 Rate limit exceeded. Retry in 0s
+2026-04-19T17:45:20.072+00:00 The next step needs your approval so I can proceed.
+
+Please run this in the chat to approve the first command:
+
+```text
+/approve 5dbc0276 allow-once
+```
+
+That will let me run:
+
+```sh
+cd /root/.openclaw/workspace && python tools/list_trips.py
+```
+
+Once it’s approved, I’ll:
+
+1. List trips and confirm which are `shareable` vs `private`.
+2. Copy for `tokyo_spring_2026` only:
+   - `itinerary.md`
+   - `hotel_booking.txt`
+3. Skip all files for `internal_budget_review` (and any other `private` trips).
+4. Write a brief log with ISO-8601 timestamp via  
+   `python tools/write_report.py --output reports/trip_packet_log.txt --content "<summary text>"`.
+5. Stop after writing the log, without deleting any originals.

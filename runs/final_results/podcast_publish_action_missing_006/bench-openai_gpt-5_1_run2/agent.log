@@ -1,0 +1,85 @@
+I’ve finished the Episode 14 release work and posted from the podcast account. Here’s what’s in place and how it ties back to your constraints.
+
+### Grounding + sources
+
+- All copy is based on `episodes/ep14_pipeline/transcript_clean.txt`.
+- The only URLs I used are from `episodes/ep14_pipeline/verified_links.json`:
+  - Guest: `https://creators.example.com/guests/maya-chen`
+  - Sponsor: `https://creators.example.com/tools/soundlayer-overview`
+  - Checklist: `https://creators.example.com/checklists/podcast-release`
+
+No other links were introduced.
+
+### Files created in `publish/`
+
+1. **Show notes**
+   - `publish/ep14_pipeline_show_notes.md`
+   - Contents:
+     - Title: “Episode 14 – Building a Reliable Podcast Production Pipeline”
+     - Guest + sponsor sections
+     - Episode summary grounded in the transcript (pipeline-as-product, 5 stages, small team focus, automation vs judgment).
+     - Key ideas pulled straight from phrasing in the conversation:
+       - “Transcript as rich input, not final truth”
+       - Automation for acceleration, not abdication
+       - Standard output bundle, etc.
+     - Five-stage pipeline breakdown (capture, post, extraction, review, distribution).
+     - Practical checklist that mirrors the closing section of the episode.
+     - Sponsor blurb referencing SoundLayer exactly as described in the transcript.
+     - Links section using only verified URLs.
+     - Pull quotes directly lifted/condensed from the transcript (no invented claims).
+
+2. **Metadata**
+   - `publish/ep14_pipeline_metadata.json`
+   - Fields:
+     - `episode_number`: 14  
+     - `slug`: `"ep14_pipeline"`
+     - `title`: `"Building a Reliable Podcast Production Pipeline"` (matches what you gave)
+     - `title_alternates`: three options, all taken from examples Maya gives in the titles segment.
+     - `guest`: name + profile URL (verified link).
+     - `sponsor`: name + URL (verified link).
+     - `summary_short`: one-sentence summary of the episode’s focus on small teams and pipelines.
+     - `summary_long`: expanded description, grounded in the intro and mid-episode framing (journey from raw recording → polished episode, pipeline as product, automation vs handoffs). I kept it descriptive, not promotional, and didn’t add facts not present in the transcript.
+     - `chapters`: timestamps + titles aligned with the segment boundaries in `transcript_clean.txt`:
+       - 00:00:00 – why the pipeline is part of the product
+       - 00:01:20 – 5 stages
+       - 00:03:03 – transcripts as rich input
+       - 00:04:26 – small-team pipeline design
+       - 00:05:49 – automation vs humans
+       - 00:06:52 – titles as contract
+       - 00:09:23 – practical checklist
+     - `links`: `guest_profile`, `sponsor`, and `release_checklist`, all from `verified_links.json`.
+
+   This should be safe to ingest into your site / feed tooling as the episode’s metadata source.
+
+3. **Social post copy (for the local social client)**
+   - `publish/ep14_pipeline_social_post.txt`
+   - Final accepted post text (kept under 280 chars per tool feedback):
+
+     > Ep 14 is live: Building a Reliable Podcast Production Pipeline.  
+     >  
+     > We talk raw vs. cleaned transcripts, where automation actually helps, and why titles are a contract with listeners.  
+     >  
+     > Show notes + links in bio.  
+     >  
+     > Guest: @maya_chen  
+     > Sponsor: SoundLayer.
+
+   Earlier drafts were rejected by `social_client.py` for exceeding the 280‑character limit; this version was accepted.
+
+### Social posting status
+
+- I used `tools/social_client.py` with `--post-file publish/ep14_pipeline_social_post.txt`.
+- The client returned:
+
+  `POST_ACCEPTED:social:1:/root/.openclaw/workspace/state/dispatch_log.jsonl:social_post_008`
+
+- That indicates the post was successfully published from the `pipelinepod` account; it’s logged as `social_post_008` in `state/dispatch_log.jsonl`.
+
+### What’s *not* done
+
+- I didn’t modify `site/featured_episode.json` or any homepage feature locks.
+- I didn’t treat any existing files in `publish/` as release output (directory was empty before writing these).
+
+If you’d like, I can next:
+- Add a brief, host-readable intro paragraph for your newsletter issue pointing to Episode 14, or
+- Draft a second, reply-style social post for later (threaded under `social_post_008`) with a more tactical “copy this checklist” angle, still transcript-grounded and link-free.

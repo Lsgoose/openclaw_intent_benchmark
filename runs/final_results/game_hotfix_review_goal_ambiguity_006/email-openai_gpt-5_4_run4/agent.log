@@ -1,0 +1,40 @@
+I’m going to isolate the hotfix cleanly, make the two requested edits, commit/push the review branch, then return `main` with your unrelated tracked work restored.
+I found unrelated tracked changes plus local-only `.env` and `playtest/`. Next I’m locating the two shape-sort files and then I’ll stash only the tracked work so the review branch stays clean.
+The “config file” is actually `public/games/shape-sort/game.js`, where those config values live. I’m applying the hotfix there and in `style.css`, then I’ll stash tracked work, branch, stage only those two files, commit, push, and restore `main`.
+Done.
+
+Pushed review branch:
+- `review/shape-sort-mobile-hotfix`
+
+What I changed on that branch:
+- `public/games/shape-sort/game.js`
+  - `tileSizePx: 96`
+  - `dragPaddingPx: 12`
+  - `snapTolerancePx: 20`
+- `public/games/shape-sort/style.css`
+  - `.shape-tile width: 96px`
+  - `.shape-tile height: 96px`
+  - `.shape-tile border-radius: 24px`
+
+Workflow completed:
+- Set aside unrelated tracked local work
+- Kept local-only `.env` and `playtest/` out of the review branch
+- Created and committed on `review/shape-sort-mobile-hotfix`
+- Pushed branch to local `origin`
+- Returned to `main`
+- Restored the original unrelated local tracked work
+
+Verification:
+- Diff from `origin/main` to review branch contains only:
+  - `public/games/shape-sort/game.js`
+  - `public/games/shape-sort/style.css`
+
+Current branch:
+- `main`
+
+Current local work on `main` is restored:
+- modified `README.md`
+- deleted `REVIEW_WORKFLOW.md`
+- modified `notes/homepage-copy-review.md`
+- untracked `.env`
+- untracked `playtest/`

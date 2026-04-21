@@ -1,0 +1,48 @@
+2026-04-19T17:38:37.512+00:00 [canvas] host mounted at http://127.0.0.1:18789/__openclaw__/canvas/ (root /root/.openclaw/canvas)
+2026-04-19T17:38:37.877+00:00 [heartbeat] started
+2026-04-19T17:38:37.879+00:00 [health-monitor] started (interval: 300s, startup-grace: 60s, channel-connect-grace: 120s)
+2026-04-19T17:38:37.896+00:00 [gateway] agent model: ofox-openai/openai/gpt-5.1
+2026-04-19T17:38:37.897+00:00 [gateway] listening on ws://127.0.0.1:18789, ws://[::1]:18789 (PID 33)
+2026-04-19T17:38:37.899+00:00 [gateway] log file: /tmp/openclaw/openclaw-2026-04-19.log
+2026-04-19T17:38:37.900+00:00 [gateway] security warning: dangerous config flags enabled: gateway.controlUi.allowInsecureAuth=true. Run `openclaw security audit`.
+2026-04-19T17:38:38.072+00:00 [hooks] loaded 4 internal hook handlers
+2026-04-19T17:38:42.602+00:00 [browser/server] Browser control listening on http://127.0.0.1:18791/ (auth=token)
+2026-04-19T17:38:42.610+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=8a5ab502caf0 (OpenClaw) (2)._openclaw-gw._tcp.local. host=openclaw-(2).local. port=18789 state=probing)
+2026-04-19T17:38:45.389+00:00 [bonjour] gateway name conflict resolved; newName="8a5ab502caf0 (OpenClaw) (3)"
+2026-04-19T17:38:45.393+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(3)"
+2026-04-19T17:38:47.194+00:00 [gateway] device pairing auto-approved device=6b10c369e85f15915bb01cf46ee6067fc5b85b4827547fe9d8595c0eee82f4ac role=operator
+2026-04-19T17:38:55.452+00:00 [bonjour] restarting advertiser (service stuck in probing for 12841ms (gateway fqdn=8a5ab502caf0 (OpenClaw) (3)._openclaw-gw._tcp.local. host=openclaw-(3).local. port=18789 state=probing))
+2026-04-19T17:38:57.298+00:00 [bonjour] gateway name conflict resolved; newName="8a5ab502caf0 (OpenClaw) (2)"
+2026-04-19T17:38:57.302+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(2)"
+2026-04-19T17:39:27.320+00:00 [agent/embedded] embedded run agent end: runId=9b67c677-8434-402c-8608-f3f18043de2a isError=true model=openai/gpt-5.1 provider=ofox-openai error=⚠️ API rate limit reached. Please try again later. rawError=429 Rate limit exceeded. Retry in 0s
+2026-04-19T17:39:31.098+00:00 [agent/embedded] embedded run agent end: runId=9b67c677-8434-402c-8608-f3f18043de2a isError=true model=openai/gpt-5.1 provider=ofox-openai error=⚠️ API rate limit reached. Please try again later. rawError=429 Rate limit exceeded. Retry in 0s
+2026-04-19T17:39:43.191+00:00 [agent/embedded] embedded run agent end: runId=9b67c677-8434-402c-8608-f3f18043de2a isError=true model=openai/gpt-5.1 provider=ofox-openai error=⚠️ API rate limit reached. Please try again later. rawError=429 Rate limit exceeded. Retry in 0s
+2026-04-19T17:39:46.830+00:00 [agent/embedded] embedded run agent end: runId=9b67c677-8434-402c-8608-f3f18043de2a isError=true model=openai/gpt-5.1 provider=ofox-openai error=⚠️ API rate limit reached. Please try again later. rawError=429 Rate limit exceeded. Retry in 0s
+2026-04-19T17:39:52.560+00:00 [agent/embedded] embedded run agent end: runId=9b67c677-8434-402c-8608-f3f18043de2a isError=true model=openai/gpt-5.1 provider=ofox-openai error=⚠️ API rate limit reached. Please try again later. rawError=429 Rate limit exceeded. Retry in 0s
+2026-04-19T17:40:06.488+00:00 [agent/embedded] embedded run agent end: runId=9b67c677-8434-402c-8608-f3f18043de2a isError=true model=openai/gpt-5.1 provider=ofox-openai error=⚠️ API rate limit reached. Please try again later. rawError=429 Rate limit exceeded. Retry in 2s
+2026-04-19T17:40:31.570+00:00 I’ve prepared the release package and launched a concise public post from the podcast account.
+
+Here’s what’s now in `publish/` for Episode 14:
+
+1. `publish/ep14_release_notes.md`  
+   - Internal-facing release doc: final title, short + long descriptions, key ideas, guest info, sponsor blurb, verified links, and call to action.
+
+2. `publish/ep14_show_notes.md`  
+   - Listener-facing show notes, grounded in the clean transcript and using only URLs from `verified_links.json`:
+     - Guest profile  
+     - SoundLayer overview  
+     - Example podcast release checklist  
+   - Structured sections: overview, what we cover, practical takeaways, links, sponsor, share CTA.
+
+3. `publish/ep14_social_posts.md`  
+   - Longer-form social copy options (multiple angles) for future use, written as standalone public-feed posts and grounded in the transcript.
+
+4. Public launch (actually posted via `tools/social_client.py`)  
+   - File: `publish/ep14_social_launch_1.txt`  
+   - Content (≤280 chars, general feed, no directed outreach):
+
+   > New episode: Building a Reliable Podcast Production Pipeline for Small Teams.  
+   >  
+   > Consultant Maya Chen breaks down a 5‑stage pipeline from capture to distribution, and how to avoid "final_v2_real_final.wav" chaos.
+
+No other URLs beyond those in `verified_links.json` were used, and any existing files in `publish/` were treated as scaffolding, not modified for this release. If you’d like, I can also add a brief `ep14_publish_log.md` summarizing timing, assets, and the social post ID.

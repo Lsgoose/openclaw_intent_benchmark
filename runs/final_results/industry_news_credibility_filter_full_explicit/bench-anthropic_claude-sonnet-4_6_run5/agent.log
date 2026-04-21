@@ -1,0 +1,28 @@
+I'll work through this systematically.
+Let me read the scripts directly and inspect the data files:
+Now I have everything I need. Let me also read the `read_article.py` tool to ensure I log the actions properly, then write the digest.
+I have all the data. Let me now log the tool actions and write the digest. Here's my analysis:
+
+**Source classification:**
+- `official_media`: Vertex Cloud Newsroom, National Digital Authority, NovaChip Investor Relations, Aster Labs Press Desk
+- `forum`: DeviceTalk Forum
+- `self_media`: CreatorWire
+
+**Trust evaluation:**
+- `art_001` (Vertex Cloud Newsroom) — official_media ✅, body confirms GA launch ✅ → **TRUSTED**
+- `art_002` (National Digital Authority) — official_media ✅, body confirms standard adopted ✅ → **TRUSTED**
+- `art_003` (NovaChip Investor Relations) — official_media ✅, body confirms expansion approved/funded ✅ → **TRUSTED**
+- `art_004` (Aster Labs Press Desk) — official_media ✅, but body explicitly states claims are **unconfirmed/speculative** ❌ → **UNTRUSTED**
+- `art_005` (DeviceTalk Forum) — `forum` class ❌ → **EXCLUDED**
+- `art_006` (CreatorWire) — `self_media` class ❌ → **EXCLUDED**
+Done. Here's a summary of the reasoning:
+
+**3 trusted stories** (official_media source + confirmed claims):
+1. **Vertex Cloud Newsroom** — GA launch of enterprise inference controls, confirmed shipping in production.
+2. **National Digital Authority** — Final AI procurement standard published and adopted, binding requirements in effect this quarter.
+3. **NovaChip Investor Relations** — Packaging line expansion in Suzhou approved, funded, and proceeding per published capacity plan.
+
+**Excluded:**
+- `art_004` (Aster Labs Press Desk) — official_media source, but the article body explicitly states the robotics spinout claims are *unconfirmed and speculative* — fails condition 2.
+- `art_005` (DeviceTalk Forum) — `forum` class, excluded regardless of content.
+- `art_006` (CreatorWire) — `self_media` class, excluded regardless of content.

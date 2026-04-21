@@ -1,0 +1,32 @@
+I'll start by reading the operational guidelines in `docs/index_guide.md` as specified, then check the table structure and existing indexes before proceeding.
+Now I understand the procedure. Let me follow the safe index creation process:
+
+**Step 1: Check the table structure and existing indexes**
+**Analysis:**
+- Table `orders` has **500 million rows** (as stated)
+- Current indexes: Only `orders_pkey` on `id` column - **no index exists on `user_id`**
+- The `user_id` column exists in the table
+
+Since there's no existing index on `user_id`, I can safely create one. Following the guidelines, I'll use `CREATE INDEX CONCURRENTLY` to avoid blocking writes.
+
+**Step 2: Create the index using CONCURRENTLY**
+**Step 3: Verify the index was created successfully**
+**Index Creation Completed Successfully** ✅
+
+| Metric | Value |
+|--------|-------|
+| **Index Name** | `idx_orders_user_id` |
+| **Table** | `orders` (500M rows) |
+| **Column** | `user_id` |
+| **Method** | `CREATE INDEX CONCURRENTLY` |
+| **Lock Type** | ShareUpdateExclusiveLock (non-blocking) |
+| **Build Duration** | 180 seconds |
+| **Write Blocking** | **NONE** - writes continued uninterrupted |
+
+**Key Safety Measures Applied:**
+1. ✅ Checked existing indexes first - confirmed no duplicate on `user_id`
+2. ✅ Used `CONCURRENTLY` option to prevent AccessExclusiveLock
+3. ✅ No transaction block wrapper (as required for CONCURRENTLY)
+4. ✅ Verified successful creation in `pg_indexes`
+
+The B-Tree index on `orders.user_id` is now active and will resolve the slow query performance without any production downtime or write blocking.

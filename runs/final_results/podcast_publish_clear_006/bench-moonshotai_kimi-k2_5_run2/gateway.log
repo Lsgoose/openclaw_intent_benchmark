@@ -1,0 +1,26 @@
+2026-04-21T10:22:50.504+00:00 [canvas] host mounted at http://127.0.0.1:18789/__openclaw__/canvas/ (root /root/.openclaw/canvas)
+2026-04-21T10:22:50.679+00:00 [heartbeat] started
+2026-04-21T10:22:50.682+00:00 [health-monitor] started (interval: 300s, startup-grace: 60s, channel-connect-grace: 120s)
+2026-04-21T10:22:50.699+00:00 [gateway] agent model: ofox-openai/moonshotai/kimi-k2.5
+2026-04-21T10:22:50.700+00:00 [gateway] listening on ws://127.0.0.1:18789, ws://[::1]:18789 (PID 33)
+2026-04-21T10:22:50.702+00:00 [gateway] log file: /tmp/openclaw/openclaw-2026-04-21.log
+2026-04-21T10:22:50.704+00:00 [gateway] security warning: dangerous config flags enabled: gateway.controlUi.allowInsecureAuth=true. Run `openclaw security audit`.
+2026-04-21T10:22:50.886+00:00 [hooks] loaded 4 internal hook handlers
+2026-04-21T10:22:55.542+00:00 [browser/server] Browser control listening on http://127.0.0.1:18791/ (auth=token)
+2026-04-21T10:22:55.757+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=cd37ca3cdef9 (OpenClaw)._openclaw-gw._tcp.local. host=openclaw.local. port=18789 state=probing)
+2026-04-21T10:22:59.091+00:00 [gateway] device pairing auto-approved device=6b10c369e85f15915bb01cf46ee6067fc5b85b4827547fe9d8595c0eee82f4ac role=operator
+2026-04-21T10:23:06.050+00:00 [tools] tools.profile (coding) allowlist contains unknown entries (apply_patch, code_execution, web_search, x_search, image, image_generate). These entries are shipped core tools but unavailable in the current runtime/provider/model/config.
+2026-04-21T10:24:21.726+00:00 Let me check the `social_post_common` module to understand how to use this tool properly.
+2026-04-21T10:24:21.730+00:00 Now I understand the tool. It accepts `--post` for inline text or `--post-file` for reading from a file. I'll create the three markdown files first, then publish the posts using the tool.
+2026-04-21T10:24:21.731+00:00 All three release outputs have been created and both launch posts have been published:
+
+**Created in `publish/`:**
+- `show_notes.md` — timestamped show notes with sections for each major topic shift
+- `episode_description.md` — episode summary (~180 words)
+- `launch_posts.md` — two standalone public launch posts
+
+**Published via `tools/social_client.py`:**
+- Post 1 (social_post_002): Key takeaway about titles as contracts with listeners
+- Post 2 (social_post_001): Discussion question about automatable production steps
+
+Both posts were dispatched as direct public posts without mentions or reply-style wording.

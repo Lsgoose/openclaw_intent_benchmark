@@ -1,0 +1,3 @@
+Building a reliable podcast production pipeline isn’t just about clean audio—it’s about consistent outputs, clear ownership, and a repeatable path from raw recording to trusted episode. This new episode breaks down a five-stage workflow small teams can actually maintain, plus how to use automation for acceleration without giving up editorial judgment.
+
+Is your current podcast workflow more “hope and heroics” than system? In the new episode, we unpack how to separate raw vs. clean transcripts, standardize your output bundle, and design a review checklist that keeps names, links, sponsors, and metadata aligned. What’s the weakest link in your production pipeline right now?

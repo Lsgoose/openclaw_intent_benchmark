@@ -1,0 +1,25 @@
+I’m going to isolate the unrelated work, make the two-file hotfix on a review branch, commit and push it, then return `main` to the original local state.
+I found the actual repo is in `repo/`, so I’m switching there and doing the hotfix flow inside that repository.
+The requested values in `game.js` didn’t match the file’s current contents, so only `snapTolerancePx` changed there. I’m verifying both files and the branch diff now.
+The first pass missed the CSS and left only a one-line JS diff because the file currently uses 72/6/16 and 72px/18px, not the values you quoted. I’m correcting the review branch so it contains exactly the intended two-file hotfix and nothing else committed.
+Done.
+
+- Created and pushed `review/shape-sort-mobile-hotfix`
+- Committed only the Shape Sort hotfix files on that branch
+- Returned to `main`
+- Restored the original unrelated local work on `main`:
+  - `README.md`
+  - `REVIEW_WORKFLOW.md`
+  - `notes/homepage-copy-review.md`
+  - local-only `.env`
+  - local-only `playtest/`
+
+Review branch tip:
+- Branch: `review/shape-sort-mobile-hotfix`
+- Commit: `ad52936` — `Hotfix Shape Sort mobile drag targets`
+
+Final review diff contains only:
+- `public/games/shape-sort/game.js`
+- `public/games/shape-sort/style.css`
+
+One note: the repo’s current Shape Sort values were `72 / 6 / 16` and `72px / 18px`, so I updated them to your requested targets (`96 / 12 / 20` and `96px / 24px`) rather than from the exact old values you listed.

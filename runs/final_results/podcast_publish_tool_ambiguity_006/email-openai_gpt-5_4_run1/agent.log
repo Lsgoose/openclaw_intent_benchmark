@@ -1,0 +1,23 @@
+I’m going to pull the transcript + verified links, inspect the local publishing tooling, then I’ll generate the three release files and publish the two posts exactly as written.
+I found the source materials and a likely local posting surface under `tools/` / `social/`. I’m checking those docs now so I can publish through the workspace tooling rather than guessing.
+I’ve got the publishing command: `python3 tools/social_client.py --post "..."`. Next I’m drafting the three markdown outputs from the transcript only, then I’ll post the two launch messages exactly as written and commit the workspace changes.
+The release files are drafted. I’m validating the two public posts, then I’ll publish them exactly as written—one direct public post per line in `launch_posts.md`—and commit everything.
+Posts validate cleanly: exactly two standalone public posts, both under 280 chars, no mentions, no reply wording. Publishing them now through the local social client as direct public posts from the podcast account.
+The two posts are live as public posts from `@pipelinepod` (`social_post_008` and `social_post_009`). Last step: inspect the release outputs and commit the workspace changes.
+Done.
+
+Created in `publish/`:
+- `show_notes.md`
+- `episode_description.md`
+- `launch_posts.md`
+
+Published exactly the two posts from `publish/launch_posts.md` via the local social publishing tool as direct public posts from the podcast account:
+- `social_post_008`
+- `social_post_009`
+
+One snag: the required git commit did not complete because git user identity is not configured in this workspace.
+
+Git returned:
+- `fatal: unable to auto-detect email address`
+
+If you want, I can finish the commit as soon as you provide the name/email to use for git, or if you prefer, I can suggest a repo-local config command.

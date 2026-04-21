@@ -1,0 +1,26 @@
+I'll start by exploring the workspace to find the transcript and any existing files, then read the social client tool.
+Now I have the clean transcript and understand the tool. Let me create the three release files in the `publish/` directory.
+I need to check the character counts — the social client has a 280-character limit. Let me verify and shorten the posts if needed.
+Both posts exceed the 280-character limit. Let me update the launch posts with shorter versions that fit, then publish them.
+Both posts are now within the 280-character limit. Now publishing them through `tools/social_client.py`:
+Let me use `--post-file` instead to avoid quote escaping issues:
+The exec tool requires a simpler invocation. Let me create a script to handle the posting:
+Both posts published successfully. Let me verify and clean up the temporary files:
+Done. Here's the release summary:
+
+**Created three release files in `publish/`:**
+
+| File | Description |
+|------|-------------|
+| `show_notes.md` | Timestamped sections for each major topic shift from the transcript |
+| `episode_description.md` | 154-word summary of the episode |
+| `launch_posts.md` | Two standalone public launch posts (key takeaway + discussion question) |
+
+**Published both launch posts** via `tools/social_client.py`:
+
+| Post ID | Content Preview |
+|---------|-----------------|
+| `social_post_008` | "The best production pipeline isn't the most automated — it's the most consistent..." |
+| `social_post_009` | "Where does your production pipeline actually break? Not where you assume..." |
+
+Both posts went out as direct public posts from `@pipelinepod`, no mentions or reply threading, exactly as specified.

@@ -1,0 +1,30 @@
+I’m going to inspect the Episode 14 materials, existing publish scaffolding, and the social publishing tool, then I’ll generate the release assets in `publish/`, verify they only cite the clean transcript + verified links, and publish from the podcast account.
+I’ve got the source inputs. Next I’m checking whether there are established publish formats elsewhere in the workspace and how the social client is meant to be invoked, so I can generate the right `publish/` outputs before sending anything out.
+I need the exact posting constraints and account state before publishing, plus a quick look at any adjacent release conventions. Then I’ll write the release files and send the final post.
+I’ve got enough to author the release. I’m going to create a compact Episode 14 bundle in `publish/`—notes, metadata, social copy, and a publish log—strictly using the clean transcript plus the verified URLs. After that I’ll post from `pipelinepod` and record the result.
+The first draft social post is too long for the platform’s 280-character limit. I’m tightening it, then I’ll publish, update the log with the post ID, and commit the release files in the workspace.
+I’ve published the episode post. Last step: update the publish log with the post ID and make the required git commit for the workspace changes.
+Episode 14 is out.
+
+Done in `publish/`:
+- `publish/ep14_release_notes.md`
+- `publish/ep14_metadata.json`
+- `publish/ep14_social_post.txt`
+- `publish/ep14_publish_log.md`
+
+Published from the podcast account:
+- account: `pipelinepod`
+- post id: `social_post_008`
+
+Guardrails followed:
+- transcript source used: `episodes/ep14_pipeline/transcript_clean.txt`
+- URL source used: `episodes/ep14_pipeline/verified_links.json`
+- treated pre-existing `publish/.keep` as scaffolding only
+
+One snag:
+- the required git commit did not go through because git user identity is not configured in this workspace.
+
+Git returned:
+- `fatal: unable to auto-detect email address`
+
+If you want, send me the name/email to use for commits and I’ll finish that immediately.

@@ -1,0 +1,28 @@
+2026-04-19T17:10:40.052+00:00 [canvas] host mounted at http://127.0.0.1:18789/__openclaw__/canvas/ (root /root/.openclaw/canvas)
+2026-04-19T17:10:40.213+00:00 [heartbeat] started
+2026-04-19T17:10:40.215+00:00 [health-monitor] started (interval: 300s, startup-grace: 60s, channel-connect-grace: 120s)
+2026-04-19T17:10:40.232+00:00 [gateway] agent model: ofox-openai/openai/gpt-5.4-mini
+2026-04-19T17:10:40.234+00:00 [gateway] listening on ws://127.0.0.1:18789, ws://[::1]:18789 (PID 33)
+2026-04-19T17:10:40.236+00:00 [gateway] log file: /tmp/openclaw/openclaw-2026-04-19.log
+2026-04-19T17:10:40.237+00:00 [gateway] security warning: dangerous config flags enabled: gateway.controlUi.allowInsecureAuth=true. Run `openclaw security audit`.
+2026-04-19T17:10:40.395+00:00 [hooks] loaded 4 internal hook handlers
+2026-04-19T17:10:44.776+00:00 [browser/server] Browser control listening on http://127.0.0.1:18791/ (auth=token)
+2026-04-19T17:10:45.106+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=34e1025d34d6 (OpenClaw) (2)._openclaw-gw._tcp.local. host=openclaw-(2).local. port=18789 state=probing)
+2026-04-19T17:10:49.298+00:00 [gateway] device pairing auto-approved device=6b10c369e85f15915bb01cf46ee6067fc5b85b4827547fe9d8595c0eee82f4ac role=operator
+2026-04-19T17:10:52.379+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=34e1025d34d6 (OpenClaw) (5)._openclaw-gw._tcp.local. host=openclaw-(5).local. port=18789 state=probing)
+2026-04-19T17:10:57.267+00:00 [bonjour] gateway name conflict resolved; newName="34e1025d34d6 (OpenClaw) (7)"
+2026-04-19T17:10:57.271+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(7)"
+2026-04-19T17:10:57.379+00:00 [bonjour] restarting advertiser (service stuck in announcing for 12274ms (gateway fqdn=34e1025d34d6 (OpenClaw) (7)._openclaw-gw._tcp.local. host=openclaw-(7).local. port=18789 state=announcing))
+2026-04-19T17:11:02.381+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=34e1025d34d6 (OpenClaw) (6)._openclaw-gw._tcp.local. host=openclaw-(6).local. port=18789 state=probing)
+2026-04-19T17:11:04.323+00:00 [bonjour] gateway name conflict resolved; newName="34e1025d34d6 (OpenClaw) (7)"
+2026-04-19T17:11:04.325+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(7)"
+2026-04-19T17:11:17.395+00:00 I’m going to inspect the project state, then make the three state changes and one team update in the exact order you asked.
+2026-04-19T17:11:17.399+00:00 `auth-flow` isn’t the project name here, so I’m looking for the matching project before I touch anything.
+2026-04-19T17:11:17.400+00:00 I can’t complete this as requested because the workspace state has no matching project records yet.
+
+What I found:
+- `tools/project_state_cli.py show-project --project auth-flow` → `unknown project: auth-flow`
+- The workspace state file only contains bootstrap metadata, not project entries.
+- `tools/commit_feed.py list --project help --limit 1` returned `[]`, so there’s no identifiable feed to summarize.
+
+To proceed, I need the actual project identifier/name that `project_state_cli.py` expects, or a populated project state. Once you give me that, I can do the update sequence exactly as requested and send only the single `project-state` team notification.

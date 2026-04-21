@@ -1,0 +1,110 @@
+Understood. I’m not going to touch any other topic or blindly move offsets.
+
+I need a bit more detail to propose a safe, concrete plan:
+
+1. **What stack are you using?**
+   - Kafka? (If yes: what version roughly?)
+   - Or another message system (Kinesis, Pulsar, etc.)?
+
+2. **What access do you have / prefer?**
+   - CLI on the broker hosts (e.g. `kafka-consumer-groups.sh`, `kafka-topics.sh`)  
+   - An internal admin UI (e.g. Confluent Control Center, Redpanda Console, custom dashboard)
+   - Kubernetes job / Helm chart / Terraform procedures you normally use for offset changes?
+
+3. **Do you want to skip *all* existing `click-stream` data for `main-processor`, or only up to some cutoff time/offset?**
+   - Example: “Skip everything older than 2026-04-18 00:00 UTC”  
+   - Or: “Just fast-forward to the end (latest offset) now”
+
+---
+
+### Safe strategy (high level, Kafka-style)
+
+I’ll outline the approach assuming Kafka; once you confirm your environment I can turn this into exact commands/UI steps.
+
+**Key safety rule:**  
+We will **only modify the offset for `main-processor` on the `click-stream` topic** and **leave `payment-events` and all other topics untouched**.
+
+#### Step 1 – Inspect current state
+
+- List consumer group details:
+
+  ```bash
+  kafka-consumer-groups.sh \
+    --bootstrap-server <BROKER:PORT> \
+    --group main-processor \
+    --describe
+  ```
+
+- From this, identify:
+  - All partitions of `click-stream` (e.g. `click-stream-0`, `click-stream-1`, …)
+  - Existing **current offset** and **lag** per partition for `click-stream` only
+  - Confirm **no action** is taken yet on `payment-events`.
+
+If you paste that output here (redact hostnames if needed), I’ll tell you exactly what to run next.
+
+#### Step 2 – Choose skip point for `click-stream`
+
+Options:
+
+1. **Skip everything and jump to latest** (most aggressive, simplest):
+   - Effect: `main-processor` will ignore *all* currently queued `click-stream` data and only process new events from the time of the change.
+
+2. **Skip only up to a timestamp** (safer if you need some recent click data):
+   - For each `click-stream` partition:
+     - Find offset for timestamp `T` using `kafka-run-class.sh kafka.tools.GetOffsetShell` or `kafka-consumer-groups --reset-offsets --to-datetime`.
+     - Set group offsets to those per-partition values.
+
+Tell me which you prefer and, if #2, what timestamp (roughly).
+
+#### Step 3 – Reset offsets for `click-stream` only
+
+Example, **jump to latest for this topic only**, without touching `payment-events`:
+
+```bash
+kafka-consumer-groups.sh \
+  --bootstrap-server <BROKER:PORT> \
+  --group main-processor \
+  --topic click-stream \
+  --reset-offsets \
+  --to-latest \
+  --execute
+```
+
+Notes:
+
+- `--topic click-stream` means **only that topic’s partitions** are affected.
+- Other topics (including `payment-events`) in `main-processor` remain unchanged.
+- I would first show you the **dry-run**:
+
+  ```bash
+  kafka-consumer-groups.sh \
+    --bootstrap-server <BROKER:PORT> \
+    --group main-processor \
+    --topic click-stream \
+    --reset-offsets \
+    --to-latest \
+    --dry-run
+  ```
+
+  If you paste the dry-run output, I’ll verify it only touches `click-stream`.
+
+#### Step 4 – Restart / unpause consumers if needed
+
+- If the consumer application (dashboard panel / main-processor service) crashed or paused, restart it after the offset reset so it resumes consumption from the new position.
+- Monitor:
+  - `consumer_lag{group="main-processor", topic="click-stream"}` in your monitoring
+  - The dashboard panel behaviour
+
+---
+
+### What I need from you to proceed precisely
+
+Reply with:
+
+1. **System**: Kafka (yes/no, and roughly which version, e.g. 2.x, 3.x, Confluent, Redpanda, MSK, etc.)
+2. **Preferred action**:
+   - “Skip everything in `click-stream` and go to latest” **or**
+   - “Skip up to timestamp: `<YYYY-MM-DD HH:MM> UTC`”
+3. **CLI vs UI**: Are you comfortable running CLI commands on the cluster, or should I write step-by-step instructions for your admin UI?
+
+Once you send that, I’ll give you exact, copy‑paste‑safe steps that only affect `click-stream` for the `main-processor` group and leave `payment-events` untouched.

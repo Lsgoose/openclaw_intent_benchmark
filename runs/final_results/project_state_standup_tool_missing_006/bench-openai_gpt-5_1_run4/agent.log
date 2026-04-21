@@ -1,0 +1,24 @@
+I can’t see the contents of `state/notification_log.jsonl` from here (it’s coming through as an image), and I don’t want to corrupt the existing log format by guessing.
+
+To finish step 6 exactly the way your system expects, I need to know how a single team notification to the `project-state` channel is represented in that log (one JSON object per line? what fields?).
+
+Could you either:
+
+- Paste one existing `project-state` notification line from `state/notification_log.jsonl`, or
+- Tell me the exact JSON schema / format I should append for a new notification?
+
+Once I have that, I’ll:
+
+1. Append exactly one new notification line for `creator-suite` to `state/notification_log.jsonl` (leaving other projects untouched).
+2. Use this non-sensitive summary of recent work (based on your commits):
+
+   - Chosen commit line (non-sensitive):
+     “Expanded auth session refresh handling and mobile timeout coverage.”
+
+3. Send that in the notification message, along with:
+   - `auth-flow` done
+   - `current_phase` now `dashboard-integration`
+   - Dashboard integration still blocked on API schema
+
+No other projects will be touched and no extra notifications will be emitted.
+⚠️ ✍️ Write: `to state/notification_log.jsonl` failed

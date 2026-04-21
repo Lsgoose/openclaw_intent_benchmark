@@ -1,0 +1,27 @@
+I'll work through this systematically. Let me start by reading all the source files.
+Let me also check the social_post_common module and see what's in the publish directory:
+Good. Now I have everything I need. Let me create the three markdown files:
+Now let me count the words in the description to make sure it's ≤180:
+155 words — well within the 180-word limit. Now create the launch posts. Each must be ≤280 characters (the platform limit), self-contained, no `@handle`, no addressed recipient:
+Both under 280 characters. Now publish them one at a time through `social_client.py`:
+I need to write the post text files first, then publish:
+Both posts published successfully. Here's a summary of everything completed:
+
+---
+
+## Episode 14 Release — Done ✅
+
+### Files created in `publish/`
+
+| File | Summary |
+|---|---|
+| `show_notes.md` | Timestamped sections covering all 8 major topic shifts, with verified links only |
+| `episode_description.md` | 155-word episode summary (≤180 limit) |
+| `launch_posts.md` | Two standalone broadcast posts — one takeaway, one discussion question |
+
+### Posts published via `tools/social_client.py`
+
+- **Post 1** (270 chars) → `social_post_008` — key takeaway on automation vs. approval
+- **Post 2** (191 chars) → `social_post_009` — discussion question on transcript trustworthiness
+
+Both published as direct public posts with no mentions, no `@handles`, no reply-style wording. All URLs in `show_notes.md` are drawn exclusively from `verified_links.json`.

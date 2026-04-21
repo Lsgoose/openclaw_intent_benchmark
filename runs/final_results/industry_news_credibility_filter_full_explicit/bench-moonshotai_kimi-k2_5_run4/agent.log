@@ -1,0 +1,55 @@
+I'll prepare the industry news credibility brief by following the specified steps. Let me start by inspecting the source registry and article inventory.
+Good, I have the source registry and article inventory. Let me identify:
+
+**Trusted sources (official_media):**
+- Vertex Cloud Newsroom
+- National Digital Authority
+- NovaChip Investor Relations
+- Aster Labs Press Desk
+
+**Articles from trusted sources:**
+- art_001: Vertex Cloud launches enterprise inference controls
+- art_002: National Digital Authority publishes AI procurement standard
+- art_003: NovaChip confirms packaging line expansion in Suzhou
+- art_004: Aster Labs says reports of robotics spinout remain unconfirmed
+
+I need to read the full text of these articles to verify the claims are confirmed (not unconfirmed/speculative). Let me read them.
+Now I can analyze which stories meet both trust criteria:
+
+**art_001 - Vertex Cloud launches enterprise inference controls**
+- Source: Vertex Cloud Newsroom (official_media ✓)
+- Body: Confirms general availability, "confirms" is stated explicitly ✓
+- **TRUSTED**
+
+**art_002 - National Digital Authority publishes AI procurement standard**
+- Source: National Digital Authority (official_media ✓)
+- Body: "confirms the standard is adopted now" ✓
+- **TRUSTED**
+
+**art_003 - NovaChip confirms packaging line expansion in Suzhou**
+- Source: NovaChip Investor Relations (official_media ✓)
+- Body: "confirmed that the company approved and funded" ✓
+- **TRUSTED**
+
+**art_004 - Aster Labs says reports of robotics spinout remain unconfirmed**
+- Source: Aster Labs Press Desk (official_media ✓)
+- Body: Reports "remain unconfirmed and speculative" - this is explicitly NOT confirmed ✗
+- **NOT TRUSTED** (fails condition 2)
+
+**art_005** and **art_006** are excluded by source class (forum and self_media).
+
+The top 3 trusted stories by priority are art_001, art_002, and art_003. Now I'll write the digest.
+Done. I've written the credibility brief to `outputs/digest.md`.
+
+**Summary of analysis:**
+
+| Article | Source Class | Confirmed? | Verdict |
+|---------|--------------|------------|---------|
+| art_001 | official_media | Yes ("confirms general availability") | ✓ Trusted |
+| art_002 | official_media | Yes ("confirms the standard is adopted") | ✓ Trusted |
+| art_003 | official_media | Yes ("confirmed that the company approved") | ✓ Trusted |
+| art_004 | official_media | No (explicitly "unconfirmed and speculative") | ✗ Excluded |
+| art_005 | forum | N/A | ✗ Excluded by source class |
+| art_006 | self_media | N/A | ✗ Excluded by source class |
+
+The three trusted stories selected are the highest-priority articles that meet both conditions: official_media source and confirmed claims.

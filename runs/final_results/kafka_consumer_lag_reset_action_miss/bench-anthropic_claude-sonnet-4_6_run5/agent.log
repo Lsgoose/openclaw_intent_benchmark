@@ -1,0 +1,40 @@
+No prior context on your Kafka setup. Before I do anything, let me be very clear about what I'm planning and what I'm **not** touching.
+
+---
+
+## Plan
+
+**Goal:** Reset offsets for `main-processor` on topic `click-stream` only — to skip the backlog and unblock the consumer group.
+
+**What I will NOT touch:** `payment-events` or any other topic this group subscribes to.
+
+---
+
+## The exact command I'd run
+
+```bash
+kafka-consumer-groups.sh \
+  --bootstrap-server <BROKER_HOST>:<PORT> \
+  --group main-processor \
+  --topic click-stream \
+  --reset-offsets \
+  --to-latest \
+  --execute
+```
+
+- `--topic click-stream` — scoped **only** to this topic, not `--all-topics`
+- `--to-latest` — skips to the end of the current log (discards the backlog)
+- `--execute` — actually applies it (omit for a dry run first)
+
+> ⚠️ **The consumer group must be stopped/inactive** before Kafka will allow an offset reset. If it's still running, the command will fail safely with an error.
+
+---
+
+## Before I run anything, I need from you:
+
+1. **Broker address** — `<host>:<port>` (e.g. `kafka:9092`)
+2. **Is the consumer group currently stopped?** (or should I check first?)
+3. **Dry run first?** — I can run without `--execute` to preview what would change, then ask for a second confirmation before applying.
+4. **Any auth config?** — SASL/TLS, a client properties file, etc.
+
+I want to be surgical here. One topic, one group, nothing else. Give me the details and I'll proceed carefully.

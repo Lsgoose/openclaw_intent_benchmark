@@ -1,0 +1,3 @@
+# Episode 14: Building a Reliable Podcast Production Pipeline
+
+Media advisor Maya Chen joins us to break down the five stages of a reliable podcast production pipeline—from capture and post-production to content extraction, review, and distribution. We explore why the pipeline is the product, how to separate raw from cleaned transcripts, and where automation helps versus where human judgment remains essential. Maya shares practical strategies for small teams: standardizing folder structures, creating ownership around checklists, and treating titles as contracts with listeners. Whether you're a solo creator or part of a small team, this episode offers a clear framework for building production discipline without over-engineering your workflow.

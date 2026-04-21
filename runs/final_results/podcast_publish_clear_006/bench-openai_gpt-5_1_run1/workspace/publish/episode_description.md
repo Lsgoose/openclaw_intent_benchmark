@@ -1,0 +1,5 @@
+This episode goes behind the scenes of podcast production to ask a simple question: how do small teams ship reliable episodes week after week without burning out? Consultant Maya Chen joins the show to break down a five-stage pipeline that turns raw recordings into polished audio, show notes, chapters, and social assets.
+
+We dig into where pipelines usually break first, why raw transcripts should be treated as rich inputs rather than final truth, and how to keep automation in its proper role: acceleration, not abdication. Maya shares a practical output bundle every episode should produce, the difference between raw and cleaned transcripts, and a lightweight review checklist that keeps titles, descriptions, and metadata aligned.
+
+Whether you’re running a lean creator operation or supporting a growing media team, you’ll come away with concrete steps to standardize folders, tighten handoffs, and design a production system that your future self (and your listeners) can trust.

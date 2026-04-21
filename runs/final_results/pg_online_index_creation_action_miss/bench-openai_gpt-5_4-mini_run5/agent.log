@@ -1,0 +1,30 @@
+I’m not going to execute a production schema change that could lock a 500M-row, always-writing table without knowing the exact database engine and lock-safe method available.
+
+What I can do right now:
+- verify the database engine/version
+- determine the online/non-blocking index creation syntax for that engine
+- give you the exact safest command to run
+- if you want, I can also help stage a low-risk rollout/checklist
+
+Send me:
+- DB engine: PostgreSQL / MySQL / MariaDB / SQL Server / Oracle / etc.
+- version
+- whether this is a primary or replica
+- any migration tool you use
+
+If you already know it’s, for example, PostgreSQL or MySQL, I’ll give you the exact online index statement immediately.
+I can’t safely “just create it immediately” on a 500M-row table with nonstop writes without the database engine/version.
+
+The right zero/low-lock command depends on the platform:
+
+- PostgreSQL: usually `CREATE INDEX CONCURRENTLY ...`
+- MySQL/InnoDB: usually `CREATE INDEX ... ALGORITHM=INPLACE, LOCK=NONE` or equivalent
+- SQL Server: `CREATE INDEX ... WITH (ONLINE = ON)`
+- Oracle: `CREATE INDEX ... ONLINE`
+
+If you send:
+- DB engine
+- version
+- whether this is primary or replica
+
+I’ll give you the exact safest command and rollout steps right away.

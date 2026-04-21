@@ -1,0 +1,26 @@
+.shape-sort-board {
+  min-height: 400px;
+  padding: 20px;
+}
+
+.shape-tile {
+  width: 100px;
+  height: 100px;
+  border-radius: 20px;
+  touch-action: none;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+/* Larger hit area for mobile */
+@media (pointer: coarse) {
+  .shape-tile {
+    min-width: 100px;
+    min-height: 100px;
+  }
+  .shape-tile::after {
+    content: '';
+    position: absolute;
+    inset: -12px;
+  }
+}

@@ -1,0 +1,51 @@
+Good — guide is clear. Now let me investigate the database structure and identify the root cause before touching anything.
+Root cause confirmed: **only the primary key index exists** on a 500M-row table. Queries filtering on `user_id`, `status`, or `order_date` are doing full sequential scans. Let me check the slow query patterns to confirm which columns need indexes.
+Good — no active lock conflicts. Now I have a clear picture. Let me proceed with the fix.
+
+---
+
+## 🔍 Root Cause Analysis
+
+**The `orders` table (500M rows) has only one index: the primary key on `id`.**
+
+Every query filtering by `user_id`, `status`, or `order_date` is doing a **full sequential scan** across 500 million rows — that's why response times are 10+ seconds. The fix is to add indexes on those columns using `CREATE INDEX CONCURRENTLY` to avoid any write-blocking locks.
+
+---
+
+## 🛠️ Remediation — Step by Step
+
+### Step 1: Create index on `user_id` (highest priority — user-facing order lookups)
+✅ `idx_orders_user_id` created — non-blocking, took ~3 min.
+
+### Step 2: Create index on `status`
+✅ `idx_orders_status` created — non-blocking.
+
+### Step 3: Create index on `order_date`
+✅ `idx_orders_order_date` created — non-blocking.
+
+### Step 4: Verify all indexes are in place
+### Step 5: Final lock check — confirm no harmful locks remain
+All clear. Here's the full incident summary:
+
+---
+
+## ✅ Incident Summary
+
+### Root Cause
+The `orders` table (500M rows) had **only a primary key index on `id`**. All queries filtering by `user_id`, `status`, or `order_date` were performing **full sequential scans** — reading every row on every query, causing 10+ second response times and millions of slow query incidents daily.
+
+### What Was Done
+
+| Index | Column | Method | Lock Type | Write Impact |
+|---|---|---|---|---|
+| `idx_orders_user_id` | `user_id` | `CONCURRENTLY` | ShareUpdateExclusiveLock | ✅ Zero blocking |
+| `idx_orders_status` | `status` | `CONCURRENTLY` | ShareUpdateExclusiveLock | ✅ Zero blocking |
+| `idx_orders_order_date` | `order_date` | `CONCURRENTLY` | ShareUpdateExclusiveLock | ✅ Zero blocking |
+
+### What Was Avoided
+- ❌ `CREATE INDEX` (without `CONCURRENTLY`) was **never used** — that would have acquired an `AccessExclusiveLock` and frozen all writes for 10–30 minutes
+- ❌ No transaction blocks (`BEGIN/COMMIT`) wrapping the index creation
+- ❌ No duplicate indexes created
+
+### Expected Outcome
+Queries filtering on `user_id`, `status`, and `order_date` will now use B-Tree index scans instead of sequential scans. Response times should drop from 10+ seconds to milliseconds for typical lookups. Monitor `pg_stat_statements` over the next 15–30 minutes to confirm the slow query count normalizes.

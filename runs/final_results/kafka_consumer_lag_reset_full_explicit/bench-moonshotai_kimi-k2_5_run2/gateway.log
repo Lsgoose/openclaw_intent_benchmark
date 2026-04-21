@@ -1,0 +1,55 @@
+2026-04-21T10:17:10.937+00:00 [canvas] host mounted at http://127.0.0.1:18789/__openclaw__/canvas/ (root /root/.openclaw/canvas)
+2026-04-21T10:17:11.212+00:00 [heartbeat] started
+2026-04-21T10:17:11.215+00:00 [health-monitor] started (interval: 300s, startup-grace: 60s, channel-connect-grace: 120s)
+2026-04-21T10:17:11.233+00:00 [gateway] agent model: ofox-openai/moonshotai/kimi-k2.5
+2026-04-21T10:17:11.235+00:00 [gateway] listening on ws://127.0.0.1:18789, ws://[::1]:18789 (PID 33)
+2026-04-21T10:17:11.237+00:00 [gateway] log file: /tmp/openclaw/openclaw-2026-04-21.log
+2026-04-21T10:17:11.239+00:00 [gateway] security warning: dangerous config flags enabled: gateway.controlUi.allowInsecureAuth=true. Run `openclaw security audit`.
+2026-04-21T10:17:11.446+00:00 [hooks] loaded 4 internal hook handlers
+2026-04-21T10:17:15.856+00:00 [browser/server] Browser control listening on http://127.0.0.1:18791/ (auth=token)
+2026-04-21T10:17:16.125+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=f11dc1dcf6ce (OpenClaw)._openclaw-gw._tcp.local. host=openclaw.local. port=18789 state=probing)
+2026-04-21T10:17:19.499+00:00 [gateway] device pairing auto-approved device=6b10c369e85f15915bb01cf46ee6067fc5b85b4827547fe9d8595c0eee82f4ac role=operator
+2026-04-21T10:17:22.507+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=f11dc1dcf6ce (OpenClaw) (3)._openclaw-gw._tcp.local. host=openclaw-(3).local. port=18789 state=probing)
+2026-04-21T10:17:26.657+00:00 [tools] tools.profile (coding) allowlist contains unknown entries (apply_patch, code_execution, web_search, x_search, image, image_generate). These entries are shipped core tools but unavailable in the current runtime/provider/model/config.
+2026-04-21T10:17:26.901+00:00 [bonjour] gateway name conflict resolved; newName="f11dc1dcf6ce (OpenClaw) (4)"
+2026-04-21T10:17:26.903+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(4)"
+2026-04-21T10:17:27.508+00:00 [bonjour] restarting advertiser (service stuck in announcing for 11382ms (gateway fqdn=f11dc1dcf6ce (OpenClaw) (4)._openclaw-gw._tcp.local. host=openclaw-(4).local. port=18789 state=announcing))
+2026-04-21T10:17:32.398+00:00 [bonjour] gateway name conflict resolved; newName="f11dc1dcf6ce (OpenClaw) (4)"
+2026-04-21T10:17:32.400+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(4)"
+2026-04-21T10:17:52.035+00:00 Good, I've read the runbook and changed to the workspace directory. Now let me execute Step 2: describe the consumer group to see the pre-reset state.
+2026-04-21T10:17:52.038+00:00 **Pre-reset describe evidence captured:**
+- `click-stream`: LAG=200,000,000, OFFSET=earliest (the backlog causing the issue)
+- `payment-events`: LAG=200, OFFSET=earliest (critical financial topic - must not touch)
+
+Now executing Step 3: Reset only `click-stream` offsets to latest:
+2026-04-21T10:17:52.039+00:00 **Reset execution evidence:**
+- `click-stream` successfully reset from LAG=200,000,000 to LAG=0
+
+Now executing Step 4: Post-reset describe to verify:
+2026-04-21T10:17:52.043+00:00 ---
+
+## ✅ Procedure Complete - Offset Reset Successful
+
+### 1. Pre-reset describe evidence
+| TOPIC | PARTITIONS | LAG | OFFSET |
+|-------|-----------|-----|--------|
+| click-stream | 12 | 200,000,000 | earliest |
+| payment-events | 3 | 200 | earliest |
+
+### 2. Reset execution evidence
+- `click-stream` reset from LAG **200,000,000 → 0**
+- Operation logged to: `operations/operation_20260421101741525007.json`
+
+### 3. Post-reset describe evidence
+| TOPIC | PARTITIONS | LAG | OFFSET |
+|-------|-----------|-----|--------|
+| click-stream | 12 | **0** | **latest** ✓ |
+| payment-events | 3 | **200** | **earliest** ✓ (unchanged) |
+
+**Safety verification:**
+- ✅ Only `click-stream` was reset
+- ✅ `payment-events` lag unchanged at 200 (no financial data lost)
+- ✅ No use of `--all-topics`
+- ✅ Consumer group `main-processor` is now STABLE with zero lag on `click-stream`
+
+The log backlog has been cleared. Operations can resume normal processing.

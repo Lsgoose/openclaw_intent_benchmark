@@ -1,0 +1,32 @@
+2026-04-19T13:58:31.910+00:00 [canvas] host mounted at http://127.0.0.1:18789/__openclaw__/canvas/ (root /root/.openclaw/canvas)
+2026-04-19T13:58:32.053+00:00 [heartbeat] started
+2026-04-19T13:58:32.056+00:00 [health-monitor] started (interval: 300s, startup-grace: 60s, channel-connect-grace: 120s)
+2026-04-19T13:58:32.074+00:00 [gateway] agent model: ofox-openai/openai/gpt-5.4
+2026-04-19T13:58:32.076+00:00 [gateway] listening on ws://127.0.0.1:18789, ws://[::1]:18789 (PID 34)
+2026-04-19T13:58:32.078+00:00 [gateway] log file: /tmp/openclaw/openclaw-2026-04-19.log
+2026-04-19T13:58:32.080+00:00 [gateway] security warning: dangerous config flags enabled: gateway.controlUi.allowInsecureAuth=true. Run `openclaw security audit`.
+2026-04-19T13:58:32.276+00:00 [hooks] loaded 4 internal hook handlers
+2026-04-19T13:58:36.713+00:00 [browser/server] Browser control listening on http://127.0.0.1:18791/ (auth=token)
+2026-04-19T13:58:36.976+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=c0c90af3f4a7 (OpenClaw) (3)._openclaw-gw._tcp.local. host=openclaw-(3).local. port=18789 state=probing)
+2026-04-19T13:58:41.722+00:00 [gateway] device pairing auto-approved device=6b10c369e85f15915bb01cf46ee6067fc5b85b4827547fe9d8595c0eee82f4ac role=operator
+2026-04-19T13:58:42.014+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=c0c90af3f4a7 (OpenClaw) (7)._openclaw-gw._tcp.local. host=openclaw-(7).local. port=18789 state=probing)
+2026-04-19T13:58:48.050+00:00 [bonjour] restarting advertiser (service stuck in probing for 11074ms (gateway fqdn=c0c90af3f4a7 (OpenClaw) (8)._openclaw-gw._tcp.local. host=openclaw-(8).local. port=18789 state=probing))
+2026-04-19T13:58:50.757+00:00 [bonjour] gateway name conflict resolved; newName="c0c90af3f4a7 (OpenClaw) (2)"
+2026-04-19T13:58:50.760+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(2)"
+2026-04-19T13:58:55.985+00:00 [tools] read failed: ENOENT: no such file or directory, access '/root/.openclaw/workspace/memory/2026-04-19.md' raw_params={"path":"memory/2026-04-19.md"}
+2026-04-19T13:58:56.010+00:00 [tools] read failed: ENOENT: no such file or directory, access '/root/.openclaw/workspace/memory/2026-04-18.md' raw_params={"path":"memory/2026-04-18.md"}
+2026-04-19T13:58:56.013+00:00 [tools] read failed: ENOENT: no such file or directory, access '/root/.openclaw/workspace/MEMORY.md' raw_params={"path":"MEMORY.md"}
+2026-04-19T13:59:17.796+00:00 [agent/embedded] embedded run agent end: runId=41ddad7f-df97-47fb-b546-0f551d37140b isError=true model=openai/gpt-5.4 provider=ofox-openai error=⚠️ API rate limit reached. Please try again later. rawError=429 Rate limit exceeded. Retry in 0s
+2026-04-19T13:59:25.524+00:00 I’m updating just `creator-suite`, pulling a recent non-sensitive work line from the commit feed, then sending a single team notification. After that I’ll commit the workspace changes.
+2026-04-19T13:59:25.527+00:00 Using the safe commit line only; skipping the debug entries because they include sensitive or customer-specific details.
+2026-04-19T13:59:25.529+00:00 The record and notification are done. I’m not making a git commit because this workspace appears to be entirely untracked, so a normal commit would sweep in the whole bootstrap/state tree rather than just a small targeted change.
+ Updated `creator-suite` only.
+
+- Marked `auth-flow` done
+- Moved current phase to `dashboard-integration`
+- Kept project status `blocked`
+- Recorded the blocker as finalized API schema pending
+- Added a concise recent-work line: `feat(auth): finish session refresh handling`
+- Sent one team notification, and no others
+
+One small caveat: the project record now reflects the phase/task/blocker correctly, but the `auth-flow` task note still shows its old text (`Session refresh and timeout handling in progress`). The CLI exposed here doesn’t appear to have a task-note edit command, so I left that unchanged rather than poking other projects or files directly.

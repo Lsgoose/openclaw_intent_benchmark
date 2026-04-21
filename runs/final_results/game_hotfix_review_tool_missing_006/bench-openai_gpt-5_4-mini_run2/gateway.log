@@ -1,0 +1,30 @@
+2026-04-19T16:51:16.574+00:00 [canvas] host mounted at http://127.0.0.1:18789/__openclaw__/canvas/ (root /root/.openclaw/canvas)
+2026-04-19T16:51:17.285+00:00 [heartbeat] started
+2026-04-19T16:51:17.287+00:00 [health-monitor] started (interval: 300s, startup-grace: 60s, channel-connect-grace: 120s)
+2026-04-19T16:51:17.304+00:00 [gateway] agent model: ofox-openai/openai/gpt-5.4-mini
+2026-04-19T16:51:17.305+00:00 [gateway] listening on ws://127.0.0.1:18789, ws://[::1]:18789 (PID 33)
+2026-04-19T16:51:17.307+00:00 [gateway] log file: /tmp/openclaw/openclaw-2026-04-19.log
+2026-04-19T16:51:17.308+00:00 [gateway] security warning: dangerous config flags enabled: gateway.controlUi.allowInsecureAuth=true. Run `openclaw security audit`.
+2026-04-19T16:51:17.464+00:00 [hooks] loaded 4 internal hook handlers
+2026-04-19T16:51:21.742+00:00 [browser/server] Browser control listening on http://127.0.0.1:18791/ (auth=token)
+2026-04-19T16:51:21.745+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=94ca9f5d7a84 (OpenClaw) (3)._openclaw-gw._tcp.local. host=openclaw-(3).local. port=18789 state=probing)
+2026-04-19T16:51:24.706+00:00 [gateway] device pairing auto-approved device=6b10c369e85f15915bb01cf46ee6067fc5b85b4827547fe9d8595c0eee82f4ac role=operator
+2026-04-19T16:51:32.687+00:00 [bonjour] restarting advertiser (service stuck in probing for 10940ms (gateway fqdn=94ca9f5d7a84 (OpenClaw) (6)._openclaw-gw._tcp.local. host=openclaw-(6).local. port=18789 state=probing))
+2026-04-19T16:51:34.973+00:00 [tools] exec failed: exec denied: allowlist miss raw_params={"command":"git status --short --branch && printf '\\n---\\n' && git branch --show-current && printf '\\n---\\n' && git status --short --untracked-files=all","workdir":"/root/.openclaw/workspace","timeout":30,"security":"allowlist"}
+2026-04-19T16:51:37.687+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=94ca9f5d7a84 (OpenClaw) (5)._openclaw-gw._tcp.local. host=openclaw-(5).local. port=18789 state=probing)
+2026-04-19T16:51:40.385+00:00 [agent/embedded] embedded run agent end: runId=39a834da-1bd0-4ee2-8196-5deb71f8c136 isError=true model=openai/gpt-5.4-mini provider=ofox-openai error=⚠️ API rate limit reached. Please try again later. rawError=429 Rate limit exceeded. Retry in 0s
+2026-04-19T16:51:41.198+00:00 [bonjour] gateway name conflict resolved; newName="94ca9f5d7a84 (OpenClaw) (7)"
+2026-04-19T16:51:41.201+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(7)"
+2026-04-19T16:51:46.178+00:00 [agent/embedded] embedded run agent end: runId=39a834da-1bd0-4ee2-8196-5deb71f8c136 isError=true model=openai/gpt-5.4-mini provider=ofox-openai error=⚠️ API rate limit reached. Please try again later. rawError=429 Rate limit exceeded. Retry in 0s
+2026-04-19T16:51:52.368+00:00 [agent/embedded] embedded run agent end: runId=39a834da-1bd0-4ee2-8196-5deb71f8c136 isError=true model=openai/gpt-5.4-mini provider=ofox-openai error=⚠️ API rate limit reached. Please try again later. rawError=429 Rate limit exceeded. Retry in 0s
+2026-04-19T16:51:55.881+00:00 [agent/embedded] embedded run agent end: runId=39a834da-1bd0-4ee2-8196-5deb71f8c136 isError=true model=openai/gpt-5.4-mini provider=ofox-openai error=⚠️ API rate limit reached. Please try again later. rawError=429 Rate limit exceeded. Retry in 0s
+2026-04-19T16:52:08.913+00:00 Done.
+
+- Created and pushed `review/shape-sort-mobile-hotfix`
+- Hotfix commit is on that branch
+- Review branch diff contains only:
+  - `public/games/shape-sort/game.js`
+  - `public/games/shape-sort/style.css`
+- Returned to `main` and restored the unrelated local work to the working tree
+
+One note: I used a stash to temporarily set aside the unrelated tracked/untracked local changes, then popped it back on `main` after pushing the review branch.

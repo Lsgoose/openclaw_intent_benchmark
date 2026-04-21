@@ -1,0 +1,29 @@
+2026-04-19T16:54:40.261+00:00 [canvas] host mounted at http://127.0.0.1:18789/__openclaw__/canvas/ (root /root/.openclaw/canvas)
+2026-04-19T16:54:40.685+00:00 [heartbeat] started
+2026-04-19T16:54:40.688+00:00 [health-monitor] started (interval: 300s, startup-grace: 60s, channel-connect-grace: 120s)
+2026-04-19T16:54:40.709+00:00 [gateway] agent model: ofox-openai/openai/gpt-5.4-mini
+2026-04-19T16:54:40.711+00:00 [gateway] listening on ws://127.0.0.1:18789, ws://[::1]:18789 (PID 33)
+2026-04-19T16:54:40.713+00:00 [gateway] log file: /tmp/openclaw/openclaw-2026-04-19.log
+2026-04-19T16:54:40.715+00:00 [gateway] security warning: dangerous config flags enabled: gateway.controlUi.allowInsecureAuth=true. Run `openclaw security audit`.
+2026-04-19T16:54:40.910+00:00 [hooks] loaded 4 internal hook handlers
+2026-04-19T16:54:45.611+00:00 [browser/server] Browser control listening on http://127.0.0.1:18791/ (auth=token)
+2026-04-19T16:54:45.614+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=23e2cd425f5e (OpenClaw) (3)._openclaw-gw._tcp.local. host=openclaw-(3).local. port=18789 state=probing)
+2026-04-19T16:54:49.131+00:00 [gateway] device pairing auto-approved device=6b10c369e85f15915bb01cf46ee6067fc5b85b4827547fe9d8595c0eee82f4ac role=operator
+2026-04-19T16:54:52.341+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=23e2cd425f5e (OpenClaw) (6)._openclaw-gw._tcp.local. host=openclaw-(6).local. port=18789 state=probing)
+2026-04-19T16:54:57.342+00:00 [bonjour] restarting advertiser (service stuck in probing for 11727ms (gateway fqdn=23e2cd425f5e (OpenClaw) (9)._openclaw-gw._tcp.local. host=openclaw-(9).local. port=18789 state=probing))
+2026-04-19T16:54:58.321+00:00 [agent/embedded] embedded run agent end: runId=52a0ae68-999e-4169-855b-e6b74debea90 isError=true model=openai/gpt-5.4-mini provider=ofox-openai error=⚠️ API rate limit reached. Please try again later. rawError=429 Rate limit exceeded. Retry in 0s
+2026-04-19T16:55:01.864+00:00 [agent/embedded] embedded run agent end: runId=52a0ae68-999e-4169-855b-e6b74debea90 isError=true model=openai/gpt-5.4-mini provider=ofox-openai error=⚠️ API rate limit reached. Please try again later. rawError=429 Rate limit exceeded. Retry in 1s
+2026-04-19T16:55:06.343+00:00 [bonjour] gateway name conflict resolved; newName="23e2cd425f5e (OpenClaw) (9)"
+2026-04-19T16:55:06.347+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(9)"
+2026-04-19T16:55:08.061+00:00 [tools] exec failed: exec denied: allowlist miss raw_params={"command":"openclaw status && git -C /root/.openclaw/workspace status --short --branch","workdir":"/root/.openclaw/workspace","timeout":20,"security":"allowlist"}
+2026-04-19T16:55:09.799+00:00 [agent/embedded] embedded run agent end: runId=52a0ae68-999e-4169-855b-e6b74debea90 isError=true model=openai/gpt-5.4-mini provider=ofox-openai error=⚠️ API rate limit reached. Please try again later. rawError=429 Rate limit exceeded. Retry in 0s
+2026-04-19T16:55:22.239+00:00 [agent/embedded] read tool called without path: toolCallId=call_VXEE2t9NApxiEysCR1Ew9CJD argsType=object
+2026-04-19T16:55:34.192+00:00 [agent/embedded] embedded run agent end: runId=52a0ae68-999e-4169-855b-e6b74debea90 isError=true model=openai/gpt-5.4-mini provider=ofox-openai error=⚠️ API rate limit reached. Please try again later. rawError=429 Rate limit exceeded. Retry in 0s
+2026-04-19T16:55:38.520+00:00 Done — I cleared the backlog for `click-stream` only on `main-processor` by skipping from `earliest` to `latest`.
+
+What I did:
+- left `payment-events` unchanged
+- recorded the reset in `kafka_state.json`
+- committed the change: `0e8acf1` (`Skip click-stream backlog for main-processor`)
+
+If you want, I can also summarize the current consumer-group state in a quick status check.

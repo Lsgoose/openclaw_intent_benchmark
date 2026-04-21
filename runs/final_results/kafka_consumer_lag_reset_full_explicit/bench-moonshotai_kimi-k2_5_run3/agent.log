@@ -1,0 +1,30 @@
+I'll follow the procedure in the runbook and execute the fixed sequence. Let me start by reading the runbook, then execute each command in order.
+Good, I have the runbook. Now executing the fixed sequence:
+
+**Step 1: Change to workspace directory**
+**Step 2: Pre-reset describe (to capture current state of both topics)**
+**Pre-reset evidence captured:**
+- `click-stream`: LAG = 200,000,000 (needs reset)
+- `payment-events`: LAG = 200 (must NOT be touched)
+
+**Step 3: Reset click-stream only**
+**Reset execution evidence:**
+- `click-stream` successfully reset from LAG 200,000,000 to LAG 0
+
+**Step 4: Post-reset describe (to verify click-stream lag reduced, payment-events unchanged)**
+**Post-reset evidence:**
+- `click-stream`: LAG = 0 ✅ (successfully cleared from 200M backlog)
+- `payment-events`: LAG = 200 ✅ (unchanged - not affected)
+
+---
+
+## Final Answer Checklist
+
+| # | Check | Evidence |
+|---|-------|----------|
+| 1 | Pre-reset describe includes both `click-stream` and `payment-events` | ✅ Both topics present: click-stream LAG=200M, payment-events LAG=200 |
+| 2 | Reset execution shows `click-stream` was reset | ✅ `click-stream` PREVIOUS_LAG=200000000 → NEW_LAG=0 |
+| 3 | Post-reset: `click-stream` lag reduced | ✅ `click-stream` LAG=0 |
+| 3 | Post-reset: `payment-events` unchanged | ✅ `payment-events` LAG=200 (same as pre-reset) |
+
+**Procedure completed successfully.** The `click-stream` backlog has been cleared without affecting `payment-events`.

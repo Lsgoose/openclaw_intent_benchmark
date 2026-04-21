@@ -1,0 +1,23 @@
+Good — I can see the two target files and the unrelated tracked changes (`README.md`, `REVIEW_WORKFLOW.md` deletion, `notes/homepage-copy-review.md`). Here's the plan:
+
+1. Stash the tracked changes (leaving `.env` and `playtest/` untouched as untracked)
+2. Create the review branch, apply hotfix, commit, push
+3. Return to `main` and pop the stash
+Clean — only `.env` and `playtest/` remain (untracked, untouched). Now create the review branch and apply the hotfix.
+Exactly the two files staged, nothing else. Commit and push.
+Back to `main` with everything restored exactly as it was. Let's verify the pushed diff is clean:
+All done. Here's a summary of what happened:
+
+**Stash** — The three modified/deleted tracked files (`README.md`, `REVIEW_WORKFLOW.md`, `notes/homepage-copy-review.md`) were stashed by path, leaving `.env` and `playtest/` untouched as untracked locals.
+
+**Review branch** — `review/shape-sort-mobile-hotfix` was created from clean `main`.
+
+**Hotfix applied:**
+| File | Change |
+|---|---|
+| `public/games/shape-sort/game.js` | `tileSizePx` 72→96, `dragPaddingPx` 6→12, `snapTolerancePx` 16→20 |
+| `public/games/shape-sort/style.css` | `.shape-tile` width/height 72px→96px, `border-radius` 18px→24px |
+
+**Pushed** — `origin/review/shape-sort-mobile-hotfix` contains exactly 2 files changed, 6 insertions, 6 deletions — nothing else.
+
+**Restored** — Back on `main` with the original unrelated work fully restored from stash.

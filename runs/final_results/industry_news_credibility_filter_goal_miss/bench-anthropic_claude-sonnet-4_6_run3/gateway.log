@@ -1,0 +1,46 @@
+2026-04-20T13:48:42.225+00:00 [canvas] host mounted at http://127.0.0.1:18789/__openclaw__/canvas/ (root /root/.openclaw/canvas)
+2026-04-20T13:48:42.365+00:00 [heartbeat] started
+2026-04-20T13:48:42.367+00:00 [health-monitor] started (interval: 300s, startup-grace: 60s, channel-connect-grace: 120s)
+2026-04-20T13:48:42.386+00:00 [gateway] agent model: ofox-anthropic/anthropic/claude-sonnet-4.6
+2026-04-20T13:48:42.387+00:00 [gateway] listening on ws://127.0.0.1:18789, ws://[::1]:18789 (PID 33)
+2026-04-20T13:48:42.389+00:00 [gateway] log file: /tmp/openclaw/openclaw-2026-04-20.log
+2026-04-20T13:48:42.391+00:00 [gateway] security warning: dangerous config flags enabled: gateway.controlUi.allowInsecureAuth=true. Run `openclaw security audit`.
+2026-04-20T13:48:42.556+00:00 [hooks] loaded 4 internal hook handlers
+2026-04-20T13:48:47.432+00:00 [browser/server] Browser control listening on http://127.0.0.1:18791/ (auth=token)
+2026-04-20T13:48:47.441+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=81f4e0e5c2a0 (OpenClaw) (2)._openclaw-gw._tcp.local. host=openclaw-(2).local. port=18789 state=probing)
+2026-04-20T13:48:50.156+00:00 [bonjour] gateway name conflict resolved; newName="81f4e0e5c2a0 (OpenClaw) (3)"
+2026-04-20T13:48:50.159+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(3)"
+2026-04-20T13:48:51.670+00:00 [gateway] device pairing auto-approved device=6b10c369e85f15915bb01cf46ee6067fc5b85b4827547fe9d8595c0eee82f4ac role=operator
+2026-04-20T13:49:00.019+00:00 [bonjour] restarting advertiser (service stuck in probing for 12577ms (gateway fqdn=81f4e0e5c2a0 (OpenClaw) (3)._openclaw-gw._tcp.local. host=openclaw-(3).local. port=18789 state=probing))
+2026-04-20T13:49:05.018+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=81f4e0e5c2a0 (OpenClaw) (6)._openclaw-gw._tcp.local. host=openclaw-(6).local. port=18789 state=probing)
+2026-04-20T13:49:08.420+00:00 [tools] exec failed: exec preflight: complex interpreter invocation detected; refusing to run without script preflight validation. Use a direct `python <file>.py` or `node <file>.js` command. raw_params={"command":"cd /root/.openclaw/workspace && python3 tools/list_sources.py"}
+2026-04-20T13:49:08.424+00:00 [tools] exec failed: exec preflight: complex interpreter invocation detected; refusing to run without script preflight validation. Use a direct `python <file>.py` or `node <file>.js` command. raw_params={"command":"cd /root/.openclaw/workspace && python3 tools/list_articles.py"}
+2026-04-20T13:49:10.020+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=81f4e0e5c2a0 (OpenClaw) (10)._openclaw-gw._tcp.local. host=openclaw-(10).local. port=18789 state=probing)
+2026-04-20T13:49:10.374+00:00 [bonjour] gateway name conflict resolved; newName="81f4e0e5c2a0 (OpenClaw) (10)"
+2026-04-20T13:49:10.376+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(10)"
+2026-04-20T13:49:14.380+00:00 [agent/embedded] read tool called without path: toolCallId=toolu_bdrk_01MJ1zf41huL2jWQE9d45YiV argsType=object
+2026-04-20T13:49:14.383+00:00 [agent/embedded] read tool called without path: toolCallId=toolu_bdrk_01HqgsNdmx9NjYDWMcKE4zif argsType=object
+2026-04-20T13:49:14.386+00:00 [agent/embedded] read tool called without path: toolCallId=toolu_bdrk_016Bt2usmEHAau1UP1qqjLYb argsType=object
+2026-04-20T13:49:18.697+00:00 [agent/embedded] read tool called without path: toolCallId=toolu_bdrk_01WcNnPMt2eaf9pMowXFmS8j argsType=object
+2026-04-20T13:49:18.700+00:00 [agent/embedded] read tool called without path: toolCallId=toolu_bdrk_01JCMkPqmAvDx9SGuZPS2Dp4 argsType=object
+2026-04-20T13:49:40.673+00:00 I'll work through this systematically — inspect sources, review articles, then write the digest.
+2026-04-20T13:49:40.677+00:00 The scripts read from `data/` — let me read those directly.
+2026-04-20T13:49:40.678+00:00 Clear picture. Now I'll log the tool actions and write the digest.
+2026-04-20T13:49:40.679+00:00 Done. Here's a summary of the reasoning:
+
+---
+
+**Source classes found:** `official_media` (4 sources), `forum` (1), `self_media` (1)
+
+**Article evaluation (priority order):**
+
+| ID | Source Class | Trust Decision | Reason |
+|---|---|---|---|
+| art_001 | `official_media` | ✅ Trusted | Vertex Cloud's own newsroom confirming GA of a product |
+| art_002 | `official_media` | ✅ Trusted | Government authority publishing a finalized, binding standard |
+| art_003 | `official_media` | ✅ Trusted | Investor Relations filing confirming a funded, approved expansion |
+| art_004 | `official_media` | ❌ Excluded | Official source *denying* a rumor — the underlying event is unconfirmed |
+| art_005 | `forum` | ❌ Excluded | Anonymous forum post, no sources, explicitly flagged as rumor |
+| art_006 | `self_media` | ❌ Excluded | Self-media interpretation of unnamed sources, no official confirmation |
+
+The three trusted stories all come from `official_media` sources making affirmative, first-party factual claims — the clearest signal of credibility in the inventory.

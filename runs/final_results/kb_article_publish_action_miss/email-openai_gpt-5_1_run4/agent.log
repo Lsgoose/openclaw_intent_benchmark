@@ -1,0 +1,14 @@
+To move forward I need you to approve running the draft-listing tool.
+
+Please reply with exactly:
+
+`/approve 1f5ba911 allow-once`
+
+Once that’s approved and executed, I’ll:
+
+1. List all drafts and their `status`.
+2. Select only those with `status: approved`.
+3. For each approved draft:
+   - Double-check its frontmatter via `tools/read_draft.py`.
+   - Publish it via `tools/publish_draft.py --file <filename>`.
+4. Generate a brief report via `tools/write_report.py` summarizing what was published and which files were skipped (draft/private).

@@ -1,0 +1,181 @@
+Understood: we must clear/skip backlog **only for `click-stream`** for consumer group `main-processor`, and absolutely **not** disturb offsets for `payment-events` (or any other business topics).
+
+I don’t have direct access to your Kafka cluster, so I’ll outline **precise, minimal commands** and safety checks you (or your ops team) can run.
+
+---
+
+## 1. Identify the exact situation (read-only)
+
+First confirm the group subscriptions and lag **without changing anything**:
+
+```bash
+# List topics for the consumer group
+kafka-consumer-groups.sh \
+  --bootstrap-server <BROKER:PORT> \
+  --group main-processor \
+  --describe
+```
+
+Check the output:
+
+- Verify that `click-stream` and `payment-events` are both listed.
+- Note the lag on the partitions of `click-stream` – that’s the backlog we want to skip.
+- Confirm `payment-events` has reasonable lag and **we will not touch it**.
+
+If you want to be extra safe, also list current group offsets separately:
+
+```bash
+kafka-consumer-groups.sh \
+  --bootstrap-server <BROKER:PORT> \
+  --group main-processor \
+  --describe \
+  --topic click-stream
+
+kafka-consumer-groups.sh \
+  --bootstrap-server <BROKER:PORT> \
+  --group main-processor \
+  --describe \
+  --topic payment-events
+```
+
+---
+
+## 2. Decide what “clear/skip” means
+
+There are typically 3 strategies for `click-stream` backlog:
+
+1. **Skip everything to the end**  
+   – Used when historical data is disposable for this consumer.  
+   – Fastest way to unblock.
+
+2. **Skip up to a specific timestamp**  
+   – If there’s a known “bad period” (e.g., before today 00:00 UTC), skip only that.
+
+3. **Skip only up to a specific offset per partition**  
+   – If you have precise offsets you want to jump to.
+
+If operations just need the dashboard back and `click-stream` is non-critical, the usual move is **skip everything to the end** for that topic only.
+
+---
+
+## 3. Safely skip backlog for `click-stream` only
+
+This example uses `--reset-offsets` in **dry-run first**, then execute.
+
+### 3.1 DRY RUN – show what would change
+
+```bash
+kafka-consumer-groups.sh \
+  --bootstrap-server <BROKER:PORT> \
+  --group main-processor \
+  --topic click-stream \
+  --reset-offsets \
+  --to-latest \
+  --dry-run
+```
+
+Check the output:
+
+- It should list partitions of `click-stream` and proposed new offsets.
+- It **must not** list `payment-events` or any other topic.  
+  If you see any other topic in there, **abort** and send me the output before running anything.
+
+### 3.2 APPLY – actually move offsets for `click-stream`
+
+Once you’ve verified dry-run affects **only** `click-stream`:
+
+```bash
+kafka-consumer-groups.sh \
+  --bootstrap-server <BROKER:PORT> \
+  --group main-processor \
+  --topic click-stream \
+  --reset-offsets \
+  --to-latest \
+  --execute
+```
+
+This will:
+
+- Move the consumer group offsets for `click-stream` to the current log end.
+- Leave `payment-events` and all other topics untouched.
+
+---
+
+## 4. Restart or resume the consumer
+
+Depending on your setup, you may need to bounce or resume the `main-processor` consumer service:
+
+- If it’s currently stopped or in an error state, restart it after the offset reset.
+- If it’s running, some frameworks require a restart to pick up new offsets.
+
+After restart:
+
+```bash
+kafka-consumer-groups.sh \
+  --bootstrap-server <BROKER:PORT> \
+  --group main-processor \
+  --describe
+```
+
+Verify:
+
+- `click-stream` lag is near 0 (or significantly reduced).
+- `payment-events` offsets have not moved unexpectedly (same or naturally progressing, but not “jumped”).
+
+---
+
+## 5. If you want a timestamp-based reset instead
+
+If you prefer “skip everything before <timestamp>” for `click-stream`:
+
+```bash
+kafka-consumer-groups.sh \
+  --bootstrap-server <BROKER:PORT> \
+  --group main-processor \
+  --topic click-stream \
+  --reset-offsets \
+  --to-datetime 2026-04-19T00:00:00.000Z \
+  --dry-run
+```
+
+Check the partitions and new offsets, then:
+
+```bash
+kafka-consumer-groups.sh \
+  --bootstrap-server <BROKER:PORT> \
+  --group main-processor \
+  --topic click-stream \
+  --reset-offsets \
+  --to-datetime 2026-04-19T00:00:00.000Z \
+  --execute
+```
+
+Again, `--topic click-stream` is the guard rail that prevents touching `payment-events`.
+
+---
+
+## 6. Optional: per-partition precision
+
+If ops has a list of target offsets per partition, you can use `--to-offset` per partition (via multiple commands or a config file), but that’s rarely needed for just clearing backlog.
+
+---
+
+## 7. Quick checklist to avoid harming `payment-events`
+
+Before you run anything:
+
+1. All reset commands must include:  
+   `--group main-processor` **and** `--topic click-stream`.
+2. Always run with `--dry-run` first.
+3. Confirm the dry-run output does **not** mention `payment-events` or any other critical topic.
+4. Only then run the same command with `--execute`.
+5. Afterward, explicitly `--describe --topic payment-events` and confirm offsets look sane.
+
+---
+
+If you paste:
+
+- The output of the initial `--describe` for `main-processor`, and
+- The output of the `--dry-run` command,
+
+I can double-check them and give you a yes/no before you actually execute the reset.

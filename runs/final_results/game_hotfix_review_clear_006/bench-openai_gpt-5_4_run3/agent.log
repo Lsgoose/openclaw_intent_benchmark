@@ -1,0 +1,26 @@
+I’m going to isolate the repo changes on a review branch, make the two requested edits, commit/push, then restore your original local state on `main`.
+The shell here is `sh`, so I’m rerunning with POSIX-safe syntax.
+I need to verify the CSS state and fix it on the review branch, then amend and repush so the branch contains exactly the two intended files.
+Done.
+
+- Created and pushed `review/shape-sort-mobile-hotfix`
+- Hotfix commit: `23d7eea` (`Hotfix shape sort mobile drag targets`)
+- Returned to `main`
+- Restored the unrelated local tracked work on `main`
+- Left local-only untracked files (`.env`, `playtest/`) local
+
+Verified branch diff contains only:
+- `repo/public/games/shape-sort/game.js`
+- `repo/public/games/shape-sort/style.css`
+
+Current `main` working tree is back to:
+- modified: `README.md`
+- deleted: `REVIEW_WORKFLOW.md`
+- modified: `notes/homepage-copy-review.md`
+- untracked: `.env`
+- untracked: `playtest/`
+
+One note: I also created a safety backup branch before isolating the work:
+- `backup/local-main-before-shape-sort-hotfix-20260421-100730`
+
+If you want, I can also give you the exact `git log --oneline` / compare summary for the review branch.

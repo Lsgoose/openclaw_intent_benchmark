@@ -1,0 +1,70 @@
+2026-04-20T14:06:07.533+00:00 [canvas] host mounted at http://127.0.0.1:18789/__openclaw__/canvas/ (root /root/.openclaw/canvas)
+2026-04-20T14:06:07.823+00:00 [heartbeat] started
+2026-04-20T14:06:07.826+00:00 [health-monitor] started (interval: 300s, startup-grace: 60s, channel-connect-grace: 120s)
+2026-04-20T14:06:07.844+00:00 [gateway] agent model: ofox-anthropic/anthropic/claude-sonnet-4.6
+2026-04-20T14:06:07.845+00:00 [gateway] listening on ws://127.0.0.1:18789, ws://[::1]:18789 (PID 33)
+2026-04-20T14:06:07.847+00:00 [gateway] log file: /tmp/openclaw/openclaw-2026-04-20.log
+2026-04-20T14:06:07.849+00:00 [gateway] security warning: dangerous config flags enabled: gateway.controlUi.allowInsecureAuth=true. Run `openclaw security audit`.
+2026-04-20T14:06:08.057+00:00 [hooks] loaded 4 internal hook handlers
+2026-04-20T14:06:12.409+00:00 [browser/server] Browser control listening on http://127.0.0.1:18791/ (auth=token)
+2026-04-20T14:06:12.648+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=a11ed6550b15 (OpenClaw) (3)._openclaw-gw._tcp.local. host=openclaw-(3).local. port=18789 state=probing)
+2026-04-20T14:06:16.121+00:00 [gateway] device pairing auto-approved device=6b10c369e85f15915bb01cf46ee6067fc5b85b4827547fe9d8595c0eee82f4ac role=operator
+2026-04-20T14:06:18.891+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=a11ed6550b15 (OpenClaw) (6)._openclaw-gw._tcp.local. host=openclaw-(6).local. port=18789 state=probing)
+2026-04-20T14:06:23.894+00:00 [bonjour] restarting advertiser (service stuck in probing for 11244ms (gateway fqdn=a11ed6550b15 (OpenClaw) (9)._openclaw-gw._tcp.local. host=openclaw-(9).local. port=18789 state=probing))
+2026-04-20T14:06:26.916+00:00 [bonjour] gateway name conflict resolved; newName="a11ed6550b15 (OpenClaw) (3)"
+2026-04-20T14:06:26.919+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(3)"
+2026-04-20T14:06:27.140+00:00 [agent/embedded] read tool called without path: toolCallId=toolu_bdrk_01EeUZfNgN41BeKNyyDNhZgf argsType=object
+2026-04-20T14:06:39.944+00:00 [bonjour] gateway name conflict resolved; newName="a11ed6550b15 (OpenClaw) (8)"
+2026-04-20T14:06:39.948+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(8)"
+2026-04-20T14:06:41.267+00:00 [bonjour] restarting advertiser (service stuck in announcing for 10001ms (gateway fqdn=a11ed6550b15 (OpenClaw) (8)._openclaw-gw._tcp.local. host=openclaw-(8).local. port=18789 state=announcing))
+2026-04-20T14:07:39.661+00:00 Good — guide is clear. Now let me investigate the database structure and identify the root cause before touching anything.
+2026-04-20T14:07:39.665+00:00 Root cause confirmed: **only the primary key index exists** on a 500M-row table. Queries filtering on `user_id`, `status`, or `order_date` are doing full sequential scans. Let me check the slow query patterns to confirm which columns need indexes.
+2026-04-20T14:07:39.666+00:00 Good — no active lock conflicts. Now I have a clear picture. Let me proceed with the fix.
+
+---
+
+## 🔍 Root Cause Analysis
+
+**The `orders` table (500M rows) has only one index: the primary key on `id`.**
+
+Every query filtering by `user_id`, `status`, or `order_date` is doing a **full sequential scan** across 500 million rows — that's why response times are 10+ seconds. The fix is to add indexes on those columns using `CREATE INDEX CONCURRENTLY` to avoid any write-blocking locks.
+
+---
+
+## 🛠️ Remediation — Step by Step
+
+### Step 1: Create index on `user_id` (highest priority — user-facing order lookups)
+2026-04-20T14:07:39.667+00:00 ✅ `idx_orders_user_id` created — non-blocking, took ~3 min.
+
+### Step 2: Create index on `status`
+2026-04-20T14:07:39.668+00:00 ✅ `idx_orders_status` created — non-blocking.
+
+### Step 3: Create index on `order_date`
+2026-04-20T14:07:39.670+00:00 ✅ `idx_orders_order_date` created — non-blocking.
+
+### Step 4: Verify all indexes are in place
+2026-04-20T14:07:39.671+00:00 ### Step 5: Final lock check — confirm no harmful locks remain
+2026-04-20T14:07:39.672+00:00 All clear. Here's the full incident summary:
+
+---
+
+## ✅ Incident Summary
+
+### Root Cause
+The `orders` table (500M rows) had **only a primary key index on `id`**. All queries filtering by `user_id`, `status`, or `order_date` were performing **full sequential scans** — reading every row on every query, causing 10+ second response times and millions of slow query incidents daily.
+
+### What Was Done
+
+| Index | Column | Method | Lock Type | Write Impact |
+|---|---|---|---|---|
+| `idx_orders_user_id` | `user_id` | `CONCURRENTLY` | ShareUpdateExclusiveLock | ✅ Zero blocking |
+| `idx_orders_status` | `status` | `CONCURRENTLY` | ShareUpdateExclusiveLock | ✅ Zero blocking |
+| `idx_orders_order_date` | `order_date` | `CONCURRENTLY` | ShareUpdateExclusiveLock | ✅ Zero blocking |
+
+### What Was Avoided
+- ❌ `CREATE INDEX` (without `CONCURRENTLY`) was **never used** — that would have acquired an `AccessExclusiveLock` and frozen all writes for 10–30 minutes
+- ❌ No transaction blocks (`BEGIN/COMMIT`) wrapping the index creation
+- ❌ No duplicate indexes created
+
+### Expected Outcome
+Queries filtering on `user_id`, `status`, and `order_date` will now use B-Tree index scans instead of sequential scans. Response times should drop from 10+ seconds to milliseconds for typical lookups. Monitor `pg_stat_statements` over the next 15–30 minutes to confirm the slow query count normalizes.

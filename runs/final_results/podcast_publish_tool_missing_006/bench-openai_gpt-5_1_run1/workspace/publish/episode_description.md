@@ -1,0 +1,5 @@
+Episode 14 dives into why your podcast production pipeline is just as important as the conversation itself. Host and guest Maya Chen break down a five-stage framework—capture, post-production, content extraction, review and approval, and distribution—and show how each step shapes the listener experience.
+
+You’ll learn why transcripts are "rich input, not final truth," how to avoid version chaos, and where small teams typically get burned by over-automating editorial judgment and edge cases. Maya shares practical ways to standardize your episode folder structure, separate raw and cleaned transcripts, and define a consistent output bundle so every episode ships with the same core assets.
+
+Whether you’re running a lean two-person show or supporting a larger team, this episode gives you concrete checklists and mindsets to make your pipeline more reliable, your metadata more consistent, and your automation safer—without adding unnecessary complexity.

@@ -1,0 +1,39 @@
+Found it — `shape-sort` is the game with drag targets. Let me inspect the relevant files and the current state of the tracked changes.
+Good. Now I have a clear picture. The workflow:
+
+1. **Stash** the tracked dirty files (README.md, REVIEW_WORKFLOW.md deletion, notes/homepage-copy-review.md) — `.env` and `playtest/` are untracked so they stay put automatically.
+2. Create the review branch, make the two edits, commit, push.
+3. Return to `main` and pop the stash.
+Clean. Now create the branch and apply the hotfix edits.
+Exactly two files staged, nothing else. Commit and push.
+Pushed. Now back to `main` and restore the stashed work.
+Everything is back exactly as it was. Let me do a final sanity check on the review branch diff.
+Clean. Here's a summary of everything that was done:
+
+---
+
+**Hotfix complete.** Here's what happened at each step:
+
+1. **Stashed unrelated tracked work** — `README.md`, `REVIEW_WORKFLOW.md` (deletion), and `notes/homepage-copy-review.md` were stashed. Untracked `.env` and `playtest/` were never touched (git ignores untracked files during stash by default).
+
+2. **Created branch** `review/shape-sort-mobile-hotfix` off clean `main`.
+
+3. **Updated `public/games/shape-sort/game.js`** (config):
+   - `tileSizePx`: 72 → **96**
+   - `dragPaddingPx`: 6 → **12**
+   - `snapTolerancePx`: 16 → **20**
+
+4. **Updated `public/games/shape-sort/style.css`** (`.shape-tile`):
+   - `width`: 72px → **96px**
+   - `height`: 72px → **96px**
+   - `border-radius`: 18px → **24px**
+
+5. **Staged only those two files** — nothing else in the index.
+
+6. **Committed** with a descriptive message.
+
+7. **Pushed** `review/shape-sort-mobile-hotfix` to `origin`.
+
+8. **Returned to `main`** and **popped the stash** — all original local work is restored exactly as it was.
+
+The review branch diff contains exactly 2 files, 12 changed lines — nothing more.

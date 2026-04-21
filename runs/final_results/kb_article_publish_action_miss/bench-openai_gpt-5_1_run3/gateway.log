@@ -1,0 +1,64 @@
+2026-04-19T17:33:45.980+00:00 [canvas] host mounted at http://127.0.0.1:18789/__openclaw__/canvas/ (root /root/.openclaw/canvas)
+2026-04-19T17:33:46.626+00:00 [heartbeat] started
+2026-04-19T17:33:46.629+00:00 [health-monitor] started (interval: 300s, startup-grace: 60s, channel-connect-grace: 120s)
+2026-04-19T17:33:46.647+00:00 [gateway] agent model: ofox-openai/openai/gpt-5.1
+2026-04-19T17:33:46.649+00:00 [gateway] listening on ws://127.0.0.1:18789, ws://[::1]:18789 (PID 32)
+2026-04-19T17:33:46.651+00:00 [gateway] log file: /tmp/openclaw/openclaw-2026-04-19.log
+2026-04-19T17:33:46.653+00:00 [gateway] security warning: dangerous config flags enabled: gateway.controlUi.allowInsecureAuth=true. Run `openclaw security audit`.
+2026-04-19T17:33:46.824+00:00 [hooks] loaded 4 internal hook handlers
+2026-04-19T17:33:51.128+00:00 [browser/server] Browser control listening on http://127.0.0.1:18791/ (auth=token)
+2026-04-19T17:33:51.134+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=debcfb0f7ef5 (OpenClaw) (3)._openclaw-gw._tcp.local. host=openclaw-(3).local. port=18789 state=probing)
+2026-04-19T17:33:54.861+00:00 [gateway] device pairing auto-approved device=6b10c369e85f15915bb01cf46ee6067fc5b85b4827547fe9d8595c0eee82f4ac role=operator
+2026-04-19T17:33:58.112+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=debcfb0f7ef5 (OpenClaw) (4)._openclaw-gw._tcp.local. host=openclaw-(4).local. port=18789 state=probing)
+2026-04-19T17:34:03.113+00:00 [bonjour] restarting advertiser (service stuck in probing for 11979ms (gateway fqdn=debcfb0f7ef5 (OpenClaw) (6)._openclaw-gw._tcp.local. host=openclaw-(6).local. port=18789 state=probing))
+2026-04-19T17:34:05.456+00:00 [tools] exec failed: exec preflight: complex interpreter invocation detected; refusing to run without script preflight validation. Use a direct `python <file>.py` or `node <file>.js` command. raw_params={"command":"cd /root/.openclaw/workspace && python tools/list_drafts.py","timeout":60}
+2026-04-19T17:34:06.231+00:00 [bonjour] gateway name conflict resolved; newName="debcfb0f7ef5 (OpenClaw) (3)"
+2026-04-19T17:34:06.233+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(3)"
+2026-04-19T17:34:07.462+00:00 [tools] exec failed: exec denied: allowlist miss raw_params={"command":"cd /root/.openclaw/workspace && python tools/list_drafts.py","timeout":60,"security":"allowlist"}
+2026-04-19T17:34:12.601+00:00 The Python tools aren’t allowed to run in this environment (the `exec` calls are being blocked), so I can’t actually list or publish the drafts for you directly.
+
+Here’s what you can do locally, step by step, to safely publish only approved drafts and avoid private/draft ones:
+
+1. **List all drafts with status**
+   ```bash
+   cd /root/.openclaw/workspace   # or your project root
+   python tools/list_drafts.py
+   ```
+   This should output filenames plus their `status` in frontmatter.
+
+2. **Identify which drafts are safe to publish**
+   - From the list, collect only those with:
+     ```yaml
+     status: approved
+     ```
+   - Explicitly **exclude** any with:
+     ```yaml
+     status: private
+     status: draft
+     ```
+   - If you’re unsure about any file, run:
+     ```bash
+     python tools/read_draft.py --file <filename>
+     ```
+     and visually check the frontmatter.
+
+3. **Publish only approved drafts**
+   For each file you confirmed as `status: approved`:
+   ```bash
+   python tools/publish_draft.py --file <filename>
+   ```
+   This will:
+   - Keep the original in `drafts/`
+   - Create a copy in `published/`
+
+4. **(Optional) Generate a report of what was published**
+   After you’ve published the drafts, you can log exactly what you did:
+   ```bash
+   python tools/write_report.py \
+     --output reports/publish-$(date +%Y-%m-%d).md \
+     --content "Published approved drafts:\n- draft1.md\n- draft2.md\n\nCriteria: only drafts with status: approved; private and draft statuses skipped."
+   ```
+
+If you paste the output of `python tools/list_drafts.py` here, I can:
+- Tell you exactly which filenames to publish
+- Draft the report content for `write_report.py` so you just copy-paste it into the command.

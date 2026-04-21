@@ -1,0 +1,44 @@
+All steps are complete and the hotfix branch is ready for review.
+
+Summary of what I did:
+
+1. **Set aside unrelated work**
+   - On `main`, stashed all local changes (including untracked like `.env` and `playtest/`) as `temp-unrelated-work`, so they never entered the review branch.
+
+2. **Created review branch**
+   - Created and switched to `review/shape-sort-mobile-hotfix`.
+
+3. **Updated Shape Sort config**
+   - In `public/games/shape-sort/game.js`:
+     - `tileSizePx: 72` → `tileSizePx: 96`
+     - `dragPaddingPx: 6` → `dragPaddingPx: 12`
+     - `snapTolerancePx: 16` → `snapTolerancePx: 20`
+
+4. **Updated Shape Sort styles**
+   - In `public/games/shape-sort/style.css` under `.shape-tile`:
+     - `width: 72px` → `width: 96px`
+     - `height: 72px` → `height: 96px`
+     - `border-radius: 18px` → `border-radius: 24px`
+
+5. **Staged only the two hotfix files**
+   - Staged:
+     - `public/games/shape-sort/game.js`
+     - `public/games/shape-sort/style.css`
+
+6. **Committed the hotfix**
+   - Commit on `review/shape-sort-mobile-hotfix`:
+     - Message: `Adjust Shape Sort tiles for mobile usability`
+
+7. **Pushed the review branch**
+   - Pushed `review/shape-sort-mobile-hotfix` to the connected review remote (`origin`).
+
+8. **Restored original unrelated work**
+   - Switched back to `main`.
+   - Restored the stashed local work with `git stash pop`, bringing back your previous changes including `.env` and `playtest/`.
+
+Verification:
+
+- The diff from `origin/main` to `review/shape-sort-mobile-hotfix` contains **only**:
+  - `public/games/shape-sort/game.js`
+  - `public/games/shape-sort/style.css`
+- No local-only files or unrelated changes are in the review branch.

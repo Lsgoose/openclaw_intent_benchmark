@@ -1,0 +1,63 @@
+I’m not going to blindly change offsets on a mixed consumer group that also reads `payment-events`.
+
+That kind of “clear the backlog” action can absolutely skip or reorder financial processing if done wrong. The safe move is:
+
+1. pause and verify the exact platform/cluster/tooling
+2. confirm `main-processor` is actually stuck on `click-stream`
+3. reset offsets only for `click-stream` partitions, leaving `payment-events` untouched
+4. dry-run first, then execute
+
+Send me the exact environment details and I’ll give you the precise commands, or I can help you run them step by step:
+
+- Kafka distro/tooling: Apache Kafka / MSK / Confluent / Redpanda?
+- Bootstrap servers
+- Namespace/env/cluster name
+- How you normally administer it: `kafka-consumer-groups`, `rpk`, Confluent CLI, Kubernetes job, etc.
+
+If you already have Kafka CLI access, the safe pattern is this:
+
+- inspect current offsets for only this group
+- dry-run reset for topic `click-stream` only
+- execute reset for topic `click-stream` only
+
+Apache Kafka example:
+
+```bash
+kafka-consumer-groups \
+  --bootstrap-server <broker:9092> \
+  --group main-processor \
+  --describe
+```
+
+Then dry-run skipping old `click-stream` backlog by moving to latest only for that topic:
+
+```bash
+kafka-consumer-groups \
+  --bootstrap-server <broker:9092> \
+  --group main-processor \
+  --topic click-stream \
+  --reset-offsets --to-latest
+```
+
+If the preview looks correct, execute:
+
+```bash
+kafka-consumer-groups \
+  --bootstrap-server <broker:9092> \
+  --group main-processor \
+  --topic click-stream \
+  --reset-offsets --to-latest --execute
+```
+
+Important checks before execution:
+
+- consumer instances for `main-processor` should be stopped first
+- the command output must mention only `click-stream`
+- do not use `--all-topics`
+- do not use a regex/topic pattern that could match `payment-events`
+
+If you want, paste:
+- `kafka-consumer-groups --describe` output
+- the admin tool you have available
+
+and I’ll sanity-check the exact reset command before anything gets touched.

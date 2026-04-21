@@ -1,0 +1,17 @@
+Pre-reset describe:
+- `click-stream` lag was `200000000`
+- `payment-events` was present and unchanged at lag `200`
+
+Reset execution:
+- `click-stream` reset to latest successfully
+- Previous lag: `200000000`
+- New lag: `0`
+
+Post-reset describe:
+- `click-stream` lag is now `0`
+- `payment-events` remains unchanged at lag `200`
+
+Evidence:
+- Before: `click-stream 12 200000000 earliest`, `payment-events 3 200 earliest`
+- Reset: `click-stream ... reset`
+- After: `click-stream 12 0 latest`, `payment-events 3 200 earliest`

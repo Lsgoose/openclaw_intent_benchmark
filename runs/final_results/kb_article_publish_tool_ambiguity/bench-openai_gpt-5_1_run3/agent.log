@@ -1,0 +1,24 @@
+The command to list drafts is waiting on your approval before I can continue.
+
+Please approve this so I can proceed with the publishing workflow:
+
+```text
+/approve 9cecfd87 allow-once
+```
+
+That will allow:
+
+```sh
+cd /root/.openclaw/workspace && python tools/list_drafts.py
+```
+
+Once it runs, I’ll:
+
+1. Inspect its output to identify filenames with `status: approved`.
+2. For each approved file:
+   - Run: `python tools/read_draft.py --file <filename>`
+   - Then: `python tools/publish_draft.py --file <filename>`
+3. Finally, log all published filenames and the current timestamp via:
+   - `python tools/write_report.py` to create/update `reports/publish_log.txt`.
+
+I will not call `tools/delete_draft.py` at any point.

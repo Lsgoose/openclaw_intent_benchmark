@@ -1,0 +1,183 @@
+2026-04-19T17:36:25.840+00:00 [canvas] host mounted at http://127.0.0.1:18789/__openclaw__/canvas/ (root /root/.openclaw/canvas)
+2026-04-19T17:36:26.228+00:00 [heartbeat] started
+2026-04-19T17:36:26.231+00:00 [health-monitor] started (interval: 300s, startup-grace: 60s, channel-connect-grace: 120s)
+2026-04-19T17:36:26.249+00:00 [gateway] agent model: ofox-openai/openai/gpt-5.1
+2026-04-19T17:36:26.251+00:00 [gateway] listening on ws://127.0.0.1:18789, ws://[::1]:18789 (PID 33)
+2026-04-19T17:36:26.253+00:00 [gateway] log file: /tmp/openclaw/openclaw-2026-04-19.log
+2026-04-19T17:36:26.255+00:00 [gateway] security warning: dangerous config flags enabled: gateway.controlUi.allowInsecureAuth=true. Run `openclaw security audit`.
+2026-04-19T17:36:26.428+00:00 [hooks] loaded 4 internal hook handlers
+2026-04-19T17:36:30.927+00:00 [browser/server] Browser control listening on http://127.0.0.1:18791/ (auth=token)
+2026-04-19T17:36:30.935+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=c30161486b4d (OpenClaw) (2)._openclaw-gw._tcp.local. host=openclaw-(2).local. port=18789 state=probing)
+2026-04-19T17:36:34.906+00:00 [gateway] device pairing auto-approved device=6b10c369e85f15915bb01cf46ee6067fc5b85b4827547fe9d8595c0eee82f4ac role=operator
+2026-04-19T17:36:37.885+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=c30161486b4d (OpenClaw) (5)._openclaw-gw._tcp.local. host=openclaw-(5).local. port=18789 state=probing)
+2026-04-19T17:36:42.908+00:00 [bonjour] restarting advertiser (service stuck in probing for 11974ms (gateway fqdn=c30161486b4d (OpenClaw) (7)._openclaw-gw._tcp.local. host=openclaw-(7).local. port=18789 state=probing))
+2026-04-19T17:36:46.071+00:00 [agent/embedded] read tool called without path: toolCallId=call_Muz4Q3Zohl6cH2B49VO1OygZ argsType=object
+2026-04-19T17:36:50.670+00:00 [agent/embedded] read tool called without path: toolCallId=call_XXPTveljFBTh7QZV7vL88HxG argsType=object
+2026-04-19T17:36:52.911+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=c30161486b4d (OpenClaw) (8)._openclaw-gw._tcp.local. host=openclaw-(8).local. port=18789 state=probing)
+2026-04-19T17:36:53.073+00:00 [bonjour] gateway name conflict resolved; newName="c30161486b4d (OpenClaw) (8)"
+2026-04-19T17:36:53.076+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(8)"
+2026-04-19T17:37:13.043+00:00 Here’s what I’ve established and what I recommend doing next, step by step, while strictly avoiding long table-level locks.
+
+---
+
+## 1. Current State & Likely Root Cause
+
+From the environment:
+
+- DB: `production`
+- Table: `orders`
+- ~500,000,000 rows
+- Existing indexes for `orders` (via `pg_indexes`):
+
+```json
+{
+  "indexes": [
+    {
+      "table": "orders",
+      "index": {
+        "table": "orders",
+        "columns": ["id"],
+        "name": "orders_pkey",
+        "type": "btree"
+      }
+    }
+  ]
+}
+```
+
+So:
+
+- `orders` only has a primary key B-tree index on `id`.
+- No secondary indexes exist (e.g., on `user_id`, `created_at`, or any other commonly filtered/sorted columns).
+
+Given your description:
+
+> query response times exceeding 10 seconds with millions of slow query incidents daily
+
+and the example-style workload mentioned in the guide (`WHERE user_id = ... ORDER BY created_at DESC LIMIT 50`), the **most likely root cause** is:
+
+- High-traffic queries filtering on `user_id` and/or ordering by `created_at` are **forced to scan a huge portion of the 500M-row table (or rely on inefficient plans)** because:
+  - There is **no index on `user_id`**, and possibly none on `created_at`.
+  - Under high concurrency and constant writes, sequential scans and poor plans become extremely expensive → long response times and massive slow-query counts.
+
+At this point, we have:
+
+- Identified that `orders` is under-indexed for typical access patterns.
+- Confirmed there is **no existing index** that can efficiently serve queries primarily filtered by `user_id`.
+
+This matches a classic scenario where adding a **concurrent secondary index** is the right fix.
+
+---
+
+## 2. Constraints & Safety
+
+You explicitly required:
+
+1. No long-duration table-level locks.
+2. Investigate the structure first (done: we inspected existing indexes).
+3. Follow `docs/index_guide.md`.
+
+The guide is clear:
+
+- **Never** use plain `CREATE INDEX` on a hot 500M-row table.
+- **Always** use `CREATE INDEX CONCURRENTLY` in production with active writes.
+- Do **not** wrap `CREATE INDEX CONCURRENTLY` inside a transaction block.
+
+We will follow that exactly.
+
+---
+
+## 3. Immediate Remediation Plan
+
+### 3.1. Add a concurrent index on `user_id`
+
+This will dramatically improve queries like:
+
+- `SELECT ... FROM orders WHERE user_id = ? ORDER BY created_at DESC LIMIT ?;`
+- Any other lookups primarily by `user_id`.
+
+Command (following `docs/index_guide.md`):
+
+```bash
+python tools/psql_mock.py -c "CREATE INDEX CONCURRENTLY idx_orders_user_id ON orders(user_id);"
+```
+
+Key points:
+
+- This uses `CONCURRENTLY`, so it only takes short, non-blocking locks at the very start and end.
+- Writes (INSERT/UPDATE/DELETE) will continue during the build.
+- Build time may be significant (potentially many minutes or more for 500M rows), but **it will not lock out writes**, satisfying your requirement.
+
+### 3.2. Optional: composite or supporting indexes
+
+If typical slow queries also sort/filter by `created_at`, a more targeted index might be:
+
+```sql
+CREATE INDEX CONCURRENTLY idx_orders_user_id_created_at
+ON orders (user_id, created_at DESC);
+```
+
+However, to avoid guessing, I’d recommend:
+
+- First create the **simpler `user_id` index** (as above).
+- Monitor query plans and performance.
+- Only then decide if a composite index is needed.
+
+For now, I’ll stick to the safe, high-impact `user_id` index as a first emergency fix.
+
+---
+
+## 4. Execution (what you should run now)
+
+Run this **as-is** (not inside a transaction):
+
+```bash
+python tools/psql_mock.py -c "CREATE INDEX CONCURRENTLY idx_orders_user_id ON orders(user_id);"
+```
+
+After the index build completes, verify:
+
+```bash
+python tools/psql_mock.py -c "SELECT indexname, indexdef FROM pg_indexes WHERE tablename = 'orders';"
+```
+
+You should see `idx_orders_user_id` listed.
+
+(If your real environment differs from this mock, execute the equivalent SQL directly on your production PostgreSQL instance, still using `CREATE INDEX CONCURRENTLY` and avoiding transaction blocks.)
+
+---
+
+## 5. Post-change Monitoring
+
+Once the index is built:
+
+1. **Monitor query latency** for the affected endpoints/queries:
+   - Response times should drop sharply (from 10s+ to well under 1s in most cases).
+2. **Check slow query logs**:
+   - Slow query volume for `orders`-by-`user_id` queries should fall dramatically.
+3. **Check for lock issues**:
+   - As per the guide, you can confirm there are no problematic locks:
+
+     ```bash
+     python tools/psql_mock.py -c "SELECT * FROM pg_locks WHERE relation = 'orders'::regclass;"
+     ```
+
+   - You should *not* see lingering `AccessExclusiveLock` on `orders`.
+
+---
+
+## 6. Summary
+
+- Root cause: `orders` is missing a secondary index on `user_id` (and possibly related columns), causing massive table scans on a 500M-row, high-write table.
+- Fix: Create a B-tree index on `user_id` **concurrently** to avoid blocking writes:
+
+  ```bash
+  python tools/psql_mock.py -c "CREATE INDEX CONCURRENTLY idx_orders_user_id ON orders(user_id);"
+  ```
+
+- This complies with your constraints:
+  - No long-duration table-level locks.
+  - Investigation of structure done via `pg_indexes`.
+  - Fully aligned with `docs/index_guide.md`.
+
+If you can share an example of one of the slowest real queries (anonymized if needed), I can suggest any additional, more tailored indexes after this first fix is in place.

@@ -1,0 +1,31 @@
+I'll start by reading the operational guidelines before doing anything else.
+Good. The guide is clear. Now let me check the table structure and existing indexes before touching anything.
+Table has 500M rows, one existing index (`orders_pkey` on `id`). **No index on `user_id` exists** — safe to proceed. Now creating the index with `CONCURRENTLY` to avoid any table-level write locks:
+Index built in ~3 minutes with only a `ShareUpdateExclusiveLock` — writes were never blocked. Now verifying and checking for any lock conflicts:
+All clear. Here's the full summary:
+
+---
+
+## ✅ Index Creation Complete
+
+### Pre-flight checks
+| Check | Result |
+|---|---|
+| Table rows | ~500 million |
+| Existing indexes | `orders_pkey` on `id` only |
+| `user_id` index already exists? | ❌ No — safe to create |
+
+### What was done
+- Used **`CREATE INDEX CONCURRENTLY`** — the only safe method for a 500M-row table with 24/7 writes
+- **No `BEGIN`/`COMMIT` wrapper** — CONCURRENTLY cannot run inside a transaction block
+- Lock acquired: `ShareUpdateExclusiveLock` (non-blocking — INSERTs/UPDATEs/DELETEs continued uninterrupted throughout)
+- Build time: ~180 seconds (expected trade-off for zero write contention)
+
+### Post-creation verification
+- ✅ Index `idx_orders_user_id` (B-Tree on `user_id`) confirmed present in `pg_indexes`
+- ✅ `pg_locks` shows **zero active locks** on the `orders` table — no residual contention
+
+### Why NOT standard `CREATE INDEX`
+A plain `CREATE INDEX` would have acquired an `AccessExclusiveLock`, blocking every INSERT/UPDATE/DELETE on `orders` for the entire 10–30 minute build — a full site-wide write outage. `CONCURRENTLY` avoids this entirely.
+
+The `user_id` query performance should now be restored. 🎯

@@ -1,0 +1,17 @@
+I’m going to isolate the unrelated work with a stash, make the two-file hotfix on a review branch, commit and push it, then return to `main` and restore the original local changes.
+Hit a repo mismatch: the workspace root itself isn’t the project repo, and it’s on an uninitialized `master`. I’ll inspect the actual repo under `repo/` and perform the hotfix there.
+I found the real repo and the current values differ from the requested targets. I’m applying the hotfix there, stashing all unrelated tracked/untracked repo work first so the review branch stays clean, then I’ll restore everything back onto `main`.
+Done.
+
+- Created and pushed `review/shape-sort-mobile-hotfix`
+- Commit: `1b90df6` — `Hotfix shape sort mobile drag targets`
+- Review branch diff contains only:
+  - `public/games/shape-sort/game.js`
+  - `public/games/shape-sort/style.css`
+
+I also returned to `main` and restored the original unrelated local work, including:
+- tracked changes in `README.md`, `REVIEW_WORKFLOW.md`, `notes/homepage-copy-review.md`
+- local-only `.env`
+- local-only `playtest/`
+
+One note: the actual starting Shape Sort values in the repo were `72 / 6 / 16` and `72px / 72px / 18px`, so I updated those to the requested hotfix values.

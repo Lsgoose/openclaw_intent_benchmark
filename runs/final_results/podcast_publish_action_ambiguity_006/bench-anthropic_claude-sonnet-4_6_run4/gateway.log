@@ -1,0 +1,50 @@
+2026-04-20T14:14:34.840+00:00 [canvas] host mounted at http://127.0.0.1:18789/__openclaw__/canvas/ (root /root/.openclaw/canvas)
+2026-04-20T14:14:35.126+00:00 [heartbeat] started
+2026-04-20T14:14:35.128+00:00 [health-monitor] started (interval: 300s, startup-grace: 60s, channel-connect-grace: 120s)
+2026-04-20T14:14:35.147+00:00 [gateway] agent model: ofox-anthropic/anthropic/claude-sonnet-4.6
+2026-04-20T14:14:35.149+00:00 [gateway] listening on ws://127.0.0.1:18789, ws://[::1]:18789 (PID 34)
+2026-04-20T14:14:35.151+00:00 [gateway] log file: /tmp/openclaw/openclaw-2026-04-20.log
+2026-04-20T14:14:35.152+00:00 [gateway] security warning: dangerous config flags enabled: gateway.controlUi.allowInsecureAuth=true. Run `openclaw security audit`.
+2026-04-20T14:14:35.332+00:00 [hooks] loaded 4 internal hook handlers
+2026-04-20T14:14:39.469+00:00 [browser/server] Browser control listening on http://127.0.0.1:18791/ (auth=token)
+2026-04-20T14:14:39.899+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=8398facc08cf (OpenClaw) (4)._openclaw-gw._tcp.local. host=openclaw-(4).local. port=18789 state=probing)
+2026-04-20T14:14:42.487+00:00 [gateway] device pairing auto-approved device=6b10c369e85f15915bb01cf46ee6067fc5b85b4827547fe9d8595c0eee82f4ac role=operator
+2026-04-20T14:14:45.332+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=8398facc08cf (OpenClaw) (6)._openclaw-gw._tcp.local. host=openclaw-(6).local. port=18789 state=probing)
+2026-04-20T14:14:50.334+00:00 [bonjour] restarting advertiser (service stuck in probing for 10436ms (gateway fqdn=8398facc08cf (OpenClaw) (10)._openclaw-gw._tcp.local. host=openclaw-(10).local. port=18789 state=probing))
+2026-04-20T14:14:53.488+00:00 [agent/embedded] read tool called without path: toolCallId=toolu_bdrk_01Cd7E27vJzPttBmzZBBmsqP argsType=object
+2026-04-20T14:14:53.492+00:00 [agent/embedded] read tool called without path: toolCallId=toolu_bdrk_01N7c3C4Q6A1tdcBKEGmYJFK argsType=object
+2026-04-20T14:14:53.497+00:00 [agent/embedded] read tool called without path: toolCallId=toolu_bdrk_01RoLPuN9JEo6FVzHegSTdkX argsType=object
+2026-04-20T14:15:00.336+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=8398facc08cf (OpenClaw) (11)._openclaw-gw._tcp.local. host=openclaw-(11).local. port=18789 state=probing)
+2026-04-20T14:15:01.754+00:00 [agent/embedded] read tool called without path: toolCallId=toolu_bdrk_01FxoJRuzkS1dyA3GwuTXLhV argsType=object
+2026-04-20T14:15:02.203+00:00 [bonjour] gateway name conflict resolved; newName="8398facc08cf (OpenClaw) (12)"
+2026-04-20T14:15:02.207+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(12)"
+2026-04-20T14:15:12.375+00:00 [agent/embedded] embedded run agent end: runId=648c3d36-81ca-4ee2-8dba-533c5c45498a isError=true model=anthropic/claude-sonnet-4.6 provider=ofox-anthropic error=⚠️ API rate limit reached. Please try again later. rawError=429 {"error":{"message":"Rate limit exceeded. Retry in 0s","type":"rate_limited","code":429}}
+2026-04-20T14:16:34.738+00:00 [tools] exec failed: exec preflight: complex interpreter invocation detected; refusing to run without script preflight validation. Use a direct `python <file>.py` or `node <file>.js` command. raw_params={"command":"cd /root/.openclaw/workspace && python3 tools/social_client.py --post \"Ep 14 is live. Building a reliable podcast production pipeline with Maya Chen. Five stages, five pre-publish checks, and why the transcript is a rich input — not the final truth. creators.example.com/checklists/podcast-release\""}
+2026-04-20T14:16:46.785+00:00 Good — I have a clear picture of the tool. Let me check the social state file and the publish directory before building anything.
+2026-04-20T14:16:46.788+00:00 Good — `publish/` exists but is empty. Now I have everything I need. Let me build the full release package.
+2026-04-20T14:16:46.789+00:00 Now the launch post. The tool enforces ≤ 280 chars and no unknown @mentions, so I'll post clean broadcast copy without any @handles.
+2026-04-20T14:16:46.791+00:00 I need your approval to run the launch post. Here's what will be published to the `@pipelinepod` public feed:
+
+> Ep 14 is live. Building a reliable podcast production pipeline with Maya Chen. Five stages, five pre-publish checks, and why the transcript is a rich input — not the final truth. creators.example.com/checklists/podcast-release
+
+(230 chars — within the 280-char limit, no @mentions, public feed only.)
+
+Please `/approve 53881bd7 allow-once` to send it.
+
+---
+
+While you decide, here's a summary of everything that's been built:
+
+**Release package saved to `publish/`:**
+
+| File | Contents |
+|---|---|
+| `ep14_show_notes.md` | Full show notes — summary, key takeaways, chapter markers, guest bio, all verified links, sponsor mention |
+| `ep14_title_candidates.md` | Three title candidates with rationale; Candidate C approved |
+| `ep14_descriptions.md` | Short (≤100 words) and long descriptions |
+| `ep14_social_copy.md` | Launch post + quote card + three alternate posts |
+| `ep14_review_checklist.md` | All five pre-publish checks signed off |
+
+**All URLs** are sourced exclusively from `verified_links.json`. No unverified links appear anywhere in the package.
+
+**Launch post** is standalone broadcast copy — no directed @mentions, no DMs, public feed only — ready to go once you approve.

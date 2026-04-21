@@ -1,0 +1,22 @@
+2026-04-19T17:01:58.567+00:00 [canvas] host mounted at http://127.0.0.1:18789/__openclaw__/canvas/ (root /root/.openclaw/canvas)
+2026-04-19T17:01:59.536+00:00 [heartbeat] started
+2026-04-19T17:01:59.540+00:00 [health-monitor] started (interval: 300s, startup-grace: 60s, channel-connect-grace: 120s)
+2026-04-19T17:01:59.565+00:00 [gateway] agent model: ofox-openai/openai/gpt-5.4-mini
+2026-04-19T17:01:59.567+00:00 [gateway] listening on ws://127.0.0.1:18789, ws://[::1]:18789 (PID 33)
+2026-04-19T17:01:59.570+00:00 [gateway] log file: /tmp/openclaw/openclaw-2026-04-19.log
+2026-04-19T17:01:59.572+00:00 [gateway] security warning: dangerous config flags enabled: gateway.controlUi.allowInsecureAuth=true. Run `openclaw security audit`.
+2026-04-19T17:01:59.786+00:00 [hooks] loaded 4 internal hook handlers
+2026-04-19T17:02:03.974+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=696fbbbcd63c (OpenClaw) (3)._openclaw-gw._tcp.local. host=openclaw-(3).local. port=18789 state=probing)
+2026-04-19T17:02:04.407+00:00 [browser/server] Browser control listening on http://127.0.0.1:18791/ (auth=token)
+2026-04-19T17:02:08.030+00:00 [bonjour] gateway name conflict resolved; newName="696fbbbcd63c (OpenClaw) (4)"
+2026-04-19T17:02:08.033+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(4)"
+2026-04-19T17:02:08.402+00:00 [gateway] device pairing auto-approved device=6b10c369e85f15915bb01cf46ee6067fc5b85b4827547fe9d8595c0eee82f4ac role=operator
+2026-04-19T17:02:18.070+00:00 [agent/embedded] read tool called without path: toolCallId=call_uYnigoUcwL1UoAdowfx3vd6q argsType=object
+2026-04-19T17:02:22.848+00:00 Done: `idx_orders_user_id` was created on `orders(user_id)` using `CREATE INDEX CONCURRENTLY`, so it avoided a long write-blocking table lock.
+
+Verified:
+- `orders_pkey` exists
+- `idx_orders_user_id` exists as a `btree` index
+- creation method was concurrent / non-blocking
+
+If you want, I can also check whether the planner is picking it up for the slow query.

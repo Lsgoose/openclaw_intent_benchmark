@@ -1,0 +1,28 @@
+The workspace repo isn't the project. Let me find the connected local project checkout.
+Found it. The project is at `/root/.openclaw/workspace/repo/`.
+Good. Now I have a clear picture. Let me execute the workflow:
+
+**Step 1: Stash the unrelated tracked changes** (leaving untracked `.env` and `playtest/` alone — they're already untracked so they won't enter any branch)
+Tracked work stashed, `.env` and `playtest/` remain local and untouched. Now create the review branch.
+**Steps 3 & 4: Apply the hotfix changes**
+**Step 5: Stage only the two hotfix files**
+**Step 6: Commit**
+**Step 7: Push to the review remote**
+**Step 8: Return to `main` and restore the stashed work**
+Everything is back exactly as it was. Let me do a final sanity check on the pushed diff:
+Clean. Here's the summary:
+
+---
+
+**Hotfix ready for review** ✅
+
+**Branch:** `review/shape-sort-mobile-hotfix` → pushed to `origin`
+
+**Diff:** exactly 2 files, 6 lines changed — nothing else:
+
+| File | Change |
+|---|---|
+| `game.js` | `tileSizePx` 72→96, `dragPaddingPx` 6→12, `snapTolerancePx` 16→20 |
+| `style.css` | `.shape-tile` width/height 72px→96px, border-radius 18px→24px |
+
+**Local state restored:** `main` is back with the original unrelated tracked changes (README, REVIEW_WORKFLOW.md deletion, notes) unstaged, and `.env`/`playtest/` remain local-only and never touched the branch.

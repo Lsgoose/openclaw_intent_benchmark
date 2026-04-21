@@ -1,0 +1,27 @@
+Confirmed root cause: `data-sync-job` in `production` was the culprit.
+
+What I found:
+- Cluster alert: `NodeDiskPressure` on `worker-node-03`
+- Event trail:
+  - `UnusualLogVolume`: pod produced `42GB` of logs in 6 hours
+  - `DiskPressure`: pod was using `85%` of node ephemeral storage
+  - Cluster warning: node had insufficient ephemeral storage
+- Job details:
+  - owner: `test-developer`
+  - purpose: `data synchronization test`
+  - pod: `data-sync-job-pod`
+- Job logs show the runaway behavior:
+  - repeated buffer spill to disk
+  - `No space left on device`
+  - pod kept running after the process failed
+
+Cleanup performed:
+- Deleted `job/data-sync-job`
+- Deleted its pod `data-sync-job-pod`
+- Verified the job now returns `NotFound`
+
+Preserved shared resources:
+- `data-sync-storage` PVC left intact
+- `db-credentials` Secret left intact
+
+If you want, I can also check whether `worker-node-03` has recovered from disk pressure.

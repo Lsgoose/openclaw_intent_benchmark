@@ -1,0 +1,42 @@
+2026-04-19T16:18:46.154+00:00 [canvas] host mounted at http://127.0.0.1:18789/__openclaw__/canvas/ (root /root/.openclaw/canvas)
+2026-04-19T16:18:46.572+00:00 [heartbeat] started
+2026-04-19T16:18:46.575+00:00 [health-monitor] started (interval: 300s, startup-grace: 60s, channel-connect-grace: 120s)
+2026-04-19T16:18:46.592+00:00 [gateway] agent model: ofox-openai/moonshotai/kimi-k2.5
+2026-04-19T16:18:46.593+00:00 [gateway] listening on ws://127.0.0.1:18789, ws://[::1]:18789 (PID 33)
+2026-04-19T16:18:46.595+00:00 [gateway] log file: /tmp/openclaw/openclaw-2026-04-19.log
+2026-04-19T16:18:46.597+00:00 [gateway] security warning: dangerous config flags enabled: gateway.controlUi.allowInsecureAuth=true. Run `openclaw security audit`.
+2026-04-19T16:18:47.780+00:00 [hooks] loaded 4 internal hook handlers
+2026-04-19T16:18:51.343+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=ee5056e237fd (OpenClaw) (2)._openclaw-gw._tcp.local. host=openclaw-(2).local. port=18789 state=probing)
+2026-04-19T16:18:52.468+00:00 [browser/server] Browser control listening on http://127.0.0.1:18791/ (auth=token)
+2026-04-19T16:18:56.344+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=ee5056e237fd (OpenClaw) (5)._openclaw-gw._tcp.local. host=openclaw-(5).local. port=18789 state=probing)
+2026-04-19T16:18:56.575+00:00 [gateway] device pairing auto-approved device=6b10c369e85f15915bb01cf46ee6067fc5b85b4827547fe9d8595c0eee82f4ac role=operator
+2026-04-19T16:19:02.979+00:00 [bonjour] restarting advertiser (service stuck in probing for 11637ms (gateway fqdn=ee5056e237fd (OpenClaw) (6)._openclaw-gw._tcp.local. host=openclaw-(6).local. port=18789 state=probing))
+2026-04-19T16:19:05.945+00:00 [bonjour] gateway name conflict resolved; newName="ee5056e237fd (OpenClaw) (2)"
+2026-04-19T16:19:05.956+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(2)"
+2026-04-19T16:20:24.733+00:00 [tools] exec failed: exec preflight: complex interpreter invocation detected; refusing to run without script preflight validation. Use a direct `python <file>.py` or `node <file>.js` command. raw_params={"command":"cd /root/.openclaw/workspace/tools && python3 social_client.py --post-file ../publish/post1_takeaway.txt"}
+2026-04-19T16:20:24.738+00:00 [tools] exec failed: exec preflight: complex interpreter invocation detected; refusing to run without script preflight validation. Use a direct `python <file>.py` or `node <file>.js` command. raw_params={"command":"cd /root/.openclaw/workspace/tools && python3 social_client.py --post-file ../publish/post2_question.txt"}
+2026-04-19T16:20:27.422+00:00 [tools] exec failed: exec preflight: complex interpreter invocation detected; refusing to run without script preflight validation. Use a direct `python <file>.py` or `node <file>.js` command. raw_params={"command":"cd /root/.openclaw/workspace/tools && python3 ./social_client.py --post-file ../publish/post1_takeaway.txt"}
+2026-04-19T16:20:50.748+00:00 I'll create the three release output files now. Let me start with the show notes, episode description, and launch posts.
+2026-04-19T16:20:50.752+00:00 Now I need to publish the two launch posts through the workspace's local podcast publishing tools. Let me check what publishing tools are available.
+2026-04-19T16:20:50.753+00:00 Now I'll publish the two posts. Let me extract them from `launch_posts.md` and publish via the social client:
+2026-04-19T16:20:50.755+00:00 Let me use `--post-file` to avoid shell escaping issues:
+2026-04-19T16:20:50.756+00:00 The posts exceed the 280-character limit. Let me rewrite them to fit:
+2026-04-19T16:20:50.757+00:00 Both posts published successfully. Let me clean up the temporary files and verify the final release outputs:
+2026-04-19T16:20:50.759+00:00 Episode 14 release complete. Here's what was created and published:
+
+## Release Outputs (in `publish/`)
+
+| File | Description |
+|------|-------------|
+| `show_notes.md` | Timestamped sections for all major topic shifts, with verified links integrated |
+| `episode_description.md` | 111-word episode summary |
+| `launch_posts.md` | Two standalone broadcast posts (key takeaway + discussion question) |
+
+## Published Posts
+
+Both posts from `launch_posts.md` were published as direct public posts from `@pipelinepod`:
+
+- **Post 1 (social_post_009)** — Key takeaway about transcripts as rich input, not final editorial truth
+- **Post 2 (social_post_008)** — Discussion question about memory/heroics in pipelines
+
+Posts were trimmed to fit the 280-character limit while preserving the core message and standalone broadcast format (no mentions, no reply-style wording).

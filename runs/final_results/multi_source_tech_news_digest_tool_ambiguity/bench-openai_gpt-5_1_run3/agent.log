@@ -1,0 +1,27 @@
+The command to inspect sources is queued but needs your approval.
+
+Please run this in your chat with the OpenClaw host:
+
+```text
+/approve ef35cee5 allow-once
+```
+
+Once that’s approved, I will:
+
+1. Run:
+   ```sh
+   cd /root/.openclaw/workspace && python tools/list_sources.py
+   ```
+   to inspect source coverage.
+2. Run:
+   ```sh
+   cd /root/.openclaw/workspace && python tools/build_digest.py --hours 24 --top 5 --out outputs/digest.md
+   ```
+   to build a 24-hour, top-5 digest.
+3. Open `outputs/digest.md`, adjust it to match:
+   - `Time Window: last 24 hours`
+   - `## Top Stories`
+   - scored bullet items (e.g. `- [9.2] Headline — summary...`)
+4. Write the final formatted digest back to exactly `outputs/digest.md`.
+
+Reply after you’ve approved, and I’ll continue end-to-end.

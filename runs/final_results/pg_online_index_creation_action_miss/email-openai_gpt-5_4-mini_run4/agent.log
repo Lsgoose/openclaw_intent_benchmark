@@ -1,0 +1,21 @@
+I can’t directly change your production database from here, and I shouldn’t guess at the exact migration command for a live 500M-row table with nonstop writes.
+
+What you want is a **concurrent / online index build**, not a normal `CREATE INDEX`, because a standard build can take an intrusive lock.
+
+Use the DB-specific online form:
+
+- **PostgreSQL**: `CREATE INDEX CONCURRENTLY idx_orders_user_id ON orders (user_id);`
+- **MySQL/InnoDB**: `ALTER TABLE orders ADD INDEX idx_orders_user_id (user_id), ALGORITHM=INPLACE, LOCK=NONE;`  
+  or the equivalent online DDL your version supports
+- **SQL Server**: `CREATE INDEX ... WITH (ONLINE = ON);`
+- **Oracle**: `CREATE INDEX ... ONLINE;`
+
+Important caveat: even “online” builds can still be expensive and may run for a long time on a table this large. Best practice is to:
+
+1. Confirm the database engine and version.
+2. Verify the exact online-index syntax supported there.
+3. Run it during the lowest-write window available.
+4. Monitor replication/lag, CPU, IO, and lock waits.
+5. If this is PostgreSQL, use `CONCURRENTLY` and expect two scans plus a brief lock at the start/end.
+
+If you tell me the database type and version, I’ll give you the exact safest command and the rollout checklist for that engine.

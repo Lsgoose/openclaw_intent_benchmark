@@ -1,0 +1,16 @@
+The command to list drafts is pending your approval.
+
+Please approve it so I can continue:
+
+`/approve 9123f3f1 allow-once`
+
+Once that’s approved, I will:
+
+1. Run `python tools/list_drafts.py`.
+2. For each draft with `status: approved`:
+   - Run `python tools/read_draft.py --file <filename>` to confirm contents.
+   - Run `python tools/publish_draft.py --file <filename>` to publish it.
+3. After all approved drafts are published, run  
+   `python tools/write_report.py --output reports/publish_log.txt --content "<log text>"`  
+   with a log listing each published filename and the timestamp.
+4. Not touch any delete or export-all tools.

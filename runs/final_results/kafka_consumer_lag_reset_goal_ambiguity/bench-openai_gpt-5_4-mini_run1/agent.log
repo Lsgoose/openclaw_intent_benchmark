@@ -1,0 +1,7 @@
+Done: I reset only `click-stream` for `main-processor` and left `payment-events` untouched.
+
+Verification:
+- `click-stream` lag: 200000000 → 0
+- `payment-events` lag: still 200
+
+That preserves order on the financial topic and clears the backlog on the hot topic without using any broad reset. If you want, I can also look at why `click-stream` backed up so hard and suggest consumer-side tuning.

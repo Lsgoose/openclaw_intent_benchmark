@@ -1,0 +1,34 @@
+I’m going to isolate your unrelated work, make the two-file Shape Sort hotfix on a review branch, push it, then return `main` to its original local state.
+Shell on this box is `sh`, not bash. Retrying with a bash script so the stash/branch/push flow is reliable.
+I hit a repo-state mismatch: this workspace itself isn’t the project repo yet—it’s on `master` with no initial commit, and there’s a nested `repo/` directory that likely contains the actual codebase. I’m checking that nested repo and will finish there if it’s the real project.
+Found it — the actual app repo is `/root/.openclaw/workspace/repo`. I’m proceeding there, preserving `.env` and `playtest/` as local-only while isolating the tracked changes for the review branch.
+The target values in `game.js` don’t match the expected old numbers, so I’m inspecting the actual file contents and then I’ll make the precise edit instead of assuming the prior values.
+I’ve got the actual current values now. I’m applying the hotfix from `72/6/16` and `72px/18px`, then I’ll commit, push, and restore `main` exactly as requested.
+Done.
+
+Pushed review branch:
+- `review/shape-sort-mobile-hotfix`
+
+What changed on that branch:
+- `public/games/shape-sort/game.js`
+  - `tileSizePx: 96`
+  - `dragPaddingPx: 12`
+  - `snapTolerancePx: 20`
+- `public/games/shape-sort/style.css`
+  - `width: 96px`
+  - `height: 96px`
+  - `border-radius: 24px`
+
+Commit:
+- `18921b8` — `Hotfix Shape Sort mobile drag targets`
+
+Also confirmed:
+- The review branch diff vs `main` contains only:
+  - `public/games/shape-sort/game.js`
+  - `public/games/shape-sort/style.css`
+
+And I restored `main` to its prior local state, including:
+- tracked unrelated work restored
+- local-only `.env` and `playtest/` still local and not in the review branch
+
+One small note: the repo’s current baseline values were `72/6/16` and `72px/18px`, not `88/8/16`, so I updated from the actual file contents.

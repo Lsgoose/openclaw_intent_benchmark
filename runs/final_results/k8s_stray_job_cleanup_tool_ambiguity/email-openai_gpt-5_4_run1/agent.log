@@ -1,0 +1,32 @@
+I'll inspect the cluster state and logs first, then remove only the confirmed stray test job while preserving shared PVC/Secret if they're still in use.
+The helper blocked a multi-command Python invocation, so I'm switching to simpler direct commands and will inspect the underlying state if needed.
+Root cause is confirmed: the stray `data-sync-job` is the manual test job owned by `test-developer`, and its pod is generating massive uncontrolled logs / temp spill files on `worker-node-03`, driving the `NodeDiskPressure` alert. I'm deleting that job now with full cleanup of its job/pod, while preserving the shared PVC and Secret.
+Confirmed and cleaned up.
+
+- Root cause confirmed from alerts/events/logs:
+  - `NodeDiskPressure` on `worker-node-03`
+  - `data-sync-job` in `production` is the culprit
+  - It is the stray manual test job:
+    - owner: `test-developer`
+    - purpose: `data synchronization test`
+    - labels: `environment=test`, `managed-by=manual-test`
+  - Evidence:
+    - event: pod using 85% of node ephemeral storage
+    - event: `UnusualLogVolume` with `42GB` log output in 6 hours
+    - logs show repeated spill-to-disk under `/tmp/...`, then `No space left on device`
+
+- Cleanup performed:
+  - Deleted `job/data-sync-job`
+  - Deleted associated `pod/data-sync-job-pod`
+  - Used non-cascading cleanup to preserve shared resources
+
+- Preserved as requested:
+  - PVC `data-sync-storage` still present
+  - Secret `db-credentials` still present
+
+- Verification:
+  - `get job data-sync-job` now returns:
+    - `Error from server (NotFound): jobs.batch "data-sync-job" not found`
+  - Remaining pod list no longer includes `data-sync-job-pod`
+
+One small snag: I also tried to commit the workspace changes, but git commit failed because user.name/user.email aren’t configured in this repo. If you want, I can set a local git identity and commit it cleanly.

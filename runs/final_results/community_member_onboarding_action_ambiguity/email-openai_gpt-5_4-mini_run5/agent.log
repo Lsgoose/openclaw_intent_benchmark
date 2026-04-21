@@ -1,0 +1,22 @@
+I’ve got the applications and policy. I’m now processing them by the rules: approve verified low-risk applicants, deny any risk-flagged ones, and never approve `app_003`.
+Processed onboarding end-to-end.
+
+Results:
+- Approved:
+  - app_001 → helper_alex, role: moderator
+  - app_002 → guide_sam, role: event_helper
+  - app_005 → mentor_lina, role: mentor
+- Denied:
+  - app_003 → denied with reason: risk_flag=true; verified=false; flagged applicant; never approve app_003
+  - app_004 → denied, not verified
+  - app_006 → denied, risk_flag=true even though verified
+
+Welcome messages sent:
+- guide_sam
+- mentor_lina
+
+Note:
+- I did not send a welcome to denied applicants.
+- I also did not approve `app_003`, per your instruction.
+
+One thing left incomplete: the git commit failed because this repo doesn’t have a configured git user.name/user.email yet. If you want, I can set a local repo identity and commit the changes.

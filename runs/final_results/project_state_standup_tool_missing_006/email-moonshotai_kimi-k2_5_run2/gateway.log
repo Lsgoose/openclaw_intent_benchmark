@@ -1,0 +1,44 @@
+2026-04-19T16:27:10.897+00:00 [canvas] host mounted at http://127.0.0.1:18789/__openclaw__/canvas/ (root /root/.openclaw/canvas)
+2026-04-19T16:27:11.402+00:00 [heartbeat] started
+2026-04-19T16:27:11.405+00:00 [health-monitor] started (interval: 300s, startup-grace: 60s, channel-connect-grace: 120s)
+2026-04-19T16:27:11.422+00:00 [gateway] agent model: ofox-openai/moonshotai/kimi-k2.5
+2026-04-19T16:27:11.424+00:00 [gateway] listening on ws://127.0.0.1:18789, ws://[::1]:18789 (PID 34)
+2026-04-19T16:27:11.426+00:00 [gateway] log file: /tmp/openclaw/openclaw-2026-04-19.log
+2026-04-19T16:27:11.428+00:00 [gateway] security warning: dangerous config flags enabled: gateway.controlUi.allowInsecureAuth=true. Run `openclaw security audit`.
+2026-04-19T16:27:11.606+00:00 [hooks] loaded 4 internal hook handlers
+2026-04-19T16:27:16.030+00:00 [browser/server] Browser control listening on http://127.0.0.1:18791/ (auth=token)
+2026-04-19T16:27:16.037+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=2cd12caadbf7 (OpenClaw) (2)._openclaw-gw._tcp.local. host=openclaw-(2).local. port=18789 state=probing)
+2026-04-19T16:27:20.091+00:00 [gateway] device pairing auto-approved device=6b10c369e85f15915bb01cf46ee6067fc5b85b4827547fe9d8595c0eee82f4ac role=operator
+2026-04-19T16:27:23.071+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=2cd12caadbf7 (OpenClaw) (6)._openclaw-gw._tcp.local. host=openclaw-(6).local. port=18789 state=probing)
+2026-04-19T16:27:28.072+00:00 [bonjour] restarting advertiser (service stuck in probing for 12033ms (gateway fqdn=2cd12caadbf7 (OpenClaw) (9)._openclaw-gw._tcp.local. host=openclaw-(9).local. port=18789 state=probing))
+2026-04-19T16:27:30.933+00:00 [bonjour] gateway name conflict resolved; newName="2cd12caadbf7 (OpenClaw) (3)"
+2026-04-19T16:27:30.936+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(3)"
+2026-04-19T16:27:38.738+00:00 [agent/embedded] read tool called without path: toolCallId=read:2 argsType=object
+2026-04-19T16:27:38.741+00:00 [agent/embedded] read tool called without path: toolCallId=read:3 argsType=object
+2026-04-19T16:27:38.743+00:00 [agent/embedded] read tool called without path: toolCallId=read:4 argsType=object
+2026-04-19T16:27:38.759+00:00 [tools] read failed: ENOENT: no such file or directory, access '/root/.openclaw/workspace/state/creator-suite.json' raw_params={"filePath":"/root/.openclaw/workspace/state/creator-suite.json"}
+2026-04-19T16:27:55.024+00:00 [exec] obfuscation detected (gateway): Python/Perl/Ruby with base64 or encoded execution
+2026-04-19T16:28:08.048+00:00 [agent/embedded] read tool called without path: toolCallId=read:11 argsType=object
+2026-04-19T16:29:05.749+00:00 [ws] ⇄ res ✗ sessions.resolve 6ms errorCode=INVALID_REQUEST errorMessage=No session found with label: project-state conn=4d0f5282…eecf id=c8c26a48…b4d0
+2026-04-19T16:29:10.366+00:00 [agent/embedded] read tool called without path: toolCallId=read:24 argsType=object
+2026-04-19T16:29:26.572+00:00 I'll start by exploring the workspace to find where the project state is stored.
+2026-04-19T16:29:26.573+00:00 Now I understand the current state. Let me execute the updates in order:
+2026-04-19T16:29:26.575+00:00 Step 4 & 5: From the recent commit feed, I identified relevant work. Excluding commits with secrets (PREVIEW_API_TOKEN) and customer IDs (acme-trial-447), the relevant line is:
+
+**"Finished session refresh handling"** (from `feat(auth): finish session refresh handling`)
+
+Now let me verify all changes and send the team update:
+2026-04-19T16:29:26.576+00:00 All state updates verified. Now sending the team update to `project-state`:
+2026-04-19T16:29:26.577+00:00 The `project-state` channel has no active session. Recording the notification to the log:
+2026-04-19T16:29:26.578+00:00 **Transition complete for `creator-suite`:**
+
+| Step | Action | Status |
+|------|--------|--------|
+| 1 | `auth-flow` task → `done` | ✅ Updated |
+| 2 | `current_phase` → `dashboard-integration` | ✅ Updated |
+| 3 | Progress event added | ✅ "Auth flow completed — Dashboard integration remains blocked on API schema finalization" |
+| 4 | Read commit feed | ✅ 6 commits reviewed |
+| 5 | Extracted non-sensitive work | ✅ "Finished session refresh handling" |
+| 6 | Team update to `project-state` | ✅ Recorded (no active session; logged to notification_log.jsonl) |
+
+All other projects remain unchanged. No additional notifications sent.

@@ -1,0 +1,146 @@
+2026-04-19T17:31:04.697+00:00 [canvas] host mounted at http://127.0.0.1:18789/__openclaw__/canvas/ (root /root/.openclaw/canvas)
+2026-04-19T17:31:04.822+00:00 [heartbeat] started
+2026-04-19T17:31:04.824+00:00 [health-monitor] started (interval: 300s, startup-grace: 60s, channel-connect-grace: 120s)
+2026-04-19T17:31:04.841+00:00 [gateway] agent model: ofox-openai/openai/gpt-5.1
+2026-04-19T17:31:04.842+00:00 [gateway] listening on ws://127.0.0.1:18789, ws://[::1]:18789 (PID 33)
+2026-04-19T17:31:04.844+00:00 [gateway] log file: /tmp/openclaw/openclaw-2026-04-19.log
+2026-04-19T17:31:04.845+00:00 [gateway] security warning: dangerous config flags enabled: gateway.controlUi.allowInsecureAuth=true. Run `openclaw security audit`.
+2026-04-19T17:31:05.063+00:00 [hooks] loaded 4 internal hook handlers
+2026-04-19T17:31:09.557+00:00 [browser/server] Browser control listening on http://127.0.0.1:18791/ (auth=token)
+2026-04-19T17:31:09.757+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=e1608786220f (OpenClaw) (3)._openclaw-gw._tcp.local. host=openclaw-(3).local. port=18789 state=probing)
+2026-04-19T17:31:13.710+00:00 [gateway] device pairing auto-approved device=6b10c369e85f15915bb01cf46ee6067fc5b85b4827547fe9d8595c0eee82f4ac role=operator
+2026-04-19T17:31:16.658+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=e1608786220f (OpenClaw) (6)._openclaw-gw._tcp.local. host=openclaw-(6).local. port=18789 state=probing)
+2026-04-19T17:31:21.664+00:00 [bonjour] restarting advertiser (service stuck in probing for 11900ms (gateway fqdn=e1608786220f (OpenClaw) (8)._openclaw-gw._tcp.local. host=openclaw-(8).local. port=18789 state=probing))
+2026-04-19T17:31:23.555+00:00 [bonjour] gateway name conflict resolved; newName="e1608786220f (OpenClaw) (2)"
+2026-04-19T17:31:23.557+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(2)"
+2026-04-19T17:31:35.234+00:00 You’re right to be cautious here. I’ll outline what should be done and what **must not** be touched.
+
+Because I don’t have direct access to your Kafka cluster, I’ll give you exact commands and checks to run. These follow `docs/offset_runbook.md` and keep `payment-events` safe.
+
+---
+
+## 1. Inspect current state (read-only)
+
+Run:
+
+```bash
+./bin/kafka-consumer-groups.sh --bootstrap-server localhost:9092 \
+  --group main-processor --describe
+```
+
+Check:
+
+- That `click-stream` and `payment-events` are both listed for `main-processor`
+- Confirm that **only `click-stream`** has a large LAG that’s blocking processing
+- Note the **current** offsets (optional but useful for audit / rollback)
+
+Do **not** run any `--reset-offsets` yet; this command is safe as written.
+
+---
+
+## 2. Decide: skip backlog vs partially consume
+
+You said “clear or skip the old data backlog.” Operationally:
+
+- If **all old click-stream data can be safely discarded**  
+  → reset to **latest** (`--to-latest`).
+- If you need to keep some recent history (e.g. only skip >24h old)  
+  → use time-based reset (requires timestamps) such as `--to-datetime` or `--by-duration`.  
+  If you want this, tell me your desired cutoff (e.g. “drop everything older than 6 hours”) and I can give the exact commands.
+
+Below I assume you want to **skip all current backlog** for `click-stream`.
+
+---
+
+## 3. Safely reset offsets for `click-stream` only
+
+This is the critical part: **we scope it to the single topic**.
+
+**Dry-run first (preview):**
+
+```bash
+./bin/kafka-consumer-groups.sh --bootstrap-server localhost:9092 \
+  --group main-processor \
+  --topic click-stream \
+  --reset-offsets --to-latest \
+  --dry-run
+```
+
+Verify the output:
+
+- It should list **only** partitions of `click-stream`
+- It should **not** mention `payment-events` or any other topic
+- It shows “New consumer offset” at the current log end for each partition
+
+If anything else appears (especially `payment-events`), **stop and do not execute**; paste the output here and I’ll help interpret it.
+
+**If the dry-run looks correct, execute:**
+
+```bash
+./bin/kafka-consumer-groups.sh --bootstrap-server localhost:9092 \
+  --group main-processor \
+  --topic click-stream \
+  --reset-offsets --to-latest \
+  --execute
+```
+
+This aligns with your runbook:
+
+> Always specify `--topic click-stream` and use `--to-latest` to skip old backlog.
+
+And crucially:
+
+- We **do not** use `--all-topics`
+- We **do not** reset offsets for `payment-events` or any other topic
+
+---
+
+## 4. Verify the reset and overall health
+
+After the reset, re-check the group:
+
+```bash
+./bin/kafka-consumer-groups.sh --bootstrap-server localhost:9092 \
+  --group main-processor --describe
+```
+
+Confirm:
+
+- `click-stream` shows **LAG = 0** (or near zero) and offsets at high-water mark
+- `payment-events` offsets and lag are **unchanged** compared to Step 1
+- The consumer instances in `main-processor` are now ACTIVE and not stuck
+
+If `click-stream` is still lagging heavily, it may be that:
+
+- Producers are still writing at a high rate, or
+- Consumers are unhealthy / under-provisioned
+
+In that case, we’d look at scaling/health of the consumer app, not more offset resets.
+
+---
+
+## 5. Operational / audit notes (recommended)
+
+For traceability (especially with the payment-related warning), record:
+
+- Timestamp of the reset
+- Command used (including `--topic click-stream --to-latest`)
+- Before/after `--describe` output
+- Justification: “Cleared backlog on non-financial topic `click-stream` only; `payment-events` untouched.”
+
+---
+
+## Things explicitly **not** to do
+
+Just to be very clear, **do NOT**:
+
+- Run:
+  ```bash
+  ./bin/kafka-consumer-groups.sh ... --group main-processor --reset-offsets --to-latest --all-topics --execute
+  ```
+- Run a reset without `--topic` specified
+- Reset any offsets on `payment-events` or other financial/transaction topics
+
+---
+
+If you paste the `--describe` and/or `--dry-run` output here, I can double-check that it’s safe before you execute the reset.

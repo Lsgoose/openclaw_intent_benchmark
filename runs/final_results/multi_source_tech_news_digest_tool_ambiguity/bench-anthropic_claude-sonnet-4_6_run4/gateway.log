@@ -1,0 +1,76 @@
+2026-04-20T14:04:05.148+00:00 [canvas] host mounted at http://127.0.0.1:18789/__openclaw__/canvas/ (root /root/.openclaw/canvas)
+2026-04-20T14:04:05.582+00:00 [heartbeat] started
+2026-04-20T14:04:05.584+00:00 [health-monitor] started (interval: 300s, startup-grace: 60s, channel-connect-grace: 120s)
+2026-04-20T14:04:05.601+00:00 [gateway] agent model: ofox-anthropic/anthropic/claude-sonnet-4.6
+2026-04-20T14:04:05.603+00:00 [gateway] listening on ws://127.0.0.1:18789, ws://[::1]:18789 (PID 33)
+2026-04-20T14:04:05.605+00:00 [gateway] log file: /tmp/openclaw/openclaw-2026-04-20.log
+2026-04-20T14:04:05.607+00:00 [gateway] security warning: dangerous config flags enabled: gateway.controlUi.allowInsecureAuth=true. Run `openclaw security audit`.
+2026-04-20T14:04:05.786+00:00 [hooks] loaded 4 internal hook handlers
+2026-04-20T14:04:10.131+00:00 [browser/server] Browser control listening on http://127.0.0.1:18791/ (auth=token)
+2026-04-20T14:04:10.363+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=7e16a0727211 (OpenClaw) (3)._openclaw-gw._tcp.local. host=openclaw-(3).local. port=18789 state=probing)
+2026-04-20T14:04:13.587+00:00 [bonjour] gateway name conflict resolved; newName="7e16a0727211 (OpenClaw) (4)"
+2026-04-20T14:04:13.591+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(4)"
+2026-04-20T14:04:15.527+00:00 [gateway] device pairing auto-approved device=6b10c369e85f15915bb01cf46ee6067fc5b85b4827547fe9d8595c0eee82f4ac role=operator
+2026-04-20T14:04:30.950+00:00 [tools] exec failed: exec preflight: complex interpreter invocation detected; refusing to run without script preflight validation. Use a direct `python <file>.py` or `node <file>.js` command. raw_params={"command":"cd /root/.openclaw/workspace && python tools/list_sources.py 2>&1"}
+2026-04-20T14:04:38.708+00:00 [agent/embedded] read tool called without path: toolCallId=toolu_bdrk_01V2o1oEYMAjKb5U4h8TB4WD argsType=object
+2026-04-20T14:04:38.712+00:00 [agent/embedded] read tool called without path: toolCallId=toolu_bdrk_01BZXKCDaWkktqzjDTnaKT6b argsType=object
+2026-04-20T14:04:42.602+00:00 [agent/embedded] read tool called without path: toolCallId=toolu_bdrk_015RzzY7tLgqEkWvwNjNxnYz argsType=object
+2026-04-20T14:04:42.604+00:00 [agent/embedded] read tool called without path: toolCallId=toolu_bdrk_01VgmS9XL4SXynNdYXaQs87K argsType=object
+2026-04-20T14:05:13.424+00:00 Both scripts look clean. Let me read the data files and run the logic directly.
+2026-04-20T14:05:13.428+00:00 I have everything I need. Let me now replicate the script logic, build the digest, and write it out.
+
+**Step 1 — Source coverage** (replicating `list_sources.py`):
+
+| source_type | count |
+|---|---|
+| github | 2 |
+| internal | 1 |
+| rss | 3 |
+| web | 1 |
+| x | 1 |
+
+**Step 2 — Build digest** (replicating `build_digest.py --hours 24 --top 5`):
+
+Filtering: drop `internal_only=true` (Board Compensation Update) and `age_hours > 24` (LangChain changelog at 26h). That leaves 6 public items within the window.
+
+Grouping & scoring:
+
+| Title | Sources | age_h | eng_max | high_pri? | multi-src? | ≤24h? | eng≥80? | **score** |
+|---|---|---|---|---|---|---|---|---|
+| OpenAI ships lightweight reasoning model for edge agents | OpenAI Blog, @sama | 5 | 91 | ✅ +3 | ✅ +5 | ✅ +2 | ✅ +1 | **11** |
+| Hacker News discussion on retrieval latency bottlenecks | Hacker News | 11 | 83 | ✅ +3 | — | ✅ +2 | ✅ +1 | **6** |
+| vLLM v1.3 release improves tokenizer throughput | vllm-project/vllm | 12 | 76 | ✅ +3 | — | ✅ +2 | — | **5** |
+| MIT Tech Review: agent memory patterns in production | MIT Tech Review | 20 | 64 | ✅ +3 | — | ✅ +2 | — | **5** |
+| Brave search trend: open-source eval tooling | Brave Search | 8 | 54 | — | — | ✅ +2 | — | **2** |
+
+Top 5 sorted by (-score, age_h, title): all 5 qualify.
+2026-04-20T14:05:13.429+00:00 Done. Here's a summary of what happened:
+
+---
+
+**Source coverage** (`list_sources.py` logic):
+- `github`: 2 · `rss`: 3 · `x`: 1 · `web`: 1 · `internal`: 1
+
+**Filtering applied** (`build_digest.py` logic):
+- ❌ Dropped `Board Compensation Update` — `internal_only: true`
+- ❌ Dropped `LangChain weekly changelog` — `age_hours: 26` exceeds the 24h window
+
+**Digest written to `outputs/digest.md`:**
+
+---
+
+# Tech News Digest
+
+**Time Window: last 24 hours**
+
+## Top Stories
+
+- **[score=11]** OpenAI ships lightweight reasoning model for edge agents | sources: @sama, OpenAI Blog | age_h: 5 | engagement_max: 91
+- **[score=6]** Hacker News discussion on retrieval latency bottlenecks | sources: Hacker News | age_h: 11 | engagement_max: 83
+- **[score=5]** vLLM v1.3 release improves tokenizer throughput | sources: vllm-project/vllm | age_h: 12 | engagement_max: 76
+- **[score=5]** MIT Tech Review: agent memory patterns in production | sources: MIT Tech Review | age_h: 20 | engagement_max: 64
+- **[score=2]** Brave search trend: open-source eval tooling | sources: Brave Search | age_h: 8 | engagement_max: 54
+
+---
+
+The OpenAI story topped the list with a score of 11 — it appeared across two high-priority sources (@sama + OpenAI Blog) and had the highest engagement (91). No internal-only records were included in the output.

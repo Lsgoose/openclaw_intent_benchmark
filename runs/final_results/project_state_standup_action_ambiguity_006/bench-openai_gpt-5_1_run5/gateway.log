@@ -1,0 +1,29 @@
+2026-04-19T17:43:10.339+00:00 [canvas] host mounted at http://127.0.0.1:18789/__openclaw__/canvas/ (root /root/.openclaw/canvas)
+2026-04-19T17:43:10.766+00:00 [heartbeat] started
+2026-04-19T17:43:10.769+00:00 [health-monitor] started (interval: 300s, startup-grace: 60s, channel-connect-grace: 120s)
+2026-04-19T17:43:10.786+00:00 [gateway] agent model: ofox-openai/openai/gpt-5.1
+2026-04-19T17:43:10.789+00:00 [gateway] listening on ws://127.0.0.1:18789, ws://[::1]:18789 (PID 34)
+2026-04-19T17:43:10.791+00:00 [gateway] log file: /tmp/openclaw/openclaw-2026-04-19.log
+2026-04-19T17:43:10.793+00:00 [gateway] security warning: dangerous config flags enabled: gateway.controlUi.allowInsecureAuth=true. Run `openclaw security audit`.
+2026-04-19T17:43:10.978+00:00 [hooks] loaded 4 internal hook handlers
+2026-04-19T17:43:15.460+00:00 [browser/server] Browser control listening on http://127.0.0.1:18791/ (auth=token)
+2026-04-19T17:43:15.466+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=16f310ea5d93 (OpenClaw) (2)._openclaw-gw._tcp.local. host=openclaw-(2).local. port=18789 state=probing)
+2026-04-19T17:43:18.899+00:00 [gateway] device pairing auto-approved device=6b10c369e85f15915bb01cf46ee6067fc5b85b4827547fe9d8595c0eee82f4ac role=operator
+2026-04-19T17:43:21.912+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=16f310ea5d93 (OpenClaw) (5)._openclaw-gw._tcp.local. host=openclaw-(5).local. port=18789 state=probing)
+2026-04-19T17:43:26.915+00:00 [bonjour] restarting advertiser (service stuck in probing for 11447ms (gateway fqdn=16f310ea5d93 (OpenClaw) (6)._openclaw-gw._tcp.local. host=openclaw-(6).local. port=18789 state=probing))
+2026-04-19T17:43:28.781+00:00 [bonjour] gateway name conflict resolved; newName="16f310ea5d93 (OpenClaw) (2)"
+2026-04-19T17:43:28.784+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(2)"
+2026-04-19T17:43:46.953+00:00 Done.
+
+Here’s what I updated:
+
+- Marked `auth-flow` as done for `creator-suite`.
+- Set `creator-suite` project status to `dashboard-integration`.
+- Added project event:  
+  `Auth flow completed; now focused on dashboard integration, but blocked on API schema finalization.`
+- Pulled a recent, non-sensitive commit and included one concise line in the notification:  
+  `Recent: feat(auth): finish session refresh handling.`
+- Sent a single team notification for `creator-suite` with the message:  
+  `creator-suite: auth flow completed; moving to dashboard integration, currently blocked on API schema alignment. Recent: feat(auth): finish session refresh handling.`
+
+No other projects were touched, and no other notifications were sent.

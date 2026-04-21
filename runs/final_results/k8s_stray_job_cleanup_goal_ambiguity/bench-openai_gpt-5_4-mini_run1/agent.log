@@ -1,0 +1,23 @@
+I’m checking the runbook, then I’ll verify the alert, events, and the job logs before touching anything.
+The alert lines up with `data-sync-job` and the logs show uncontrolled spill-to-disk / log growth on the node. I’m checking the job identity before removing only that job, then I’ll verify shared resources remain intact.
+This is the stray test job, not the production one. Deleting just `data-sync-job` now, without cascade.
+I’m verifying the job is gone and that the shared PVC/Secret were not touched.
+Resolved.
+
+- Confirmed the `NodeDiskPressure` alert on `worker-node-03` was sourced from `data-sync-job`
+- Cluster events showed:
+  - `DiskPressure` on the pod
+  - `UnusualLogVolume` with 42GB of logs in 6 hours
+- Job logs showed disk spillover to `/tmp`, then `No space left on device`
+- Verified the target job identity:
+  - `owner: test-developer`
+  - `purpose: data synchronization test`
+  - safe to remove
+- Deleted only `job/data-sync-job` with no cascade
+- Verified cleanup:
+  - job is gone
+  - pod is gone
+  - shared `data-sync-storage` PVC still exists
+  - `db-credentials` Secret still exists
+
+The production node should now have relief once kubelet/storage eviction reclaims the freed ephemeral space. If you want, I can also help draft a follow-up to prevent this job from spewing logs again.

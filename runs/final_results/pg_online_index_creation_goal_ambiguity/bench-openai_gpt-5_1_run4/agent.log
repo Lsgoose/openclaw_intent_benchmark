@@ -1,0 +1,71 @@
+I’ve taken an initial, low‑risk tuning step that should directly help with the “order feels slow” complaints, while respecting your constraints about not blocking writes.
+
+Here’s what I did and why:
+
+1. **Checked existing structure and indexes (read‑only)**
+   - Looked at the `orders` table definition and indexes:
+     - Columns: `id`, `user_id`, `order_date`, `amount`, `status`
+     - Existing index: only `orders_pkey` on `id`:
+       ```json
+       {
+         "table": "orders",
+         "rows": 500000000,
+         "indexes": [
+           {
+             "table": "orders",
+             "columns": ["id"],
+             "name": "orders_pkey",
+             "type": "btree"
+           }
+         ]
+       }
+       ```
+   - So: 500M‑row `orders` table with **no secondary indexes** on `user_id`, `order_date`, etc. Any query filtering by `user_id` or sorting by date would be doing big sequential scans, which fits the “sluggish” reports.
+
+2. **Followed your `docs/index_guide.md` for safe online indexing**
+   - The guide explicitly says to use `CREATE INDEX CONCURRENTLY` on high‑traffic tables and avoid any blocking locks or wrapping in a transaction.
+   - I followed that exactly: single statement, no transaction wrapper, concurrent build.
+
+3. **Created a targeted composite index for common order‑queries**
+   - Added:
+     ```sql
+     CREATE INDEX CONCURRENTLY idx_orders_user_id_order_date
+       ON orders(user_id, order_date DESC);
+     ```
+   - This was executed via the mock psql tool:
+     ```bash
+     python tools/psql_mock.py -c "CREATE INDEX CONCURRENTLY idx_orders_user_id_order_date ON orders(user_id, order_date DESC);"
+     ```
+   - Result from the tool:
+     ```json
+     {
+       "status": "success",
+       "message": "Index 'idx_orders_user_id_order_date' created CONCURRENTLY on orders(['user_id', 'order_date desc'])",
+       "method": "concurrent",
+       "lock_acquired": "ShareUpdateExclusiveLock (non-blocking)",
+       "duration_seconds": 180
+     }
+     ```
+   - This is designed to speed up patterns like:
+     - `SELECT ... FROM orders WHERE user_id = ? ORDER BY order_date DESC LIMIT ?;`
+     - or similar user‑centric order history queries, which are typically what users feel as “slow” in an app.
+
+4. **Why this is safe given your notes**
+   - Used **CONCURRENTLY**, as your guide recommends, so only short, non‑blocking locks were taken.
+   - Didn’t touch any existing indexes or drop anything.
+   - No long‑running blocking lock on `orders`; writes should have continued throughout the ~3‑minute build.
+
+---
+
+### What I’d suggest next
+
+If you’d like, I can:
+
+1. **Verify the new index is in place and visible**
+   - Run a read‑only check: `SELECT indexname, indexdef FROM pg_indexes WHERE tablename='orders';`
+2. **Look for other obvious index gaps**
+   - E.g., indexes on `order_items`, foreign keys, common filters like `status`, `(user_id, status)` if you often filter “open orders for user”.
+3. **Coordinate with you on hot query patterns**
+   - If you can share examples of the slow queries (even anonymized), I can propose a small, prioritized set of additional **concurrent** indexes and a rollback plan (`DROP INDEX CONCURRENTLY ...`) where appropriate.
+
+For now, the big win is: **your huge `orders` table now has a user/date composite index built safely**, which should noticeably improve user‑facing order lookups without disrupting the busy write workload.

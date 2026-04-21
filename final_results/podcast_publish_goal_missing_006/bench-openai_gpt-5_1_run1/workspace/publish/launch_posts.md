@@ -1,3 +1,0 @@
-Why most title tests fail: you’re optimising for click-through rate and novelty instead of checking whether the headline’s promise matches what the episode actually delivers. This week’s Pipeline episode with title specialist Jordan Kim is a fast walkthrough of how to fix that.
-
-If you had to keep just one habit from your current title experiments, what would it be: a shared title board, a simple experiment log, or a weekly review of which episode promises actually resonated with listeners?

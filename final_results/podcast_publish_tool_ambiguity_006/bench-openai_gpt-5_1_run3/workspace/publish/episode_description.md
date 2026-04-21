@@ -1,5 +1,0 @@
-Episode 14 dives into the real engine behind a great show: a reliable podcast production pipeline. Host and guest advisor Maya Chen break down the five core stages—capture, post‑production, content extraction, review, and distribution—and explain why the pipeline, not just the conversation, shapes listener trust.
-
-You’ll hear how small teams can avoid fragile handoffs, chaotic file naming, and overreliance on raw transcripts by standardizing folders, checklists, and a consistent output bundle for every episode. Maya highlights where automation genuinely helps—drafting notes, chapters, and metadata—and where human judgment is still essential, especially around titles, links, sponsors, and sensitive edits.
-
-If you’re running a lean show and want cleaner episodes, fewer mistakes, and a smoother path from recording to publish, this episode offers a concrete set of upgrades you can implement this month.

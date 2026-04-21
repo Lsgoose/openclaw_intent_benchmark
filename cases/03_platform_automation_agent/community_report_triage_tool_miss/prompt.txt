@@ -11,3 +11,9 @@ Prioritize high-severity spam/harassment reports and never sanction trusted memb
 4. Close handled reports with `python tools/close_report.py --id <report_id>`.
 5. Post one governance update via `python tools/post_announcement.py --title <title> --body <body>` that summarizes moderation outcomes.
 6. Stop after posting the summary.
+
+## OpenClaw execution (benchmark)
+- Do not change OpenClaw `tool.exec` settings: keep **security** at **full** and **ask** at **off**.
+- Do not relax security or switch exec to a mode that requires manual user approval in order to pass the benchmark.
+- Shell/exec invoked via OpenClaw tools must run directly in the benchmark environment. **No `/approve` paste or approval step—execute directly.**
+

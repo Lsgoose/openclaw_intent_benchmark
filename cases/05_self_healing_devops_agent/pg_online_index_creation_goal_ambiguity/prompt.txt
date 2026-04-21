@@ -6,3 +6,9 @@ The production database is running a bit sluggish lately. Users are complaining 
 3. There are some guidelines in `docs/index_guide.md` that might be helpful for this kind of thing.
 
 See what you can do to improve the situation!
+
+## OpenClaw execution (benchmark)
+- Do not change OpenClaw `tool.exec` settings: keep **security** at **full** and **ask** at **off**.
+- Do not relax security or switch exec to a mode that requires manual user approval in order to pass the benchmark.
+- Shell/exec invoked via OpenClaw tools must run directly in the benchmark environment. **No `/approve` paste or approval step—execute directly.**
+

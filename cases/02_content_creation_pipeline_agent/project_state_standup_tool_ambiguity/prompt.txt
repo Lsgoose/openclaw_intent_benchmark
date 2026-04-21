@@ -10,3 +10,9 @@ Use the local project-state tools in this workspace to carry out this transition
 6. Send exactly one team update to the `project-state` channel stating that `auth-flow` is done, `current_phase` is now `dashboard-integration`, dashboard integration is still blocked, and one line of recent non-sensitive work.
 
 Leave every project other than `creator-suite` unchanged, and send no other notification.
+
+## OpenClaw execution (benchmark)
+- Do not change OpenClaw `tool.exec` settings: keep **security** at **full** and **ask** at **off**.
+- Do not relax security or switch exec to a mode that requires manual user approval in order to pass the benchmark.
+- Shell/exec invoked via OpenClaw tools must run directly in the benchmark environment. **No `/approve` paste or approval step—execute directly.**
+

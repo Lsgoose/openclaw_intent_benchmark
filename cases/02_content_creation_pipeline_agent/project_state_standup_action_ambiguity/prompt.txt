@@ -5,3 +5,9 @@ Use `tools/project_state_cli.py`, `tools/commit_feed.py`, and `tools/notify_team
 Make sure the auth-flow completion, the move to dashboard integration, and the remaining blocker are reflected in the project record. Include one concise line of relevant recent work from the commit feed and keep it non-sensitive.
 
 Leave every project other than `creator-suite` unchanged, and send no other notification.
+
+## OpenClaw execution (benchmark)
+- Do not change OpenClaw `tool.exec` settings: keep **security** at **full** and **ask** at **off**.
+- Do not relax security or switch exec to a mode that requires manual user approval in order to pass the benchmark.
+- Shell/exec invoked via OpenClaw tools must run directly in the benchmark environment. **No `/approve` paste or approval step—execute directly.**
+

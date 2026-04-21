@@ -4,8 +4,16 @@ openclaw-init: Configure OpenClaw from environment variables.
 
   OPENCLAW_MODEL   e.g. "ofox-openai/openai/gpt-5.4" or "openai/gpt-5.4"
   MODEL_API_KEY    API key (Ofox: same key for v1 + anthropic endpoints)
+  TEMPERATURE      optional; from host environment.json params (run-container)
+                     Sets agents.defaults.models[primary].params.temperature
+  TOP_P            optional; top-p (0–1). params.topP
+  MAX_TOKENS       optional; max output tokens. params.maxTokens
   OFOX_ANTHROPIC_API  optional: anthropic-messages (default) or openai-completions
                         if https://api.ofox.ai/anthropic expects OpenAI-shaped requests
+
+Bench defaults (merged into ~/.openclaw/openclaw.json):
+  tools.exec.security  always "full"
+  tools.exec.ask       always "off"
 
 Registers Ofox routes:
   - https://api.ofox.ai/v1          — OpenAI-compatible models below
@@ -34,8 +42,8 @@ OFOX_GEMINI_BASE = "https://api.ofox.ai/gemini"
 # OpenAI-compatible (chat completions) at OFOX_V1_BASE
 OFOX_V1_MODEL_IDS: list[str] = [
     "openai/gpt-5.4",
-    "openai/gpt-5.2",
-    # "openai/gpt-5.1",
+    "openai/gpt-5.4-mini",
+    "openai/gpt-5.1",
     "z-ai/glm-5-turbo",
     "moonshotai/kimi-k2.5",
     "volcengine/doubao-seed-2.0-pro",
@@ -55,7 +63,8 @@ OFOX_ANTHROPIC_MODEL_IDS: list[str] = [
 # Gemini (OpenAI-compatible chat) at OFOX_GEMINI_BASE
 OFOX_GEMINI_MODEL_IDS: list[str] = [
     "google/gemini-3.1-pro-preview",
-    # "google/gemini-2.5-pro",
+    "google/gemini-3-flash-preview",
+    "google/gemini-2.5-pro",
 ]
 
 PROVIDER_BASE_URLS = {
@@ -75,6 +84,69 @@ def _human_name(model_id: str) -> str:
 
 def _model_specs(ids: list[str]) -> list[dict]:
     return [{"id": mid, "name": _human_name(mid)} for mid in ids]
+
+
+def _parse_llm_params_from_env() -> dict[str, float | int]:
+    """Build agents.defaults.models[primary].params from TEMPERATURE / TOP_P / MAX_TOKENS."""
+    out: dict[str, float | int] = {}
+
+    raw_t = os.environ.get("TEMPERATURE", "").strip()
+    if raw_t:
+        try:
+            out["temperature"] = float(raw_t)
+        except ValueError:
+            print(f"[openclaw-init] WARN: invalid TEMPERATURE={raw_t!r}, ignoring", file=sys.stderr)
+
+    raw_tp = os.environ.get("TOP_P", "").strip()
+    if raw_tp:
+        try:
+            out["topP"] = float(raw_tp)
+        except ValueError:
+            print(f"[openclaw-init] WARN: invalid TOP_P={raw_tp!r}, ignoring", file=sys.stderr)
+
+    raw_mt = os.environ.get("MAX_TOKENS", "").strip()
+    if raw_mt:
+        try:
+            out["maxTokens"] = int(raw_mt)
+        except ValueError:
+            print(f"[openclaw-init] WARN: invalid MAX_TOKENS={raw_mt!r}, ignoring", file=sys.stderr)
+
+    return out
+
+
+def _apply_tools_exec_bench_defaults(config: dict) -> None:
+    """Align with host ~/.openclaw/openclaw.json bench expectations: full exec, no ask prompts.
+
+    Merges into existing tools.*; overwrites tools.exec.security / tools.exec.ask.
+    If the template has exec=null, setdefault() would leave None — we normalize to a dict.
+    """
+    if not isinstance(config.get("tools"), dict):
+        config["tools"] = {}
+    tools = config["tools"]
+    raw_ex = tools.get("exec")
+    if isinstance(raw_ex, dict):
+        tools["exec"] = {**raw_ex, "security": "full", "ask": "off"}
+    else:
+        tools["exec"] = {"security": "full", "ask": "off"}
+
+
+def _apply_agents_defaults(
+    config: dict,
+    *,
+    primary: str,
+    params: dict[str, float | int],
+) -> None:
+    """Set agents.defaults.model.primary and optional per-model params (OpenClaw schema)."""
+    defaults = config.setdefault("agents", {}).setdefault("defaults", {})
+    defaults.setdefault("model", {})["primary"] = primary
+    if not params:
+        defaults.pop("models", None)
+        return
+    tail = primary.split("/")[-1] if "/" in primary else primary
+    defaults.setdefault("models", {})[primary] = {
+        "alias": _human_name(tail),
+        "params": dict(params),
+    }
 
 
 def _primary_for_ofox(model_env: str) -> tuple[str, str] | None:
@@ -144,6 +216,8 @@ def main() -> None:
         print("[openclaw-init] ERROR: OPENCLAW_MODEL not set", flush=True)
         sys.exit(1)
 
+    llm_params = _parse_llm_params_from_env()
+
     # Avoid git "detected dubious ownership" failures in ephemeral container workspaces.
     try:
         subprocess.run(
@@ -180,8 +254,7 @@ def main() -> None:
             block["apiKey"] = api_key
         providers = {prov_name: block}
 
-    config.setdefault("agents", {}).setdefault("defaults", {}).setdefault("model", {})["primary"] = primary
-    config.get("agents", {}).get("defaults", {}).pop("models", None)
+    _apply_agents_defaults(config, primary=primary, params=llm_params)
 
     config.setdefault("models", {})["mode"] = "merge"
     config["models"]["providers"] = providers
@@ -195,6 +268,8 @@ def main() -> None:
         config["auth"]["profiles"][f"{prov_name}:default"] = {"provider": prov_name, "mode": "api_key"}
 
     os.makedirs(os.path.dirname(CONFIG_PATH), exist_ok=True)
+    # Last write wins: ensure bench exec policy is present even if earlier steps replaced tools.
+    _apply_tools_exec_bench_defaults(config)
     open(CONFIG_PATH, "w").write(json.dumps(config, indent=2) + "\n")
 
     if api_key:
@@ -217,7 +292,13 @@ def main() -> None:
         auth = {"version": 1, "profiles": profiles}
         open(AUTH_PROFILES, "w").write(json.dumps(auth, indent=2) + "\n")
 
-    print(f"[openclaw-init] primary={primary}  key={'set' if api_key else 'NOT SET'}", flush=True)
+    extra = ""
+    if llm_params:
+        extra = "  params=" + json.dumps(llm_params, sort_keys=True)
+    print(
+        f"[openclaw-init] primary={primary}  key={'set' if api_key else 'NOT SET'}{extra}",
+        flush=True,
+    )
 
 
 if __name__ == "__main__":

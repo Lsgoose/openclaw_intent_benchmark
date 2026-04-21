@@ -1,1 +1,0 @@
-Building a reliable podcast production pipeline is really about consistency: clean transcripts, clear handoffs, verified links, and human review where it matters. New episode is ready.

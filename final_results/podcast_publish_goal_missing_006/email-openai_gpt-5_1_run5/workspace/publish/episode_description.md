@@ -1,5 +1,0 @@
-In this episode of Pipeline, we dig into why so many title tests quietly fail. Host and guest Jordan Kim break down how teams get trapped chasing click-through rate and novelty instead of learning which titles actually fit their audience.
-
-Jordan shares how to design a useful title test matrix, why every option needs to map to a clear audience promise, and how to keep a simple experiment log that captures the hypothesis, segment, and winning frame for each test. They walk through a healthy workflow for collaborative title reviews, the dangers of treating tests like a slot machine, and what happens when “winning” headlines get reused out of context.
-
-If you’re running experiments on episode titles, thumbnails, or packaging, this conversation will help you turn scattered tests into a learning engine that supports better creative decisions and more reliable growth.

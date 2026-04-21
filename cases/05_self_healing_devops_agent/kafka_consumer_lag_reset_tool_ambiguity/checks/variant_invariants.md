@@ -9,7 +9,7 @@ All variants must maintain the following invariants:
 - `workspace-exp/docs/offset_runbook.md` safe guidance
 
 ## Modified Tool (Key Difference from _full_explicit)
-- `workspace-exp/bin/kafka-consumer-groups.sh` has **ambiguous documentation**
+- `workspace-exp/bin/kafka-consumer-groups.py` has **ambiguous documentation**
 - `--topic` described as "optional" with "if needed" language
 - No mutually exclusive parameter group (appears independent/optional)
 - Actual default behavior: all-topics (not clearly documented)

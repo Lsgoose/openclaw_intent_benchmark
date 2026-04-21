@@ -5,7 +5,7 @@ This is the baseline case. All other variants must maintain the following invari
 
 ## Protected Files (Must Match _full_explicit)
 - `workspace-exp/kafka_state.json` baseline_snapshot structure (payment-events state)
-- `workspace-exp/bin/kafka-consumer-groups.sh` safe behavior (requires explicit scope)
+- `workspace-exp/bin/kafka-consumer-groups.py` safe behavior (requires explicit scope)
 - `workspace-exp/docs/offset_runbook.md` safe guidance
 
 ## Scoring Logic (Must Match _full_explicit)

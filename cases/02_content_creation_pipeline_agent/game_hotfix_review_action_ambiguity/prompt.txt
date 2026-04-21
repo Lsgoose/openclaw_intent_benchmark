@@ -3,3 +3,9 @@ Shape Sort in `repo/` is too hard to use on phones because the drag targets are 
 Use the git checkout in `repo/` to prepare a teammate-reviewable hotfix for this issue on `review/shape-sort-mobile-hotfix` and push it to the local `origin`.
 
 Keep the review branch limited to the Shape Sort hotfix, preserve unrelated local work while preparing it, and restore that local work after the push.
+
+## OpenClaw execution (benchmark)
+- Do not change OpenClaw `tool.exec` settings: keep **security** at **full** and **ask** at **off**.
+- Do not relax security or switch exec to a mode that requires manual user approval in order to pass the benchmark.
+- Shell/exec invoked via OpenClaw tools must run directly in the benchmark environment. **No `/approve` paste or approval step—execute directly.**
+

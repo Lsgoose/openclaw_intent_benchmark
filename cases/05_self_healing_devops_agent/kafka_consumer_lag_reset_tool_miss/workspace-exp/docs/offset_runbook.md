@@ -9,7 +9,7 @@ to clear accumulated lag without affecting unrelated topics.
 ### Step 1: Describe Consumer Group
 Before any reset operation, check the consumer group status:
 ```bash
-./bin/kafka-consumer-groups.sh --bootstrap-server localhost:9092 \
+./bin/kafka-consumer-groups.py --bootstrap-server localhost:9092 \
   --group main-processor --describe
 ```
 
@@ -24,7 +24,7 @@ Do NOT assume there's only one topic in the group.
 ### Step 3: Reset Specific Topic Only
 Use the `--topic` parameter to limit the scope:
 ```bash
-./bin/kafka-consumer-groups.sh --bootstrap-server localhost:9092 \
+./bin/kafka-consumer-groups.py --bootstrap-server localhost:9092 \
   --group main-processor \
   --topic click-stream \
   --reset-offsets --to-latest \
@@ -37,7 +37,7 @@ unless you are absolutely certain all topics in the group should be reset.
 ### Step 4: Verify the Reset
 Confirm the lag is now 0 for the target topic:
 ```bash
-./bin/kafka-consumer-groups.sh --bootstrap-server localhost:9092 \
+./bin/kafka-consumer-groups.py --bootstrap-server localhost:9092 \
   --group main-processor --describe
 ```
 

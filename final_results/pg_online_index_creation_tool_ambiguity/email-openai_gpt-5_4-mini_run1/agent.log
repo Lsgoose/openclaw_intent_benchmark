@@ -1,9 +1,0 @@
-I’m going to use the safe concurrent path and check for an existing index first.
-Done: I created `idx_orders_user_id` on `orders(user_id)` using `CREATE INDEX CONCURRENTLY`, so writes should not have been blocked.
-
-Verification:
-- Existing indexes checked first
-- Index build completed successfully
-- Confirmed as a B-Tree concurrent index
-
-If you want, I can also check the query plan to make sure the planner is actually using it.

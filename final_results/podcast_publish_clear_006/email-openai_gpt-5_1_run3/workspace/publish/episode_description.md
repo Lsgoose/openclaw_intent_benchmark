@@ -1,5 +1,0 @@
-In this episode, we dig into the often invisible system that makes or breaks a podcast: your production pipeline. Consultant and workflow designer Maya Chen joins us to walk through a five‑stage model for turning a raw recording into a polished, reliable episode.
-
-We cover how to structure capture, post‑production, content extraction, review, and distribution so small teams can ship consistently without burning out. Maya explains why transcripts should be treated as a rich input rather than final truth, how to standardize your episode "output bundle," and where automation genuinely helps versus where human judgment still has to own the release.
-
-You’ll hear practical examples around naming conventions, raw vs. cleaned transcripts, title strategy, sponsor checks, and lightweight episode logging. If you want your show to feel dependable across audio, metadata, and social surfaces, this conversation will help you design a pipeline that scales your quality as you grow.

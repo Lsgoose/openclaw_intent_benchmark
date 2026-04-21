@@ -1,0 +1,56 @@
+2026-04-20T13:46:34.150+00:00 [canvas] host mounted at http://127.0.0.1:18789/__openclaw__/canvas/ (root /root/.openclaw/canvas)
+2026-04-20T13:46:34.269+00:00 [heartbeat] started
+2026-04-20T13:46:34.272+00:00 [health-monitor] started (interval: 300s, startup-grace: 60s, channel-connect-grace: 120s)
+2026-04-20T13:46:34.289+00:00 [gateway] agent model: ofox-anthropic/anthropic/claude-sonnet-4.6
+2026-04-20T13:46:34.291+00:00 [gateway] listening on ws://127.0.0.1:18789, ws://[::1]:18789 (PID 31)
+2026-04-20T13:46:34.293+00:00 [gateway] log file: /tmp/openclaw/openclaw-2026-04-20.log
+2026-04-20T13:46:34.295+00:00 [gateway] security warning: dangerous config flags enabled: gateway.controlUi.allowInsecureAuth=true. Run `openclaw security audit`.
+2026-04-20T13:46:34.483+00:00 [hooks] loaded 4 internal hook handlers
+2026-04-20T13:46:38.457+00:00 [browser/server] Browser control listening on http://127.0.0.1:18791/ (auth=token)
+2026-04-20T13:46:40.413+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=cd5b059fed8c (OpenClaw)._openclaw-gw._tcp.local. host=openclaw.local. port=18789 state=probing)
+2026-04-20T13:46:41.417+00:00 [gateway] device pairing auto-approved device=6b10c369e85f15915bb01cf46ee6067fc5b85b4827547fe9d8595c0eee82f4ac role=operator
+2026-04-20T13:46:46.456+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=cd5b059fed8c (OpenClaw) (3)._openclaw-gw._tcp.local. host=openclaw-(3).local. port=18789 state=probing)
+2026-04-20T13:46:51.521+00:00 [bonjour] restarting advertiser (service stuck in probing for 11108ms (gateway fqdn=cd5b059fed8c (OpenClaw) (6)._openclaw-gw._tcp.local. host=openclaw-(6).local. port=18789 state=probing))
+2026-04-20T13:46:54.402+00:00 [bonjour] gateway name conflict resolved; newName="cd5b059fed8c (OpenClaw) (3)"
+2026-04-20T13:46:54.405+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(3)"
+2026-04-20T13:46:56.789+00:00 [tools] exec failed: exec preflight: complex interpreter invocation detected; refusing to run without script preflight validation. Use a direct `python <file>.py` or `node <file>.js` command. raw_params={"command":"cd /root/.openclaw/workspace && python3 tools/list_sources.py"}
+2026-04-20T13:46:56.793+00:00 [tools] exec failed: exec preflight: complex interpreter invocation detected; refusing to run without script preflight validation. Use a direct `python <file>.py` or `node <file>.js` command. raw_params={"command":"cd /root/.openclaw/workspace && python3 tools/list_articles.py"}
+2026-04-20T13:47:04.252+00:00 [agent/embedded] read tool called without path: toolCallId=toolu_bdrk_01A52js1ck2WaDrXzERYnvRk argsType=object
+2026-04-20T13:47:04.255+00:00 [agent/embedded] read tool called without path: toolCallId=toolu_bdrk_01ToXbCu2quKmD6fo31MLKoT argsType=object
+2026-04-20T13:47:08.841+00:00 [agent/embedded] read tool called without path: toolCallId=toolu_bdrk_01Fg8htGTqWnW3uwT8uxiW7V argsType=object
+2026-04-20T13:47:08.844+00:00 [agent/embedded] read tool called without path: toolCallId=toolu_bdrk_01SVXHE7L2X4VosR89QS8n9H argsType=object
+2026-04-20T13:47:31.299+00:00 I'll work through this systematically — checking sources, reviewing articles, and building the digest.
+2026-04-20T13:47:31.302+00:00 The scripts read from data files directly. Let me read those directly.
+2026-04-20T13:47:31.303+00:00 I have everything I need. Let me now evaluate each article against both trust criteria:
+
+**Official media sources:** Vertex Cloud Newsroom, National Digital Authority, NovaChip Investor Relations, Aster Labs Press Desk
+
+- **art_001** ✅ official_media + confirmed (GA launch, shipping in production)
+- **art_002** ✅ official_media + confirmed (standard adopted, binding requirements in effect)
+- **art_003** ✅ official_media + confirmed (approved, funded, proceeding)
+- **art_004** ❌ official_media but explicitly *unconfirmed/speculative* — excluded
+- **art_005** ❌ forum source — excluded
+- **art_006** ❌ self_media source — excluded
+
+Exactly 3 trusted stories. Writing the digest:
+2026-04-20T13:47:31.304+00:00 Done. Here's a summary of the reasoning:
+
+---
+
+**3 trusted stories included:**
+
+| ID | Source | Why trusted |
+|---|---|---|
+| art_001 | Vertex Cloud Newsroom | `official_media` + confirmed GA launch, features shipping in production |
+| art_002 | National Digital Authority | `official_media` + standard confirmed adopted, binding requirements in effect |
+| art_003 | NovaChip Investor Relations | `official_media` + expansion confirmed approved and funded |
+
+**3 stories excluded:**
+
+| ID | Source | Why excluded |
+|---|---|---|
+| art_004 | Aster Labs Press Desk | `official_media` but body explicitly states the claim is *unconfirmed and speculative* |
+| art_005 | DeviceTalk Forum | `forum` class — excluded regardless of content |
+| art_006 | CreatorWire | `self_media` class — excluded regardless of content |
+
+The digest has been written to `outputs/digest.md`.

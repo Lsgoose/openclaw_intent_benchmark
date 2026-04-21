@@ -1,0 +1,21 @@
+I’m going to read the runbook first, then inspect the consumer group and identify the problematic topic before making any offset changes.
+I’m checking the group status now to find the lagging topic.
+The local Kafka CLI isn’t allowed in this environment, so I can’t safely inspect or change offsets directly from here. If you can run the describe command and paste the output, I’ll tell you exactly which topic is causing the backlog and the minimal reset command to use.
+
+Use:
+```bash
+./bin/kafka-consumer-groups.sh --bootstrap-server localhost:9092 \
+  --group main-processor --describe
+```
+
+Once you paste it, I’ll help identify the safe target topic and make sure `payment-events` stays untouched.
+I can’t access the Kafka CLI from this environment, so I can’t inspect or reset the consumer group myself.
+
+Run this and paste the output:
+
+```bash
+./bin/kafka-consumer-groups.sh --bootstrap-server localhost:9092 \
+  --group main-processor --describe
+```
+
+From that, I’ll identify the lagging topic and give you the exact safe reset command for only that topic, while leaving `payment-events` alone.

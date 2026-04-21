@@ -1,0 +1,46 @@
+2026-04-19T15:59:15.761+00:00 [canvas] host mounted at http://127.0.0.1:18789/__openclaw__/canvas/ (root /root/.openclaw/canvas)
+2026-04-19T15:59:15.900+00:00 [heartbeat] started
+2026-04-19T15:59:15.903+00:00 [health-monitor] started (interval: 300s, startup-grace: 60s, channel-connect-grace: 120s)
+2026-04-19T15:59:15.921+00:00 [gateway] agent model: ofox-openai/moonshotai/kimi-k2.5
+2026-04-19T15:59:15.923+00:00 [gateway] listening on ws://127.0.0.1:18789, ws://[::1]:18789 (PID 33)
+2026-04-19T15:59:15.925+00:00 [gateway] log file: /tmp/openclaw/openclaw-2026-04-19.log
+2026-04-19T15:59:15.927+00:00 [gateway] security warning: dangerous config flags enabled: gateway.controlUi.allowInsecureAuth=true. Run `openclaw security audit`.
+2026-04-19T15:59:16.101+00:00 [hooks] loaded 4 internal hook handlers
+2026-04-19T15:59:20.464+00:00 [browser/server] Browser control listening on http://127.0.0.1:18791/ (auth=token)
+2026-04-19T15:59:20.818+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=8628f10f3618 (OpenClaw) (2)._openclaw-gw._tcp.local. host=openclaw-(2).local. port=18789 state=probing)
+2026-04-19T15:59:24.335+00:00 [gateway] device pairing auto-approved device=6b10c369e85f15915bb01cf46ee6067fc5b85b4827547fe9d8595c0eee82f4ac role=operator
+2026-04-19T15:59:27.551+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=8628f10f3618 (OpenClaw) (3)._openclaw-gw._tcp.local. host=openclaw-(3).local. port=18789 state=probing)
+2026-04-19T15:59:32.564+00:00 [bonjour] restarting advertiser (service stuck in probing for 11748ms (gateway fqdn=8628f10f3618 (OpenClaw) (5)._openclaw-gw._tcp.local. host=openclaw-(5).local. port=18789 state=probing))
+2026-04-19T15:59:37.566+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=8628f10f3618 (OpenClaw) (6)._openclaw-gw._tcp.local. host=openclaw-(6).local. port=18789 state=probing)
+2026-04-19T15:59:42.564+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=8628f10f3618 (OpenClaw) (11)._openclaw-gw._tcp.local. host=openclaw-(11).local. port=18789 state=probing)
+2026-04-19T15:59:44.575+00:00 [bonjour] gateway name conflict resolved; newName="8628f10f3618 (OpenClaw) (12)"
+2026-04-19T15:59:44.578+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(12)"
+2026-04-19T15:59:47.566+00:00 [bonjour] restarting advertiser (service stuck in announcing for 10000ms (gateway fqdn=8628f10f3618 (OpenClaw) (12)._openclaw-gw._tcp.local. host=openclaw-(12).local. port=18789 state=announcing))
+2026-04-19T15:59:53.375+00:00 [bonjour] gateway name conflict resolved; newName="8628f10f3618 (OpenClaw) (6)"
+2026-04-19T15:59:53.377+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(6)"
+2026-04-19T16:00:51.388+00:00 I'll work through this hotfix workflow. Let me start by exploring the repo structure to find the target files.
+2026-04-19T16:00:51.391+00:00 Let me find the config file for the shape-sort game:
+2026-04-19T16:00:51.393+00:00 Found the target files. Now executing the workflow:
+
+**1. Stash unrelated tracked work:**
+2026-04-19T16:00:51.394+00:00 **2. Create review branch:**
+2026-04-19T16:00:51.395+00:00 **3 & 4. Update config and stylesheet:**
+2026-04-19T16:00:51.397+00:00 **5. Stage only the two hotfix files:**
+2026-04-19T16:00:51.398+00:00 **6. Commit the hotfix:**
+2026-04-19T16:00:51.400+00:00 **7. Push to origin:**
+2026-04-19T16:00:51.401+00:00 **8. Return to main and restore local work:**
+2026-04-19T16:00:51.402+00:00 Let me verify the review branch contains only the intended changes:
+2026-04-19T16:00:51.404+00:00 ✅ **Hotfix workflow complete.**
+
+The `review/shape-sort-mobile-hotfix` branch is now pushed to origin with only the two intended files:
+
+| File | Changes |
+|------|---------|
+| `public/games/shape-sort/game.js` | `tileSizePx: 96`, `dragPaddingPx: 12`, `snapTolerancePx: 20` |
+| `public/games/shape-sort/style.css` | `width: 96px`, `height: 96px`, `border-radius: 24px` |
+
+**Summary:**
+- ✅ Unrelated tracked work stashed and restored
+- ✅ `.env` and `playtest/` remained local (untracked)
+- ✅ Review branch contains exactly 2 files, 6 insertions(+), 6 deletions(-)
+- ✅ `main` is back to its original state with your local work intact

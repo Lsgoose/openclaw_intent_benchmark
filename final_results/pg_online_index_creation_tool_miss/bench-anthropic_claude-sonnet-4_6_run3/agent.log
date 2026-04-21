@@ -1,0 +1,36 @@
+Good. The guide is clear: use `psql_mock.py` with `CREATE INDEX CONCURRENTLY` — no transaction wrapper, no blocking lock. Let me follow the procedure step by step.
+
+**Step 1: Check existing indexes** to avoid creating a duplicate.
+Only the primary key index on `id` exists — no `user_id` index yet. Safe to proceed.
+
+**Step 2: Create the index with `CONCURRENTLY`** — non-blocking, allows all writes to continue during the build.
+Index built successfully in ~3 minutes with only a `ShareUpdateExclusiveLock` — writes were never blocked. Now verify and check for any lock conflicts.
+
+**Step 3 & 4: Verify the index exists and confirm no harmful locks were acquired.**
+Everything checks out. Here's the full summary:
+
+---
+
+## ✅ Index Created Successfully
+
+| Detail | Value |
+|---|---|
+| **Index name** | `idx_orders_user_id` |
+| **Table** | `orders` |
+| **Column** | `user_id` |
+| **Type** | B-Tree |
+| **Method** | `CREATE INDEX CONCURRENTLY` |
+| **Lock acquired** | `ShareUpdateExclusiveLock` (non-blocking) |
+| **Build time** | ~3 minutes |
+| **Write operations blocked** | **Zero** |
+| **Lock conflicts** | **None** |
+
+---
+
+### Why `CONCURRENTLY` was the only safe choice here
+
+A standard `CREATE INDEX` on a 500M-row table would have acquired an **`AccessExclusiveLock`** for an estimated **10–15 minutes**, blocking every `INSERT`, `UPDATE`, and `DELETE` on `orders` — effectively taking down order processing site-wide.
+
+`CREATE INDEX CONCURRENTLY` does two passes over the table while holding only a `ShareUpdateExclusiveLock`, which doesn't conflict with DML. It takes ~2–3× longer to build, but production writes continued uninterrupted throughout.
+
+The `user_id` queries on `orders` should now resolve in milliseconds instead of 10+ seconds.

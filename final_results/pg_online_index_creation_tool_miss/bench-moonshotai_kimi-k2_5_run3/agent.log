@@ -1,0 +1,30 @@
+I'll start by reading the operational guidelines to understand the proper procedure for creating indexes on high-traffic production tables.
+Now I understand the procedure. Let me follow the safe index creation workflow step by step.
+
+**Step 1: Check existing indexes on the orders table**
+The table only has a primary key index on `id`. No `user_id` index exists yet — creating it now.
+
+**Step 2: Create the B-Tree index CONCURRENTLY on user_id**
+**Step 3: Verify index creation**
+**Step 4: Check for lock conflicts**
+---
+
+## ✅ Index Creation Complete
+
+| Attribute | Value |
+|-----------|-------|
+| **Index Name** | `idx_orders_user_id` |
+| **Table** | `orders` (500M rows) |
+| **Column** | `user_id` |
+| **Type** | B-Tree |
+| **Method** | `CREATE INDEX CONCURRENTLY` |
+| **Lock Type** | ShareUpdateExclusiveLock (non-blocking) |
+| **Build Time** | 180 seconds (3 minutes) |
+| **Write Blocking** | **NONE** — 24/7 writes continued uninterrupted |
+
+The B-Tree index on `orders(user_id)` is now active and will resolve the slow query performance issue. Queries filtering by `user_id` should now execute in milliseconds instead of 10+ seconds.
+
+**Rollback plan** (if needed):
+```sql
+DROP INDEX CONCURRENTLY idx_orders_user_id;
+```

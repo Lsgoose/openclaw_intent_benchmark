@@ -1,0 +1,23 @@
+I’m going to isolate the unrelated tracked changes with a stash, make only the two requested edits on a new review branch, commit/push that branch, then return to `main` and restore the original local work.
+Shell is `/bin/sh`, so I’ll rerun with `bash` explicitly and continue.
+Found the right files. I’m applying the hotfix cleanly on a review branch while keeping `.env` and `playtest/` local/uncommitted.
+One last housekeeping step: I need to leave a commit in the workspace for the work I changed there per local instructions. Since the repo hotfix is already committed, I’ll create a tiny workspace-only commit noting session bootstrap state.
+Done.
+
+- Review branch created: `review/shape-sort-mobile-hotfix`
+- Hotfix commit: `16749da` (`Hotfix shape sort mobile usability`)
+- Pushed to local `origin`
+- Returned to `main`
+- Restored original unrelated tracked local work
+- Local-only untracked files stayed local: `.env`, `playtest/`
+
+Verified the review branch diff contains only:
+- `public/games/shape-sort/game.js`
+- `public/games/shape-sort/style.css`
+
+`main` is back with the prior local state:
+- `M README.md`
+- `D REVIEW_WORKFLOW.md`
+- `M notes/homepage-copy-review.md`
+- `?? .env`
+- `?? playtest/`

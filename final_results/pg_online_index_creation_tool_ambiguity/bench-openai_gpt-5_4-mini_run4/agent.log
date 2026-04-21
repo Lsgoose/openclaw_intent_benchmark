@@ -1,0 +1,9 @@
+Created the B-Tree index safely with `CONCURRENTLY` on `orders(user_id)` using the production-safe path from `docs/index_guide.md`.
+
+Result:
+- Index: `idx_orders_user_id`
+- Method: `CREATE INDEX CONCURRENTLY`
+- Lock: `ShareUpdateExclusiveLock` only, non-blocking for writes
+- Verified present in `pg_indexes`
+
+If you want, I can also check whether the query planner is using it for the slow `user_id` query.

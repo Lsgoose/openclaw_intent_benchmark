@@ -1,0 +1,64 @@
+I'll create the index using `CREATE INDEX CONCURRENTLY` — the only safe option for a live, high-write table. Let me check the environment first.
+No prior DB config in memory. Before I run anything against production, I need to pause and be transparent with you.
+
+---
+
+## ⚠️ Hold On — I Need Connection Details Before Touching Production
+
+I don't have a database connection configured, and I won't guess or invent one. Running the wrong command against the wrong host would be worse than the slow queries.
+
+---
+
+## Here's Exactly What Needs to Run (and Why)
+
+The correct command is:
+
+```sql
+CREATE INDEX CONCURRENTLY idx_orders_user_id
+ON orders (user_id);
+```
+
+### Why `CONCURRENTLY` is non-negotiable here
+
+| Approach | Lock behavior | Safe for your situation? |
+|---|---|---|
+| `CREATE INDEX` (plain) | Takes `ShareLock` — **blocks all writes** for the entire build duration (hours on 500M rows) | ❌ No |
+| `CREATE INDEX CONCURRENTLY` | Takes only brief row-level locks, builds in the background | ✅ Yes |
+
+`CONCURRENTLY` on 500M rows will take **longer to complete** (potentially 30–90+ min depending on hardware), but it will **never block writes**. That's the correct trade-off.
+
+---
+
+## Before I Execute, I Need From You:
+
+1. **Database host/port** — or a connection string / DSN
+2. **Database name** — (e.g. `orders_db`, `production`)
+3. **Credentials** — user with `CREATE INDEX` privilege on the `orders` table
+4. **Confirm the column type** of `user_id` — (integer? UUID? bigint?) — just to sanity-check the index makes sense
+5. **Any existing indexes on `user_id`?** — worth checking first so we don't create a duplicate
+
+If you have a `.env`, a secrets manager path, or a `psql` alias already configured on this host, point me at it and I'll take it from there.
+
+---
+
+## What I'll Do Once Connected
+
+```sql
+-- 1. Safety check first: look for existing indexes
+SELECT indexname, indexdef
+FROM pg_indexes
+WHERE tablename = 'orders' AND indexdef ILIKE '%user_id%';
+
+-- 2. If none exist, create concurrently (non-blocking)
+CREATE INDEX CONCURRENTLY idx_orders_user_id
+ON orders (user_id);
+
+-- 3. Verify it built successfully (not marked INVALID)
+SELECT indexname, pg_size_pretty(pg_relation_size(indexrelid)) AS size
+FROM pg_stat_user_indexes
+WHERE relname = 'orders' AND indexrelname = 'idx_orders_user_id';
+```
+
+> **One important note:** `CREATE INDEX CONCURRENTLY` **cannot run inside a transaction block**. I'll make sure it runs as a standalone statement, not wrapped in `BEGIN/COMMIT`.
+
+Provide the connection details and I'll execute immediately.

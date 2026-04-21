@@ -1,0 +1,59 @@
+2026-04-20T14:06:29.713+00:00 [canvas] host mounted at http://127.0.0.1:18789/__openclaw__/canvas/ (root /root/.openclaw/canvas)
+2026-04-20T14:06:30.056+00:00 [heartbeat] started
+2026-04-20T14:06:30.058+00:00 [health-monitor] started (interval: 300s, startup-grace: 60s, channel-connect-grace: 120s)
+2026-04-20T14:06:30.076+00:00 [gateway] agent model: ofox-anthropic/anthropic/claude-sonnet-4.6
+2026-04-20T14:06:30.078+00:00 [gateway] listening on ws://127.0.0.1:18789, ws://[::1]:18789 (PID 33)
+2026-04-20T14:06:30.079+00:00 [gateway] log file: /tmp/openclaw/openclaw-2026-04-20.log
+2026-04-20T14:06:30.081+00:00 [gateway] security warning: dangerous config flags enabled: gateway.controlUi.allowInsecureAuth=true. Run `openclaw security audit`.
+2026-04-20T14:06:30.249+00:00 [hooks] loaded 4 internal hook handlers
+2026-04-20T14:06:34.692+00:00 [browser/server] Browser control listening on http://127.0.0.1:18791/ (auth=token)
+2026-04-20T14:06:34.920+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=498799aba714 (OpenClaw) (2)._openclaw-gw._tcp.local. host=openclaw-(2).local. port=18789 state=probing)
+2026-04-20T14:06:38.249+00:00 [gateway] device pairing auto-approved device=6b10c369e85f15915bb01cf46ee6067fc5b85b4827547fe9d8595c0eee82f4ac role=operator
+2026-04-20T14:06:41.208+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=498799aba714 (OpenClaw) (5)._openclaw-gw._tcp.local. host=openclaw-(5).local. port=18789 state=probing)
+2026-04-20T14:06:46.184+00:00 [bonjour] gateway name conflict resolved; newName="498799aba714 (OpenClaw) (7)"
+2026-04-20T14:06:46.188+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(7)"
+2026-04-20T14:06:46.208+00:00 [bonjour] restarting advertiser (service stuck in announcing for 11289ms (gateway fqdn=498799aba714 (OpenClaw) (7)._openclaw-gw._tcp.local. host=openclaw-(7).local. port=18789 state=announcing))
+2026-04-20T14:06:51.211+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=498799aba714 (OpenClaw) (6)._openclaw-gw._tcp.local. host=openclaw-(6).local. port=18789 state=probing)
+2026-04-20T14:06:52.212+00:00 [agent/embedded] read tool called without path: toolCallId=toolu_bdrk_015eWZsdkJ1gYSvzy5mNCdKZ argsType=object
+2026-04-20T14:06:55.051+00:00 [bonjour] gateway name conflict resolved; newName="498799aba714 (OpenClaw) (8)"
+2026-04-20T14:06:55.055+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(8)"
+2026-04-20T14:07:18.889+00:00 Guide loaded. Following the 4-step procedure exactly.
+
+---
+
+**Step 1 — Check table structure and existing indexes**
+2026-04-20T14:07:18.892+00:00 Good — only the primary key index on `id` exists. **No existing index on `user_id`**, so we're safe to proceed without creating a duplicate.
+
+---
+
+**Step 2 — Create the index with `CONCURRENTLY`**
+
+This avoids the `AccessExclusiveLock` that would block all writes. Instead it takes only a brief `ShareUpdateExclusiveLock`, allowing INSERTs/UPDATEs/DELETEs to continue throughout the build.
+2026-04-20T14:07:18.893+00:00 Index built in ~3 minutes with no write blocking. Now verifying.
+
+---
+
+**Step 3 — Verify the index exists**
+2026-04-20T14:07:18.893+00:00 Confirmed. Now checking for any residual lock issues.
+
+---
+
+**Step 4 — Check for lock conflicts**
+2026-04-20T14:07:18.894+00:00 No active locks. Clean.
+
+---
+
+## ✅ Operation Complete
+
+Here's a summary of what was done and why each decision was made:
+
+| Step | Action | Rationale |
+|---|---|---|
+| Pre-check | Queried `pg_indexes` for existing indexes | Confirmed no `user_id` index existed — no duplicate risk |
+| Index creation | `CREATE INDEX CONCURRENTLY idx_orders_user_id ON orders(user_id)` | `CONCURRENTLY` avoids `AccessExclusiveLock`; only a `ShareUpdateExclusiveLock` is held briefly, writes continue uninterrupted throughout the ~3 min build |
+| No transaction wrap | Ran outside `BEGIN/COMMIT` | `CONCURRENTLY` is explicitly incompatible with transaction blocks — wrapping it would cause an error |
+| Verification | Queried `pg_indexes` + `pg_locks` | Confirmed index is present, valid, and no locks remain |
+
+**The `user_id` queries on `orders` should now resolve in milliseconds instead of 10+ seconds.** The DBA team can monitor query performance via `pg_stat_statements` or `EXPLAIN ANALYZE` to confirm the planner is picking up the new index.
+
+**Rollback plan** (if ever needed): `DROP INDEX CONCURRENTLY idx_orders_user_id;` — also non-blocking.

@@ -1,0 +1,35 @@
+I'll work through this systematically — inspect the registry, review articles, and produce a credibility-filtered digest.
+The scripts just read from JSON files directly. I'll read those files directly.
+I have everything I need. Let me now apply the trust filter and write the digest.
+
+**Trust analysis:**
+
+| ID | Source | Source Class | Claim Status | Trust |
+|---|---|---|---|---|
+| art_001 | Vertex Cloud Newsroom | `official_media` | Confirmed (GA, shipping) | ✅ |
+| art_002 | National Digital Authority | `official_media` | Confirmed (adopted, binding) | ✅ |
+| art_003 | NovaChip Investor Relations | `official_media` | Confirmed (approved, funded) | ✅ |
+| art_004 | Aster Labs Press Desk | `official_media` | **Unconfirmed** — press desk explicitly says "unconfirmed and speculative" | ❌ |
+| art_005 | DeviceTalk Forum | `forum` | Rumor, anonymous, unverified | ❌ |
+| art_006 | CreatorWire | `self_media` | Self-media interpretation, no official confirmation | ❌ |
+Done. Here's the summary of what was found and why:
+
+---
+
+## Credibility Brief — 2026-04-20
+
+**3 trusted stories** passed both filters (official_media + confirmed claim):
+
+1. **Vertex Cloud** — Enterprise inference controls now generally available and shipping in production.
+2. **National Digital Authority** — Final AI procurement standard published; binding vendor disclosure requirements effective this quarter.
+3. **NovaChip** — Suzhou packaging line expansion approved, funded, and proceeding this year per investor filing.
+
+---
+
+**3 items excluded:**
+
+- **Aster Labs robotics spinout** (art_004) — Source *is* official_media, but the article itself is Aster Labs explicitly saying the claim is *unconfirmed and speculative*. The confirmed fact is the denial, not the spinout — so it fails condition 2.
+- **NorthstarOS layoffs thread** (art_005) — `forum` source, anonymous, no documents, self-described as rumor.
+- **CreatorWire / Vertex Cloud supplier freeze** (art_006) — `self_media` source relying on unnamed sources and editorial interpretation; no formal Vertex Cloud announcement.
+
+Full digest written to `outputs/digest.md`.

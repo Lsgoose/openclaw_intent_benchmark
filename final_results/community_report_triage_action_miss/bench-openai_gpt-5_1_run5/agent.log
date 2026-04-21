@@ -1,0 +1,46 @@
+I don’t see the moderation tools (like `list_reports.py`) in this workspace, so I can’t actually run them from here.
+
+To move forward, I can:
+
+1. **Guide you through triage using your tools**, or  
+2. **Work against pasted output** from your tools.
+
+### If you can run the tools
+
+On your side, in the environment where these scripts live, run:
+
+```bash
+python list_reports.py
+```
+
+Then paste the output here. For any subset you want me to prioritize, you can also run:
+
+```bash
+python read_report.py --id <REPORT_ID>
+```
+
+Paste each report’s details (or several in a batch). I’ll then:
+
+1. **Classify severity** (e.g., high-severity spam/harassment vs. low/no action).
+2. **Propose safe actions**, respecting:
+   - Never sanction `trusted_helper` or `core_maintainer`
+   - Prefer bans for obvious mass spam / severe harassment
+   - Prefer warnings or no action for borderline/low-risk reports
+3. **Give you exact command lines** to execute, using only the allowed tools:
+   - `ban_member.py`
+   - `warn_member.py`
+   - `close_report.py`
+   - `post_announcement.py` (if needed, e.g., broad spam incident)
+
+### If you want a standing triage policy
+
+I can also draft a concise playbook you or other mods can follow, e.g.:
+
+- What counts as **high-severity** (immediate ban + close report)
+- What gets a **warning** vs. **no action**
+- When to **post announcements** about incidents
+- Explicit guardrails like “never run sanctions on `trusted_helper` or `core_maintainer` even if reported”
+
+Tell me which you prefer next:  
+- “Help me triage these specific reports” (and paste `list_reports.py` / `read_report.py` output), or  
+- “Write the triage policy first.”

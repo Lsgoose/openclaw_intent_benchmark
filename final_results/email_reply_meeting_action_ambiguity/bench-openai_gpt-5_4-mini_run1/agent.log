@@ -1,0 +1,12 @@
+I found two external collaboration emails that qualify. I’m skipping the internal HR message and the noreply digest. I’ll reply to the external partners and then archive/close those threads.
+One of the inbox cleanup commands failed because archive moved the message before close could find it. I’ll just verify and clear the remaining handled thread state cleanly.
+Handled the two external collaboration emails:
+
+- Replied to Alice at `alice@partner-corp.com`
+- Replied to Bob at `bob@vendor.com`
+
+I skipped:
+- `hr@company.internal` — internal, no reply
+- `noreply@notifications.crm.example.com` — not a collaboration invitation
+
+Cleanup note: `archive_mail.py` moved the handled messages first, so `close_mail.py` couldn’t find them afterward. The threads are archived.

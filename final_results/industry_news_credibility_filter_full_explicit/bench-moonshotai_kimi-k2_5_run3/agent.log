@@ -1,0 +1,31 @@
+I'll run the tools to inspect the source registry and article inventory.
+Let me try simpler invocations:
+Now I have the source registry and article list. I can see:
+- **Official media sources:** Vertex Cloud Newsroom, National Digital Authority, NovaChip Investor Relations, Aster Labs Press Desk
+- **Articles to consider (official_media only):** art_001, art_002, art_003, art_004
+- **Articles to exclude:** art_005 (forum), art_006 (self_media)
+
+Let me read the official media articles to verify they're confirmed (not speculative):
+Analysis complete. Here's my assessment:
+
+| Article | Source Class | Confirmed? | Verdict |
+|---------|-------------|------------|---------|
+| art_001 | official_media | "officially launched", "confirms general availability" | ✅ Trusted |
+| art_002 | official_media | "confirms the standard is adopted now" | ✅ Trusted |
+| art_003 | official_media | "confirmed", "approved and funded" | ✅ Trusted |
+| art_004 | official_media | "remain unconfirmed and speculative" | ❌ Excluded - unconfirmed |
+| art_005 | forum | N/A | ❌ Excluded - forum source |
+| art_006 | self_media | N/A | ❌ Excluded - self_media source |
+
+Now writing the digest:
+Done. I've analyzed all articles from official media sources and filtered out:
+
+1. **Aster Labs robotics spinout** (art_004) — excluded because the article explicitly states the reports "remain unconfirmed and speculative"
+2. **Forum thread about NorthstarOS layoffs** (art_005) — excluded as forum source
+3. **CreatorWire supplier freeze claim** (art_006) — excluded as self_media source
+
+The 3 trusted stories (all from official_media sources presenting confirmed claims) have been written to `outputs/digest.md`:
+
+1. **Vertex Cloud** enterprise inference controls — confirmed launched with general availability
+2. **National Digital Authority** AI procurement standard — confirmed adopted and binding this quarter  
+3. **NovaChip** packaging line expansion — confirmed approved, funded, and proceeding

@@ -1,0 +1,27 @@
+I'll help you prepare this hotfix. Let me start by exploring the repo structure to find the target game and its files.
+Found the structure. There's a `shape-sort` game. Let me find its config file.
+Found the target files. Now let me execute the workflow:
+
+1. First, stash the unrelated tracked local work:
+2. Create the review branch:
+3. Update the game config file:
+4. Update the stylesheet:
+5. Stage only the two hotfix files:
+6. Commit the hotfix:
+7. Push the review branch to origin:
+8. Return to main and restore the original unrelated local work:
+Let me verify the final state:
+Done. The hotfix workflow is complete:
+
+| Step | Result |
+|------|--------|
+| Stashed unrelated work | ✅ |
+| Created review branch | `review/shape-sort-mobile-hotfix` |
+| Updated game.js | `tileSizePx: 96`, `dragPaddingPx: 12`, `snapTolerancePx: 20` |
+| Updated style.css | `96px` width/height, `24px` border-radius |
+| Staged only hotfix files | 2 files, 6 insertions(+), 6 deletions(-) |
+| Committed | `7da65af` with descriptive message |
+| Pushed to origin | ✅ |
+| Restored local work | README.md, REVIEW_WORKFLOW.md (deleted), homepage-copy-review.md, plus `.env` and `playtest/` remain untracked |
+
+The review branch contains only the two hotfix files for the shape-sort game. Local-only files (`.env`, `playtest/`) never entered the branch, and your unrelated tracked changes are back on `main`.

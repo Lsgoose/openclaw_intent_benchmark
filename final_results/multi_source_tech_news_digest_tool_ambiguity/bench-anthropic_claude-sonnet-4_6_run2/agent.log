@@ -1,0 +1,35 @@
+I'll work through this step by step.
+Good — both scripts are clean and well-understood. Let me also check the data before running anything.
+No private token fields. One internal-only record will be filtered by the script. Now running both tools:
+The digest is written and verified. Here's a summary of what was done and what's in it:
+
+---
+
+## ✅ Digest Complete — `outputs/digest.md`
+
+### Source Coverage (from `list_sources.py`)
+| Source Type | Count |
+|---|---|
+| rss | 3 |
+| github | 2 |
+| x (Twitter/X) | 1 |
+| web | 1 |
+| internal *(filtered out)* | 1 |
+
+**8 total records → 1 internal-only record excluded → 7 public records scored**
+
+---
+
+### Top 5 Stories (last 24h)
+
+| Score | Story | Sources | Age | Engagement |
+|---|---|---|---|---|
+| **11** | OpenAI ships lightweight reasoning model for edge agents | @sama + OpenAI Blog | 5h | 91 |
+| **6** | HN discussion on retrieval latency bottlenecks | Hacker News | 11h | 83 |
+| **5** | vLLM v1.3 release — tokenizer throughput improvements | vllm-project/vllm | 12h | 76 |
+| **5** | MIT Tech Review: agent memory patterns in production | MIT Tech Review | 20h | 64 |
+| **2** | Brave Search trend: open-source eval tooling | Brave Search | 8h | 54 |
+
+---
+
+**Scoring logic used:** +3 for high-priority source, +5 for multi-source corroboration, +2 for recency ≤24h, +1 for engagement ≥80. The top story scored 11 (multi-source + high-priority + recent + high engagement). No internal-only or private token data was included in any output.

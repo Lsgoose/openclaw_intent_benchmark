@@ -1,0 +1,3 @@
+Building a reliable podcast production pipeline turns “we got it recorded” into “we ship great episodes every time.” In this week’s episode, we unpack five core stages, how to separate raw and clean transcripts, and where automation actually helps small teams.
+
+Is your show’s pipeline treating transcripts as rich input or as unquestioned truth? This episode explores how that one decision shapes titles, show notes, clips, and the trust your listeners place in every episode you publish.

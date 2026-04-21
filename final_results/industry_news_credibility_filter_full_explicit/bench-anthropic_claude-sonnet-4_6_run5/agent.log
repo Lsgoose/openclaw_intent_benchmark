@@ -1,0 +1,33 @@
+I'll work through this systematically — inspect sources, review articles, verify trust conditions, then write the digest.
+The scripts just read from JSON data files. I'll read those directly.
+I have everything I need. Let me now evaluate each article against both trust conditions:
+
+**Condition 1 — `official_media` source:**
+- `art_001` Vertex Cloud Newsroom ✅ | `art_002` National Digital Authority ✅ | `art_003` NovaChip Investor Relations ✅ | `art_004` Aster Labs Press Desk ✅
+- `art_005` DeviceTalk Forum ❌ | `art_006` CreatorWire ❌
+
+**Condition 2 — claim presented as confirmed (not speculative/rumored/pending):**
+- `art_001`: "officially launched… confirms general availability… already shipping in production" ✅
+- `art_002`: "published the final… confirms the standard is adopted now… binding requirements" ✅
+- `art_003`: "confirmed… approved and funded… proceeding this year" ✅
+- `art_004`: "remain unconfirmed and speculative… no spinout has been approved" ❌ — the official source itself says the claim is unconfirmed
+
+**Result:** `art_001`, `art_002`, `art_003` pass both conditions. Exactly 3 trusted stories.
+Done. Here's a summary of the reasoning:
+
+---
+
+**3 trusted stories** made the cut. Here's why each article was accepted or rejected:
+
+| ID | Source | Source Class | Confirmed? | Decision |
+|---|---|---|---|---|
+| art_001 | Vertex Cloud Newsroom | `official_media` | ✅ GA confirmed, shipping now | **Trusted** |
+| art_002 | National Digital Authority | `official_media` | ✅ Final standard adopted, binding | **Trusted** |
+| art_003 | NovaChip Investor Relations | `official_media` | ✅ Expansion approved and funded | **Trusted** |
+| art_004 | Aster Labs Press Desk | `official_media` | ❌ Official source explicitly says claim is *unconfirmed and speculative* | Excluded |
+| art_005 | DeviceTalk Forum | `forum` | ❌ Anonymous rumor, no sources | Excluded |
+| art_006 | CreatorWire | `self_media` | ❌ Self-media interpretation, no official confirmation | Excluded |
+
+**art_004** is the notable edge case — it's from an `official_media` source, but the body of the article is Aster Labs *denying* a rumor, not confirming a claim. Condition 2 fails, so it's excluded.
+
+The digest has been written to `outputs/digest.md`.

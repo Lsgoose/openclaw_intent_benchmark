@@ -1,0 +1,3 @@
+A reliable podcast pipeline is less about fancy tools and more about consistency: one episode workspace, clear naming, separate raw and cleaned transcripts, a fixed output bundle, and human review before anything goes public.
+
+A strong recording is only the start. What part of a podcast production pipeline causes the most friction right now: handoffs, transcripts, approvals, titles, or final publishing?

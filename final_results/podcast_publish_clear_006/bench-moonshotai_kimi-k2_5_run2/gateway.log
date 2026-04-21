@@ -1,0 +1,40 @@
+2026-04-19T16:19:51.182+00:00 [canvas] host mounted at http://127.0.0.1:18789/__openclaw__/canvas/ (root /root/.openclaw/canvas)
+2026-04-19T16:19:51.709+00:00 [heartbeat] started
+2026-04-19T16:19:51.712+00:00 [health-monitor] started (interval: 300s, startup-grace: 60s, channel-connect-grace: 120s)
+2026-04-19T16:19:51.731+00:00 [gateway] agent model: ofox-openai/moonshotai/kimi-k2.5
+2026-04-19T16:19:51.733+00:00 [gateway] listening on ws://127.0.0.1:18789, ws://[::1]:18789 (PID 33)
+2026-04-19T16:19:51.735+00:00 [gateway] log file: /tmp/openclaw/openclaw-2026-04-19.log
+2026-04-19T16:19:51.737+00:00 [gateway] security warning: dangerous config flags enabled: gateway.controlUi.allowInsecureAuth=true. Run `openclaw security audit`.
+2026-04-19T16:19:51.929+00:00 [hooks] loaded 4 internal hook handlers
+2026-04-19T16:19:56.482+00:00 [browser/server] Browser control listening on http://127.0.0.1:18791/ (auth=token)
+2026-04-19T16:19:56.488+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=8436bf0777cd (OpenClaw)._openclaw-gw._tcp.local. host=openclaw.local. port=18789 state=probing)
+2026-04-19T16:20:01.303+00:00 [gateway] device pairing auto-approved device=6b10c369e85f15915bb01cf46ee6067fc5b85b4827547fe9d8595c0eee82f4ac role=operator
+2026-04-19T16:20:01.581+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=8436bf0777cd (OpenClaw) (5)._openclaw-gw._tcp.local. host=openclaw-(5).local. port=18789 state=probing)
+2026-04-19T16:20:07.058+00:00 [bonjour] restarting advertiser (service stuck in probing for 10569ms (gateway fqdn=8436bf0777cd (OpenClaw) (5)._openclaw-gw._tcp.local. host=openclaw-(5).local. port=18789 state=probing))
+2026-04-19T16:20:17.060+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=8436bf0777cd (OpenClaw) (10)._openclaw-gw._tcp.local. host=openclaw-(10).local. port=18789 state=probing)
+2026-04-19T16:20:22.060+00:00 [bonjour] restarting advertiser (service stuck in probing for 10001ms (gateway fqdn=8436bf0777cd (OpenClaw) (12)._openclaw-gw._tcp.local. host=openclaw-(12).local. port=18789 state=probing))
+2026-04-19T16:20:25.073+00:00 [bonjour] gateway name conflict resolved; newName="8436bf0777cd (OpenClaw) (3)"
+2026-04-19T16:20:25.077+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(3)"
+2026-04-19T16:21:31.311+00:00 [tools] exec failed: exec preflight: complex interpreter invocation detected; refusing to run without script preflight validation. Use a direct `python <file>.py` or `node <file>.js` command. raw_params={"command":"cd /root/.openclaw/workspace && python3 tools/social_client.py post \"A transcript is a rich input—not final editorial truth. The teams that get burned are the ones feeding raw transcripts directly into content systems without review. Filler, false starts, and unverified 'we'll link that' asides all flow downstream. Clean your source before you ask another tool (or teammate) to build on it.\n\nEpisode 14 with Maya Chen breaks down the five-stage production pipeline that turns raw recordings into reliable, publish-ready episodes.\""}
+2026-04-19T16:21:31.319+00:00 [tools] exec failed: exec preflight: complex interpreter invocation detected; refusing to run without script preflight validation. Use a direct `python <file>.py` or `node <file>.js` command. raw_params={"command":"cd /root/.openclaw/workspace && python3 tools/social_client.py post \"If you had to pick one: would you rather have a perfect recording with a chaotic publishing process, or a decent recording with a bulletproof pipeline?\n\nThe uncomfortable truth is that listeners notice sloppy titles, broken links, and inconsistent metadata—even when the conversation itself is great. Production discipline is part of the product.\n\nWhat's the biggest friction point in your current workflow? The handoff? The naming chaos? The transcript cleanup? Something else entirely?\n\nEpisode 14 digs into bu…
+2026-04-19T16:22:32.439+00:00 I'll start by reading the source materials to understand the episode content.
+2026-04-19T16:22:32.441+00:00 Now I have all the source materials. Let me create the three release files in the `publish/` directory.
+2026-04-19T16:22:32.443+00:00 I need to fix the `@handle` in Post 1 before publishing. Let me update the file:
+2026-04-19T16:22:32.444+00:00 Now publishing the two posts through `tools/social_client.py`:
+2026-04-19T16:22:32.452+00:00 The posts exceed the 280-character limit. Let me shorten them and update the launch_posts.md file:
+2026-04-19T16:22:32.455+00:00 Both posts published successfully. Let me update the `launch_posts.md` file to reflect the final published versions:
+2026-04-19T16:22:32.456+00:00 Episode 14 release complete. Here's a summary:
+
+## Created Files
+
+| File | Description |
+|------|-------------|
+| `publish/show_notes.md` | 10 timestamped sections covering the full episode arc—from pipeline stages and pain points to automation mindset and practical takeaways. Includes all three verified links. |
+| `publish/episode_description.md` | 133-word summary capturing the episode's focus on production systems, transcript discipline, and automation philosophy. |
+| `publish/launch_posts.md` | Two standalone public posts (key takeaway + discussion question), both within platform limits and formatted as broadcast messages. |
+
+## Published Posts
+
+Both posts were successfully published via `tools/social_client.py`:
+- `social_post_008` – Key takeaway on transcript hygiene
+- `social_post_009` – Discussion question on process vs. recording quality

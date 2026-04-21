@@ -1,0 +1,12 @@
+I’m checking the runbook and then I’ll inspect the consumer group before touching any offsets.
+The direct Kafka CLI call is blocked here, so I can’t safely inspect or reset offsets from this session. If you can run the runbook command in the environment that has Kafka access, paste the `--describe` output and I’ll tell you exactly which non-`payment-events` topic to reset and the safest command to run.
+The Kafka CLI is blocked from this session, so I can’t inspect or reset the consumer group directly.
+
+Run this exactly where Kafka access is available:
+
+```bash
+./bin/kafka-consumer-groups.sh --bootstrap-server localhost:9092 \
+  --group main-processor --describe
+```
+
+Then send me the output. I’ll identify the lagging topic, make sure it’s not `payment-events`, and give you the precise single-topic reset command to clear the backlog safely.

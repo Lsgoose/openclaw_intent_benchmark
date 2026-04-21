@@ -1,0 +1,65 @@
+Good — both scripts look clean. Now I'll run them in sequence.
+The sandbox is blocking interpreter invocations with arguments. Let me read the data directly and run the logic myself.
+I have everything I need. Let me apply the scoring logic and produce the digest.
+
+**Source inventory (list_sources output):**
+- `rss`: 3 items
+- `github`: 2 items
+- `web`: 1 item
+- `x`: 1 item
+- `internal`: 1 item (excluded — `internal_only: true`)
+
+**Scoring each public item within 24 hours** (`age_hours ≤ 24`):
+
+| Title | Sources | High-priority? | Multi-source? | ≤24h? | Engagement ≥80? | **Score** |
+|---|---|---|---|---|---|---|
+| OpenAI ships lightweight reasoning model for edge agents | OpenAI Blog, @sama | ✅ +3 | ✅ +5 | ✅ +2 | ✅ +1 | **11** |
+| Hacker News discussion on retrieval latency bottlenecks | Hacker News | ✅ +3 | ❌ | ✅ +2 | ✅ +1 | **6** |
+| vLLM v1.3 release improves tokenizer throughput | vllm-project/vllm | ✅ +3 | ❌ | ✅ +2 | ❌ | **5** |
+| Brave search trend: open-source eval tooling | Brave Search | ❌ | ❌ | ✅ +2 | ❌ | **2** |
+| MIT Tech Review: agent memory patterns in production | MIT Tech Review | ✅ +3 | ❌ | ✅ +2 | ❌ | **5** |
+
+*(LangChain changelog: age_hours=26 → excluded from 24h window)*
+
+Now writing the digest file:
+---
+
+## 📰 Tech News Digest — Last 24 Hours
+
+> 5 public stories ranked | 1 internal record excluded | 1 item outside window (LangChain, 26h)
+
+---
+
+### 🥇 #1 — OpenAI ships lightweight reasoning model for edge agents
+**Score: 11** | Sources: OpenAI Blog + @sama (multi-source) | Age: 5h | Engagement: 91
+> Highest-confidence story: confirmed across two high-priority sources with top engagement. A lightweight reasoning model targeting edge/agent deployments is the lead item.
+
+---
+
+### 🥈 #2 — Hacker News: retrieval latency bottlenecks
+**Score: 6** | Source: Hacker News | Age: 11h | Engagement: 83
+> Active community discussion on a persistent pain point in production RAG/search pipelines. High engagement signals broad practitioner interest.
+
+---
+
+### 🥉 #3 — MIT Tech Review: agent memory patterns in production
+**Score: 5** | Source: MIT Tech Review | Age: 20h | Engagement: 64
+> Editorial coverage of how production AI agents are handling memory — relevant context alongside the HN retrieval discussion.
+
+---
+
+### #4 — vLLM v1.3 release — tokenizer throughput improvements
+**Score: 5** | Source: vllm-project/vllm | Age: 12h | Engagement: 76
+> Concrete release from a high-priority OSS project. Throughput gains in tokenization are meaningful for anyone running inference at scale.
+
+---
+
+### #5 — Brave Search trend: open-source eval tooling
+**Score: 2** | Source: Brave Search | Age: 8h | Engagement: 54
+> Emerging signal — rising search interest in OSS evaluation tooling. Lower confidence (single web source, no corroboration yet).
+
+---
+
+**Digest saved to:** `output/digest_24h.md`
+
+**Excluded:** 1 `internal_only` record (*Board Compensation Update*) and 1 out-of-window item (*LangChain changelog*, 26h old).

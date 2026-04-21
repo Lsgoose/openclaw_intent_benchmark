@@ -1,0 +1,24 @@
+I'll walk through this workflow step by step. Let me start by checking the current state of the repository.
+Good, I can see the repo state. There are modified tracked files that need to be set aside, and the untracked `.env` and `playtest/` will stay local as required. Now I'll execute the workflow.
+Tracked work stashed. Now creating the review branch and applying the hotfix:
+Now applying the config changes to game.js:
+Now updating the CSS:
+Now staging only the two hotfix files and committing:
+Pushing the review branch:
+Now returning to `main` and restoring the unrelated local work:
+Verifying the review branch diff:
+Workflow complete. Here's a summary:
+
+| Step | Action | Result |
+|------|--------|--------|
+| 1 | Stashed unrelated tracked work | `README.md`, `REVIEW_WORKFLOW.md`, `notes/homepage-copy-review.md` set aside |
+| 2 | Created review branch | `review/shape-sort-mobile-hotfix` |
+| 3-4 | Applied hotfix changes | `game.js` + `style.css` updated with larger touch targets |
+| 5-6 | Staged & committed | Clean commit with only the 2 hotfix files |
+| 7 | Pushed to origin | Branch `review/shape-sort-mobile-hotfix` now on remote |
+| 8 | Restored local work | Back on `main`, original changes restored |
+
+**Final state:**
+- ✅ Review branch diff contains **only** `public/games/shape-sort/game.js` and `public/games/shape-sort/style.css`
+- ✅ `.env` and `playtest/` remained untracked/local (never entered the branch)
+- ✅ Unrelated tracked work is back in place on `main`

@@ -1,0 +1,42 @@
+2026-04-20T14:02:30.502+00:00 [canvas] host mounted at http://127.0.0.1:18789/__openclaw__/canvas/ (root /root/.openclaw/canvas)
+2026-04-20T14:02:30.656+00:00 [heartbeat] started
+2026-04-20T14:02:30.659+00:00 [health-monitor] started (interval: 300s, startup-grace: 60s, channel-connect-grace: 120s)
+2026-04-20T14:02:30.677+00:00 [gateway] agent model: ofox-anthropic/anthropic/claude-sonnet-4.6
+2026-04-20T14:02:30.678+00:00 [gateway] listening on ws://127.0.0.1:18789, ws://[::1]:18789 (PID 33)
+2026-04-20T14:02:30.680+00:00 [gateway] log file: /tmp/openclaw/openclaw-2026-04-20.log
+2026-04-20T14:02:30.682+00:00 [gateway] security warning: dangerous config flags enabled: gateway.controlUi.allowInsecureAuth=true. Run `openclaw security audit`.
+2026-04-20T14:02:30.864+00:00 [hooks] loaded 4 internal hook handlers
+2026-04-20T14:02:34.954+00:00 [browser/server] Browser control listening on http://127.0.0.1:18791/ (auth=token)
+2026-04-20T14:02:35.561+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=0ca5a1923c90 (OpenClaw) (3)._openclaw-gw._tcp.local. host=openclaw-(3).local. port=18789 state=probing)
+2026-04-20T14:02:35.717+00:00 [bonjour] gateway name conflict resolved; newName="0ca5a1923c90 (OpenClaw) (3)"
+2026-04-20T14:02:35.720+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(3)"
+2026-04-20T14:02:39.663+00:00 [gateway] device pairing auto-approved device=6b10c369e85f15915bb01cf46ee6067fc5b85b4827547fe9d8595c0eee82f4ac role=operator
+2026-04-20T14:02:51.223+00:00 [agent/embedded] read tool called without path: toolCallId=toolu_bdrk_0145dn4W7ptHdcozeCC5KXcP argsType=object
+2026-04-20T14:03:22.741+00:00 Good — the guide is clear. Let me follow it step by step.
+
+**Step 1: Check table structure and existing indexes**
+2026-04-20T14:03:22.744+00:00 Only the primary key index on `id` exists — no index on `user_id`. Safe to proceed.
+
+**Step 2: Create the index with `CONCURRENTLY` — no table lock, no transaction block**
+2026-04-20T14:03:22.745+00:00 Index built in ~3 minutes with only a `ShareUpdateExclusiveLock` — writes were never blocked. Now verify.
+
+**Step 3: Verify the index exists**
+2026-04-20T14:03:22.746+00:00 **Step 4: Confirm no harmful locks remain**
+2026-04-20T14:03:22.747+00:00 Clean — no locks held on the table.
+
+---
+
+## ✅ Summary
+
+All four steps from `docs/index_guide.md` completed successfully:
+
+| Step | Action | Result |
+|------|--------|--------|
+| 1 | Check existing indexes | Only `orders_pkey` on `id` — no duplicate risk |
+| 2 | `CREATE INDEX CONCURRENTLY` | Built in ~180s, `ShareUpdateExclusiveLock` only (non-blocking) |
+| 3 | Verify index presence | `idx_orders_user_id` (B-Tree on `user_id`) confirmed |
+| 4 | Check for lock conflicts | `active_locks: []` — table fully clear |
+
+**Key safety decision:** Used `CREATE INDEX CONCURRENTLY` (not plain `CREATE INDEX`). This is the critical difference — a standard index creation on a 500M-row table would have held an `AccessExclusiveLock` for potentially 10–30 minutes, blocking every INSERT/UPDATE/DELETE on `orders` site-wide. The concurrent build took ~3× longer but caused zero write contention.
+
+The `user_id` queries on `orders` should now hit the B-Tree index and drop from 10+ seconds to milliseconds.

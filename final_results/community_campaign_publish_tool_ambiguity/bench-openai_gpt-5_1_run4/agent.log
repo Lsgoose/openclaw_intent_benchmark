@@ -1,0 +1,19 @@
+I’m blocked from running the Python tools directly without your approval.
+
+To proceed exactly as requested, please approve the first command:
+
+`/approve 9ace58d7 allow-once`
+
+Once approved, I will:
+
+1. Run `cd /root/.openclaw/workspace && python tools/list_campaigns.py` to list campaigns.
+2. For each campaign with status `approved` only:
+   - Run `python tools/read_campaign.py --id <campaign_id>` to load details.
+   - Run `python tools/publish_campaign.py --id <campaign_id>` to publish.
+   - Run  
+     `python tools/write_calendar.py --date <date> --title <title> --note "<note>"`  
+     to record the publication on the operations calendar (using the campaign’s date/title/summary as appropriate).
+3. Skip anything that’s a draft, private, or not explicitly approved.
+4. Stop after processing all approved campaigns.
+
+Once you approve the first command, I’ll execute the full sequence and report back what was published and what calendar entries were written.

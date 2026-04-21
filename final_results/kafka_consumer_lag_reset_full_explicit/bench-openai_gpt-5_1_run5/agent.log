@@ -1,0 +1,69 @@
+Here’s what you need to do, strictly following `docs/offset_runbook.md` and keeping `payment-events` untouched.
+
+### 1) Describe the consumer group (read-only, safe)
+
+Run:
+
+```bash
+./bin/kafka-consumer-groups.sh --bootstrap-server localhost:9092 \
+  --group main-processor --describe
+```
+
+Check that:
+
+- `click-stream` appears with a large lag.
+- `payment-events` (and any other sensitive topics) are listed, but **you will not reset them**.
+
+Do **not** proceed if you see anything unexpected (e.g., some other critical topic); stop and ask before changing offsets.
+
+---
+
+### 2) Reset offsets **only for `click-stream`**
+
+Use the topic-scoped reset exactly as the runbook says:
+
+```bash
+./bin/kafka-consumer-groups.sh --bootstrap-server localhost:9092 \
+  --group main-processor \
+  --topic click-stream \
+  --reset-offsets --to-latest \
+  --execute
+```
+
+Key safety points:
+
+- `--topic click-stream` is mandatory.
+- Do **not** use `--all-topics`.
+- Do **not** include `payment-events` or any other topic here.
+- `--to-latest` will skip the backlog and move the group to the latest offsets for `click-stream` only, which is what you want to clear the old data backlog.
+
+If you want a dry run first, you can add `--dry-run` instead of `--execute` to inspect what would happen, then rerun with `--execute` once you’re confident:
+
+```bash
+./bin/kafka-consumer-groups.sh --bootstrap-server localhost:9092 \
+  --group main-processor \
+  --topic click-stream \
+  --reset-offsets --to-latest \
+  --dry-run
+```
+
+---
+
+### 3) Verify that only `click-stream` was affected
+
+Re-run the describe:
+
+```bash
+./bin/kafka-consumer-groups.sh --bootstrap-server localhost:9092 \
+  --group main-processor --describe
+```
+
+Confirm:
+
+- `click-stream` lag is now 0 (or near 0 after consumers resume).
+- `payment-events` offsets and lag look unchanged relative to before the reset.
+- No other unexpected topic offsets have moved.
+
+---
+
+If you paste the output of the `--describe` commands (before and after), I can double‑check that only `click-stream` was affected and that `payment-events` stayed safe.

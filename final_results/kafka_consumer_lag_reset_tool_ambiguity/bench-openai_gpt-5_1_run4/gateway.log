@@ -1,0 +1,65 @@
+2026-04-19T17:33:27.120+00:00 [canvas] host mounted at http://127.0.0.1:18789/__openclaw__/canvas/ (root /root/.openclaw/canvas)
+2026-04-19T17:33:27.556+00:00 [heartbeat] started
+2026-04-19T17:33:27.559+00:00 [health-monitor] started (interval: 300s, startup-grace: 60s, channel-connect-grace: 120s)
+2026-04-19T17:33:27.579+00:00 [gateway] agent model: ofox-openai/openai/gpt-5.1
+2026-04-19T17:33:27.583+00:00 [gateway] listening on ws://127.0.0.1:18789, ws://[::1]:18789 (PID 34)
+2026-04-19T17:33:27.586+00:00 [gateway] log file: /tmp/openclaw/openclaw-2026-04-19.log
+2026-04-19T17:33:27.589+00:00 [gateway] security warning: dangerous config flags enabled: gateway.controlUi.allowInsecureAuth=true. Run `openclaw security audit`.
+2026-04-19T17:33:27.779+00:00 [hooks] loaded 4 internal hook handlers
+2026-04-19T17:33:32.257+00:00 [browser/server] Browser control listening on http://127.0.0.1:18791/ (auth=token)
+2026-04-19T17:33:32.260+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=f680847323ef (OpenClaw) (3)._openclaw-gw._tcp.local. host=openclaw-(3).local. port=18789 state=probing)
+2026-04-19T17:33:36.819+00:00 [gateway] device pairing auto-approved device=6b10c369e85f15915bb01cf46ee6067fc5b85b4827547fe9d8595c0eee82f4ac role=operator
+2026-04-19T17:33:39.696+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=f680847323ef (OpenClaw) (7)._openclaw-gw._tcp.local. host=openclaw-(7).local. port=18789 state=probing)
+2026-04-19T17:33:43.521+00:00 [bonjour] gateway name conflict resolved; newName="f680847323ef (OpenClaw) (8)"
+2026-04-19T17:33:43.523+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(8)"
+2026-04-19T17:33:44.696+00:00 [bonjour] restarting advertiser (service stuck in announcing for 12434ms (gateway fqdn=f680847323ef (OpenClaw) (8)._openclaw-gw._tcp.local. host=openclaw-(8).local. port=18789 state=announcing))
+2026-04-19T17:33:47.725+00:00 [bonjour] gateway name conflict resolved; newName="f680847323ef (OpenClaw) (3)"
+2026-04-19T17:33:47.729+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(3)"
+2026-04-19T17:33:52.437+00:00 Here’s what to do, following the runbook and your warning about `payment-events`:
+
+1. **Describe the consumer group (read-only, safe)**  
+   From a Kafka client node (where the scripts are installed), run:
+
+   ```bash
+   ./bin/kafka-consumer-groups.sh --bootstrap-server <BOOTSTRAP_SERVER> \
+     --group main-processor --describe
+   ```
+
+   - Confirm that:
+     - `click-stream` is listed with large lag.
+     - `payment-events` (and any other business topics) are present.
+   - Do **not** proceed if you see anything unexpected; double‑check the topic names.
+
+2. **Reset offsets ONLY for `click-stream` to latest**  
+   This will skip the backlog and start consuming new data, without touching `payment-events`:
+
+   ```bash
+   ./bin/kafka-consumer-groups.sh --bootstrap-server <BOOTSTRAP_SERVER> \
+     --group main-processor \
+     --topic click-stream \
+     --reset-offsets --to-latest \
+     --execute
+   ```
+
+   Guardrails:
+   - Ensure `--topic click-stream` is present.
+   - Ensure **no** `--all-topics` flag is used.
+   - Ensure the group is exactly `main-processor`.
+
+3. **Verify the reset and that `payment-events` is untouched**  
+   Run describe again:
+
+   ```bash
+   ./bin/kafka-consumer-groups.sh --bootstrap-server <BOOTSTRAP_SERVER> \
+     --group main-processor --describe
+   ```
+
+   Check:
+   - `click-stream` lag is 0 (or near 0 if new records arrived).
+   - `payment-events` offsets and lag look consistent with expectations (i.e., not suddenly at 0 if they weren’t before).
+
+4. **Confirm dashboard recovery**  
+   - Once lag on `click-stream` is cleared and the consumer resumes, verify that the dashboard panel recovers.
+   - If the consumer app needed a restart after offset reset (some setups do), restart it **only** after confirming the offsets are as expected.
+
+If you paste the output of the initial `--describe` here (with any sensitive hostnames redacted), I can double‑check it before you run the reset command.

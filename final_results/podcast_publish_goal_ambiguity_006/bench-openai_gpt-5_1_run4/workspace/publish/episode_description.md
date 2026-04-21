@@ -1,0 +1,5 @@
+This episode dives into the often invisible engine behind a great show: the podcast production pipeline. Consultant and systems strategist Maya Chen joins us to break down how small teams can move from fragile, ad hoc workflows to reliable, repeatable production.
+
+We walk through the five core stages of an episode pipelinefrom capture and post-production to content extraction, review, and distributionand explore why transcripts should be treated as rich input rather than final editorial truth. Maya shares practical tactics for organizing episode folders, naming assets, separating raw and clean transcripts, and defining a fixed output bundle so every release ships with the same core materials.
+
+Youll also hear where automation and agents genuinely help (and where they fail), how to think about titles as a contract with your listeners, and the highest-value checks to run before you hit publish. If youre ready to tighten up your production system without adding a ton of overhead, this conversation is a great place to start.

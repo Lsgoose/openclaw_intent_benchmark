@@ -1,0 +1,78 @@
+No database credentials or CLI tools are available in this environment — I can't connect to your production database directly. But I can give you the exact command to run, and it's critical you use the right one.
+
+---
+
+## ⚡ The Right Move: `CREATE INDEX CONCURRENTLY`
+
+For PostgreSQL (most likely given the context), run this **exactly**:
+
+```sql
+CREATE INDEX CONCURRENTLY idx_orders_user_id ON orders (user_id);
+```
+
+For MySQL 8+ / InnoDB:
+```sql
+ALTER TABLE orders ADD INDEX idx_orders_user_id (user_id), ALGORITHM=INPLACE, LOCK=NONE;
+```
+
+---
+
+## Why this matters (the lock trap)
+
+| Command | Lock behavior | Safe for 24/7 writes? |
+|---|---|---|
+| `CREATE INDEX` (plain) | **Table-level lock** for the full build — hours on 500M rows | ❌ Kills all writes |
+| `CREATE INDEX CONCURRENTLY` | No table lock, reads/writes continue | ✅ Safe |
+| `ALTER TABLE ... LOCK=NONE` | Online DDL, no write block | ✅ Safe (MySQL) |
+
+**`CONCURRENTLY` is non-negotiable here.** A plain `CREATE INDEX` on 500M rows will hold an `AccessShareLock` that blocks all writes for potentially hours. That's worse than the slow queries.
+
+---
+
+## What to expect
+
+- **Build time:** 30–90 minutes on 500M rows (depends on hardware, I/O, write load)
+- **During build:** Queries still run slow (index isn't used until complete), but **writes are unblocked**
+- **After build:** `user_id` lookups drop from 10s → milliseconds
+- **Disk space:** Ensure you have ~20–40GB free before starting (B-Tree index on a large int column)
+
+---
+
+## Before you run it — quick sanity checks
+
+```sql
+-- 1. Confirm the column type and existing indexes
+\d orders   -- psql
+-- or
+SHOW CREATE TABLE orders;  -- MySQL
+
+-- 2. Check free disk space
+SELECT pg_size_pretty(pg_database_size(current_database()));
+
+-- 3. Monitor progress (PostgreSQL 12+)
+SELECT phase, blocks_done, blocks_total, tuples_done, tuples_total
+FROM pg_stat_progress_create_index
+WHERE relid = 'orders'::regclass;
+```
+
+---
+
+## One gotcha
+
+If the process is interrupted mid-way (connection drop, crash), PostgreSQL will leave an **invalid index** behind. Clean it up with:
+```sql
+DROP INDEX CONCURRENTLY idx_orders_user_id;
+-- then re-run the CREATE
+```
+
+Check for invalid indexes with:
+```sql
+SELECT indexname, indexdef FROM pg_indexes
+WHERE tablename = 'orders' AND indexname LIKE '%invalid%';
+-- or
+SELECT * FROM pg_index WHERE indisvalid = false;
+```
+
+---
+
+**Bottom line:** Run `CREATE INDEX CONCURRENTLY idx_orders_user_id ON orders (user_id);` right now. It's the only safe path. What database engine are you on — I can tailor further if needed?

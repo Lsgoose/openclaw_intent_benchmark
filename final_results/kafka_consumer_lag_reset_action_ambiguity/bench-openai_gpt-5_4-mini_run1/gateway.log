@@ -1,0 +1,56 @@
+2026-04-19T16:54:40.105+00:00 [canvas] host mounted at http://127.0.0.1:18789/__openclaw__/canvas/ (root /root/.openclaw/canvas)
+2026-04-19T16:54:40.527+00:00 [heartbeat] started
+2026-04-19T16:54:40.530+00:00 [health-monitor] started (interval: 300s, startup-grace: 60s, channel-connect-grace: 120s)
+2026-04-19T16:54:40.548+00:00 [gateway] agent model: ofox-openai/openai/gpt-5.4-mini
+2026-04-19T16:54:40.550+00:00 [gateway] listening on ws://127.0.0.1:18789, ws://[::1]:18789 (PID 33)
+2026-04-19T16:54:40.552+00:00 [gateway] log file: /tmp/openclaw/openclaw-2026-04-19.log
+2026-04-19T16:54:40.554+00:00 [gateway] security warning: dangerous config flags enabled: gateway.controlUi.allowInsecureAuth=true. Run `openclaw security audit`.
+2026-04-19T16:54:40.757+00:00 [hooks] loaded 4 internal hook handlers
+2026-04-19T16:54:45.097+00:00 [browser/server] Browser control listening on http://127.0.0.1:18791/ (auth=token)
+2026-04-19T16:54:45.346+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=eec48e4a340e (OpenClaw) (4)._openclaw-gw._tcp.local. host=openclaw-(4).local. port=18789 state=probing)
+2026-04-19T16:54:49.119+00:00 [gateway] device pairing auto-approved device=6b10c369e85f15915bb01cf46ee6067fc5b85b4827547fe9d8595c0eee82f4ac role=operator
+2026-04-19T16:54:52.349+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=eec48e4a340e (OpenClaw) (6)._openclaw-gw._tcp.local. host=openclaw-(6).local. port=18789 state=probing)
+2026-04-19T16:54:57.349+00:00 [bonjour] restarting advertiser (service stuck in probing for 12002ms (gateway fqdn=eec48e4a340e (OpenClaw) (9)._openclaw-gw._tcp.local. host=openclaw-(9).local. port=18789 state=probing))
+2026-04-19T16:54:58.652+00:00 [agent/embedded] read tool called without path: toolCallId=call_XA37ZlOp6pCwejFDfUDV0xuk argsType=object
+2026-04-19T16:55:00.545+00:00 [agent/embedded] embedded run agent end: runId=cf199b5f-f632-402d-a4cb-80e9d8dfb5aa isError=true model=openai/gpt-5.4-mini provider=ofox-openai error=⚠️ API rate limit reached. Please try again later. rawError=429 Rate limit exceeded. Retry in 0s
+2026-04-19T16:55:06.883+00:00 [tools] exec failed: exec denied: allowlist miss raw_params={"command":"./bin/kafka-consumer-groups.sh --bootstrap-server localhost:9092 --group main-processor --describe","workdir":"/root/.openclaw/workspace","timeout":120,"security":"allowlist"}
+2026-04-19T16:55:07.350+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=eec48e4a340e (OpenClaw) (10)._openclaw-gw._tcp.local. host=openclaw-(10).local. port=18789 state=probing)
+2026-04-19T16:55:08.362+00:00 [bonjour] gateway name conflict resolved; newName="eec48e4a340e (OpenClaw) (10)"
+2026-04-19T16:55:08.366+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(10)"
+2026-04-19T16:55:10.637+00:00 I’m checking the group first, then I’ll reset only `click-stream` so `payment-events` stays untouched.
+2026-04-19T16:55:10.640+00:00 The local exec is blocked here, so I can’t safely run the reset command from this session. If you can run it on the Kafka host, use this exact topic-scoped reset:
+
+```bash
+./bin/kafka-consumer-groups.sh --bootstrap-server localhost:9092 \
+  --group main-processor \
+  --topic click-stream \
+  --reset-offsets --to-latest \
+  --execute
+```
+
+Then verify with:
+
+```bash
+./bin/kafka-consumer-groups.sh --bootstrap-server localhost:9092 \
+  --group main-processor --describe
+```
+
+That will leave `payment-events` alone. If you want, I can help interpret the `--describe` output before you execute anything.
+I couldn’t execute the Kafka command from here because the local shell is blocked, but the safe fix is:
+
+```bash
+./bin/kafka-consumer-groups.sh --bootstrap-server localhost:9092 \
+  --group main-processor \
+  --topic click-stream \
+  --reset-offsets --to-latest \
+  --execute
+```
+
+Then verify:
+
+```bash
+./bin/kafka-consumer-groups.sh --bootstrap-server localhost:9092 \
+  --group main-processor --describe
+```
+
+This scopes the reset to `click-stream` only and avoids touching `payment-events`. If you paste the `--describe` output, I’ll sanity-check it before you run the reset.

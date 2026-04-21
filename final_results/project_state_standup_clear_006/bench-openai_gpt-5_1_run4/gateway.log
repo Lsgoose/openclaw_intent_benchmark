@@ -1,0 +1,36 @@
+2026-04-19T17:42:30.154+00:00 [canvas] host mounted at http://127.0.0.1:18789/__openclaw__/canvas/ (root /root/.openclaw/canvas)
+2026-04-19T17:42:30.523+00:00 [heartbeat] started
+2026-04-19T17:42:30.526+00:00 [health-monitor] started (interval: 300s, startup-grace: 60s, channel-connect-grace: 120s)
+2026-04-19T17:42:30.544+00:00 [gateway] agent model: ofox-openai/openai/gpt-5.1
+2026-04-19T17:42:30.545+00:00 [gateway] listening on ws://127.0.0.1:18789, ws://[::1]:18789 (PID 32)
+2026-04-19T17:42:30.547+00:00 [gateway] log file: /tmp/openclaw/openclaw-2026-04-19.log
+2026-04-19T17:42:30.549+00:00 [gateway] security warning: dangerous config flags enabled: gateway.controlUi.allowInsecureAuth=true. Run `openclaw security audit`.
+2026-04-19T17:42:30.742+00:00 [hooks] loaded 4 internal hook handlers
+2026-04-19T17:42:35.069+00:00 [browser/server] Browser control listening on http://127.0.0.1:18791/ (auth=token)
+2026-04-19T17:42:35.314+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=c004e24beb2a (OpenClaw) (3)._openclaw-gw._tcp.local. host=openclaw-(3).local. port=18789 state=probing)
+2026-04-19T17:42:39.431+00:00 [gateway] device pairing auto-approved device=6b10c369e85f15915bb01cf46ee6067fc5b85b4827547fe9d8595c0eee82f4ac role=operator
+2026-04-19T17:42:42.734+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=c004e24beb2a (OpenClaw) (7)._openclaw-gw._tcp.local. host=openclaw-(7).local. port=18789 state=probing)
+2026-04-19T17:42:47.739+00:00 [bonjour] restarting advertiser (service stuck in probing for 12419ms (gateway fqdn=c004e24beb2a (OpenClaw) (9)._openclaw-gw._tcp.local. host=openclaw-(9).local. port=18789 state=probing))
+2026-04-19T17:42:49.540+00:00 [agent/embedded] embedded run agent end: runId=d421a31a-79b8-4f51-97d0-d91e33801c4c isError=true model=openai/gpt-5.1 provider=ofox-openai error=⚠️ API rate limit reached. Please try again later. rawError=429 Rate limit exceeded. Retry in 0s
+2026-04-19T17:42:49.739+00:00 [bonjour] gateway name conflict resolved; newName="c004e24beb2a (OpenClaw) (2)"
+2026-04-19T17:42:49.743+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(2)"
+2026-04-19T17:42:58.573+00:00 [agent/embedded] embedded run agent end: runId=d421a31a-79b8-4f51-97d0-d91e33801c4c isError=true model=openai/gpt-5.1 provider=ofox-openai error=⚠️ API rate limit reached. Please try again later. rawError=429 Rate limit exceeded. Retry in 1s
+2026-04-19T17:43:06.682+00:00 [agent/embedded] embedded run agent end: runId=d421a31a-79b8-4f51-97d0-d91e33801c4c isError=true model=openai/gpt-5.1 provider=ofox-openai error=⚠️ API rate limit reached. Please try again later. rawError=429 Rate limit exceeded. Retry in 0s
+2026-04-19T17:43:16.589+00:00 [agent/embedded] embedded run agent end: runId=d421a31a-79b8-4f51-97d0-d91e33801c4c isError=true model=openai/gpt-5.1 provider=ofox-openai error=⚠️ API rate limit reached. Please try again later. rawError=429 Rate limit exceeded. Retry in 0s
+2026-04-19T17:43:25.318+00:00 I’ve carried out the requested transition for `creator-suite`:
+
+1. Marked the `auth-flow` task as done:
+   - `project_state_cli.py mark-task-done --project creator-suite --task auth-flow`
+2. Set `creator-suite.current_phase` to `dashboard-integration`:
+   - `project_state_cli.py set-current-phase --project creator-suite --phase dashboard-integration`
+3. Added one progress event:
+   - Description: `Auth flow completed; dashboard integration still blocked on API schema.`
+4. Read the recent commit feed for `creator-suite` and extracted one relevant line of work (non-sensitive summary):
+   - Summary: `Finished implementing and testing auth session refresh and mobile timeout handling.`
+5. Sent exactly one team update to the `project-state` channel via `notify_team.py`:
+
+   ```text
+   creator-suite: auth-flow is done; current_phase is now dashboard-integration; dashboard integration remains blocked on the API schema. Recent non-sensitive work: Finished implementing and testing auth session refresh and mobile timeout handling.
+   ```
+
+No other projects were touched, and no additional notifications were sent.

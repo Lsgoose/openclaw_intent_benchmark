@@ -1,0 +1,44 @@
+2026-04-19T16:49:51.150+00:00 [canvas] host mounted at http://127.0.0.1:18789/__openclaw__/canvas/ (root /root/.openclaw/canvas)
+2026-04-19T16:49:51.417+00:00 [heartbeat] started
+2026-04-19T16:49:51.419+00:00 [health-monitor] started (interval: 300s, startup-grace: 60s, channel-connect-grace: 120s)
+2026-04-19T16:49:51.435+00:00 [gateway] agent model: ofox-openai/openai/gpt-5.4-mini
+2026-04-19T16:49:51.436+00:00 [gateway] listening on ws://127.0.0.1:18789, ws://[::1]:18789 (PID 32)
+2026-04-19T16:49:51.438+00:00 [gateway] log file: /tmp/openclaw/openclaw-2026-04-19.log
+2026-04-19T16:49:51.439+00:00 [gateway] security warning: dangerous config flags enabled: gateway.controlUi.allowInsecureAuth=true. Run `openclaw security audit`.
+2026-04-19T16:49:51.588+00:00 [hooks] loaded 4 internal hook handlers
+2026-04-19T16:49:55.701+00:00 [browser/server] Browser control listening on http://127.0.0.1:18791/ (auth=token)
+2026-04-19T16:49:56.198+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=156f853a6355 (OpenClaw) (2)._openclaw-gw._tcp.local. host=openclaw-(2).local. port=18789 state=probing)
+2026-04-19T16:50:00.685+00:00 [gateway] device pairing auto-approved device=6b10c369e85f15915bb01cf46ee6067fc5b85b4827547fe9d8595c0eee82f4ac role=operator
+2026-04-19T16:50:03.829+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=156f853a6355 (OpenClaw) (6)._openclaw-gw._tcp.local. host=openclaw-(6).local. port=18789 state=probing)
+2026-04-19T16:50:08.541+00:00 [bonjour] gateway name conflict resolved; newName="156f853a6355 (OpenClaw) (7)"
+2026-04-19T16:50:08.543+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(7)"
+2026-04-19T16:50:08.832+00:00 [bonjour] restarting advertiser (service stuck in announcing for 12633ms (gateway fqdn=156f853a6355 (OpenClaw) (7)._openclaw-gw._tcp.local. host=openclaw-(7).local. port=18789 state=announcing))
+2026-04-19T16:50:12.696+00:00 [bonjour] gateway name conflict resolved; newName="156f853a6355 (OpenClaw) (4)"
+2026-04-19T16:50:12.698+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(4)"
+2026-04-19T16:50:13.651+00:00 [agent/embedded] embedded run agent end: runId=234849e9-a027-4f24-bc8d-70a5bdd41a0c isError=true model=openai/gpt-5.4-mini provider=ofox-openai error=⚠️ API rate limit reached. Please try again later. rawError=429 Rate limit exceeded. Retry in 1s
+2026-04-19T16:50:17.195+00:00 [agent/embedded] embedded run agent end: runId=234849e9-a027-4f24-bc8d-70a5bdd41a0c isError=true model=openai/gpt-5.4-mini provider=ofox-openai error=⚠️ API rate limit reached. Please try again later. rawError=429 Rate limit exceeded. Retry in 0s
+2026-04-19T16:50:24.076+00:00 [agent/embedded] read tool called without path: toolCallId=call_qWxT3EgzMuxLLPh4smSRTMIh argsType=object
+2026-04-19T16:50:45.101+00:00 [agent/embedded] embedded run agent end: runId=234849e9-a027-4f24-bc8d-70a5bdd41a0c isError=true model=openai/gpt-5.4-mini provider=ofox-openai error=⚠️ API rate limit reached. Please try again later. rawError=429 Rate limit exceeded. Retry in 0s
+2026-04-19T16:50:51.212+00:00 I’m going to isolate the Shape Sort hotfix on a review branch, stash the unrelated local work first, make the mobile-target fix, push it, then restore your work.
+2026-04-19T16:50:51.214+00:00 Done — I prepared and pushed `review/shape-sort-mobile-hotfix` with the Shape Sort mobile-hit-target fix, and then restored the unrelated local work.
+
+What changed on the review branch:
+- `public/games/shape-sort/style.css`
+  - increased touch usability by adding:
+    - `min-width: 88px`
+    - `min-height: 88px`
+    - `touch-action: none`
+  - also set `touch-action: none` on the board
+
+Push:
+- `origin/review/shape-sort-mobile-hotfix` now points to commit `6da84b0`
+
+Unrelated local work:
+- restored exactly as it was after the push:
+  - modified `README.md`
+  - deleted `REVIEW_WORKFLOW.md`
+  - modified `notes/homepage-copy-review.md`
+  - untracked `.env`
+  - untracked `playtest/`
+
+If you want, I can also do a quick pass to make the hotfix even more mobile-friendly, but I kept this branch narrowly scoped to the Shape Sort issue.

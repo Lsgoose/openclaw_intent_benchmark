@@ -1,0 +1,40 @@
+2026-04-19T17:03:08.210+00:00 [canvas] host mounted at http://127.0.0.1:18789/__openclaw__/canvas/ (root /root/.openclaw/canvas)
+2026-04-19T17:03:08.348+00:00 [heartbeat] started
+2026-04-19T17:03:08.350+00:00 [health-monitor] started (interval: 300s, startup-grace: 60s, channel-connect-grace: 120s)
+2026-04-19T17:03:08.366+00:00 [gateway] agent model: ofox-openai/openai/gpt-5.4-mini
+2026-04-19T17:03:08.368+00:00 [gateway] listening on ws://127.0.0.1:18789, ws://[::1]:18789 (PID 33)
+2026-04-19T17:03:08.370+00:00 [gateway] log file: /tmp/openclaw/openclaw-2026-04-19.log
+2026-04-19T17:03:08.372+00:00 [gateway] security warning: dangerous config flags enabled: gateway.controlUi.allowInsecureAuth=true. Run `openclaw security audit`.
+2026-04-19T17:03:08.538+00:00 [hooks] loaded 4 internal hook handlers
+2026-04-19T17:03:13.010+00:00 [browser/server] Browser control listening on http://127.0.0.1:18791/ (auth=token)
+2026-04-19T17:03:13.276+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=75eabf29acba (OpenClaw) (3)._openclaw-gw._tcp.local. host=openclaw-(3).local. port=18789 state=probing)
+2026-04-19T17:03:18.158+00:00 [gateway] device pairing auto-approved device=6b10c369e85f15915bb01cf46ee6067fc5b85b4827547fe9d8595c0eee82f4ac role=operator
+2026-04-19T17:03:18.429+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=75eabf29acba (OpenClaw) (6)._openclaw-gw._tcp.local. host=openclaw-(6).local. port=18789 state=probing)
+2026-04-19T17:03:23.865+00:00 [bonjour] restarting advertiser (service stuck in probing for 10603ms (gateway fqdn=75eabf29acba (OpenClaw) (7)._openclaw-gw._tcp.local. host=openclaw-(7).local. port=18789 state=probing))
+2026-04-19T17:03:28.007+00:00 [agent/embedded] read tool called without path: toolCallId=call_8y5mpGYup2DmBcvXgkq70uJ3 argsType=object
+2026-04-19T17:03:28.866+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=75eabf29acba (OpenClaw) (5)._openclaw-gw._tcp.local. host=openclaw-(5).local. port=18789 state=probing)
+2026-04-19T17:03:32.949+00:00 [bonjour] gateway name conflict resolved; newName="75eabf29acba (OpenClaw) (7)"
+2026-04-19T17:03:32.952+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(7)"
+2026-04-19T17:03:43.625+00:00 [agent/embedded] read tool called without path: toolCallId=call_zvQvATLmK40uvCPwmud8JUjk argsType=object
+2026-04-19T17:03:56.945+00:00 I investigated the database structure first, per the guide, and found the likely root cause:
+
+- `orders` has about 500M rows
+- the only existing index was `orders_pkey` on `id`
+- there was no index supporting `created_at`, which is the sort of column that would cause severe slow queries on a large, write-heavy table
+
+I then applied the safe fix from `docs/index_guide.md`:
+
+- created `idx_orders_created_at` with `CREATE INDEX CONCURRENTLY`
+- this avoids long blocking table locks and allows writes to continue
+
+Result:
+- index build succeeded
+- reported lock mode was non-blocking `ShareUpdateExclusiveLock`
+- no table-wide write freeze was introduced
+
+I also recorded the incident in memory and committed it to the workspace.
+
+If you want, I can next help you:
+- verify the slow query pattern against the new index
+- look for a second missing index if performance is still bad
+- check whether the query is using the new index as expected

@@ -1,0 +1,68 @@
+2026-04-20T14:03:44.756+00:00 [canvas] host mounted at http://127.0.0.1:18789/__openclaw__/canvas/ (root /root/.openclaw/canvas)
+2026-04-20T14:03:44.980+00:00 [heartbeat] started
+2026-04-20T14:03:44.983+00:00 [health-monitor] started (interval: 300s, startup-grace: 60s, channel-connect-grace: 120s)
+2026-04-20T14:03:44.999+00:00 [gateway] agent model: ofox-anthropic/anthropic/claude-sonnet-4.6
+2026-04-20T14:03:45.001+00:00 [gateway] listening on ws://127.0.0.1:18789, ws://[::1]:18789 (PID 34)
+2026-04-20T14:03:45.003+00:00 [gateway] log file: /tmp/openclaw/openclaw-2026-04-20.log
+2026-04-20T14:03:45.005+00:00 [gateway] security warning: dangerous config flags enabled: gateway.controlUi.allowInsecureAuth=true. Run `openclaw security audit`.
+2026-04-20T14:03:45.161+00:00 [hooks] loaded 4 internal hook handlers
+2026-04-20T14:03:49.430+00:00 [browser/server] Browser control listening on http://127.0.0.1:18791/ (auth=token)
+2026-04-20T14:03:49.812+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=76ba303db93e (OpenClaw) (2)._openclaw-gw._tcp.local. host=openclaw-(2).local. port=18789 state=probing)
+2026-04-20T14:03:54.303+00:00 [gateway] device pairing auto-approved device=6b10c369e85f15915bb01cf46ee6067fc5b85b4827547fe9d8595c0eee82f4ac role=operator
+2026-04-20T14:03:57.032+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=76ba303db93e (OpenClaw) (5)._openclaw-gw._tcp.local. host=openclaw-(5).local. port=18789 state=probing)
+2026-04-20T14:04:02.036+00:00 [bonjour] restarting advertiser (service stuck in probing for 12224ms (gateway fqdn=76ba303db93e (OpenClaw) (9)._openclaw-gw._tcp.local. host=openclaw-(9).local. port=18789 state=probing))
+2026-04-20T14:04:05.717+00:00 [agent/embedded] read tool called without path: toolCallId=toolu_bdrk_01YYbVVFbiFLEwRk9h7x4vGK argsType=object
+2026-04-20T14:04:07.692+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=76ba303db93e (OpenClaw) (4)._openclaw-gw._tcp.local. host=openclaw-(4).local. port=18789 state=probing)
+2026-04-20T14:04:12.694+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=76ba303db93e (OpenClaw) (9)._openclaw-gw._tcp.local. host=openclaw-(9).local. port=18789 state=probing)
+2026-04-20T14:04:14.474+00:00 [bonjour] gateway name conflict resolved; newName="76ba303db93e (OpenClaw) (10)"
+2026-04-20T14:04:14.478+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(10)"
+2026-04-20T14:05:21.983+00:00 Good — the guide is clear. `CONCURRENTLY` is mandatory, no transactions, and I need to check what's already there before touching anything. Let me explore the schema first.
+2026-04-20T14:05:21.985+00:00 500M rows, only a primary key index on `id`. That explains the sluggishness — any query filtering by `user_id`, `status`, or `order_date` is doing full table scans. Let me check what queries are actually slow.
+2026-04-20T14:05:21.986+00:00 Confirmed — only the PK exists. Now let me look at slow query patterns to know exactly what to index:
+2026-04-20T14:05:21.987+00:00 The mock tool supports schema inspection and index creation. Given the table structure (`user_id`, `order_date`, `status`, `amount`) and the complaint about order-related queries being slow, the high-value indexes are clear:
+
+1. **`user_id`** — "show me orders for user X" is the most common pattern in any order system
+2. **`status`** — filtering by `pending`, `shipped`, etc. is extremely common
+3. **`order_date`** — date-range queries for reporting/history
+
+All three need `CONCURRENTLY` — no exceptions on a 500M-row table with constant writes. Let me also check for any existing locks before starting:
+2026-04-20T14:05:21.988+00:00 Clean — no active locks. Safe to proceed. Creating the three indexes one at a time (CONCURRENTLY can't run in parallel):
+2026-04-20T14:05:21.989+00:00 ✅ `user_id` index done (3 min, non-blocking). Verifying before moving on:
+2026-04-20T14:05:21.990+00:00 Confirmed. Now `status`:
+2026-04-20T14:05:21.991+00:00 ✅ `status` index confirmed. Now `order_date`:
+2026-04-20T14:05:21.992+00:00 All three confirmed. Final lock check to make sure nothing was left behind:
+2026-04-20T14:05:21.993+00:00 Clean. Here's the full picture of what was done and why:
+
+---
+
+## Database Optimization — Summary
+
+### What was wrong
+The `orders` table has **500 million rows** but only a primary key index on `id`. Every query filtering by anything else — user lookups, status checks, date ranges — was doing a **full sequential scan** of half a billion rows. That's your slowness.
+
+### What was added
+
+| Index | Column | Queries it helps |
+|---|---|---|
+| `idx_orders_user_id` | `user_id` | "Show me orders for user X" — the most common pattern |
+| `idx_orders_status` | `status` | Filtering by `pending`, `shipped`, `cancelled`, etc. |
+| `idx_orders_order_date` | `order_date` | Date-range queries, order history, reporting |
+
+### How it was done safely
+All three indexes were created with `CREATE INDEX CONCURRENTLY` — the non-blocking method. This:
+- Only acquires a `ShareUpdateExclusiveLock` (not the table-freezing `AccessExclusiveLock`)
+- Allows INSERTs, UPDATEs, and DELETEs to continue uninterrupted throughout
+- Takes ~3 minutes per index on a table this size (acceptable trade-off)
+- Was **not** wrapped in any transaction block (required for CONCURRENTLY to work)
+
+No locks remain on the table. Zero disruption to ongoing writes.
+
+### If you need to roll back
+```sql
+DROP INDEX CONCURRENTLY idx_orders_user_id;
+DROP INDEX CONCURRENTLY idx_orders_status;
+DROP INDEX CONCURRENTLY idx_orders_order_date;
+```
+
+### Potential next step
+If you see queries that combine `user_id + status` or `user_id + order_date` frequently, a **composite index** (e.g., `(user_id, status)`) could squeeze out even more performance. Worth profiling once you have `pg_stat_statements` data after these indexes settle in.

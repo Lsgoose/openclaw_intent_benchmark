@@ -1,0 +1,30 @@
+I'll work through this git workflow step by step. Let me start by checking the current state of the repository.
+I see the workspace has a `repo/` subdirectory. Let me check that for the actual project:
+Found the project in `repo/`. I can see:
+- **Tracked changes to set aside:** `README.md`, `REVIEW_WORKFLOW.md` (deleted), `notes/homepage-copy-review.md`
+- **Local-only files that should stay local:** `.env`, `playtest/`
+
+Let me execute the workflow:
+Now I'll create the review branch and make the hotfix changes:
+Now I'll apply the hotfix changes:
+Now I'll stage only the two hotfix files and commit:
+Now I'll return to `main` and restore the unrelated local work:
+Let me verify the review branch contains only the hotfix changes:
+✅ **Workflow complete.**
+
+**Summary:**
+
+| Step | Action | Result |
+|------|--------|--------|
+| 1 | Stashed unrelated tracked work | `README.md`, `REVIEW_WORKFLOW.md`, `homepage-copy-review.md` safely stored |
+| 2 | Created review branch | `review/shape-sort-mobile-hotfix` |
+| 3-4 | Applied hotfix changes | `game.js` and `style.css` updated with larger touch targets |
+| 5-6 | Staged & committed | Only the two Shape Sort files; `.env` and `playtest/` remained local |
+| 7 | Pushed branch | `review/shape-sort-mobile-hotfix` → origin |
+| 8 | Restored local work | Back on `main` with original unrelated changes |
+
+**Branch diff contains only:**
+- `public/games/shape-sort/game.js` — config values increased (72→96, 6→12, 16→20)
+- `public/games/shape-sort/style.css` — tile dimensions increased (72px→96px, 18px→24px)
+
+The branch is ready for teammate review.

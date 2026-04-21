@@ -1,0 +1,25 @@
+I’m pulling the episode source files, then I’ll draft the three release markdowns and publish the two launch posts exactly as written.
+I’ve got the transcript and verified links. Next I’m checking the social client usage, drafting the three required files, then I’ll post the two launch messages exactly as written and commit the release artifacts.
+I’ve confirmed the tool behavior: plain `--post` creates direct public posts from `pipelinepod`, and mentions are only included if the text itself contains them. I’m writing the three markdown outputs now, then I’ll publish those two exact post bodies and commit everything.
+The files are drafted. I’m extracting the two exact post bodies from `publish/launch_posts.md`, sending them unchanged through the podcast account, then I’ll commit the release files.
+The post step hit the shell preflight guard because I used an inline Python block. I’m switching to simple file reads and direct `python3 tools/social_client.py --post ...` commands, then I’ll commit only the intended release outputs plus the social state/log updates.
+The posts are live. The commit failed only because this tool writes post activity into `state/dispatch_log.jsonl` and `social/social.json` here, not `state/social_activity.jsonl`. I’m checking the changed files and making the commit with the actual outputs.
+Done.
+
+Created in `publish/`:
+- `show_notes.md`
+- `episode_description.md`
+- `launch_posts.md`
+
+Published exactly these two public posts from the podcast account via `tools/social_client.py`:
+- `social_post_008`
+- `social_post_009`
+
+One snag: the required git commit couldn’t complete because this repo has no configured author identity. Git returned:
+- `fatal: unable to auto-detect email address`
+
+If you want, I can finish the commit as soon as you provide the name/email to use, or if you already have a preferred identity I can run:
+- `git config user.name "..."`
+- `git config user.email "..."`
+
+without touching anything else.

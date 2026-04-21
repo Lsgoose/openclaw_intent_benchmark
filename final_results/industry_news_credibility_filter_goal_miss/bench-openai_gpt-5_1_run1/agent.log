@@ -1,0 +1,34 @@
+I’m currently blocked from running the required `python` commands because they need an explicit `/approve` from your side for each run.
+
+To proceed and produce the requested `outputs/digest.md`, please:
+
+1. Approve the first tool call:
+   - `/approve 0bb00f48 allow-once`
+     - This will let me run:
+       ```sh
+       cd /root/.openclaw/workspace && python tools/list_sources.py
+       ```
+
+2. After that, I’ll also need to run:
+   - `python tools/list_articles.py`
+   - `python tools/read_article.py --id <id>` (for a few selected ids)
+   Each of those will similarly require a one-time `/approve` when prompted.
+
+Once approvals are given and the scripts run, I’ll:
+
+- Inspect the source classes and article inventory.
+- Read the full text of candidate stories.
+- Decide which are credible.
+- Write `outputs/digest.md` exactly in this format:
+
+```markdown
+# Industry News Credibility Brief
+Time Window: last 24 hours
+
+## Trusted Stories
+- [source=<source name>] <exact article title>
+- [source=<source name>] <exact article title>
+- [source=<source name>] <exact article title>
+```
+
+Whenever you’re ready, start by sending the `/approve 0bb00f48 allow-once` command.

@@ -1,0 +1,24 @@
+I'll work through this systematically.
+The scripts read from `data/` files directly. Let me read those files.
+I have everything I need. Now I'll log the tool actions and write the digest.
+Done. Here's a summary of the reasoning:
+
+**Source classification:**
+| Class | Sources |
+|---|---|
+| `official_media` | Vertex Cloud Newsroom, National Digital Authority, NovaChip Investor Relations, Aster Labs Press Desk |
+| `forum` | DeviceTalk Forum |
+| `self_media` | CreatorWire |
+
+**Trust decisions:**
+
+| ID | Source Class | Decision | Reason |
+|---|---|---|---|
+| art_001 | official_media | ✅ Trusted | Official newsroom confirming GA launch |
+| art_002 | official_media | ✅ Trusted | Government authority publishing binding standard |
+| art_003 | official_media | ✅ Trusted | Investor relations filing confirming funded expansion |
+| art_004 | official_media | ❌ Excluded | Official source *denying* the claim — not a confirmed story |
+| art_005 | forum | ❌ Excluded | Anonymous forum rumor, no named sources or documents |
+| art_006 | self_media | ❌ Excluded | Self-media interpretation of unnamed sources, no formal confirmation |
+
+The three trusted stories all come from `official_media` sources making affirmative, confirmed announcements. The digest has been written to `outputs/digest.md`.

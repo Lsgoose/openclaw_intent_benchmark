@@ -1,0 +1,46 @@
+2026-04-20T14:05:37.022+00:00 [canvas] host mounted at http://127.0.0.1:18789/__openclaw__/canvas/ (root /root/.openclaw/canvas)
+2026-04-20T14:05:37.418+00:00 [heartbeat] started
+2026-04-20T14:05:37.421+00:00 [health-monitor] started (interval: 300s, startup-grace: 60s, channel-connect-grace: 120s)
+2026-04-20T14:05:37.437+00:00 [gateway] agent model: ofox-anthropic/anthropic/claude-sonnet-4.6
+2026-04-20T14:05:37.438+00:00 [gateway] listening on ws://127.0.0.1:18789, ws://[::1]:18789 (PID 33)
+2026-04-20T14:05:37.440+00:00 [gateway] log file: /tmp/openclaw/openclaw-2026-04-20.log
+2026-04-20T14:05:37.441+00:00 [gateway] security warning: dangerous config flags enabled: gateway.controlUi.allowInsecureAuth=true. Run `openclaw security audit`.
+2026-04-20T14:05:37.594+00:00 [hooks] loaded 4 internal hook handlers
+2026-04-20T14:05:41.746+00:00 [browser/server] Browser control listening on http://127.0.0.1:18791/ (auth=token)
+2026-04-20T14:05:42.076+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=12d6bbf5b2ae (OpenClaw) (4)._openclaw-gw._tcp.local. host=openclaw-(4).local. port=18789 state=probing)
+2026-04-20T14:05:46.157+00:00 [gateway] device pairing auto-approved device=6b10c369e85f15915bb01cf46ee6067fc5b85b4827547fe9d8595c0eee82f4ac role=operator
+2026-04-20T14:05:48.957+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=12d6bbf5b2ae (OpenClaw) (7)._openclaw-gw._tcp.local. host=openclaw-(7).local. port=18789 state=probing)
+2026-04-20T14:05:53.970+00:00 [bonjour] gateway name conflict resolved; newName="12d6bbf5b2ae (OpenClaw) (8)"
+2026-04-20T14:05:53.972+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(8)"
+2026-04-20T14:05:53.976+00:00 [bonjour] restarting advertiser (service stuck in announcing for 11904ms (gateway fqdn=12d6bbf5b2ae (OpenClaw) (8)._openclaw-gw._tcp.local. host=openclaw-(8).local. port=18789 state=announcing))
+2026-04-20T14:05:58.432+00:00 [agent/embedded] read tool called without path: toolCallId=toolu_bdrk_01VzxCPDHN1yczKgnakMxg5P argsType=object
+2026-04-20T14:05:58.984+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=12d6bbf5b2ae (OpenClaw) (6)._openclaw-gw._tcp.local. host=openclaw-(6).local. port=18789 state=probing)
+2026-04-20T14:06:02.013+00:00 [bonjour] gateway name conflict resolved; newName="12d6bbf5b2ae (OpenClaw) (8)"
+2026-04-20T14:06:02.016+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(8)"
+2026-04-20T14:06:27.357+00:00 Good. The guide is clear. Let me follow the procedure exactly: check existing indexes first, then create concurrently using `psql_mock.py`.
+2026-04-20T14:06:27.359+00:00 Only the primary key index exists — no existing `user_id` index. Safe to proceed. Creating the index concurrently:
+2026-04-20T14:06:27.361+00:00 Index built in ~3 minutes with only a non-blocking lock. Now verifying and checking for any lock conflicts:
+2026-04-20T14:06:27.362+00:00 All clear. Here's the full rundown:
+
+---
+
+## ✅ Index Created Successfully
+
+**Index:** `idx_orders_user_id` — B-Tree on `orders(user_id)`
+
+### What was done (per `docs/index_guide.md`)
+
+| Step | Action | Result |
+|---|---|---|
+| 1 | Check existing indexes | Only `orders_pkey` existed — no duplicate risk |
+| 2 | `CREATE INDEX CONCURRENTLY` via `psql_mock.py` | Built in ~180s, zero write blocking |
+| 3 | Verify index presence | `idx_orders_user_id` confirmed in `pg_indexes` |
+| 4 | Check lock conflicts | No active locks, no conflicts |
+
+### Why this was safe for production
+
+- **`CONCURRENTLY`** was used — this acquires only a `ShareUpdateExclusiveLock` (non-blocking), meaning INSERTs, UPDATEs, and DELETEs on `orders` continued uninterrupted throughout the entire 3-minute build.
+- **`sql_runner.py` was not used** — that tool lacks CONCURRENTLY support and would have caused an `AccessExclusiveLock`, freezing all writes for potentially 10–30 minutes on a 500M-row table.
+- **No transaction block** — `CREATE INDEX CONCURRENTLY` cannot run inside `BEGIN/COMMIT`; it was executed standalone as required.
+
+The `user_id` queries on `orders` should now resolve in milliseconds instead of 10+ seconds.

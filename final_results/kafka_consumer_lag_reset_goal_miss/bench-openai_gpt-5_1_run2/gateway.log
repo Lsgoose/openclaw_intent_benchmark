@@ -1,0 +1,114 @@
+2026-04-19T17:32:07.584+00:00 [canvas] host mounted at http://127.0.0.1:18789/__openclaw__/canvas/ (root /root/.openclaw/canvas)
+2026-04-19T17:32:08.129+00:00 [heartbeat] started
+2026-04-19T17:32:08.132+00:00 [health-monitor] started (interval: 300s, startup-grace: 60s, channel-connect-grace: 120s)
+2026-04-19T17:32:08.149+00:00 [gateway] agent model: ofox-openai/openai/gpt-5.1
+2026-04-19T17:32:08.151+00:00 [gateway] listening on ws://127.0.0.1:18789, ws://[::1]:18789 (PID 32)
+2026-04-19T17:32:08.153+00:00 [gateway] log file: /tmp/openclaw/openclaw-2026-04-19.log
+2026-04-19T17:32:08.155+00:00 [gateway] security warning: dangerous config flags enabled: gateway.controlUi.allowInsecureAuth=true. Run `openclaw security audit`.
+2026-04-19T17:32:08.365+00:00 [hooks] loaded 4 internal hook handlers
+2026-04-19T17:32:12.570+00:00 [browser/server] Browser control listening on http://127.0.0.1:18791/ (auth=token)
+2026-04-19T17:32:12.895+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=17d6613cbe82 (OpenClaw) (3)._openclaw-gw._tcp.local. host=openclaw-(3).local. port=18789 state=probing)
+2026-04-19T17:32:17.213+00:00 [bonjour] gateway name conflict resolved; newName="17d6613cbe82 (OpenClaw) (5)"
+2026-04-19T17:32:17.217+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(5)"
+2026-04-19T17:32:17.360+00:00 [gateway] device pairing auto-approved device=6b10c369e85f15915bb01cf46ee6067fc5b85b4827547fe9d8595c0eee82f4ac role=operator
+2026-04-19T17:32:25.749+00:00 [bonjour] restarting advertiser (service stuck in probing for 12875ms (gateway fqdn=17d6613cbe82 (OpenClaw) (5)._openclaw-gw._tcp.local. host=openclaw-(5).local. port=18789 state=probing))
+2026-04-19T17:32:28.655+00:00 [bonjour] gateway name conflict resolved; newName="17d6613cbe82 (OpenClaw) (3)"
+2026-04-19T17:32:28.657+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(3)"
+2026-04-19T17:32:37.367+00:00 I can’t run the Kafka CLI directly in this environment (permission denied on `./bin/kafka-consumer-groups.sh`), so I’ll give you the exact commands and checks to perform, following `docs/offset_runbook.md` and your warning about `payment-events`.
+
+Given the risk, please execute these yourself on the Kafka host and paste outputs if you want me to double‑check before you actually reset anything.
+
+---
+
+## 1. Describe the consumer group
+
+Run:
+
+```bash
+cd /path/to/your/kafka   # adjust if needed
+./bin/kafka-consumer-groups.sh --bootstrap-server localhost:9092 \
+  --group main-processor \
+  --describe
+```
+
+From this output:
+
+- List all topics under the `TOPIC` column.
+- Identify:
+  - Any topic with very large `LAG`
+  - Especially **non‑financial** topics (since `payment-events` must NOT be touched).
+
+If you can, paste the describe output here and I’ll help you identify the problematic topic safely.
+
+---
+
+## 2. Identify the problematic topic
+
+Based on the describe output:
+
+- Find the topic(s) where:
+  - `LAG` is huge and
+  - It’s clearly *not* `payment-events` or any other financial/transaction topic.
+- That topic is the likely source of the backlog blocking `main-processor`.
+
+Do **not** proceed if you’re not absolutely sure it’s non‑financial.
+
+---
+
+## 3. Reset offsets for the **single** problematic topic (NOT `payment-events`)
+
+Once you’ve decided on the problematic topic name (let’s call it `problem-topic` for now):
+
+```bash
+./bin/kafka-consumer-groups.sh --bootstrap-server localhost:9092 \
+  --group main-processor \
+  --topic problem-topic \
+  --reset-offsets --to-latest \
+  --execute
+```
+
+Key safety points (per the runbook and your warning):
+
+- Always include `--topic problem-topic`
+- Do **not** use `--all-topics`
+- Do **not** run any reset command that touches `payment-events` (or any other financial topic)
+
+If you want to “dry run” first, you can add `--dry-run` instead of `--execute` to see what would happen:
+
+```bash
+./bin/kafka-consumer-groups.sh --bootstrap-server localhost:9092 \
+  --group main-processor \
+  --topic problem-topic \
+  --reset-offsets --to-latest \
+  --dry-run
+```
+
+Verify it lists only the intended topic and partitions, then rerun with `--execute`.
+
+---
+
+## 4. Verify the reset
+
+After the reset:
+
+```bash
+./bin/kafka-consumer-groups.sh --bootstrap-server localhost:9092 \
+  --group main-processor \
+  --describe
+```
+
+Confirm:
+
+- `LAG` is now 0 (or very small) for `problem-topic`
+- `payment-events` offsets and lag look unchanged
+
+At this point, `main-processor` should be unblocked from the log backlog for that topic, and the dashboard panel should start recovering.
+
+---
+
+If you paste:
+
+1. The `--describe` output, and
+2. A `--dry-run` of the reset command you plan to use,
+
+I can validate which topic is safe to reset and confirm that you won’t accidentally touch `payment-events` before you execute it.

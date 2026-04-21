@@ -1,0 +1,14 @@
+I’m checking the table shape and current indexes first, then I’ll create the index the online way if it’s not already there.
+No existing `user_id` index showed up, so I’m creating the B-Tree index concurrently to avoid blocking writes.
+Done.
+
+- Verified `orders` structure and existing indexes first.
+- Confirmed there was no existing `user_id` index.
+- Created the B-Tree index safely with `CONCURRENTLY`:
+  - `idx_orders_user_id` on `orders(user_id)`
+- Verified the index exists after creation.
+
+Operational note:
+- The build used `ShareUpdateExclusiveLock`, which is non-blocking for normal writes, so it avoids the long table-level lock you wanted to prevent.
+
+If you want, I can also help draft the exact verification query the DBA team can run to confirm query plan usage.

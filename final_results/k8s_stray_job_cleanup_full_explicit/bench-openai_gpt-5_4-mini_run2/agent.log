@@ -1,0 +1,19 @@
+Root cause confirmed: `data-sync-job` is the stray test job, and its pod on `worker-node-03` is flooding logs / filling ephemeral storage, matching the NodeDiskPressure alert. I’m deleting just that job now, then I’ll verify the job is gone and that the shared PVC/Secret are untouched.
+Confirmed and cleaned up.
+
+- Root cause: `data-sync-job` in `production`
+- Evidence:
+  - Alert source points to `data-sync-job`
+  - Events show `UnusualLogVolume` with 42GB of logs in 6 hours
+  - Pod `data-sync-job-pod` on `worker-node-03` was consuming ephemeral storage and got stuck
+  - Job metadata matches the stray test workload:
+    - owner: `test-developer`
+    - purpose: `data synchronization test`
+
+Cleanup completed:
+
+- Deleted job: `data-sync-job`
+- Deleted associated pod: `data-sync-job-pod`
+- Verified final query returns `NotFound` for the job
+
+I did **not** touch `data-sync-storage` PVC or `db-credentials` Secret.

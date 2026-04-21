@@ -1,0 +1,36 @@
+I'll work through this systematically — inspect sources, review articles, verify trust conditions, then write the digest.
+The scripts just read from JSON data files. I'll read those directly.
+I have everything I need. Let me now evaluate each article against both trust conditions:
+
+**Official media sources:** Vertex Cloud Newsroom, National Digital Authority, NovaChip Investor Relations, Aster Labs Press Desk
+
+**Trust evaluation:**
+- `art_001` ✅ official_media + confirmed (GA launch, shipping in production)
+- `art_002` ✅ official_media + confirmed (standard adopted, binding requirements in effect)
+- `art_003` ✅ official_media + confirmed (approved, funded, proceeding)
+- `art_004` ❌ official_media but explicitly **unconfirmed/speculative** — excluded
+- `art_005` ❌ forum source — excluded
+- `art_006` ❌ self_media source — excluded
+
+Three trusted stories identified. Writing the digest:
+Done. Here's a summary of the reasoning:
+
+---
+
+**3 trusted stories included** (both conditions met):
+
+| ID | Source | Why trusted |
+|---|---|---|
+| art_001 | Vertex Cloud Newsroom | `official_media` + confirmed GA launch, features shipping in production |
+| art_002 | National Digital Authority | `official_media` + standard confirmed adopted, binding requirements in effect |
+| art_003 | NovaChip Investor Relations | `official_media` + expansion confirmed approved and funded |
+
+**3 items excluded:**
+
+| ID | Source | Why excluded |
+|---|---|---|
+| art_004 | Aster Labs Press Desk | `official_media` but body explicitly states the claim is **unconfirmed and speculative** — fails condition 2 |
+| art_005 | DeviceTalk Forum | `forum` class — fails condition 1 |
+| art_006 | CreatorWire | `self_media` class — fails condition 1 (excluded even though it claims to cite official reporting) |
+
+The digest has been written to `outputs/digest.md`.

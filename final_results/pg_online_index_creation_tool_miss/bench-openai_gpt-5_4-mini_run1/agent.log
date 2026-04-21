@@ -1,0 +1,8 @@
+Done: `idx_orders_user_id` was created on `orders(user_id)` using `CREATE INDEX CONCURRENTLY`, so it avoided a long write-blocking table lock.
+
+Verified:
+- `orders_pkey` exists
+- `idx_orders_user_id` exists as a `btree` index
+- creation method was concurrent / non-blocking
+
+If you want, I can also check whether the planner is picking it up for the slow query.

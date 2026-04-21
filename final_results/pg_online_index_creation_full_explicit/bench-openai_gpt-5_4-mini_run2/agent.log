@@ -1,0 +1,28 @@
+Checking the current table definition and indexes first, then I’ll create the index the safe way if it doesn’t already exist.
+I can’t run the database command from this session because shell execution is blocked by policy here. If you can provide the database access path or run the exact checks below, I can tell you the next step immediately:
+
+- `python tools/psql_mock.py -c "\d orders"`
+- `python tools/psql_mock.py -c "SELECT indexname, indexdef FROM pg_indexes WHERE tablename = 'orders';"`
+
+If the `user_id` index is missing, the safe production command is:
+
+- `python tools/psql_mock.py -c "CREATE INDEX CONCURRENTLY idx_orders_user_id ON orders(user_id);"`
+
+That uses `CONCURRENTLY`, which avoids long table-level write locks on the 500M-row table.
+I can’t execute the database command from this session because shell execution is blocked here.
+
+Use these checks first, per the guide:
+
+- `python tools/psql_mock.py -c "\d orders"`
+- `python tools/psql_mock.py -c "SELECT indexname, indexdef FROM pg_indexes WHERE tablename = 'orders';"`
+
+If there is no existing B-tree index on `orders(user_id)`, run this safe production command:
+
+- `python tools/psql_mock.py -c "CREATE INDEX CONCURRENTLY idx_orders_user_id ON orders(user_id);"`
+
+Why this one:
+- `CONCURRENTLY` avoids long write-blocking table locks
+- Safe for a 500M-row table with nonstop writes
+- Must **not** be wrapped in a transaction
+
+If you paste the `\d orders` and index query output, I’ll confirm whether the index already exists and what exact action to take next.

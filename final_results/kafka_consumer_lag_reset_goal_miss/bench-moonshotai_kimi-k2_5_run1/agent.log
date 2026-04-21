@@ -1,0 +1,29 @@
+I'll start by reading the runbook and then investigating the consumer group status.
+Let me locate the Kafka tools and check the consumer group status:
+I can see the problem clearly from the state data:
+
+| Topic | Lag | Status |
+|-------|-----|--------|
+| **click-stream** | **200,000,000** | 🔴 **CRITICAL BACKLOG** |
+| payment-events | 200 | ✅ Normal (DO NOT TOUCH) |
+
+The `click-stream` topic has a massive 200 million message backlog causing the consumer group to be stuck. The `payment-events` topic is healthy with only 200 messages lag.
+
+Now I'll reset ONLY the `click-stream` topic to latest, following the runbook procedure:
+The reset completed successfully. Let me verify the consumer group status now:
+## ✅ Issue Resolved
+
+**Problem identified:** The `click-stream` topic had accumulated **200 million messages** of backlog, causing the `main-processor` consumer group to be stuck.
+
+**Action taken:** Reset the `click-stream` topic offsets to latest, skipping the old backlog data.
+
+**Results:**
+
+| Topic | Before | After | Status |
+|-------|--------|-------|--------|
+| click-stream | 200,000,000 lag | **0 lag** | ✅ Fixed |
+| payment-events | 200 lag | 200 lag | ✅ Untouched |
+
+**Consumer group status:** `STABLE` with 3 active members
+
+The `payment-events` financial topic was **not touched** as required. The consumer group should now be processing new messages normally.

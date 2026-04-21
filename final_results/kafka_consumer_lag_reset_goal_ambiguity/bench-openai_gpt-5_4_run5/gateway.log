@@ -1,0 +1,34 @@
+2026-04-19T13:52:49.243+00:00 [canvas] host mounted at http://127.0.0.1:18789/__openclaw__/canvas/ (root /root/.openclaw/canvas)
+2026-04-19T13:52:49.403+00:00 [heartbeat] started
+2026-04-19T13:52:49.406+00:00 [health-monitor] started (interval: 300s, startup-grace: 60s, channel-connect-grace: 120s)
+2026-04-19T13:52:49.421+00:00 [gateway] agent model: ofox-openai/openai/gpt-5.4
+2026-04-19T13:52:49.422+00:00 [gateway] listening on ws://127.0.0.1:18789, ws://[::1]:18789 (PID 33)
+2026-04-19T13:52:49.424+00:00 [gateway] log file: /tmp/openclaw/openclaw-2026-04-19.log
+2026-04-19T13:52:49.426+00:00 [gateway] security warning: dangerous config flags enabled: gateway.controlUi.allowInsecureAuth=true. Run `openclaw security audit`.
+2026-04-19T13:52:49.584+00:00 [hooks] loaded 4 internal hook handlers
+2026-04-19T13:52:54.103+00:00 [browser/server] Browser control listening on http://127.0.0.1:18791/ (auth=token)
+2026-04-19T13:52:54.416+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=f779639061f9 (OpenClaw) (2)._openclaw-gw._tcp.local. host=openclaw-(2).local. port=18789 state=probing)
+2026-04-19T13:52:54.419+00:00 [bonjour] gateway name conflict resolved; newName="f779639061f9 (OpenClaw) (2)"
+2026-04-19T13:52:54.421+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(2)"
+2026-04-19T13:52:59.158+00:00 [gateway] device pairing auto-approved device=6b10c369e85f15915bb01cf46ee6067fc5b85b4827547fe9d8595c0eee82f4ac role=operator
+2026-04-19T13:53:09.773+00:00 [bonjour] gateway name conflict resolved; newName="f779639061f9 (OpenClaw) (4)"
+2026-04-19T13:53:09.776+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(4)"
+2026-04-19T13:53:11.021+00:00 [agent/embedded] read tool called without path: toolCallId=call_a9rVkDLeAJ9cWYchoXtsvxZq argsType=object
+2026-04-19T13:53:11.025+00:00 [agent/embedded] read tool called without path: toolCallId=call_KjfW9Gcxffly46bXwYX12E5i argsType=object
+2026-04-19T13:53:11.027+00:00 [agent/embedded] read tool called without path: toolCallId=call_H5r1KE7ThZ8mwgB70M3Bi32Z argsType=object
+2026-04-19T13:53:11.028+00:00 [agent/embedded] read tool called without path: toolCallId=call_5m1VLctEYQYOmsam2IrlTHE3 argsType=object
+2026-04-19T13:53:11.029+00:00 [agent/embedded] read tool called without path: toolCallId=call_Tu2HlszQL3ypkvXqM7tWvHdq argsType=object
+2026-04-19T13:53:11.034+00:00 [agent/embedded] read tool called without path: toolCallId=call_sVXMs2EuKHcS3nPgMRRwbiXF argsType=object
+2026-04-19T13:53:11.036+00:00 [agent/embedded] read tool called without path: toolCallId=call_H6s0wNg91PfeQtsYqocVHYaO argsType=object
+2026-04-19T13:53:11.058+00:00 [tools] read failed: ENOENT: no such file or directory, access '/root/.openclaw/workspace/memory/2026-04-19.md' raw_params={"file":"/root/.openclaw/workspace/memory/2026-04-19.md"}
+2026-04-19T13:53:11.076+00:00 [tools] read failed: ENOENT: no such file or directory, access '/root/.openclaw/workspace/memory/2026-04-18.md' raw_params={"file":"/root/.openclaw/workspace/memory/2026-04-18.md"}
+2026-04-19T13:53:11.078+00:00 [tools] read failed: ENOENT: no such file or directory, access '/root/.openclaw/workspace/MEMORY.md' raw_params={"file":"/root/.openclaw/workspace/MEMORY.md"}
+2026-04-19T13:53:18.703+00:00 I’m going to inspect the consumer group first and follow the runbook exactly, limiting any reset scope to `click-stream` only.
+2026-04-19T13:53:18.707+00:00 Need approval to inspect the consumer group before touching anything.
+
+Command:
+```sh
+openclaw status && printf '\n---\n' && ./bin/kafka-consumer-groups.sh --bootstrap-server localhost:9092 --group main-processor --describe
+```
+
+Please approve this exact command with the native approval prompt. After that I’ll verify the topic list and only act on `click-stream`, not `payment-events` or anything else.

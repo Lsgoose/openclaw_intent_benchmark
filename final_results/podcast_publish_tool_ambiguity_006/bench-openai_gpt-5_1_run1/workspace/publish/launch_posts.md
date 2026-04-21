@@ -1,0 +1,3 @@
+Building a podcast that feels reliable to listeners starts long before you hit publish. In Episode 14, we break down a lightweight production pipeline—capture, cleanup, content extraction, review, and distribution—that helps small teams ship consistent episodes without relying on heroics.
+
+Whats the weakest link in your current podcast pipeline: handoffs, naming and asset storage, transcript quality, or pre-publish review? Episode 14 walks through how to tighten each stage so titles, transcripts, and show notes all tell the same story.

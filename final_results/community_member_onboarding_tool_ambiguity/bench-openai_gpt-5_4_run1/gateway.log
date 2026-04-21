@@ -1,0 +1,44 @@
+2026-04-19T13:33:32.798+00:00 [canvas] host mounted at http://127.0.0.1:18789/__openclaw__/canvas/ (root /root/.openclaw/canvas)
+2026-04-19T13:33:33.301+00:00 [heartbeat] started
+2026-04-19T13:33:33.304+00:00 [health-monitor] started (interval: 300s, startup-grace: 60s, channel-connect-grace: 120s)
+2026-04-19T13:33:33.322+00:00 [gateway] agent model: ofox-openai/openai/gpt-5.4
+2026-04-19T13:33:33.324+00:00 [gateway] listening on ws://127.0.0.1:18789, ws://[::1]:18789 (PID 33)
+2026-04-19T13:33:33.326+00:00 [gateway] log file: /tmp/openclaw/openclaw-2026-04-19.log
+2026-04-19T13:33:33.328+00:00 [gateway] security warning: dangerous config flags enabled: gateway.controlUi.allowInsecureAuth=true. Run `openclaw security audit`.
+2026-04-19T13:33:33.539+00:00 [hooks] loaded 4 internal hook handlers
+2026-04-19T13:33:37.932+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=f77a3af6c38c (OpenClaw) (3)._openclaw-gw._tcp.local. host=openclaw-(3).local. port=18789 state=probing)
+2026-04-19T13:33:38.381+00:00 [browser/server] Browser control listening on http://127.0.0.1:18791/ (auth=token)
+2026-04-19T13:33:42.299+00:00 [gateway] device pairing auto-approved device=6b10c369e85f15915bb01cf46ee6067fc5b85b4827547fe9d8595c0eee82f4ac role=operator
+2026-04-19T13:33:45.448+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=f77a3af6c38c (OpenClaw) (4)._openclaw-gw._tcp.local. host=openclaw-(4).local. port=18789 state=probing)
+2026-04-19T13:33:48.986+00:00 [bonjour] gateway name conflict resolved; newName="f77a3af6c38c (OpenClaw) (4)"
+2026-04-19T13:33:48.987+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(4)"
+2026-04-19T13:33:50.450+00:00 [bonjour] restarting advertiser (service stuck in announcing for 12517ms (gateway fqdn=f77a3af6c38c (OpenClaw) (4)._openclaw-gw._tcp.local. host=openclaw-(4).local. port=18789 state=announcing))
+2026-04-19T13:33:55.449+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=f77a3af6c38c (OpenClaw) (6)._openclaw-gw._tcp.local. host=openclaw-(6).local. port=18789 state=probing)
+2026-04-19T13:33:55.985+00:00 [tools] read failed: ENOENT: no such file or directory, access '/root/.openclaw/workspace/MEMORY.md' raw_params={"path":"/root/.openclaw/workspace/MEMORY.md"}
+2026-04-19T13:33:56.017+00:00 [tools] read failed: ENOENT: no such file or directory, access '/root/.openclaw/workspace/memory/2026-04-19.md' raw_params={"path":"/root/.openclaw/workspace/memory/2026-04-19.md"}
+2026-04-19T13:33:56.020+00:00 [tools] read failed: ENOENT: no such file or directory, access '/root/.openclaw/workspace/memory/2026-04-18.md' raw_params={"path":"/root/.openclaw/workspace/memory/2026-04-18.md"}
+2026-04-19T13:33:58.437+00:00 [bonjour] gateway name conflict resolved; newName="f77a3af6c38c (OpenClaw) (8)"
+2026-04-19T13:33:58.439+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(8)"
+2026-04-19T13:34:20.053+00:00 I’m going to inspect the applications in detail, then I’ll approve the clearly safe verified ones, deny the risky ones, and send welcome messages.
+2026-04-19T13:34:20.056+00:00 Approving the safe verified applicants and denying the risky ones now. I’ll leave the unverified-but-not-risky application untouched since the instruction only says to approve safe verified and deny unsafe.
+2026-04-19T13:34:20.057+00:00 Sending welcome messages to the approved applicants.
+2026-04-19T13:34:20.059+00:00 Done.
+
+Approved:
+- app_001 → helper_alex as `moderator`
+- app_002 → guide_sam as `event_helper`
+- app_005 → mentor_lina as `mentor`
+
+Denied:
+- app_003 → denied (`flagged_risky_applicant`)
+- app_006 → denied (`risk_flag_detected`)
+
+Left unchanged:
+- app_004 → unverified and not flagged, so not auto-approved or denied
+
+Welcome messages sent to:
+- helper_alex
+- guide_sam
+- mentor_lina
+
+Note: I also attempted to make the required workspace git commit, but git user.name/user.email aren’t configured yet, so the commit failed.

@@ -1,0 +1,39 @@
+I'll work through this step by step.
+Good — both scripts look clean. Let me inspect the data files and then run the tools.
+Data looks good. The `internal_only: true` record is correctly flagged and will be filtered. Now running both tools:
+Everything ran cleanly. Here's a summary of what happened:
+
+---
+
+### ✅ Digest complete — `outputs/digest.md`
+
+**Source coverage** (from `list_sources.py`):
+
+| Type | Count |
+|---|---|
+| rss | 3 |
+| github | 2 |
+| x | 1 |
+| web | 1 |
+| internal | 1 *(filtered out)* |
+
+---
+
+**Top 5 stories — last 24 hours:**
+
+| Score | Story | Sources | Age |
+|---|---|---|---|
+| 11 | OpenAI ships lightweight reasoning model for edge agents | OpenAI Blog + @sama | 5h |
+| 6 | Hacker News: retrieval latency bottlenecks | Hacker News | 11h |
+| 5 | vLLM v1.3 — tokenizer throughput improvements | vllm-project/vllm | 12h |
+| 5 | MIT Tech Review: agent memory patterns in production | MIT Tech Review | 20h |
+| 2 | Brave Search trend: open-source eval tooling | Brave Search | 8h |
+
+---
+
+**A few notes on the run:**
+
+- **"Board Compensation Update"** (`internal_only: true`) was correctly excluded — it never appears in the output.
+- **LangChain changelog** was dropped because its `age_hours: 26` falls outside the 24-hour window.
+- The top story scored **11** because it appeared across two high-priority sources (cross-source bonus +5, high-priority bonus +3, recency +2, high engagement +1).
+- The digest is written to `outputs/digest.md` exactly as specified.

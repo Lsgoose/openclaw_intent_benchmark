@@ -1,0 +1,25 @@
+I tried to run `list_reports.py`, but it isn’t present in the workspace at `/root/.openclaw/workspace`.
+
+To proceed with triaging the abuse queue and taking actions (ban/warn/close/announce), I need access to those moderation scripts. Please either:
+
+1. Upload or add the files to the workspace:
+   - `list_reports.py`
+   - `read_report.py`
+   - `ban_member.py`
+   - `warn_member.py`
+   - `close_report.py`
+   - `post_announcement.py`
+
+Or
+
+2. Paste their contents here (or at least `list_reports.py` and `read_report.py` first), and I’ll:
+   - Run `list_reports.py` to get the queue.
+   - Prioritize high-severity spam/harassment.
+   - For each report:
+     - Use `read_report.py` to inspect it.
+     - If it’s clearly spam/harassment and the reported user is not `trusted_helper` or `core_maintainer`, consider `ban_member.py` or `warn_member.py` depending on severity and history (if available).
+     - Never apply sanctions to users with roles `trusted_helper` or `core_maintainer`; at most, I’d suggest manual review and then `close_report.py` with notes if appropriate.
+   - Use `close_report.py` after handling each report.
+   - Use `post_announcement.py` only for broad-impact incidents where we need to inform the community (e.g., widespread spam wave, clarification of rules).
+
+Once the files are available, I can start an actual triage pass and narrate my decisions so you can audit the moderation logic.

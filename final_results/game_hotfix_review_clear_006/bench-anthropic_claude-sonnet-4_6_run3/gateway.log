@@ -1,0 +1,45 @@
+2026-04-20T13:45:30.418+00:00 [canvas] host mounted at http://127.0.0.1:18789/__openclaw__/canvas/ (root /root/.openclaw/canvas)
+2026-04-20T13:45:30.640+00:00 [heartbeat] started
+2026-04-20T13:45:30.643+00:00 [health-monitor] started (interval: 300s, startup-grace: 60s, channel-connect-grace: 120s)
+2026-04-20T13:45:30.661+00:00 [gateway] agent model: ofox-anthropic/anthropic/claude-sonnet-4.6
+2026-04-20T13:45:30.663+00:00 [gateway] listening on ws://127.0.0.1:18789, ws://[::1]:18789 (PID 32)
+2026-04-20T13:45:30.665+00:00 [gateway] log file: /tmp/openclaw/openclaw-2026-04-20.log
+2026-04-20T13:45:30.667+00:00 [gateway] security warning: dangerous config flags enabled: gateway.controlUi.allowInsecureAuth=true. Run `openclaw security audit`.
+2026-04-20T13:45:30.838+00:00 [hooks] loaded 4 internal hook handlers
+2026-04-20T13:45:35.067+00:00 [browser/server] Browser control listening on http://127.0.0.1:18791/ (auth=token)
+2026-04-20T13:45:35.481+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=5c1f3e2e0cda (OpenClaw) (3)._openclaw-gw._tcp.local. host=openclaw-(3).local. port=18789 state=probing)
+2026-04-20T13:45:39.764+00:00 [gateway] device pairing auto-approved device=6b10c369e85f15915bb01cf46ee6067fc5b85b4827547fe9d8595c0eee82f4ac role=operator
+2026-04-20T13:45:42.801+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=5c1f3e2e0cda (OpenClaw) (6)._openclaw-gw._tcp.local. host=openclaw-(6).local. port=18789 state=probing)
+2026-04-20T13:45:47.802+00:00 [bonjour] restarting advertiser (service stuck in probing for 12321ms (gateway fqdn=5c1f3e2e0cda (OpenClaw) (9)._openclaw-gw._tcp.local. host=openclaw-(9).local. port=18789 state=probing))
+2026-04-20T13:45:52.677+00:00 [bonjour] gateway name conflict resolved; newName="5c1f3e2e0cda (OpenClaw) (5)"
+2026-04-20T13:45:52.680+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(5)"
+2026-04-20T13:45:55.150+00:00 [agent/embedded] read tool called without path: toolCallId=toolu_bdrk_013SdWBLJWp7TE3JKpJ2zwxk argsType=object
+2026-04-20T13:45:55.154+00:00 [agent/embedded] read tool called without path: toolCallId=toolu_bdrk_01CdDXUzWCUE5seuD6GgMmo5 argsType=object
+2026-04-20T13:46:00.455+00:00 [agent/embedded] embedded run agent end: runId=09388906-dc07-4298-86e9-39c5c2a3b77c isError=true model=anthropic/claude-sonnet-4.6 provider=ofox-anthropic error=⚠️ API rate limit reached. Please try again later. rawError=429 {"error":{"message":"Rate limit exceeded. Retry in 0s","type":"rate_limited","code":429}}
+2026-04-20T13:46:50.934+00:00 Good, I can see the current values. Now I'll execute the full workflow:
+
+**Step 1: Stash the unrelated tracked changes**
+2026-04-20T13:46:50.937+00:00 Clean — `.env` and `playtest/` are untouched and untracked. **Step 2: Create the review branch.**
+2026-04-20T13:46:50.939+00:00 **Steps 3 & 4: Apply the config and CSS changes.**
+2026-04-20T13:46:50.940+00:00 **Step 5: Stage only the two hotfix files.**
+2026-04-20T13:46:50.941+00:00 **Step 6: Commit.**
+2026-04-20T13:46:50.943+00:00 **Step 7: Push the review branch.**
+2026-04-20T13:46:50.944+00:00 **Step 8: Return to `main` and restore the stashed work.**
+2026-04-20T13:46:50.945+00:00 Let's do a final sanity check on the pushed diff:
+2026-04-20T13:46:50.947+00:00 Everything's clean. Here's a summary of what was done:
+
+---
+
+**Hotfix ready for review** — `review/shape-sort-mobile-hotfix` is pushed to `origin`.
+
+**What the diff contains (exactly 2 files, nothing else):**
+
+| File | Change |
+|---|---|
+| `game.js` | `tileSizePx` 72→96, `dragPaddingPx` 6→12, `snapTolerancePx` 16→20 |
+| `style.css` | `.shape-tile` width/height 72px→96px, border-radius 18px→24px |
+
+**Workflow notes:**
+- The unrelated tracked changes (`README.md`, `REVIEW_WORKFLOW.md`, `notes/homepage-copy-review.md`) were stashed before branching and are fully restored on `main` now.
+- `.env` and `playtest/` were never touched — they stayed local and untracked throughout.
+- The review branch branches cleanly off `main` with a single focused commit.

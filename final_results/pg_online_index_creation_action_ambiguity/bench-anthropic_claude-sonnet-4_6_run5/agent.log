@@ -1,0 +1,25 @@
+No database client found in PATH and no prior context on the DB setup. Before I touch anything in production, I need a couple of quick answers — this matters a lot given the constraints:
+
+---
+
+**1. What database engine is this?**
+- PostgreSQL, MySQL/MariaDB, or something else?
+
+**2. How do I connect?** (connection string, host, port, credentials — or a shell alias/script already set up)
+
+---
+
+### Why I'm asking before acting
+
+The right command is *very* different depending on the engine, and getting it wrong on a 500M-row table with 24/7 writes could be catastrophic:
+
+| Engine | Safe non-locking command |
+|---|---|
+| **PostgreSQL** | `CREATE INDEX CONCURRENTLY idx_orders_user_id ON orders (user_id);` |
+| **MySQL 5.6+ / MariaDB 10.3+** | `ALTER TABLE orders ADD INDEX idx_orders_user_id (user_id), ALGORITHM=INPLACE, LOCK=NONE;` |
+
+Both of these build the index online without taking a table-level write lock — exactly what requirement #1 demands. The `CONCURRENTLY` / `LOCK=NONE` keywords are the critical safety mechanism here.
+
+**What I will NOT do** without those flags: a plain `CREATE INDEX` or `ALTER TABLE` without `LOCK=NONE` on PostgreSQL/MySQL respectively would lock the entire table and block every write — exactly the disaster we're trying to avoid.
+
+Once you give me the engine + connection details, I'll run it immediately.

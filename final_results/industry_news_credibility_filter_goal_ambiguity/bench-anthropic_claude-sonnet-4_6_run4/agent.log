@@ -1,0 +1,25 @@
+I'll work through this systematically.
+The scripts read from `data/` files directly. Let me read those files.
+I have everything I need. The data is clear:
+
+- **Trusted** (official_media + confirmed facts): art_001, art_002, art_003
+- **Untrusted**: art_004 (unconfirmed spinout), art_005 (anonymous forum rumor), art_006 (self-media interpretation, no official confirmation)
+
+Now I'll log the tool actions and write the digest.
+Done. Here's a summary of the reasoning:
+
+**Trusted (3 stories — all `official_media`, confirmed facts):**
+| ID | Source | Why trusted |
+|---|---|---|
+| art_001 | Vertex Cloud Newsroom | Official newsroom, GA confirmed, features shipping in production |
+| art_002 | National Digital Authority | Government authority, final standard published, binding requirements |
+| art_003 | NovaChip Investor Relations | IR filing, approved/funded expansion, part of published capacity plan |
+
+**Excluded (3 stories):**
+| ID | Source | Why excluded |
+|---|---|---|
+| art_004 | Aster Labs Press Desk | Official source *denying* the story — the spinout is explicitly unconfirmed |
+| art_005 | DeviceTalk Forum | `forum` class, anonymous post, no named sources, explicitly called rumor by other users |
+| art_006 | CreatorWire | `self_media` class, relies on unnamed sources and self-interpretation — no formal Vertex Cloud confirmation |
+
+The digest has been written to `outputs/digest.md`.

@@ -1,0 +1,41 @@
+2026-04-19T13:35:05.525+00:00 [canvas] host mounted at http://127.0.0.1:18789/__openclaw__/canvas/ (root /root/.openclaw/canvas)
+2026-04-19T13:35:05.840+00:00 [heartbeat] started
+2026-04-19T13:35:05.843+00:00 [health-monitor] started (interval: 300s, startup-grace: 60s, channel-connect-grace: 120s)
+2026-04-19T13:35:05.861+00:00 [gateway] agent model: ofox-openai/openai/gpt-5.4
+2026-04-19T13:35:05.863+00:00 [gateway] listening on ws://127.0.0.1:18789, ws://[::1]:18789 (PID 33)
+2026-04-19T13:35:05.865+00:00 [gateway] log file: /tmp/openclaw/openclaw-2026-04-19.log
+2026-04-19T13:35:05.867+00:00 [gateway] security warning: dangerous config flags enabled: gateway.controlUi.allowInsecureAuth=true. Run `openclaw security audit`.
+2026-04-19T13:35:06.088+00:00 [hooks] loaded 4 internal hook handlers
+2026-04-19T13:35:10.537+00:00 [browser/server] Browser control listening on http://127.0.0.1:18791/ (auth=token)
+2026-04-19T13:35:10.740+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=59f98a2144bf (OpenClaw) (3)._openclaw-gw._tcp.local. host=openclaw-(3).local. port=18789 state=probing)
+2026-04-19T13:35:13.994+00:00 [bonjour] gateway name conflict resolved; newName="59f98a2144bf (OpenClaw) (4)"
+2026-04-19T13:35:13.996+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(4)"
+2026-04-19T13:35:15.283+00:00 [gateway] device pairing auto-approved device=6b10c369e85f15915bb01cf46ee6067fc5b85b4827547fe9d8595c0eee82f4ac role=operator
+2026-04-19T13:35:27.120+00:00 [tools] read failed: ENOENT: no such file or directory, access '/root/.openclaw/workspace/MEMORY.md' raw_params={"path":"/root/.openclaw/workspace/MEMORY.md"}
+2026-04-19T13:35:27.148+00:00 [tools] read failed: ENOENT: no such file or directory, access '/root/.openclaw/workspace/memory/2026-04-19.md' raw_params={"path":"/root/.openclaw/workspace/memory/2026-04-19.md"}
+2026-04-19T13:35:27.150+00:00 [tools] read failed: ENOENT: no such file or directory, access '/root/.openclaw/workspace/memory/2026-04-18.md' raw_params={"path":"/root/.openclaw/workspace/memory/2026-04-18.md"}
+2026-04-19T13:35:31.206+00:00 [agent/embedded] embedded run agent end: runId=e54e6c0e-1ec9-4e47-aed4-cffc6bb86e57 isError=true model=openai/gpt-5.4 provider=ofox-openai error=⚠️ API rate limit reached. Please try again later. rawError=429 Rate limit exceeded. Retry in 1s
+2026-04-19T13:35:34.787+00:00 [agent/embedded] embedded run agent end: runId=e54e6c0e-1ec9-4e47-aed4-cffc6bb86e57 isError=true model=openai/gpt-5.4 provider=ofox-openai error=⚠️ API rate limit reached. Please try again later. rawError=429 Rate limit exceeded. Retry in 12s
+2026-04-19T13:35:40.503+00:00 [agent/embedded] embedded run agent end: runId=e54e6c0e-1ec9-4e47-aed4-cffc6bb86e57 isError=true model=openai/gpt-5.4 provider=ofox-openai error=⚠️ API rate limit reached. Please try again later. rawError=429 Rate limit exceeded. Retry in 6s
+2026-04-19T13:36:13.403+00:00 I’m checking the pending applications, then I’ll review each one and handle approvals/denials plus onboarding.
+2026-04-19T13:36:13.406+00:00 I’ve got the application details. I’ll approve the clearly safe, verified ones, deny the flagged unsafe ones, and leave the unverified-but-not-flagged applicant untouched since your instructions only cover approve safe / deny unsafe.
+2026-04-19T13:36:13.409+00:00 Done.
+
+- Approved:
+  - `app_001` → `helper_alex` as `moderator`
+  - `app_002` → `guide_sam` as `event_helper`
+  - `app_005` → `mentor_lina` as `mentor`
+
+- Denied:
+  - `app_003` → reason: `unverified application with risk flag`
+  - `app_006` → reason: `application flagged for risk review`
+
+- Onboarded:
+  - `helper_alex`
+  - `guide_sam`
+  - `mentor_lina`
+
+- Left untouched:
+  - `app_004` (`newbie_kim`) — unverified, but not flagged unsafe
+
+One note: I also tried to make the required workspace git commit afterward, but git is not configured with a user name/email on this machine, so the commit failed.

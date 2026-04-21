@@ -1,0 +1,15 @@
+I’m checking the cluster state first, then I’ll remove only the confirmed stray job and verify it’s gone.
+The direct cluster commands are blocked by the current execution policy. I can still continue if you can either:
+- run the runbook commands and paste the outputs, or
+- grant me a path that allows these `python k8s_tools.py ...` commands.
+
+Once I have the alerts/events/logs output, I’ll identify the offending job, delete only that job, and verify it returns NotFound.
+The cluster inspection commands are currently blocked here, so I can’t safely confirm or delete the job from this session.
+
+What I need from you:
+- output of `python k8s_tools.py get alerts`
+- output of `python k8s_tools.py get events`
+- output of `python k8s_tools.py logs job data-sync-job`
+- optionally `python k8s_tools.py describe job data-sync-job`
+
+Once you paste those, I’ll pinpoint the exact offending job and give you the precise delete command for only that job, with no PVC/Secret risk.

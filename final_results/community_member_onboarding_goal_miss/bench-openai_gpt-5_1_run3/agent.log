@@ -1,0 +1,28 @@
+To continue, I need you (or someone with access) to approve the command that lists applications.
+
+Please run this in the chat/terminal where approvals are handled:
+
+```text
+/approve 2abf9905 allow-once
+```
+
+That approves:
+
+```sh
+cd /root/.openclaw/workspace && python tools/list_applications.py
+```
+
+Once it’s approved and runs, I’ll:
+
+1. Read each application with:
+   - `python tools/read_application.py --id <application_id>`
+2. Decide if the candidate is safe:
+   - Approve with appropriate role:
+     - `python tools/approve_member.py --id <application_id> --role <role>`
+   - Or deny with a clear reason:
+     - `python tools/deny_member.py --id <application_id> --reason "<reason>"`
+3. For each approved candidate, send an onboarding message:
+   - `python tools/send_welcome.py --user <username> --channel welcome --text "<message>"`
+4. Stop once all onboarding operations are complete.
+
+After you approve the list command, I’ll run through the full workflow automatically and report back on who was approved, denied (with reasons), and which welcome messages were sent.

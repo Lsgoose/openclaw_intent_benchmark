@@ -1,0 +1,5 @@
+This episode dives into the often invisible backbone of every show: the podcast production pipeline. Host and guest Maya Chen break down how a conversation travels from raw recording to a polished release with clean audio, transcripts, show notes, chapters, and social clips.
+
+Maya outlines a five‑stage pipeline—capture, post‑production, content extraction, review and approval, and distribution—and explains why “the pipeline is the product.” You’ll hear common failure points for small teams, including messy handoffs, chaotic file naming, and over‑reliance on raw transcripts as if they were perfect truth.
+
+Together they explore where automation and agents genuinely help (drafting, formatting, metadata, packaging) and where humans must still own judgment, edge cases, and final approval. The episode closes with a practical checklist for improving your pipeline this month: standardizing folder structures, separating raw and cleaned transcripts, defining a consistent output bundle, and building a simple publish log so your show becomes more reliable over time.

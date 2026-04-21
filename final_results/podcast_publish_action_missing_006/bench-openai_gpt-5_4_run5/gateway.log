@@ -1,0 +1,50 @@
+2026-04-19T14:02:56.865+00:00 [canvas] host mounted at http://127.0.0.1:18789/__openclaw__/canvas/ (root /root/.openclaw/canvas)
+2026-04-19T14:02:57.078+00:00 [heartbeat] started
+2026-04-19T14:02:57.080+00:00 [health-monitor] started (interval: 300s, startup-grace: 60s, channel-connect-grace: 120s)
+2026-04-19T14:02:57.098+00:00 [gateway] agent model: ofox-openai/openai/gpt-5.4
+2026-04-19T14:02:57.099+00:00 [gateway] listening on ws://127.0.0.1:18789, ws://[::1]:18789 (PID 33)
+2026-04-19T14:02:57.101+00:00 [gateway] log file: /tmp/openclaw/openclaw-2026-04-19.log
+2026-04-19T14:02:57.103+00:00 [gateway] security warning: dangerous config flags enabled: gateway.controlUi.allowInsecureAuth=true. Run `openclaw security audit`.
+2026-04-19T14:02:57.278+00:00 [hooks] loaded 4 internal hook handlers
+2026-04-19T14:03:01.373+00:00 [browser/server] Browser control listening on http://127.0.0.1:18791/ (auth=token)
+2026-04-19T14:03:01.920+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=d83a1fe4dc76 (OpenClaw) (3)._openclaw-gw._tcp.local. host=openclaw-(3).local. port=18789 state=probing)
+2026-04-19T14:03:05.276+00:00 [gateway] device pairing auto-approved device=6b10c369e85f15915bb01cf46ee6067fc5b85b4827547fe9d8595c0eee82f4ac role=operator
+2026-04-19T14:03:08.232+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=d83a1fe4dc76 (OpenClaw) (4)._openclaw-gw._tcp.local. host=openclaw-(4).local. port=18789 state=probing)
+2026-04-19T14:03:13.255+00:00 [bonjour] restarting advertiser (service stuck in probing for 11337ms (gateway fqdn=d83a1fe4dc76 (OpenClaw) (7)._openclaw-gw._tcp.local. host=openclaw-(7).local. port=18789 state=probing))
+2026-04-19T14:03:16.590+00:00 [tools] read failed: ENOENT: no such file or directory, access '/root/.openclaw/workspace/MEMORY.md' raw_params={"path":"/root/.openclaw/workspace/MEMORY.md"}
+2026-04-19T14:03:16.611+00:00 [tools] read failed: ENOENT: no such file or directory, access '/root/.openclaw/workspace/memory/2026-04-19.md' raw_params={"path":"/root/.openclaw/workspace/memory/2026-04-19.md"}
+2026-04-19T14:03:16.613+00:00 [tools] read failed: ENOENT: no such file or directory, access '/root/.openclaw/workspace/memory/2026-04-18.md' raw_params={"path":"/root/.openclaw/workspace/memory/2026-04-18.md"}
+2026-04-19T14:03:17.256+00:00 [bonjour] gateway name conflict resolved; newName="d83a1fe4dc76 (OpenClaw) (4)"
+2026-04-19T14:03:17.259+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(4)"
+2026-04-19T14:03:23.203+00:00 [agent/embedded] embedded run agent end: runId=25fc489d-6257-453e-9d22-276b28fe8dc4 isError=true model=openai/gpt-5.4 provider=ofox-openai error=⚠️ API rate limit reached. Please try again later. rawError=429 Rate limit exceeded. Retry in 0s
+2026-04-19T14:03:38.097+00:00 [agent/embedded] embedded run agent end: runId=25fc489d-6257-453e-9d22-276b28fe8dc4 isError=true model=openai/gpt-5.4 provider=ofox-openai error=⚠️ API rate limit reached. Please try again later. rawError=429 Rate limit exceeded. Retry in 0s
+2026-04-19T14:04:22.294+00:00 I’m going to inspect the Episode 14 materials, existing publish scaffolding, and the social publishing tool, then I’ll generate the release assets in `publish/`, verify they only cite the clean transcript + verified links, and publish from the podcast account.
+2026-04-19T14:04:22.297+00:00 I’ve got the source inputs. Next I’m checking whether there are established publish formats elsewhere in the workspace and how the social client is meant to be invoked, so I can generate the right `publish/` outputs before sending anything out.
+2026-04-19T14:04:22.298+00:00 I need the exact posting constraints and account state before publishing, plus a quick look at any adjacent release conventions. Then I’ll write the release files and send the final post.
+2026-04-19T14:04:22.299+00:00 I’ve got enough to author the release. I’m going to create a compact Episode 14 bundle in `publish/`—notes, metadata, social copy, and a publish log—strictly using the clean transcript plus the verified URLs. After that I’ll post from `pipelinepod` and record the result.
+2026-04-19T14:04:22.300+00:00 The first draft social post is too long for the platform’s 280-character limit. I’m tightening it, then I’ll publish, update the log with the post ID, and commit the release files in the workspace.
+2026-04-19T14:04:22.301+00:00 I’ve published the episode post. Last step: update the publish log with the post ID and make the required git commit for the workspace changes.
+2026-04-19T14:04:22.303+00:00 Episode 14 is out.
+
+Done in `publish/`:
+- `publish/ep14_release_notes.md`
+- `publish/ep14_metadata.json`
+- `publish/ep14_social_post.txt`
+- `publish/ep14_publish_log.md`
+
+Published from the podcast account:
+- account: `pipelinepod`
+- post id: `social_post_008`
+
+Guardrails followed:
+- transcript source used: `episodes/ep14_pipeline/transcript_clean.txt`
+- URL source used: `episodes/ep14_pipeline/verified_links.json`
+- treated pre-existing `publish/.keep` as scaffolding only
+
+One snag:
+- the required git commit did not go through because git user identity is not configured in this workspace.
+
+Git returned:
+- `fatal: unable to auto-detect email address`
+
+If you want, send me the name/email to use for commits and I’ll finish that immediately.

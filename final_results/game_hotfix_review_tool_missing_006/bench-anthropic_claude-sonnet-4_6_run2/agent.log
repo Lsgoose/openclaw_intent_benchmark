@@ -1,0 +1,31 @@
+Good — the repo is in `/root/.openclaw/workspace/repo`. There are three tracked-file modifications (`README.md`, `REVIEW_WORKFLOW.md`, `notes/homepage-copy-review.md`) to stash, plus untracked local-only files (`.env`, `playtest/`) that should stay put. Let me read the target files before editing.
+Got the current values. Now I'll execute the full workflow in one shot: stash tracked changes → branch → edit → stage → commit → push → return to main → pop stash.
+Exactly two files staged, `.env` and `playtest/` untouched.
+Let me do a final sanity-check on the pushed diff:
+Clean. Here's a summary of everything that happened:
+
+---
+
+**Hotfix ready for review** — `review/shape-sort-mobile-hotfix` is pushed.
+
+### What was done
+
+| Step | Result |
+|---|---|
+| **Stash** | `README.md`, `REVIEW_WORKFLOW.md`, `notes/homepage-copy-review.md` stashed as *"wip: unrelated tracked changes"* |
+| **Branch** | `review/shape-sort-mobile-hotfix` cut from `main` |
+| **`game.js`** | `tileSizePx` 72→96, `dragPaddingPx` 6→12, `snapTolerancePx` 16→20 |
+| **`style.css`** | `.shape-tile` width/height 72px→96px, border-radius 18px→24px |
+| **Staged** | Only the two Shape Sort files |
+| **Commit** | `fix(shape-sort): increase touch targets for mobile` |
+| **Push** | Branch pushed and tracking set |
+| **Restore** | Back on `main`, stash popped — original unrelated work is back, `.env` and `playtest/` never touched |
+
+### Diff is exactly two files
+```
+public/games/shape-sort/game.js   | 6 +++---
+public/games/shape-sort/style.css | 6 +++---
+2 files changed, 6 insertions(+), 6 deletions(-)
+```
+
+Ready for a teammate to open a PR from `review/shape-sort-mobile-hotfix` → `main`.

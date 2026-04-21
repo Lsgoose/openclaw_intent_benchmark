@@ -1,0 +1,30 @@
+Hmm — the workspace itself is a fresh git repo with no commits, and the actual project seems to live in `repo/`. Let me check that.
+Found it. Let me read the two target files before making changes.
+Good. Now I have a clear picture. Here's the plan:
+1. Stash the tracked dirty files (README.md, REVIEW_WORKFLOW.md deletion, notes file)
+2. Create the review branch
+3. Apply the hotfix edits
+4. Stage only the two Shape Sort files, commit, push
+5. Return to `main`, pop the stash
+Clean — `.env` and `playtest/` are untouched untracked files, exactly as required. Now create the review branch and apply the hotfix.
+Exactly the two files staged, nothing else. Commit and push.
+Pushed. Now back to `main` and restore the stash.
+Everything is back exactly as it was. Let me do a final sanity check on the diff.
+Clean. Here's the summary:
+
+---
+
+**Hotfix ready for review** — `review/shape-sort-mobile-hotfix` is pushed.
+
+**What the diff contains (only these two files):**
+
+| File | Change |
+|---|---|
+| `game.js` | `tileSizePx` 72→96, `dragPaddingPx` 6→12, `snapTolerancePx` 16→20 |
+| `style.css` | `.shape-tile` width/height 72px→96px, border-radius 18px→24px |
+
+**What stayed out of the branch:**
+- `.env` and `playtest/` — local-only, never touched
+- `README.md`, `REVIEW_WORKFLOW.md` (deletion), `notes/homepage-copy-review.md` — stashed before branching, restored to `main` afterward via `git stash pop`
+
+`main` is back to its pre-hotfix state with all unrelated work intact.

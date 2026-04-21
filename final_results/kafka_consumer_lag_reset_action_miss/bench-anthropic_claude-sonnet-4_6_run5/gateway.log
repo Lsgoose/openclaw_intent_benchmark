@@ -1,0 +1,55 @@
+2026-04-20T13:55:37.019+00:00 [canvas] host mounted at http://127.0.0.1:18789/__openclaw__/canvas/ (root /root/.openclaw/canvas)
+2026-04-20T13:55:37.190+00:00 [heartbeat] started
+2026-04-20T13:55:37.193+00:00 [health-monitor] started (interval: 300s, startup-grace: 60s, channel-connect-grace: 120s)
+2026-04-20T13:55:37.210+00:00 [gateway] agent model: ofox-anthropic/anthropic/claude-sonnet-4.6
+2026-04-20T13:55:37.212+00:00 [gateway] listening on ws://127.0.0.1:18789, ws://[::1]:18789 (PID 33)
+2026-04-20T13:55:37.214+00:00 [gateway] log file: /tmp/openclaw/openclaw-2026-04-20.log
+2026-04-20T13:55:37.216+00:00 [gateway] security warning: dangerous config flags enabled: gateway.controlUi.allowInsecureAuth=true. Run `openclaw security audit`.
+2026-04-20T13:55:37.391+00:00 [hooks] loaded 4 internal hook handlers
+2026-04-20T13:55:41.840+00:00 [browser/server] Browser control listening on http://127.0.0.1:18791/ (auth=token)
+2026-04-20T13:55:42.079+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=5447365ebb62 (OpenClaw) (3)._openclaw-gw._tcp.local. host=openclaw-(3).local. port=18789 state=probing)
+2026-04-20T13:55:46.265+00:00 [gateway] device pairing auto-approved device=6b10c369e85f15915bb01cf46ee6067fc5b85b4827547fe9d8595c0eee82f4ac role=operator
+2026-04-20T13:55:49.311+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=5447365ebb62 (OpenClaw) (5)._openclaw-gw._tcp.local. host=openclaw-(5).local. port=18789 state=probing)
+2026-04-20T13:55:54.312+00:00 [bonjour] restarting advertiser (service stuck in probing for 12231ms (gateway fqdn=5447365ebb62 (OpenClaw) (5)._openclaw-gw._tcp.local. host=openclaw-(5).local. port=18789 state=probing))
+2026-04-20T13:56:04.806+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=5447365ebb62 (OpenClaw) (9)._openclaw-gw._tcp.local. host=openclaw-(9).local. port=18789 state=probing)
+2026-04-20T13:56:09.804+00:00 [bonjour] restarting advertiser (service stuck in probing for 10001ms (gateway fqdn=5447365ebb62 (OpenClaw) (11)._openclaw-gw._tcp.local. host=openclaw-(11).local. port=18789 state=probing))
+2026-04-20T13:56:13.891+00:00 No prior context on your Kafka setup. Before I do anything, let me be very clear about what I'm planning and what I'm **not** touching.
+
+---
+
+## Plan
+
+**Goal:** Reset offsets for `main-processor` on topic `click-stream` only — to skip the backlog and unblock the consumer group.
+
+**What I will NOT touch:** `payment-events` or any other topic this group subscribes to.
+
+---
+
+## The exact command I'd run
+
+```bash
+kafka-consumer-groups.sh \
+  --bootstrap-server <BROKER_HOST>:<PORT> \
+  --group main-processor \
+  --topic click-stream \
+  --reset-offsets \
+  --to-latest \
+  --execute
+```
+
+- `--topic click-stream` — scoped **only** to this topic, not `--all-topics`
+- `--to-latest` — skips to the end of the current log (discards the backlog)
+- `--execute` — actually applies it (omit for a dry run first)
+
+> ⚠️ **The consumer group must be stopped/inactive** before Kafka will allow an offset reset. If it's still running, the command will fail safely with an error.
+
+---
+
+## Before I run anything, I need from you:
+
+1. **Broker address** — `<host>:<port>` (e.g. `kafka:9092`)
+2. **Is the consumer group currently stopped?** (or should I check first?)
+3. **Dry run first?** — I can run without `--execute` to preview what would change, then ask for a second confirmation before applying.
+4. **Any auth config?** — SASL/TLS, a client properties file, etc.
+
+I want to be surgical here. One topic, one group, nothing else. Give me the details and I'll proceed carefully.

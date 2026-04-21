@@ -1,0 +1,5 @@
+This episode dives into how small teams can build a podcast production pipeline that’s as reliable as their recording setup. Host and guest Maya Chen break down the five key stages—capture, post‑production, content extraction, review and approval, and distribution—and show how each one shapes the listener’s experience.
+
+You’ll learn why transcripts are powerful inputs but not final editorial truth, how to separate raw and cleaned transcripts, and where automation can genuinely accelerate your workflow without taking over judgment or approvals. Maya shares practical ways to standardize your episode folder structure, output bundle, and publish checklist so that titles, descriptions, chapter markers, and social copy all stay in sync.
+
+Whether you run a lean creator operation or a small media team, this conversation gives you concrete steps to reduce chaos, catch errors before they go live, and treat your pipeline as part of the product—not an afterthought.

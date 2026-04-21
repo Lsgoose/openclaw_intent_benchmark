@@ -1,0 +1,34 @@
+2026-04-19T15:58:59.819+00:00 [canvas] host mounted at http://127.0.0.1:18789/__openclaw__/canvas/ (root /root/.openclaw/canvas)
+2026-04-19T15:59:00.044+00:00 [heartbeat] started
+2026-04-19T15:59:00.046+00:00 [health-monitor] started (interval: 300s, startup-grace: 60s, channel-connect-grace: 120s)
+2026-04-19T15:59:00.061+00:00 [gateway] agent model: ofox-openai/moonshotai/kimi-k2.5
+2026-04-19T15:59:00.063+00:00 [gateway] listening on ws://127.0.0.1:18789, ws://[::1]:18789 (PID 33)
+2026-04-19T15:59:00.064+00:00 [gateway] log file: /tmp/openclaw/openclaw-2026-04-19.log
+2026-04-19T15:59:00.066+00:00 [gateway] security warning: dangerous config flags enabled: gateway.controlUi.allowInsecureAuth=true. Run `openclaw security audit`.
+2026-04-19T15:59:00.228+00:00 [hooks] loaded 4 internal hook handlers
+2026-04-19T15:59:04.331+00:00 [browser/server] Browser control listening on http://127.0.0.1:18791/ (auth=token)
+2026-04-19T15:59:04.868+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=c3b26543d811 (OpenClaw) (4)._openclaw-gw._tcp.local. host=openclaw-(4).local. port=18789 state=probing)
+2026-04-19T15:59:09.868+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=c3b26543d811 (OpenClaw) (6)._openclaw-gw._tcp.local. host=openclaw-(6).local. port=18789 state=probing)
+2026-04-19T15:59:10.325+00:00 [gateway] device pairing auto-approved device=6b10c369e85f15915bb01cf46ee6067fc5b85b4827547fe9d8595c0eee82f4ac role=operator
+2026-04-19T15:59:16.717+00:00 [bonjour] restarting advertiser (service stuck in probing for 11850ms (gateway fqdn=c3b26543d811 (OpenClaw) (8)._openclaw-gw._tcp.local. host=openclaw-(8).local. port=18789 state=probing))
+2026-04-19T15:59:26.719+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=c3b26543d811 (OpenClaw) (9)._openclaw-gw._tcp.local. host=openclaw-(9).local. port=18789 state=probing)
+2026-04-19T15:59:30.733+00:00 [bonjour] gateway name conflict resolved; newName="c3b26543d811 (OpenClaw) (11)"
+2026-04-19T15:59:30.737+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(11)"
+2026-04-19T15:59:31.719+00:00 [bonjour] restarting advertiser (service stuck in announcing for 10000ms (gateway fqdn=c3b26543d811 (OpenClaw) (11)._openclaw-gw._tcp.local. host=openclaw-(11).local. port=18789 state=announcing))
+2026-04-19T15:59:38.569+00:00 [bonjour] gateway name conflict resolved; newName="c3b26543d811 (OpenClaw) (7)"
+2026-04-19T15:59:38.574+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(7)"
+2026-04-19T16:00:05.659+00:00 Now I have the full picture. Let me execute the workflow:
+
+1. **Stash the unrelated tracked local work**
+2. **Create and switch to the review branch**
+3. **Make the hotfix changes**
+4. **Stage, commit, and push**
+5. **Return to main and restore stashed work**
+2026-04-19T16:00:05.662+00:00 Done. The review branch `review/shape-sort-mobile-hotfix` is pushed with only the two hotfix files:
+
+| File | Changes |
+|------|---------|
+| `public/games/shape-sort/game.js` | `tileSizePx: 72 → 96`, `dragPaddingPx: 6 → 12`, `snapTolerancePx: 16 → 20` |
+| `public/games/shape-sort/style.css` | `.shape-tile: 72px → 96px`, `border-radius: 18px → 24px` |
+
+The `.env` and `playtest/` directories remained local and untracked throughout. We're back on `main` with the original local work restored.

@@ -1,0 +1,19 @@
+I checked the current `orders` indexing and found it only had the primary key on `id`.
+
+To improve the order-related query path without disrupting writes, I added:
+
+- `idx_orders_user_id` on `orders(user_id)`
+- created **CONCURRENTLY**, so it avoided blocking ongoing inserts/updates/deletes
+
+Result:
+- existing indexes before: `orders_pkey`
+- added: `idx_orders_user_id`
+- lock mode used: `ShareUpdateExclusiveLock` only
+- build completed successfully
+
+This should help any queries filtering or joining on `orders.user_id`, which is a common pain point in order lookups.
+
+If you want, I can also take a pass at likely follow-up indexes for other order query patterns, like:
+- `orders(created_at)`
+- composite indexes for common filters such as `(user_id, created_at)`
+- indexes for status / tenant / customer lookups if those exist

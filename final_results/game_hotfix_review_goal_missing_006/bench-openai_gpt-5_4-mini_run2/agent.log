@@ -1,0 +1,28 @@
+I’m going to inspect the repo state, isolate the unrelated tracked work, make the two-file hotfix on a review branch, push it, then restore main.
+I see unrelated tracked edits plus local-only files. I’ll stash only the tracked work, branch off main, apply the hotfix, commit, push, then put main back exactly where it started.
+I found the game under `public/games/shape-sort`. I’m locating the exact config and stylesheet files, then I’ll patch just those two.
+I’ve got the two files. Applying the size/tolerance hotfix now, then I’ll stage only those files and commit.
+The review branch is pushed with only the two hotfix files. I’m switching back to `main` and restoring the stashed tracked work.
+Done.
+
+What I did:
+- Stashed the unrelated tracked local work
+- Created `review/shape-sort-mobile-hotfix`
+- Updated:
+  - `public/games/shape-sort/game.js`
+    - `tileSizePx: 96`
+    - `dragPaddingPx: 12`
+    - `snapTolerancePx: 20`
+  - `public/games/shape-sort/style.css`
+    - `.shape-tile` width/height `96px`
+    - `border-radius: 24px`
+- Staged only those two files
+- Committed: `9244a41` — `Hotfix shape-sort mobile sizing`
+- Pushed `review/shape-sort-mobile-hotfix` to `origin`
+- Switched back to `main`
+- Restored the original tracked local work
+
+Current state:
+- `main` still has the original local tracked edits restored
+- `.env` and `playtest/` stayed local
+- The pushed review branch contains only the two intended hotfix files

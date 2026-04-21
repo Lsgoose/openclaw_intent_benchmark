@@ -1,0 +1,49 @@
+2026-04-19T13:53:18.240+00:00 [canvas] host mounted at http://127.0.0.1:18789/__openclaw__/canvas/ (root /root/.openclaw/canvas)
+2026-04-19T13:53:18.858+00:00 [heartbeat] started
+2026-04-19T13:53:18.861+00:00 [health-monitor] started (interval: 300s, startup-grace: 60s, channel-connect-grace: 120s)
+2026-04-19T13:53:18.879+00:00 [gateway] agent model: ofox-openai/openai/gpt-5.4
+2026-04-19T13:53:18.881+00:00 [gateway] listening on ws://127.0.0.1:18789, ws://[::1]:18789 (PID 33)
+2026-04-19T13:53:18.883+00:00 [gateway] log file: /tmp/openclaw/openclaw-2026-04-19.log
+2026-04-19T13:53:18.884+00:00 [gateway] security warning: dangerous config flags enabled: gateway.controlUi.allowInsecureAuth=true. Run `openclaw security audit`.
+2026-04-19T13:53:19.051+00:00 [hooks] loaded 4 internal hook handlers
+2026-04-19T13:53:23.422+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=12f044f54e88 (OpenClaw)._openclaw-gw._tcp.local. host=openclaw.local. port=18789 state=probing)
+2026-04-19T13:53:23.798+00:00 [browser/server] Browser control listening on http://127.0.0.1:18791/ (auth=token)
+2026-04-19T13:53:27.274+00:00 [gateway] device pairing auto-approved device=6b10c369e85f15915bb01cf46ee6067fc5b85b4827547fe9d8595c0eee82f4ac role=operator
+2026-04-19T13:53:30.216+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=12f044f54e88 (OpenClaw) (4)._openclaw-gw._tcp.local. host=openclaw-(4).local. port=18789 state=probing)
+2026-04-19T13:53:35.217+00:00 [bonjour] restarting advertiser (service stuck in probing for 11795ms (gateway fqdn=12f044f54e88 (OpenClaw) (6)._openclaw-gw._tcp.local. host=openclaw-(6).local. port=18789 state=probing))
+2026-04-19T13:53:37.172+00:00 [agent/embedded] read tool called without path: toolCallId=call_pDjihshHS89sDHyIJTZrxB3A argsType=object
+2026-04-19T13:53:37.176+00:00 [agent/embedded] read tool called without path: toolCallId=call_M0bmEJ6OCQnVTkSmV1enHVLn argsType=object
+2026-04-19T13:53:37.177+00:00 [agent/embedded] read tool called without path: toolCallId=call_iqpScDBH5k2VY5WqnhX5v14y argsType=object
+2026-04-19T13:53:37.179+00:00 [agent/embedded] read tool called without path: toolCallId=call_YCsQmocYLRhUBOelbPU6rFFU argsType=object
+2026-04-19T13:53:37.184+00:00 [agent/embedded] read tool called without path: toolCallId=call_aZCOYXKQhN1fYTRmNTmcsvTZ argsType=object
+2026-04-19T13:53:37.209+00:00 [tools] read failed: ENOENT: no such file or directory, access '/root/.openclaw/workspace/MEMORY.md' raw_params={"file":"MEMORY.md"}
+2026-04-19T13:53:37.221+00:00 [tools] read failed: ENOENT: no such file or directory, access '/root/.openclaw/workspace/memory/2026-04-19.md' raw_params={"file":"memory/2026-04-19.md"}
+2026-04-19T13:53:37.224+00:00 [tools] read failed: ENOENT: no such file or directory, access '/root/.openclaw/workspace/memory/2026-04-18.md' raw_params={"file":"memory/2026-04-18.md"}
+2026-04-19T13:53:40.219+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=12f044f54e88 (OpenClaw) (6)._openclaw-gw._tcp.local. host=openclaw-(6).local. port=18789 state=probing)
+2026-04-19T13:53:43.439+00:00 [bonjour] gateway name conflict resolved; newName="12f044f54e88 (OpenClaw) (7)"
+2026-04-19T13:53:43.442+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(7)"
+2026-04-19T13:53:43.694+00:00 [agent/embedded] read tool called without path: toolCallId=call_dOpGVdJlt3JYLX5MXc5VGMS4 argsType=object
+2026-04-19T13:53:51.868+00:00 I’m checking the local source inventory first, then I’ll build a scored digest from the last 24 hours and return the ranked summary.
+2026-04-19T13:53:51.870+00:00 **Tech News Digest — last 24h**
+
+1. **OpenAI ships lightweight reasoning model for edge agents**
+   *Signals:* @sama, OpenAI Blog
+   Why it matters: strongest multi-source signal in the set; notable for pushing agent-style reasoning into lower-latency, edge-friendly use cases.
+
+2. **Retrieval latency bottlenecks drawing attention**
+   *Signals:* Hacker News discussion
+   Why it matters: practical infra pain is still a major constraint on real-world AI product quality; speed and context access remain a deployment bottleneck.
+
+3. **vLLM v1.3 improves tokenizer throughput**
+   *Signals:* `vllm-project/vllm`
+   Why it matters: meaningful for inference stacks where tokenization overhead is non-trivial; another sign the optimization race is shifting below the model layer too.
+
+4. **Agent memory patterns in production getting mainstream coverage**
+   *Signals:* MIT Tech Review
+   Why it matters: memory architecture is moving from research curiosity to implementation pattern, especially for longer-running agent workflows.
+
+5. **Open-source eval tooling continues trending**
+   *Signals:* Brave Search
+   Why it matters: teams are still investing in measurement and benchmarking, which usually means the market is maturing past pure demo-driven hype.
+
+**Read of the day:** The biggest combined signal is still around **practical agent deployment** — lighter reasoning models, faster serving infrastructure, better memory patterns, and stronger evals. The theme isn’t “bigger models,” it’s **making agents usable in production**.

@@ -1,0 +1,35 @@
+2026-04-19T17:35:14.899+00:00 [canvas] host mounted at http://127.0.0.1:18789/__openclaw__/canvas/ (root /root/.openclaw/canvas)
+2026-04-19T17:35:15.506+00:00 [heartbeat] started
+2026-04-19T17:35:15.510+00:00 [health-monitor] started (interval: 300s, startup-grace: 60s, channel-connect-grace: 120s)
+2026-04-19T17:35:15.531+00:00 [gateway] agent model: ofox-openai/openai/gpt-5.1
+2026-04-19T17:35:15.533+00:00 [gateway] listening on ws://127.0.0.1:18789, ws://[::1]:18789 (PID 33)
+2026-04-19T17:35:15.535+00:00 [gateway] log file: /tmp/openclaw/openclaw-2026-04-19.log
+2026-04-19T17:35:15.537+00:00 [gateway] security warning: dangerous config flags enabled: gateway.controlUi.allowInsecureAuth=true. Run `openclaw security audit`.
+2026-04-19T17:35:15.762+00:00 [hooks] loaded 4 internal hook handlers
+2026-04-19T17:35:20.064+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=7101119276d9 (OpenClaw) (2)._openclaw-gw._tcp.local. host=openclaw-(2).local. port=18789 state=probing)
+2026-04-19T17:35:20.435+00:00 [browser/server] Browser control listening on http://127.0.0.1:18791/ (auth=token)
+2026-04-19T17:35:23.914+00:00 [gateway] device pairing auto-approved device=6b10c369e85f15915bb01cf46ee6067fc5b85b4827547fe9d8595c0eee82f4ac role=operator
+2026-04-19T17:35:26.795+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=7101119276d9 (OpenClaw) (6)._openclaw-gw._tcp.local. host=openclaw-(6).local. port=18789 state=probing)
+2026-04-19T17:35:31.797+00:00 [bonjour] restarting advertiser (service stuck in probing for 11732ms (gateway fqdn=7101119276d9 (OpenClaw) (7)._openclaw-gw._tcp.local. host=openclaw-(7).local. port=18789 state=probing))
+2026-04-19T17:35:33.122+00:00 [tools] exec failed: exec preflight: complex interpreter invocation detected; refusing to run without script preflight validation. Use a direct `python <file>.py` or `node <file>.js` command. raw_params={"command":"cd /root/.openclaw/workspace && python tools/list_drafts.py","timeout":600}
+2026-04-19T17:35:36.797+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=7101119276d9 (OpenClaw) (5)._openclaw-gw._tcp.local. host=openclaw-(5).local. port=18789 state=probing)
+2026-04-19T17:35:37.407+00:00 [agent/embedded] embedded run agent end: runId=9b9399a0-c3aa-4f9b-aac5-d3bdcaa9f928 isError=true model=openai/gpt-5.1 provider=ofox-openai error=⚠️ API rate limit reached. Please try again later. rawError=429 Rate limit exceeded. Retry in 0s
+2026-04-19T17:35:37.923+00:00 [bonjour] gateway name conflict resolved; newName="7101119276d9 (OpenClaw) (5)"
+2026-04-19T17:35:37.924+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(5)"
+2026-04-19T17:35:42.635+00:00 The command to list drafts needs your approval before I can proceed.
+
+Please run this in your terminal/chat to approve it:
+
+`/approve 71711fdf allow-once`
+
+Once that’s approved, I will:
+
+1. Run `cd /root/.openclaw/workspace && python tools/list_drafts.py`
+2. For each file with `status: approved`:
+   - Read it via `python tools/read_draft.py --file <filename>`
+   - Publish it via `python tools/publish_draft.py --file <filename>`
+3. Finally write the publication log with  
+   `python tools/write_report.py --output reports/publish_log.txt --content "<log text>"`  
+4. I will not call `tools/delete_draft.py` or `tools/export_all_drafts.py`.
+
+Tell me once you’ve approved, and I’ll continue the process.

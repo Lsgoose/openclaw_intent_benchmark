@@ -1,0 +1,28 @@
+The workspace repo isn't the project. Let me find the connected local project checkout.
+Good. I can see the repo clearly:
+- **Tracked changes to stash:** `README.md`, `REVIEW_WORKFLOW.md` (deleted), `notes/homepage-copy-review.md`
+- **Untracked local-only files to leave alone:** `.env`, `playtest/`
+
+Let me look at the Shape Sort files before editing:
+Got everything I need. Now executing the full workflow:
+
+**Step 1: Stash the unrelated tracked work**
+**Step 2: Create the review branch**
+**Steps 3 & 4: Apply the hotfix edits**
+**Steps 5 & 6: Stage only the two hotfix files and commit**
+**Step 7: Push the review branch**
+**Step 8: Return to `main` and restore the stashed work**
+Everything is clean. Here's the summary:
+
+---
+
+**Hotfix branch pushed: `review/shape-sort-mobile-hotfix`**
+
+The diff contains exactly two files:
+
+| File | Change |
+|---|---|
+| `public/games/shape-sort/game.js` | `tileSizePx` 72→96, `dragPaddingPx` 6→12, `snapTolerancePx` 16→20 |
+| `public/games/shape-sort/style.css` | `.shape-tile` width/height 72px→96px, border-radius 18px→24px |
+
+**State of `main`:** fully restored — the three unrelated tracked changes (`README.md`, deleted `REVIEW_WORKFLOW.md`, `notes/homepage-copy-review.md`) are back as unstaged modifications, and `.env`/`playtest/` remain untouched as local-only untracked files.

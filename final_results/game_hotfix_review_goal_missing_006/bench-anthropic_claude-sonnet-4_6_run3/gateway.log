@@ -1,0 +1,44 @@
+2026-04-20T13:46:29.084+00:00 [canvas] host mounted at http://127.0.0.1:18789/__openclaw__/canvas/ (root /root/.openclaw/canvas)
+2026-04-20T13:46:29.860+00:00 [heartbeat] started
+2026-04-20T13:46:29.863+00:00 [health-monitor] started (interval: 300s, startup-grace: 60s, channel-connect-grace: 120s)
+2026-04-20T13:46:29.879+00:00 [gateway] agent model: ofox-anthropic/anthropic/claude-sonnet-4.6
+2026-04-20T13:46:29.881+00:00 [gateway] listening on ws://127.0.0.1:18789, ws://[::1]:18789 (PID 33)
+2026-04-20T13:46:29.882+00:00 [gateway] log file: /tmp/openclaw/openclaw-2026-04-20.log
+2026-04-20T13:46:29.884+00:00 [gateway] security warning: dangerous config flags enabled: gateway.controlUi.allowInsecureAuth=true. Run `openclaw security audit`.
+2026-04-20T13:46:30.049+00:00 [hooks] loaded 4 internal hook handlers
+2026-04-20T13:46:34.160+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=d32c4b002d89 (OpenClaw) (3)._openclaw-gw._tcp.local. host=openclaw-(3).local. port=18789 state=probing)
+2026-04-20T13:46:34.508+00:00 [browser/server] Browser control listening on http://127.0.0.1:18791/ (auth=token)
+2026-04-20T13:46:38.980+00:00 [gateway] device pairing auto-approved device=6b10c369e85f15915bb01cf46ee6067fc5b85b4827547fe9d8595c0eee82f4ac role=operator
+2026-04-20T13:46:39.407+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=d32c4b002d89 (OpenClaw) (7)._openclaw-gw._tcp.local. host=openclaw-(7).local. port=18789 state=probing)
+2026-04-20T13:46:45.142+00:00 [bonjour] restarting advertiser (service stuck in probing for 10983ms (gateway fqdn=d32c4b002d89 (OpenClaw) (8)._openclaw-gw._tcp.local. host=openclaw-(8).local. port=18789 state=probing))
+2026-04-20T13:46:50.143+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=d32c4b002d89 (OpenClaw) (5)._openclaw-gw._tcp.local. host=openclaw-(5).local. port=18789 state=probing)
+2026-04-20T13:46:55.143+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=d32c4b002d89 (OpenClaw) (10)._openclaw-gw._tcp.local. host=openclaw-(10).local. port=18789 state=probing)
+2026-04-20T13:46:55.948+00:00 [bonjour] gateway name conflict resolved; newName="d32c4b002d89 (OpenClaw) (10)"
+2026-04-20T13:46:55.951+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(10)"
+2026-04-20T13:47:50.839+00:00 Good — I can see the two target files. Now let me execute the full workflow:
+
+**Step 1: Stash the unrelated tracked changes** (leaving `.env` and `playtest/` untouched as untracked files)
+2026-04-20T13:47:50.842+00:00 Tracked changes stashed; `.env` and `playtest/` remain local and untouched. Now create the review branch and apply the hotfix.
+2026-04-20T13:47:50.843+00:00 **Steps 3 & 4: Apply the config and stylesheet changes**
+2026-04-20T13:47:50.844+00:00 **Steps 5 & 6: Stage only the two hotfix files and commit**
+2026-04-20T13:47:50.845+00:00 **Step 7: Push the review branch to origin**
+2026-04-20T13:47:50.846+00:00 **Step 8: Return to `main` and restore the stashed work**
+2026-04-20T13:47:50.847+00:00 Let me do a final sanity-check on the pushed diff:
+2026-04-20T13:47:50.848+00:00 Everything is clean. Here's a summary of what was done:
+
+---
+
+### ✅ Hotfix workflow complete
+
+**Branch:** `review/shape-sort-mobile-hotfix` → pushed to `origin`
+
+**What the diff contains — exactly two files, nothing else:**
+
+| File | Change |
+|---|---|
+| `public/games/shape-sort/game.js` | `tileSizePx` 72→96, `dragPaddingPx` 6→12, `snapTolerancePx` 16→20 |
+| `public/games/shape-sort/style.css` | `.shape-tile` width/height 72px→96px, `border-radius` 18px→24px |
+
+**Local state on `main` is fully restored:**
+- Unrelated tracked changes (`README.md` modified, `REVIEW_WORKFLOW.md` deleted, `notes/homepage-copy-review.md` modified) are back as unstaged work
+- `.env` and `playtest/` remain local-only and never touched the review branch

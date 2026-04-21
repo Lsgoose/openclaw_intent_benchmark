@@ -1,0 +1,23 @@
+I’m going to check the workspace context and then I can help isolate the safe offset action for `click-stream` without touching `payment-events`.
+I can help, but I won’t touch `payment-events` offsets.
+
+To safely clear the backlog for `click-stream`, I need the exact consumer group / topic offset controls from your Kafka setup, because the safe move depends on whether you want to:
+
+- skip all existing `click-stream` data and resume at latest
+- skip only up to a specific timestamp
+- or reset just the lagging partitions
+
+If you want, send me one of these and I’ll give you the exact low-risk command sequence:
+
+1. Kafka version / tooling you use (`kafka-consumer-groups`, Confluent, Strimzi, MSK, etc.)
+2. The consumer group name again, and whether `click-stream` can safely start from newest
+3. Whether this is a one-off backlog clear or a permanent offset reset policy
+
+If you already know the intent, the safest general pattern is:
+
+- inspect current offsets for `main-processor`
+- reset only the `click-stream` topic offsets
+- do **not** include `payment-events`
+- verify lag drops and consumer resumes
+
+If you paste the output of `kafka-consumer-groups --describe --group main-processor`, I’ll help you choose the exact reset without risking the financial topic.

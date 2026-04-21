@@ -1,0 +1,41 @@
+I'll help you create this index safely. Given the 24/7 high-frequency write workload and 500M rows, this requires careful handling to avoid lock contention. Let me start by reading the operational guidelines and checking the current state.
+Now let me check the existing table structure and indexes to avoid duplicates:
+**Analysis Complete:**
+
+| Item | Status |
+|------|--------|
+| Table | `orders` |
+| Row Count | 500,000,000 |
+| Existing Indexes | `orders_pkey` (on `id` only) |
+| `user_id` indexed? | ❌ No index exists |
+| **Safe to proceed?** | ✅ Yes, no duplicate index risk |
+
+---
+
+**Creating index with CONCURRENTLY** to avoid blocking 24/7 writes:
+Index created successfully. Now verifying completion and checking for any lock issues:
+---
+
+## ✅ Operation Complete
+
+| Metric | Value |
+|--------|-------|
+| **Index Name** | `idx_orders_user_id` |
+| **Table** | `orders` (500M rows) |
+| **Column** | `user_id` |
+| **Type** | B-Tree |
+| **Method** | `CONCURRENTLY` (non-blocking) |
+| **Lock Acquired** | ShareUpdateExclusiveLock (brief, non-blocking) |
+| **Build Duration** | 3 minutes |
+| **Active Locks Remaining** | None |
+| **Lock Conflicts** | None |
+
+### Summary
+
+The B-Tree index on `orders(user_id)` has been successfully created using `CREATE INDEX CONCURRENTLY`, ensuring:
+
+- ✅ **Zero write lock contention** — All INSERT/UPDATE/DELETE operations continued uninterrupted during the 3-minute build
+- ✅ **No duplicate index** — Verified existing indexes before creation
+- ✅ **No residual locks** — Confirmed clean lock state post-creation
+
+The slow query issue on `user_id` lookups should now be resolved. Query response times should drop from >10 seconds to milliseconds.

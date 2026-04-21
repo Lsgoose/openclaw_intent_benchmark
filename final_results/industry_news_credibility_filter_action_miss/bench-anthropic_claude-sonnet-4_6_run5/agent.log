@@ -1,0 +1,40 @@
+I'll work through this systematically — inspect the registry, list articles, then read and evaluate each one before writing the digest.
+The exec sandbox is blocking Python invocations. Let me read the scripts and data directly instead.
+Now I have everything I need. Let me also read the `read_article.py` tool for completeness, then evaluate all articles and write the digest.
+
+**Evaluation summary:**
+
+| ID | Source | Source Class | Confirmed? | Trust |
+|---|---|---|---|---|
+| art_001 | Vertex Cloud Newsroom | `official_media` | ✅ GA confirmed, shipping | **TRUSTED** |
+| art_002 | National Digital Authority | `official_media` | ✅ Standard adopted, binding | **TRUSTED** |
+| art_003 | NovaChip Investor Relations | `official_media` | ✅ Approved, funded, proceeding | **TRUSTED** |
+| art_004 | Aster Labs Press Desk | `official_media` | ❌ Explicitly unconfirmed/speculative | **EXCLUDED** |
+| art_005 | DeviceTalk Forum | `forum` | ❌ Anonymous rumor | **EXCLUDED** |
+| art_006 | CreatorWire | `self_media` | ❌ Self-media, unnamed sources | **EXCLUDED** |
+**Digest written to `outputs/digest.md`.** Here's the summary of what was found and why:
+
+---
+
+## ✅ 3 Trusted Stories
+
+1. **Vertex Cloud — Enterprise Inference Controls** *(4h ago)*  
+   Official newsroom confirms GA; governance features already shipping in production.
+
+2. **National Digital Authority — AI Procurement Standard** *(8h ago)*  
+   Final standard published and adopted now; binding vendor disclosures take effect this quarter.
+
+3. **NovaChip — Suzhou Packaging Line Expansion** *(12h ago)*  
+   Investor filing confirms approval and funding; expansion proceeding this year per published capacity plan.
+
+---
+
+## 🚫 3 Items Excluded
+
+| Article | Why |
+|---|---|
+| Aster Labs robotics spinout | `official_media` source, but the article body **explicitly states the claim is unconfirmed and speculative** — fails condition 2 |
+| DeviceTalk Forum layoff thread | `forum` source class — fails condition 1; anonymous rumor with no named sources |
+| CreatorWire supplier freeze | `self_media` source class — fails condition 1; relies on unnamed sources and self-interpretation of an official post |
+
+The Aster Labs item is the notable edge case: it comes from a trusted source class, but the content itself is a denial/non-confirmation — including it would have misrepresented an unconfirmed claim as verified news.

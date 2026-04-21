@@ -1,0 +1,11 @@
+# Tech News Digest
+
+Time Window: last 24 hours
+
+## Top Stories
+
+- [score=11] OpenAI ships lightweight reasoning model for edge agents — New compact model targets on-device and low-latency agent use, trading some depth for speed and cost. Early benchmarks suggest strong reasoning on structured tasks with significantly reduced context and compute requirements. | sources: @sama, OpenAI Blog | age_h: 5 | engagement_max: 91
+- [score=6] Hacker News discussion on retrieval latency bottlenecks — Practitioners share concrete architectures and metrics for reducing retrieval and rerank latency in RAG and agent systems, including approximate indexing strategies, caching layers, and tradeoffs between throughput and freshness. | sources: Hacker News | age_h: 11 | engagement_max: 83
+- [score=5] vLLM v1.3 release improves tokenizer throughput — Release focuses on tokenizer and KV-cache optimizations, which can materially cut per-request overhead for high-concurrency LLM services. Notable for users running multi-tenant inference backends or serving many small prompts. | sources: vllm-project/vllm | age_h: 12 | engagement_max: 76
+- [score=5] MIT Tech Review on agent memory patterns in production — Survey-style piece covering how teams are implementing long-term memory: vector stores, event logs, hybrid symbolic approaches, and the operational challenges (cost, privacy, drift) of keeping memories fresh. | sources: MIT Tech Review | age_h: 20 | engagement_max: 64
+- [score=2] Brave Search trend: open-source eval tooling — Search and click trends show growing interest in lightweight, OSS eval harnesses for LLMs and agents, suggesting that evaluation and benchmarks are becoming a more central part of day-to-day workflows. | sources: Brave Search | age_h: 8 | engagement_max: 54

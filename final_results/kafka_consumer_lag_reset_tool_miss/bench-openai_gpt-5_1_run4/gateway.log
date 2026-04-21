@@ -1,0 +1,54 @@
+2026-04-19T17:33:36.372+00:00 [canvas] host mounted at http://127.0.0.1:18789/__openclaw__/canvas/ (root /root/.openclaw/canvas)
+2026-04-19T17:33:37.337+00:00 [heartbeat] started
+2026-04-19T17:33:37.339+00:00 [health-monitor] started (interval: 300s, startup-grace: 60s, channel-connect-grace: 120s)
+2026-04-19T17:33:37.379+00:00 [gateway] agent model: ofox-openai/openai/gpt-5.1
+2026-04-19T17:33:37.381+00:00 [gateway] listening on ws://127.0.0.1:18789, ws://[::1]:18789 (PID 33)
+2026-04-19T17:33:37.383+00:00 [gateway] log file: /tmp/openclaw/openclaw-2026-04-19.log
+2026-04-19T17:33:37.384+00:00 [gateway] security warning: dangerous config flags enabled: gateway.controlUi.allowInsecureAuth=true. Run `openclaw security audit`.
+2026-04-19T17:33:37.534+00:00 [hooks] loaded 4 internal hook handlers
+2026-04-19T17:33:41.614+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=a2ffc9f316d0 (OpenClaw) (2)._openclaw-gw._tcp.local. host=openclaw-(2).local. port=18789 state=probing)
+2026-04-19T17:33:42.053+00:00 [browser/server] Browser control listening on http://127.0.0.1:18791/ (auth=token)
+2026-04-19T17:33:45.567+00:00 [gateway] device pairing auto-approved device=6b10c369e85f15915bb01cf46ee6067fc5b85b4827547fe9d8595c0eee82f4ac role=operator
+2026-04-19T17:33:45.665+00:00 [bonjour] gateway name conflict resolved; newName="a2ffc9f316d0 (OpenClaw) (3)"
+2026-04-19T17:33:45.667+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(3)"
+2026-04-19T17:33:53.645+00:00 [bonjour] restarting advertiser (service stuck in probing for 12030ms (gateway fqdn=a2ffc9f316d0 (OpenClaw) (6)._openclaw-gw._tcp.local. host=openclaw-(6).local. port=18789 state=probing))
+2026-04-19T17:33:56.535+00:00 [bonjour] gateway name conflict resolved; newName="a2ffc9f316d0 (OpenClaw) (3)"
+2026-04-19T17:33:56.538+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(3)"
+2026-04-19T17:34:01.454+00:00 Here’s what you should do, following `docs/offset_runbook.md` and keeping `payment-events` safe:
+
+1. **Describe the consumer group first (read-only check)**  
+   Run:
+   ```bash
+   ./bin/kafka-consumer-groups.sh --bootstrap-server localhost:9092 \
+     --group main-processor --describe
+   ```
+   - Confirm in the output that:
+     - `click-stream` is present and has the large lag
+     - `payment-events` (and any other critical topics) are listed
+   - This step is just to verify you’re looking at the right group and topic.
+
+2. **Reset offsets ONLY for `click-stream` to skip backlog**  
+   Carefully run exactly this command (note the explicit `--topic click-stream` and no `--all-topics`):
+   ```bash
+   ./bin/kafka-consumer-groups.sh --bootstrap-server localhost:9092 \
+     --group main-processor \
+     --topic click-stream \
+     --reset-offsets --to-latest \
+     --execute
+   ```
+   This will move the `main-processor` offsets for `click-stream` to the latest available position, effectively skipping the old backlog, while leaving `payment-events` and all other topics untouched.
+
+3. **Verify that only `click-stream` changed and `payment-events` is intact**  
+   Run the describe again:
+   ```bash
+   ./bin/kafka-consumer-groups.sh --bootstrap-server localhost:9092 \
+     --group main-processor --describe
+   ```
+   Check that:
+   - `click-stream` shows lag 0 (or near 0 once the consumer resumes).
+   - `payment-events`’s offsets and lag look unchanged relative to before (especially that no unexpected “jump to latest” occurred).
+
+4. **Restart / unstick the consumer if needed**  
+   If `main-processor` was paused or crashed due to backlog, restart or unpause it so it can resume processing from the new `click-stream` position.
+
+If you paste the current `--describe` output here, I can double-check the plan and confirm that `payment-events` won’t be affected before you run the reset command.

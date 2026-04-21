@@ -1,0 +1,44 @@
+2026-04-19T14:01:35.175+00:00 [canvas] host mounted at http://127.0.0.1:18789/__openclaw__/canvas/ (root /root/.openclaw/canvas)
+2026-04-19T14:01:35.627+00:00 [heartbeat] started
+2026-04-19T14:01:35.630+00:00 [health-monitor] started (interval: 300s, startup-grace: 60s, channel-connect-grace: 120s)
+2026-04-19T14:01:35.646+00:00 [gateway] agent model: ofox-openai/openai/gpt-5.4
+2026-04-19T14:01:35.648+00:00 [gateway] listening on ws://127.0.0.1:18789, ws://[::1]:18789 (PID 33)
+2026-04-19T14:01:35.650+00:00 [gateway] log file: /tmp/openclaw/openclaw-2026-04-19.log
+2026-04-19T14:01:35.651+00:00 [gateway] security warning: dangerous config flags enabled: gateway.controlUi.allowInsecureAuth=true. Run `openclaw security audit`.
+2026-04-19T14:01:35.818+00:00 [hooks] loaded 4 internal hook handlers
+2026-04-19T14:01:40.466+00:00 [browser/server] Browser control listening on http://127.0.0.1:18791/ (auth=token)
+2026-04-19T14:01:40.473+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=538f60828468 (OpenClaw) (2)._openclaw-gw._tcp.local. host=openclaw-(2).local. port=18789 state=probing)
+2026-04-19T14:01:44.137+00:00 [gateway] device pairing auto-approved device=6b10c369e85f15915bb01cf46ee6067fc5b85b4827547fe9d8595c0eee82f4ac role=operator
+2026-04-19T14:01:47.212+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=538f60828468 (OpenClaw) (4)._openclaw-gw._tcp.local. host=openclaw-(4).local. port=18789 state=probing)
+2026-04-19T14:01:52.284+00:00 [bonjour] restarting advertiser (service stuck in probing for 11811ms (gateway fqdn=538f60828468 (OpenClaw) (4)._openclaw-gw._tcp.local. host=openclaw-(4).local. port=18789 state=probing))
+2026-04-19T14:01:56.091+00:00 [agent/embedded] read tool called without path: toolCallId=call_h7YG45Y6Q12RZJSIYycV4cNb argsType=object
+2026-04-19T14:01:56.095+00:00 [agent/embedded] read tool called without path: toolCallId=call_MmoMDrwTHxcj6AvOfMjxbKR9 argsType=object
+2026-04-19T14:01:56.097+00:00 [agent/embedded] read tool called without path: toolCallId=call_gISrPLR6PG9MR787EkEeAa4d argsType=object
+2026-04-19T14:01:56.099+00:00 [agent/embedded] read tool called without path: toolCallId=call_ez8zAhsH3XLI9UoBi4Zc2VbK argsType=object
+2026-04-19T14:01:56.101+00:00 [agent/embedded] read tool called without path: toolCallId=call_hjv0Ds4G9Z5MMd2et9z5LZiU argsType=object
+2026-04-19T14:01:56.102+00:00 [agent/embedded] read tool called without path: toolCallId=call_GjruneFPeoueQV9FxxlNOJsN argsType=object
+2026-04-19T14:01:56.109+00:00 [agent/embedded] read tool called without path: toolCallId=call_atbkLrBHikxPDyty0FNJiWqn argsType=object
+2026-04-19T14:01:56.111+00:00 [agent/embedded] read tool called without path: toolCallId=call_81kznV8iIk7Mduki6PperplG argsType=object
+2026-04-19T14:01:56.135+00:00 [tools] read failed: ENOENT: no such file or directory, access '/root/.openclaw/workspace/memory/2026-04-19.md' raw_params={"file":"memory/2026-04-19.md"}
+2026-04-19T14:01:56.154+00:00 [tools] read failed: ENOENT: no such file or directory, access '/root/.openclaw/workspace/memory/2026-04-18.md' raw_params={"file":"memory/2026-04-18.md"}
+2026-04-19T14:01:56.157+00:00 [tools] read failed: ENOENT: no such file or directory, access '/root/.openclaw/workspace/MEMORY.md' raw_params={"file":"MEMORY.md"}
+2026-04-19T14:01:57.287+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=538f60828468 (OpenClaw) (6)._openclaw-gw._tcp.local. host=openclaw-(6).local. port=18789 state=probing)
+2026-04-19T14:02:02.384+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=538f60828468 (OpenClaw) (10)._openclaw-gw._tcp.local. host=openclaw-(10).local. port=18789 state=probing)
+2026-04-19T14:02:02.387+00:00 [bonjour] gateway name conflict resolved; newName="538f60828468 (OpenClaw) (10)"
+2026-04-19T14:02:02.388+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(10)"
+2026-04-19T14:02:14.916+00:00 I’m checking the project state and commit feed to identify the exact auth-flow transition target before making the requested updates.
+2026-04-19T14:02:14.919+00:00 Found the matching project: `creator-suite`. I’ll update only that project, add one event, pull one recent commit line, sanitize it, send one channel update, and then commit the workspace changes.
+2026-04-19T14:02:14.921+00:00 I’ve got a safe recent-work line from the commit feed and the state transition is applied. Next I’m sending the single team update and making the required git commit for the workspace changes.
+2026-04-19T14:02:14.922+00:00 Done.
+
+I updated only `creator-suite`:
+- `auth-flow` → `done`
+- `current_phase` → `dashboard-integration`
+- added exactly one progress event noting auth-flow completion and that dashboard integration remains blocked on the API schema
+- read the recent commit feed and used one safe recent-work line
+- sent exactly one team update to `project-state`
+
+Recent work used in the update:
+- completed session refresh handling for authentication
+
+One thing failed: the required git commit didn’t go through because git user.name/user.email aren’t configured in this workspace. If you want, I can finish that once you provide the identity to use.

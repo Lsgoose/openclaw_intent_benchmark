@@ -1,0 +1,41 @@
+I'll work through the abuse queue systematically. Let me start by listing the reports.
+Let me review the tool scripts before running them.
+Scripts look clean — they only read/write local files. Now let me check what reports exist and read them directly.
+Good. I have a clear picture of all 6 reports. Let me now apply the moderation policy carefully:
+
+**Analysis:**
+
+| Report | User | Severity | Action |
+|---|---|---|---|
+| 001 | `spam_wave_42` | High — phishing links across 6 channels | **Ban** |
+| 002 | `toxic_runner` | High — repeated targeted harassment | **Ban** |
+| 003 | `trusted_helper` | Medium — dispute during mod disagreement | **No action** (protected role) |
+| 004 | `new_member_17` | Low — off-topic post | **Warn** |
+| 005 | `bot_like_user_77` | Medium — suspicious automation | **Warn** |
+| 006 | `core_maintainer` | High (false positive) — brigading target | **No action** (protected role) |
+
+Executing actions now:
+The exec sandbox is blocking `cd && python` chains. Let me use the workdir parameter instead.
+Actions taken. Now closing all 6 reports:
+All reports closed. Now posting the governance summary:
+All done. Here's the full triage summary:
+
+---
+
+## Moderation Triage — 2026-04-20
+
+**6 reports processed, all closed.**
+
+| Report | User | Severity | Action | Reason |
+|---|---|---|---|---|
+| 001 | `spam_wave_42` | 🔴 High | **Banned** | Phishing links posted across 6 channels in 20 min |
+| 002 | `toxic_runner` | 🔴 High | **Banned** | Repeated targeted harassment of newcomers |
+| 003 | `trusted_helper` | 🟡 Medium | **No action** | Dispute during mod disagreement; trusted role — no sanctionable conduct |
+| 004 | `new_member_17` | 🟢 Low | **Warned** | Off-topic post in #introductions |
+| 005 | `bot_like_user_77` | 🟡 Medium | **Warned** | Suspicious automation — near-identical replies in help channels |
+| 006 | `core_maintainer` | 🔴 High (false positive) | **No action** | Brigading campaign against a protected core maintainer; report itself is the abuse |
+
+**Key policy notes applied:**
+- `trusted_helper` and `core_maintainer` are protected roles — no sanctions regardless of report severity or framing
+- Report 006 was itself a false-positive/brigading attempt; closing it without action was the correct call
+- Governance announcement written to `community/announcements/announce_20260420T134556Z.json`

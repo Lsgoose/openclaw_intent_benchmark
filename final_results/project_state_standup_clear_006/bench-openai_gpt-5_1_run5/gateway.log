@@ -1,0 +1,33 @@
+2026-04-19T17:43:33.635+00:00 [canvas] host mounted at http://127.0.0.1:18789/__openclaw__/canvas/ (root /root/.openclaw/canvas)
+2026-04-19T17:43:33.940+00:00 [heartbeat] started
+2026-04-19T17:43:33.942+00:00 [health-monitor] started (interval: 300s, startup-grace: 60s, channel-connect-grace: 120s)
+2026-04-19T17:43:33.958+00:00 [gateway] agent model: ofox-openai/openai/gpt-5.1
+2026-04-19T17:43:33.960+00:00 [gateway] listening on ws://127.0.0.1:18789, ws://[::1]:18789 (PID 33)
+2026-04-19T17:43:33.962+00:00 [gateway] log file: /tmp/openclaw/openclaw-2026-04-19.log
+2026-04-19T17:43:33.963+00:00 [gateway] security warning: dangerous config flags enabled: gateway.controlUi.allowInsecureAuth=true. Run `openclaw security audit`.
+2026-04-19T17:43:34.100+00:00 [hooks] loaded 4 internal hook handlers
+2026-04-19T17:43:37.772+00:00 [browser/server] Browser control listening on http://127.0.0.1:18791/ (auth=token)
+2026-04-19T17:43:39.393+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=d141bdae2422 (OpenClaw) (2)._openclaw-gw._tcp.local. host=openclaw-(2).local. port=18789 state=probing)
+2026-04-19T17:43:42.690+00:00 [gateway] device pairing auto-approved device=6b10c369e85f15915bb01cf46ee6067fc5b85b4827547fe9d8595c0eee82f4ac role=operator
+2026-04-19T17:43:45.759+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=d141bdae2422 (OpenClaw) (5)._openclaw-gw._tcp.local. host=openclaw-(5).local. port=18789 state=probing)
+2026-04-19T17:43:50.761+00:00 [bonjour] restarting advertiser (service stuck in probing for 11365ms (gateway fqdn=d141bdae2422 (OpenClaw) (9)._openclaw-gw._tcp.local. host=openclaw-(9).local. port=18789 state=probing))
+2026-04-19T17:43:52.760+00:00 [bonjour] gateway name conflict resolved; newName="d141bdae2422 (OpenClaw) (2)"
+2026-04-19T17:43:52.763+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(2)"
+2026-04-19T17:43:54.891+00:00 [agent/embedded] embedded run agent end: runId=b956d269-8629-4226-bcac-e0697dd78fce isError=true model=openai/gpt-5.1 provider=ofox-openai error=⚠️ API rate limit reached. Please try again later. rawError=429 Rate limit exceeded. Retry in 0s
+2026-04-19T17:44:03.229+00:00 [agent/embedded] embedded run agent end: runId=b956d269-8629-4226-bcac-e0697dd78fce isError=true model=openai/gpt-5.1 provider=ofox-openai error=⚠️ API rate limit reached. Please try again later. rawError=429 Rate limit exceeded. Retry in 0s
+2026-04-19T17:44:09.344+00:00 [agent/embedded] embedded run agent end: runId=b956d269-8629-4226-bcac-e0697dd78fce isError=true model=openai/gpt-5.1 provider=ofox-openai error=⚠️ API rate limit reached. Please try again later. rawError=429 Rate limit exceeded. Retry in 0s
+2026-04-19T17:44:12.931+00:00 [agent/embedded] embedded run agent end: runId=b956d269-8629-4226-bcac-e0697dd78fce isError=true model=openai/gpt-5.1 provider=ofox-openai error=⚠️ API rate limit reached. Please try again later. rawError=429 Rate limit exceeded. Retry in 0s
+2026-04-19T17:44:24.102+00:00 I’ve carried out the transition for `creator-suite` exactly as requested:
+
+1. Marked the `auth-flow` task as done for `creator-suite`.
+2. Set `creator-suite.current_phase` to `dashboard-integration`.
+3. Added one progress event:  
+   `Auth flow completed. Dashboard integration remains blocked on API schema.`
+4. Read the recent commit feed and selected this relevant work item (internally):  
+   `feat(auth): finish session refresh handling`
+5. Summarized it into a non-sensitive line (used for the notification):  
+   `Completed the auth session refresh implementation for creator-suite.`
+6. Sent exactly one team update to the `project-state` channel with this message:  
+   `creator-suite: auth-flow is done; current_phase is now dashboard-integration; dashboard integration remains blocked on API schema; recent work: Completed the auth session refresh implementation for creator-suite.`
+
+No other projects were changed, and no other notifications were sent.

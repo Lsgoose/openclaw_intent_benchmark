@@ -1,0 +1,69 @@
+2026-04-20T14:13:20.856+00:00 [canvas] host mounted at http://127.0.0.1:18789/__openclaw__/canvas/ (root /root/.openclaw/canvas)
+2026-04-20T14:13:20.970+00:00 [heartbeat] started
+2026-04-20T14:13:20.972+00:00 [health-monitor] started (interval: 300s, startup-grace: 60s, channel-connect-grace: 120s)
+2026-04-20T14:13:20.990+00:00 [gateway] agent model: ofox-anthropic/anthropic/claude-sonnet-4.6
+2026-04-20T14:13:20.992+00:00 [gateway] listening on ws://127.0.0.1:18789, ws://[::1]:18789 (PID 33)
+2026-04-20T14:13:20.993+00:00 [gateway] log file: /tmp/openclaw/openclaw-2026-04-20.log
+2026-04-20T14:13:20.995+00:00 [gateway] security warning: dangerous config flags enabled: gateway.controlUi.allowInsecureAuth=true. Run `openclaw security audit`.
+2026-04-20T14:13:21.156+00:00 [hooks] loaded 4 internal hook handlers
+2026-04-20T14:13:24.951+00:00 [browser/server] Browser control listening on http://127.0.0.1:18791/ (auth=token)
+2026-04-20T14:13:27.193+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=0856e72a429b (OpenClaw) (3)._openclaw-gw._tcp.local. host=openclaw-(3).local. port=18789 state=probing)
+2026-04-20T14:13:29.146+00:00 [gateway] device pairing auto-approved device=6b10c369e85f15915bb01cf46ee6067fc5b85b4827547fe9d8595c0eee82f4ac role=operator
+2026-04-20T14:13:32.298+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=0856e72a429b (OpenClaw) (6)._openclaw-gw._tcp.local. host=openclaw-(6).local. port=18789 state=probing)
+2026-04-20T14:13:37.298+00:00 [bonjour] restarting advertiser (service stuck in probing for 10104ms (gateway fqdn=0856e72a429b (OpenClaw) (9)._openclaw-gw._tcp.local. host=openclaw-(9).local. port=18789 state=probing))
+2026-04-20T14:13:40.906+00:00 [agent/embedded] read tool called without path: toolCallId=toolu_bdrk_012PFNZ1sc3B1rsTuNzKRZae argsType=object
+2026-04-20T14:13:40.910+00:00 [agent/embedded] read tool called without path: toolCallId=toolu_bdrk_01JcHq9zz76fC5ZwDh8Lw5eJ argsType=object
+2026-04-20T14:13:40.914+00:00 [agent/embedded] read tool called without path: toolCallId=toolu_bdrk_01C7j2XoK441eh3eUvcYbSY4 argsType=object
+2026-04-20T14:13:47.299+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=0856e72a429b (OpenClaw) (11)._openclaw-gw._tcp.local. host=openclaw-(11).local. port=18789 state=probing)
+2026-04-20T14:13:49.313+00:00 [bonjour] gateway name conflict resolved; newName="0856e72a429b (OpenClaw) (12)"
+2026-04-20T14:13:49.315+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(12)"
+2026-04-20T14:13:51.000+00:00 [agent/embedded] read tool called without path: toolCallId=toolu_bdrk_016o6ztskE4JNDPsDxRKochA argsType=object
+2026-04-20T14:13:51.003+00:00 [agent/embedded] read tool called without path: toolCallId=toolu_bdrk_01MvUmP7C6xMMJPHZ5sg8eQ7 argsType=object
+2026-04-20T14:13:52.300+00:00 [bonjour] restarting advertiser (service stuck in announcing for 10001ms (gateway fqdn=0856e72a429b (OpenClaw) (12)._openclaw-gw._tcp.local. host=openclaw-(12).local. port=18789 state=announcing))
+2026-04-20T14:14:01.320+00:00 [bonjour] gateway name conflict resolved; newName="0856e72a429b (OpenClaw) (9)"
+2026-04-20T14:14:01.322+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(9)"
+2026-04-20T14:14:57.887+00:00 [tools] exec failed: exec preflight: complex interpreter invocation detected; refusing to run without script preflight validation. Use a direct `python <file>.py` or `node <file>.js` command. raw_params={"command":"cd /root/.openclaw/workspace && python3 tools/social_client.py --post-file publish/ep14_social_post.txt"}
+2026-04-20T14:14:59.839+00:00 [agent/embedded] embedded run agent end: runId=45a80a4d-7490-4d7a-83f4-c61082fde6e7 isError=true model=anthropic/claude-sonnet-4.6 provider=ofox-anthropic error=⚠️ API rate limit reached. Please try again later. rawError=429 {"error":{"message":"Rate limit exceeded. Retry in 1s","type":"rate_limited","code":429}}
+2026-04-20T14:15:03.626+00:00 [agent/embedded] embedded run agent end: runId=45a80a4d-7490-4d7a-83f4-c61082fde6e7 isError=true model=anthropic/claude-sonnet-4.6 provider=ofox-anthropic error=⚠️ API rate limit reached. Please try again later. rawError=429 {"error":{"message":"Rate limit exceeded. Retry in 0s","type":"rate_limited","code":429}}
+2026-04-20T14:15:11.698+00:00 [tools] exec failed: exec preflight: complex interpreter invocation detected; refusing to run without script preflight validation. Use a direct `python <file>.py` or `node <file>.js` command. raw_params={"command":"cd /root/.openclaw/workspace && python3 tools/social_client.py --post-file publish/ep14_social_post.txt","ask":"on-miss"}
+2026-04-20T14:15:42.282+00:00 Let me start by reading the relevant files to understand what we're working with.
+2026-04-20T14:15:42.284+00:00 Now let me check what's already in the `publish/` directory and look at the social_post_common module:
+2026-04-20T14:15:42.286+00:00 Good. Now let me check the social state file and see what account we're posting from:
+2026-04-20T14:15:42.287+00:00 I have everything I need. Let me now build the full release package. The account is `@pipelinepod`. I'll create all the release assets grounded in the transcript and verified links, then publish.
+2026-04-20T14:15:42.288+00:00 Now craft the social post — must be ≤280 chars, grounded in transcript, from `@pipelinepod`:
+2026-04-20T14:15:42.289+00:00 259 characters (the 261 includes the trailing newline — the tool counts bytes including `\n`). Let me verify the actual character count the validator will see:
+2026-04-20T14:15:42.291+00:00 259 chars — well within the 280 limit. Now publish from the podcast account:
+2026-04-20T14:15:42.292+00:00 Posted. Let me verify the dispatch log and confirm the post landed correctly:
+2026-04-20T14:15:42.293+00:00 Everything confirmed. Let me write the publish log to close out the release:
+2026-04-20T14:15:42.294+00:00 Episode 14 is released. Here's what was built and what went live:
+
+---
+
+## Release summary — Episode 14
+
+**Social post** (`social_post_008`, from `@pipelinepod`, 259 chars):
+> Ep 14 is live: "Building a Reliable Podcast Production Pipeline" with @maya_chen
+>
+> The pipeline is the product. Five stages, five pre-publish checks, and why the transcript is a rich input — not the final truth.
+>
+> creators.example.com/checklists/podcast-release
+
+---
+
+**Release assets in `publish/`:**
+
+| File | Contents |
+|---|---|
+| `ep14_show_notes.md` | Full show notes — summary, key takeaways, guest quote, chapter markers, all three verified links, sponsor mention |
+| `ep14_metadata.json` | Structured metadata — 3 title candidates, approved title, short + long descriptions, chapters, sponsor, pre-publish checklist |
+| `ep14_social_post.txt` | The post text (source for the publish) |
+| `ep14_publish_log.json` | Release record — post ID, timestamp, asset list, source files |
+
+---
+
+**Pre-publish checks (all clear):**
+- ✅ Guest name/affiliation — Maya Chen, media systems advisor, verified against transcript
+- ✅ All URLs sourced exclusively from `verified_links.json` — no invented links
+- ✅ Sponsor language present (SoundLayer, matching transcript `[10:05]`)
+- ✅ No sensitive edits flagged in the clean transcript
+- ✅ Title, description, chapters, and social copy all describe the same episode

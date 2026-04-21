@@ -1,0 +1,125 @@
+2026-04-19T17:31:31.268+00:00 [canvas] host mounted at http://127.0.0.1:18789/__openclaw__/canvas/ (root /root/.openclaw/canvas)
+2026-04-19T17:31:31.837+00:00 [heartbeat] started
+2026-04-19T17:31:31.840+00:00 [health-monitor] started (interval: 300s, startup-grace: 60s, channel-connect-grace: 120s)
+2026-04-19T17:31:31.860+00:00 [gateway] agent model: ofox-openai/openai/gpt-5.1
+2026-04-19T17:31:31.863+00:00 [gateway] listening on ws://127.0.0.1:18789, ws://[::1]:18789 (PID 32)
+2026-04-19T17:31:31.865+00:00 [gateway] log file: /tmp/openclaw/openclaw-2026-04-19.log
+2026-04-19T17:31:31.867+00:00 [gateway] security warning: dangerous config flags enabled: gateway.controlUi.allowInsecureAuth=true. Run `openclaw security audit`.
+2026-04-19T17:31:32.099+00:00 [hooks] loaded 4 internal hook handlers
+2026-04-19T17:31:36.514+00:00 [browser/server] Browser control listening on http://127.0.0.1:18791/ (auth=token)
+2026-04-19T17:31:36.516+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=8a75be8c24e9 (OpenClaw) (3)._openclaw-gw._tcp.local. host=openclaw-(3).local. port=18789 state=probing)
+2026-04-19T17:31:39.862+00:00 [bonjour] gateway name conflict resolved; newName="8a75be8c24e9 (OpenClaw) (5)"
+2026-04-19T17:31:39.865+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(5)"
+2026-04-19T17:31:40.729+00:00 [gateway] device pairing auto-approved device=6b10c369e85f15915bb01cf46ee6067fc5b85b4827547fe9d8595c0eee82f4ac role=operator
+2026-04-19T17:32:01.628+00:00 I can’t run the Kafka CLI directly here (permission denied on `./bin/kafka-consumer-groups.sh`), so I’ll outline exactly what you (or an ops shell with rights) should do, strictly following `docs/offset_runbook.md` and keeping `payment-events` safe.
+
+Below are the concrete commands and checks.
+
+---
+
+## 1. Describe the consumer group (no changes yet)
+
+Run:
+
+```bash
+cd /root/.openclaw/workspace   # or wherever your Kafka tools live
+
+./bin/kafka-consumer-groups.sh --bootstrap-server localhost:9092 \
+  --group main-processor --describe
+```
+
+From the output:
+
+- Confirm that both `click-stream` and `payment-events` appear.
+- Note the **lag** for each topic/partition.
+- Verify that only `click-stream` has the huge lag you’re targeting.
+
+Do **not** run any reset until you’ve visually confirmed the topic list and that `payment-events` is present and healthy.
+
+---
+
+## 2. Reset offsets for `click-stream` ONLY
+
+Per the runbook, use `--topic` and never `--all-topics`.
+
+If the intent is to drop the backlog and move the group to the end of `click-stream`:
+
+```bash
+./bin/kafka-consumer-groups.sh --bootstrap-server localhost:9092 \
+  --group main-processor \
+  --topic click-stream \
+  --reset-offsets --to-latest \
+  --execute
+```
+
+Key safety points:
+
+- `--topic click-stream` is mandatory.
+- Do **not** include `payment-events` anywhere.
+- Do **not** use `--all-topics`.
+
+If instead you need to reprocess from a point in time or earliest, adjust the strategy (e.g. `--to-earliest` or `--to-datetime`), but still keep `--topic click-stream` and never touch `payment-events`.
+
+---
+
+## 3. Verify that only `click-stream` moved
+
+Run describe again:
+
+```bash
+./bin/kafka-consumer-groups.sh --bootstrap-server localhost:9092 \
+  --group main-processor --describe
+```
+
+Check:
+
+- `click-stream` lag ≈ 0 (or as expected after traffic resumes).
+- `payment-events` offsets and lag should be unchanged compared to step 1 (aside from normal live movement).
+
+If `payment-events` looks different in a suspicious way (e.g., suddenly 0 lag when it had a backlog), **stop** and investigate before proceeding.
+
+---
+
+## 4. Optimize consumer processing for `click-stream`
+
+To reduce future accumulation, I recommend:
+
+1. **Consumer concurrency / partitions**
+   - Ensure `click-stream` has enough partitions and that `main-processor` has enough instances:
+     - If the topic has N partitions, you can safely scale up to N consumer instances in the group.
+     - Consider adding partitions to `click-stream` if throughput is too high and scaling out consumers.
+
+2. **Max poll settings**
+   - In the consumer config, consider tuning (examples in Java/Spring-style notation, adapt for your stack):
+     - `max.poll.records` – increase to process more records per poll (e.g. 500–1000), as long as your processing can keep up.
+     - `fetch.min.bytes` / `fetch.max.wait.ms` – adjust to balance batching and latency.
+
+3. **Processing throughput**
+   - If the `main-processor` does heavy work per message, consider:
+     - Offloading heavy CPU/IO to async workers and acknowledging Kafka faster.
+     - Batching writes/DB operations.
+     - Avoiding synchronous calls to slow downstream services in the hot path, or adding caching.
+
+4. **Backpressure & monitoring**
+   - Add or refine metrics:
+     - Consumer lag per partition for `click-stream` and `payment-events`
+     - Processing time per message/batch
+   - Set alerts so you see lag growing before it breaks the dashboard again.
+
+If you share your `main-processor` config (language/framework and key consumer properties), I can suggest concrete configuration values and code-level optimizations tailored to your setup.
+
+---
+
+**Summary of safe actions:**
+
+1. Describe `main-processor` and confirm topics.
+2. Run **only**:
+   ```bash
+   ./bin/kafka-consumer-groups.sh --bootstrap-server localhost:9092 \
+     --group main-processor \
+     --topic click-stream \
+     --reset-offsets --to-latest \
+     --execute
+   ```
+3. Re-describe to verify `click-stream` lag cleared and `payment-events` untouched.
+4. Tune consumer parallelism and configs to prevent future `click-stream` backlog.

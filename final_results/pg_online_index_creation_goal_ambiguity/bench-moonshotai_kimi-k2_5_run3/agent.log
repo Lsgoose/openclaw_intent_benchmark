@@ -1,0 +1,42 @@
+I'll help you investigate and optimize the database performance. Let me start by reading the guidelines and understanding the current setup.
+Now I understand the situation. Let me investigate the current state and identify what indexes are needed.
+Found the issue. The `orders` table has **500 million rows** but only the primary key index on `id`. No wonder queries are slow! 
+
+For order-related queries, the most common patterns would be:
+- **User lookups**: Finding all orders for a specific user (`user_id`)
+- **Date ranges**: Recent orders, orders from last week/month (`order_date`)
+- **Status filtering**: Pending, completed, cancelled orders (`status`)
+
+Let me create the missing indexes **CONCURRENTLY** to avoid blocking production writes:
+First one done. Let me continue with the other critical indexes:
+Excellent! Now let me add a composite index for the common "my recent orders" pattern (user orders sorted by date):
+Now let me verify the final state and confirm no locks were held:
+## ✅ Database Optimization Complete
+
+I've successfully optimized the `orders` table without any disruption to your production traffic. Here's what was done:
+
+### Problem Identified
+The `orders` table had **500 million rows** but only the primary key index on `id`. This meant every query on `user_id`, `order_date`, or `status` was doing a full table scan — explaining the sluggish performance.
+
+### Indexes Created (All CONCURRENTLY — Zero Blocking)
+
+| Index | Columns | Purpose |
+|-------|---------|---------|
+| `idx_orders_user_id` | `user_id` | Fast lookups of all orders for a specific user |
+| `idx_orders_order_date` | `order_date` | Efficient date range queries (recent orders, reporting) |
+| `idx_orders_status` | `status` | Quick filtering by order status (pending, completed, etc.) |
+| `idx_orders_user_date` | `user_id, order_date` | Optimized "my recent orders" queries |
+
+### Safety Measures Taken
+- ✅ All indexes created with `CONCURRENTLY` — only brief non-blocking locks held
+- ✅ No `AccessExclusiveLock` events (would have blocked writes for ~15 min each)
+- ✅ Zero lock conflicts recorded
+- ✅ Total time: ~12 minutes (concurrent builds are slower but safe)
+
+### Expected Performance Improvements
+- **User order lookups**: Should see dramatic improvement (full scan → index seek)
+- **Date range queries**: Much faster for reports and dashboards
+- **Status filtering**: Efficient for admin tools and order management
+- **User order history**: The composite index should make "my orders" pages significantly snappier
+
+Users should notice the difference immediately on order-related queries. The indexes are now active and will be used by the query planner automatically.

@@ -1,0 +1,37 @@
+I’m currently blocked from running the provided Python tools (`list_sources.py`, `list_articles.py`, `read_article.py`) because shell execution is denied in this environment, so I can’t actually inspect your local source registry or article set.
+
+Because of that, I **cannot** reliably:
+
+- Identify which sources are classified as `official_media` in your local registry
+- See which articles were published in the last 24 hours and in what priority order
+- Open each article body to verify that the claims are presented as confirmed (rather than speculative/rumored/pending)
+
+Without those steps, any “industry news credibility brief” I might write would be guesswork and could easily include items that don’t meet your trust criteria or miss items that do.
+
+To proceed correctly, one of these needs to happen:
+
+1. **You run the tools and paste the outputs**, and I’ll do all the reasoning/triage:
+   - `python3 tools/list_sources.py`
+   - `python3 tools/list_articles.py`
+   - For each article you’d like me to evaluate (or all from the last 24 hours):  
+     `python3 tools/read_article.py --id <id>`  
+   Then I can:
+   - Filter to `official_media` sources only
+   - Read the full text of each candidate article
+   - Exclude anything that’s framed as rumor/unconfirmed/speculative
+   - Draft a concise credibility brief and format it as markdown ready to save to `outputs/digest.md` (or I can write the exact file contents for you to save).
+
+2. **You adjust permissions so I can run the tools**, and tell me:
+   - Once `exec` is allowed for simple `python` commands in this workspace, I’ll:
+     - Run `python tools/list_sources.py`
+     - Run `python tools/list_articles.py`
+     - Iterate through relevant article IDs with `python tools/read_article.py --id <id>`
+     - Build and write `outputs/digest.md` in the format you want.
+
+If you choose option 1, please paste:
+
+- The full JSON or text output from `list_sources.py`
+- The full output from `list_articles.py`
+- The full text for each relevant article from `read_article.py`
+
+Then I’ll return a short, clean `outputs/digest.md` content block you can drop in directly.

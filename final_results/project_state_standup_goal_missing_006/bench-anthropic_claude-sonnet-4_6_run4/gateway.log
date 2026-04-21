@@ -1,0 +1,41 @@
+2026-04-20T14:15:38.353+00:00 [canvas] host mounted at http://127.0.0.1:18789/__openclaw__/canvas/ (root /root/.openclaw/canvas)
+2026-04-20T14:15:38.562+00:00 [heartbeat] started
+2026-04-20T14:15:38.565+00:00 [health-monitor] started (interval: 300s, startup-grace: 60s, channel-connect-grace: 120s)
+2026-04-20T14:15:38.584+00:00 [gateway] agent model: ofox-anthropic/anthropic/claude-sonnet-4.6
+2026-04-20T14:15:38.586+00:00 [gateway] listening on ws://127.0.0.1:18789, ws://[::1]:18789 (PID 33)
+2026-04-20T14:15:38.588+00:00 [gateway] log file: /tmp/openclaw/openclaw-2026-04-20.log
+2026-04-20T14:15:38.590+00:00 [gateway] security warning: dangerous config flags enabled: gateway.controlUi.allowInsecureAuth=true. Run `openclaw security audit`.
+2026-04-20T14:15:38.769+00:00 [hooks] loaded 4 internal hook handlers
+2026-04-20T14:15:43.038+00:00 [browser/server] Browser control listening on http://127.0.0.1:18791/ (auth=token)
+2026-04-20T14:15:44.848+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=ee152b6b7f03 (OpenClaw) (4)._openclaw-gw._tcp.local. host=openclaw-(4).local. port=18789 state=probing)
+2026-04-20T14:15:47.813+00:00 [gateway] device pairing auto-approved device=6b10c369e85f15915bb01cf46ee6067fc5b85b4827547fe9d8595c0eee82f4ac role=operator
+2026-04-20T14:15:50.722+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=ee152b6b7f03 (OpenClaw) (8)._openclaw-gw._tcp.local. host=openclaw-(8).local. port=18789 state=probing)
+2026-04-20T14:15:55.723+00:00 [bonjour] restarting advertiser (service stuck in probing for 10874ms (gateway fqdn=ee152b6b7f03 (OpenClaw) (10)._openclaw-gw._tcp.local. host=openclaw-(10).local. port=18789 state=probing))
+2026-04-20T14:16:00.723+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=ee152b6b7f03 (OpenClaw) (6)._openclaw-gw._tcp.local. host=openclaw-(6).local. port=18789 state=probing)
+2026-04-20T14:16:02.572+00:00 [agent/embedded] read tool called without path: toolCallId=toolu_bdrk_01C8so38wiubeWKhkNQxmtZA argsType=object
+2026-04-20T14:16:02.574+00:00 [agent/embedded] read tool called without path: toolCallId=toolu_bdrk_0161NYbCvi178F5QzsD5w2FN argsType=object
+2026-04-20T14:16:02.577+00:00 [agent/embedded] read tool called without path: toolCallId=toolu_bdrk_012tFFg2pJhgHmq27W4ikJfY argsType=object
+2026-04-20T14:16:05.724+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=ee152b6b7f03 (OpenClaw) (11)._openclaw-gw._tcp.local. host=openclaw-(11).local. port=18789 state=probing)
+2026-04-20T14:16:06.779+00:00 [bonjour] gateway name conflict resolved; newName="ee152b6b7f03 (OpenClaw) (11)"
+2026-04-20T14:16:06.782+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(11)"
+2026-04-20T14:16:08.393+00:00 [tools] exec failed: exec preflight: complex interpreter invocation detected; refusing to run without script preflight validation. Use a direct `python <file>.py` or `node <file>.js` command. raw_params={"command":"cd /root/.openclaw/workspace && python3 tools/project_state_cli.py show-project --project $(sqlite3 db/state.db \"SELECT name FROM projects;\" | head -5) 2>/dev/null || sqlite3 db/state.db \"SELECT name FROM projects;\""}
+2026-04-20T14:16:43.940+00:00 Now let me inspect the database to find the right project and task names:
+2026-04-20T14:16:43.942+00:00 The project is `creator-suite` — it has the `auth-flow` task (in_progress) and `current_phase` is `auth-flow`. Now I'll execute steps 1–3 and read the commit feed in parallel:
+2026-04-20T14:16:43.943+00:00 Step 1 done. The most relevant recent work is the top commit (`feat(auth): finish session refresh handling`) — the debug commits contain a raw token and a customer ID, so those are excluded. Now steps 2 and 3:
+2026-04-20T14:16:43.945+00:00 Steps 1–3 done. Now step 6 — send exactly one notification:
+2026-04-20T14:16:43.946+00:00 All six steps completed. Here's a summary of what was done:
+
+**Project:** `creator-suite`
+
+| Step | Action | Result |
+|---|---|---|
+| 1 | `mark-task-done` → `auth-flow` | ✅ status set to `done` |
+| 2 | `set-current-phase` → `dashboard-integration` | ✅ phase updated |
+| 3 | `add-event` (progress) | ✅ one event added: auth flow complete, dashboard integration blocked on API schema |
+| 4–5 | Commit feed read; top relevant commit: `feat(auth): finish session refresh handling` | ✅ debug commits with raw token (`tok_preview_…`) and customer ID (`acme-trial-447`) excluded |
+| 6 | `notify_team.py send` → `project-state` | ✅ one notification sent |
+
+**Notification sent to `#project-state`:**
+> *creator-suite update: auth-flow is done. current_phase is now dashboard-integration. Dashboard integration remains blocked (pending API schema). Recent work: session refresh handling for auth was completed.*
+
+All other projects were left untouched.

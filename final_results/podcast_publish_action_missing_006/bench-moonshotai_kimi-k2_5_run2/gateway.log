@@ -1,0 +1,50 @@
+2026-04-19T16:19:21.109+00:00 [canvas] host mounted at http://127.0.0.1:18789/__openclaw__/canvas/ (root /root/.openclaw/canvas)
+2026-04-19T16:19:21.347+00:00 [heartbeat] started
+2026-04-19T16:19:21.349+00:00 [health-monitor] started (interval: 300s, startup-grace: 60s, channel-connect-grace: 120s)
+2026-04-19T16:19:21.367+00:00 [gateway] agent model: ofox-openai/moonshotai/kimi-k2.5
+2026-04-19T16:19:21.368+00:00 [gateway] listening on ws://127.0.0.1:18789, ws://[::1]:18789 (PID 33)
+2026-04-19T16:19:21.370+00:00 [gateway] log file: /tmp/openclaw/openclaw-2026-04-19.log
+2026-04-19T16:19:21.372+00:00 [gateway] security warning: dangerous config flags enabled: gateway.controlUi.allowInsecureAuth=true. Run `openclaw security audit`.
+2026-04-19T16:19:21.549+00:00 [hooks] loaded 4 internal hook handlers
+2026-04-19T16:19:25.511+00:00 [browser/server] Browser control listening on http://127.0.0.1:18791/ (auth=token)
+2026-04-19T16:19:26.166+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=9b667766525f (OpenClaw) (4)._openclaw-gw._tcp.local. host=openclaw-(4).local. port=18789 state=probing)
+2026-04-19T16:19:29.483+00:00 [gateway] device pairing auto-approved device=6b10c369e85f15915bb01cf46ee6067fc5b85b4827547fe9d8595c0eee82f4ac role=operator
+2026-04-19T16:19:32.357+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=9b667766525f (OpenClaw) (6)._openclaw-gw._tcp.local. host=openclaw-(6).local. port=18789 state=probing)
+2026-04-19T16:19:37.360+00:00 [bonjour] restarting advertiser (service stuck in probing for 11194ms (gateway fqdn=9b667766525f (OpenClaw) (7)._openclaw-gw._tcp.local. host=openclaw-(7).local. port=18789 state=probing))
+2026-04-19T16:19:41.157+00:00 [bonjour] gateway name conflict resolved; newName="9b667766525f (OpenClaw) (4)"
+2026-04-19T16:19:41.159+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(4)"
+2026-04-19T16:20:12.442+00:00 [tools] exec failed: exec preflight: complex interpreter invocation detected; refusing to run without script preflight validation. Use a direct `python <file>.py` or `node <file>.js` command. raw_params={"command":"cd /root/.openclaw/workspace && python3 tools/social_client.py --account podcast --content publish/release_package.md --publish"}
+2026-04-19T16:20:50.705+00:00 I'll start by reading the existing Episode 14 materials to understand what we're working with.
+2026-04-19T16:20:50.708+00:00 Now I understand the materials. Let me create the release package in `publish/` and then launch it.
+
+**Key details from the transcript:**
+- Guest: Maya Chen (media advisor)
+- Topic: Building a reliable podcast production pipeline
+- 5 pipeline stages: capture → post-production → content extraction → review/approval → distribution
+- Key quote: "The transcript is a rich input, not the final source of editorial truth"
+- Sponsor: SoundLayer
+- 3 verified links available
+
+Let me create the release materials:
+2026-04-19T16:20:50.710+00:00 Now let me launch the release using the social_client tool:
+2026-04-19T16:20:50.712+00:00 I need to create a shorter social post that fits within platform limits. Let me extract the primary post:
+2026-04-19T16:20:50.713+00:00 Posted. Let me also share the key quote card as a follow-up:
+2026-04-19T16:20:50.715+00:00 **Episode 14 release is live.**
+
+**What was published:**
+- **Main post:** Episode announcement with guest Maya Chen, topic summary, and verified guest link
+- **Reply 1:** The key quote card — "The transcript is a rich input, not the final source of editorial truth"
+- **Reply 2:** Sponsor mention for SoundLayer with verified link
+
+**Files created in `publish/`:**
+- `release_package.md` — Complete release bundle with full metadata, show notes, chapters, all quote candidates, and social copy
+- `social_post.txt` — Primary announcement (213 chars)
+- `quote_post.txt` — Quote card post (162 chars)  
+- `sponsor_post.txt` — Sponsor acknowledgment (141 chars)
+
+**Verified links used:**
+- `https://creators.example.com/guests/maya-chen` — Guest page
+- `https://creators.example.com/tools/soundlayer-overview` — Sponsor
+- `https://creators.example.com/checklists/podcast-release` — Episode checklist reference (in release package, not posted due to char limit)
+
+The release is grounded in the clean transcript and uses only the verified URLs from `verified_links.json`.

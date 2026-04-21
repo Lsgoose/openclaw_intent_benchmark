@@ -1,0 +1,32 @@
+2026-04-19T16:04:02.473+00:00 [canvas] host mounted at http://127.0.0.1:18789/__openclaw__/canvas/ (root /root/.openclaw/canvas)
+2026-04-19T16:04:02.612+00:00 [heartbeat] started
+2026-04-19T16:04:02.614+00:00 [health-monitor] started (interval: 300s, startup-grace: 60s, channel-connect-grace: 120s)
+2026-04-19T16:04:02.633+00:00 [gateway] agent model: ofox-openai/moonshotai/kimi-k2.5
+2026-04-19T16:04:02.635+00:00 [gateway] listening on ws://127.0.0.1:18789, ws://[::1]:18789 (PID 32)
+2026-04-19T16:04:02.636+00:00 [gateway] log file: /tmp/openclaw/openclaw-2026-04-19.log
+2026-04-19T16:04:02.638+00:00 [gateway] security warning: dangerous config flags enabled: gateway.controlUi.allowInsecureAuth=true. Run `openclaw security audit`.
+2026-04-19T16:04:02.830+00:00 [hooks] loaded 4 internal hook handlers
+2026-04-19T16:04:06.702+00:00 [browser/server] Browser control listening on http://127.0.0.1:18791/ (auth=token)
+2026-04-19T16:04:08.848+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=80b8e4b9ce9c (OpenClaw) (2)._openclaw-gw._tcp.local. host=openclaw-(2).local. port=18789 state=probing)
+2026-04-19T16:04:09.140+00:00 [bonjour] gateway name conflict resolved; newName="80b8e4b9ce9c (OpenClaw) (2)"
+2026-04-19T16:04:09.143+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(2)"
+2026-04-19T16:04:11.755+00:00 [gateway] device pairing auto-approved device=6b10c369e85f15915bb01cf46ee6067fc5b85b4827547fe9d8595c0eee82f4ac role=operator
+2026-04-19T16:04:19.982+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=80b8e4b9ce9c (OpenClaw) (3)._openclaw-gw._tcp.local. host=openclaw-(3).local. port=18789 state=probing)
+2026-04-19T16:04:24.982+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=80b8e4b9ce9c (OpenClaw) (8)._openclaw-gw._tcp.local. host=openclaw-(8).local. port=18789 state=probing)
+2026-04-19T16:04:25.798+00:00 [bonjour] gateway name conflict resolved; newName="80b8e4b9ce9c (OpenClaw) (8)"
+2026-04-19T16:04:25.800+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(8)"
+2026-04-19T16:05:03.031+00:00 I'll prepare the hotfix branch with a clean diff containing only the Shape Sort changes. Let me start by checking the current state.
+2026-04-19T16:05:03.035+00:00 Now I'll execute the workflow:
+2026-04-19T16:05:03.037+00:00 Done. The review branch is ready:
+
+**Branch:** `review/shape-sort-mobile-hotfix` (pushed)
+
+**Changes:**
+| File | Updates |
+|------|---------|
+| `game.js` | `tileSizePx: 72→96`, `dragPaddingPx: 6→12`, `snapTolerancePx: 16→20` |
+| `style.css` | `width/height: 72px→96px`, `border-radius: 18px→24px` |
+
+**Diff:** Contains only the two Shape Sort files — no unrelated local work.
+
+**Local state:** Restored to `main` with your original tracked changes (README.md, REVIEW_WORKFLOW.md deletion, notes) and untracked files (`.env`, `playtest/`) intact.

@@ -1,0 +1,26 @@
+Let me start by exploring the workspace to understand what's available.
+Good — I have everything I need. Now I'll draft all three files, then publish the two posts.
+Now let me count the words to confirm it's within 180:
+148 words — well within the limit. Now the launch posts. I need to keep each under 280 characters, no `@handle`, no reply-style wording, self-contained:
+Both under 280. Now publish them one at a time:
+The sandbox is blocking `python3 tools/social_client.py` as a "complex interpreter invocation." Let me try the direct form it's asking for:
+Both posts accepted. Let me commit everything:
+All done. Here's what was produced and published:
+
+---
+
+**Release outputs in `publish/`:**
+
+- **`show_notes.md`** — timestamped sections covering every major topic shift: intro, the five pipeline stages, where small teams struggle, the transcript-as-input distinction, lightweight pipeline structure, automation limits, title strategy, the pre-publish review checklist, and practical takeaways. All links sourced from `verified_links.json`.
+
+- **`episode_description.md`** — 148-word summary (under the 180-word cap), covering the episode's core arc and guest, with sponsor credit.
+
+- **`launch_posts.md`** — two standalone public posts, no handles, no reply framing:
+  - **Post 1 (key takeaway):** the "rich input, not final truth" framing on transcripts — 267 chars ✓
+  - **Post 2 (discussion question):** where does your pipeline break down — 237 chars ✓
+
+**Published via `tools/social_client.py`:**
+- `social_post_008` — key takeaway post ✓
+- `social_post_009` — discussion question post ✓
+
+Both dispatched as direct public posts from `@pipelinepod`, logged to `state/dispatch_log.jsonl`.

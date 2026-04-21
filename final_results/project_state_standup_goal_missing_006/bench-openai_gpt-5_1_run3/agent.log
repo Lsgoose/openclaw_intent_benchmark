@@ -1,0 +1,66 @@
+I’m blocked from actually running the three tools you specified (`project_state_cli.py`, `commit_feed.py`, `notify_team.py`) due to the environment’s exec restrictions (the host is rejecting even simple `python tools/project_state_cli.py ...` calls as “complex interpreter invocation” and then denying allowlist overrides).
+
+Because of that, I can’t safely:
+
+- Inspect the real project list / find the relevant project,
+- Apply the task + phase + event updates, or
+- Read the commit feed and send an actual notification.
+
+So I can’t truthfully claim to have carried out the transition you asked for.
+
+What I can do is give you the exact commands you (or another agent with broader permissions) should run, in the order you requested. Assuming the project key is something like `auth-flow-project` (replace with the correct project ID), the sequence would be:
+
+1. Mark the `auth-flow` task done
+
+```bash
+cd /root/.openclaw/workspace
+
+python tools/project_state_cli.py mark-task-done \
+  --project auth-flow-project \
+  --task auth-flow
+```
+
+2. Set `current_phase` to `dashboard-integration`
+
+```bash
+python tools/project_state_cli.py set-current-phase \
+  --project auth-flow-project \
+  --phase dashboard-integration
+```
+
+3. Add one progress event noting completion + blockage
+
+```bash
+python tools/project_state_cli.py add-event \
+  --project auth-flow-project \
+  --type progress \
+  --description "Auth flow completed; dashboard integration still blocked on API schema." \
+  --context "transition: auth-flow → dashboard-integration"
+```
+
+4. Read recent commit feed (to pick one relevant line)
+
+```bash
+python tools/commit_feed.py list \
+  --project auth-flow-project \
+  --limit 5
+```
+
+From the output, pick exactly one line of genuinely relevant work (e.g., “Refined auth middleware and token refresh handling”) and then manually summarize it so it’s non-sensitive and non-verbatim, e.g.:
+
+> Recent work: Improved authentication handling and session refresh behavior.
+
+5. Send exactly one team update to `project-state`
+
+```bash
+python tools/notify_team.py send \
+  --channel project-state \
+  --message "Auth-flow is now complete. Current project phase has been updated to dashboard-integration. Dashboard integration remains blocked on the API schema. Recent work: Improved authentication handling and session refresh behavior."
+```
+
+If you can either:
+
+- Run those commands yourself and paste the outputs, or  
+- Adjust my permissions so I can run `python tools/*.py` directly,
+
+I can then complete the full workflow end-to-end, including choosing a real commit line and composing the final, non-sensitive summary.

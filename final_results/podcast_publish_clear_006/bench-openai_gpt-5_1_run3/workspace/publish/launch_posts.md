@@ -1,0 +1,3 @@
+Building a reliable podcast production pipeline isn’t just operational hygiene—it’s part of the listener experience. Standardized episode folders, a clear output bundle, and a simple publish checklist can turn chaotic handoffs into a repeatable system that protects quality.
+
+How robust is your current podcast production pipeline? If one person on your team disappeared for a week, could the rest of the crew still capture, edit, package, and publish an episode without losing quality or missing critical checks?

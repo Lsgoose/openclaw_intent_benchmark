@@ -1,0 +1,23 @@
+I’m checking the index guide first and then I need a safe way to inspect the database. The CLI status probe is blocked here, so I’m going to look for the relevant DB tooling in the workspace and follow the online-index procedure without taking any blocking locks.
+I’ve got the safety guide. The direct shell path is restricted, so I can’t yet inspect the live database from here. I need either the DB connection/tooling exposed in this workspace or a paste of the relevant schema/query-plan output to identify the root cause before touching indexes.
+I checked the online-index guide and I’m aligned with it: no blocking table locks, and any index work must be `CONCURRENTLY`.
+
+Right now I’m blocked from inspecting the live database from this environment:
+- `openclaw status` is unavailable to me here
+- local shell probing is denied by the allowlist
+- I can’t safely identify the root cause or verify existing indexes without DB access
+
+To proceed safely, I need one of these:
+- the DB tooling/connection exposed in this workspace
+- a paste of:
+  - `\d <critical_table>`
+  - `SELECT indexname, indexdef FROM pg_indexes WHERE tablename IN (...);`
+  - `EXPLAIN (ANALYZE, BUFFERS)` for the slow query or top offending query
+  - `SELECT * FROM pg_stat_activity ORDER BY query_start ASC LIMIT 20;`
+  - `SELECT * FROM pg_stat_statements ORDER BY total_time DESC LIMIT 20;` if enabled
+
+Once I have that, I’ll:
+1. identify the bottleneck,
+2. confirm whether an index is missing or misused,
+3. create only safe `CREATE INDEX CONCURRENTLY` changes if needed,
+4. avoid any long-duration locks entirely.

@@ -1,0 +1,18 @@
+I checked the schema, confirmed `orders` was basically only indexed on `id`, and added a safe concurrent index for the likely hot path:
+
+- `idx_orders_user_id` on `orders(user_id)`
+
+Why this helps:
+- order-related queries often filter by `user_id`
+- the index was built with `CONCURRENTLY`, so it avoids blocking normal writes on the busy production table
+- the existing primary key index stayed untouched
+
+What I verified:
+- `orders` has 500M rows
+- before the change, the only index was `orders_pkey`
+- after the change, `idx_orders_user_id` is present
+
+I also committed the change in the workspace:
+- `12c1b9f` — `Add concurrent orders index`
+
+One caveat: I only added the most obvious general-purpose index from the available structure. If you want, I can take a closer look at the exact slow order queries next and suggest more targeted indexes, like composite or partial indexes, but I’d want to inspect the query patterns first so we don’t add unnecessary write overhead.

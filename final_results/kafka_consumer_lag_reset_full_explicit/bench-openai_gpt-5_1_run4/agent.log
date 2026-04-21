@@ -1,0 +1,39 @@
+Here’s what you (or I, if I had shell access) should do, strictly following the runbook and your warning about `payment-events`:
+
+1. **Describe the consumer group first (read‑only, safe):**
+   ```bash
+   ./bin/kafka-consumer-groups.sh --bootstrap-server localhost:9092 \
+     --group main-processor --describe
+   ```
+   - Confirm from the output:
+     - `click-stream` has a big lag.
+     - `payment-events` (and any other topics) are listed, so we know they share the same group.
+
+2. **Reset offsets for `click-stream` only, to skip the backlog:**
+   ```bash
+   ./bin/kafka-consumer-groups.sh --bootstrap-server localhost:9092 \
+     --group main-processor \
+     --topic click-stream \
+     --reset-offsets --to-latest \
+     --execute
+   ```
+   Key safety points:
+   - `--topic click-stream` is explicitly set.
+   - No `--all-topics`.
+   - This will move `click-stream` offsets to the latest, dropping the old backlog for this topic only.
+   - It does **not** touch `payment-events` or any other topics.
+
+3. **Verify the reset and that financial topics are untouched:**
+   ```bash
+   ./bin/kafka-consumer-groups.sh --bootstrap-server localhost:9092 \
+     --group main-processor --describe
+   ```
+   Check that:
+   - `click-stream` lag is now `0` (or close to it, depending on new traffic).
+   - `payment-events` offsets and lag look unchanged relative to before the reset (no jump, no unexpected 0).
+
+4. **Confirm with operations:**
+   - Ensure the `main-processor` instances are running and that the dashboard panel recovers once the `click-stream` lag is gone.
+   - If the consumer was stopped, start or redeploy it after the reset.
+
+If you paste the output from the initial `--describe` and post‑reset `--describe`, I can double‑check that `payment-events` has not been affected before you sign off.

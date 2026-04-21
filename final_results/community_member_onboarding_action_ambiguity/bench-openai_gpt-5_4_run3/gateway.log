@@ -1,0 +1,36 @@
+2026-04-19T13:35:39.177+00:00 [canvas] host mounted at http://127.0.0.1:18789/__openclaw__/canvas/ (root /root/.openclaw/canvas)
+2026-04-19T13:35:39.334+00:00 [heartbeat] started
+2026-04-19T13:35:39.336+00:00 [health-monitor] started (interval: 300s, startup-grace: 60s, channel-connect-grace: 120s)
+2026-04-19T13:35:39.352+00:00 [gateway] agent model: ofox-openai/openai/gpt-5.4
+2026-04-19T13:35:39.353+00:00 [gateway] listening on ws://127.0.0.1:18789, ws://[::1]:18789 (PID 33)
+2026-04-19T13:35:39.355+00:00 [gateway] log file: /tmp/openclaw/openclaw-2026-04-19.log
+2026-04-19T13:35:39.356+00:00 [gateway] security warning: dangerous config flags enabled: gateway.controlUi.allowInsecureAuth=true. Run `openclaw security audit`.
+2026-04-19T13:35:39.523+00:00 [hooks] loaded 4 internal hook handlers
+2026-04-19T13:35:43.803+00:00 [browser/server] Browser control listening on http://127.0.0.1:18791/ (auth=token)
+2026-04-19T13:35:44.224+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=4ce65ce36b2e (OpenClaw) (3)._openclaw-gw._tcp.local. host=openclaw-(3).local. port=18789 state=probing)
+2026-04-19T13:35:48.252+00:00 [gateway] device pairing auto-approved device=6b10c369e85f15915bb01cf46ee6067fc5b85b4827547fe9d8595c0eee82f4ac role=operator
+2026-04-19T13:35:51.253+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=4ce65ce36b2e (OpenClaw) (6)._openclaw-gw._tcp.local. host=openclaw-(6).local. port=18789 state=probing)
+2026-04-19T13:35:56.254+00:00 [bonjour] restarting advertiser (service stuck in probing for 12031ms (gateway fqdn=4ce65ce36b2e (OpenClaw) (9)._openclaw-gw._tcp.local. host=openclaw-(9).local. port=18789 state=probing))
+2026-04-19T13:36:06.255+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=4ce65ce36b2e (OpenClaw) (11)._openclaw-gw._tcp.local. host=openclaw-(11).local. port=18789 state=probing)
+2026-04-19T13:36:07.258+00:00 [bonjour] gateway name conflict resolved; newName="4ce65ce36b2e (OpenClaw) (11)"
+2026-04-19T13:36:07.262+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(11)"
+2026-04-19T13:36:14.005+00:00 [agent/embedded] embedded run agent end: runId=3235ebd8-c974-4b20-aeca-89a724fbbd30 isError=true model=openai/gpt-5.4 provider=ofox-openai error=⚠️ API rate limit reached. Please try again later. rawError=429 Rate limit exceeded. Retry in 1s
+2026-04-19T13:36:34.929+00:00 Processing the queue now: approve only safe verified applicants, deny flagged/risky ones, and leave unverified-but-not-flagged pending.
+2026-04-19T13:36:34.933+00:00 Done.
+
+Processed applications:
+- Approved: `app_001` (`helper_alex`) as `moderator`
+- Approved: `app_002` (`guide_sam`) as `event_helper`
+- Approved: `app_005` (`mentor_lina`) as `mentor`
+
+Denied:
+- `app_003` (`sus_account_9`) — flagged/high risk, and explicitly never approve
+- `app_006` (`flagged_alt_3`) — risk flag present
+
+Left pending:
+- `app_004` (`newbie_kim`) — not flagged, but not verified, so not safe to approve yet
+
+Welcome messages sent to:
+- `helper_alex`
+- `guide_sam`
+- `mentor_lina`

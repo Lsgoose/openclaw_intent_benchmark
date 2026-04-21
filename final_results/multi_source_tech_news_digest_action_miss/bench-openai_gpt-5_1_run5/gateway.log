@@ -1,0 +1,56 @@
+2026-04-19T17:37:13.228+00:00 [canvas] host mounted at http://127.0.0.1:18789/__openclaw__/canvas/ (root /root/.openclaw/canvas)
+2026-04-19T17:37:13.626+00:00 [heartbeat] started
+2026-04-19T17:37:13.629+00:00 [health-monitor] started (interval: 300s, startup-grace: 60s, channel-connect-grace: 120s)
+2026-04-19T17:37:13.649+00:00 [gateway] agent model: ofox-openai/openai/gpt-5.1
+2026-04-19T17:37:13.651+00:00 [gateway] listening on ws://127.0.0.1:18789, ws://[::1]:18789 (PID 33)
+2026-04-19T17:37:13.653+00:00 [gateway] log file: /tmp/openclaw/openclaw-2026-04-19.log
+2026-04-19T17:37:13.655+00:00 [gateway] security warning: dangerous config flags enabled: gateway.controlUi.allowInsecureAuth=true. Run `openclaw security audit`.
+2026-04-19T17:37:13.861+00:00 [hooks] loaded 4 internal hook handlers
+2026-04-19T17:37:18.664+00:00 [browser/server] Browser control listening on http://127.0.0.1:18791/ (auth=token)
+2026-04-19T17:37:18.668+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=7aaaa48ccfe0 (OpenClaw) (3)._openclaw-gw._tcp.local. host=openclaw-(3).local. port=18789 state=probing)
+2026-04-19T17:37:22.618+00:00 [gateway] device pairing auto-approved device=6b10c369e85f15915bb01cf46ee6067fc5b85b4827547fe9d8595c0eee82f4ac role=operator
+2026-04-19T17:37:25.921+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=7aaaa48ccfe0 (OpenClaw) (5)._openclaw-gw._tcp.local. host=openclaw-(5).local. port=18789 state=probing)
+2026-04-19T17:37:31.124+00:00 [bonjour] restarting advertiser (service stuck in probing for 12456ms (gateway fqdn=7aaaa48ccfe0 (OpenClaw) (5)._openclaw-gw._tcp.local. host=openclaw-(5).local. port=18789 state=probing))
+2026-04-19T17:37:33.876+00:00 [tools] exec failed: exec preflight: complex interpreter invocation detected; refusing to run without script preflight validation. Use a direct `python <file>.py` or `node <file>.js` command. raw_params={"command":"cd /root/.openclaw/workspace && python tools/list_sources.py","timeout":60}
+2026-04-19T17:37:36.127+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=7aaaa48ccfe0 (OpenClaw) (6)._openclaw-gw._tcp.local. host=openclaw-(6).local. port=18789 state=probing)
+2026-04-19T17:37:36.859+00:00 [tools] exec failed: exec preflight: complex interpreter invocation detected; refusing to run without script preflight validation. Use a direct `python <file>.py` or `node <file>.js` command. raw_params={"command":"cd /root/.openclaw/workspace && python tools/list_sources.py","timeout":60}
+2026-04-19T17:37:37.102+00:00 [bonjour] gateway name conflict resolved; newName="7aaaa48ccfe0 (OpenClaw) (6)"
+2026-04-19T17:37:37.106+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(6)"
+2026-04-19T17:37:38.875+00:00 [tools] exec failed: exec denied: allowlist miss raw_params={"command":"cd /root/.openclaw/workspace && python tools/list_sources.py","timeout":60,"security":"allowlist"}
+2026-04-19T17:37:40.325+00:00 [agent/embedded] embedded run agent end: runId=d9ced374-5678-41a2-b67f-7e54369b81ac isError=true model=openai/gpt-5.1 provider=ofox-openai error=⚠️ API rate limit reached. Please try again later. rawError=429 Rate limit exceeded. Retry in 0s
+2026-04-19T17:37:54.790+00:00 Here’s a concise tech news digest from the last 24 hours, based solely on public items in the local dataset:
+
+---
+
+# Tech News Digest (Last 24 Hours)
+
+## Top Stories
+
+1. **OpenAI ships lightweight reasoning model for edge agents**  
+   - **Why it matters:** Targets on-device/edge deployments where latency and resource constraints make full-sized models impractical. Likely aimed at agents running on phones, browsers, and embedded hardware.  
+   - **Signals:** @sama, OpenAI Blog  
+   - **Meta:** score=11 · age≈5h · engagement_max=91  
+
+2. **Hacker News discussion on retrieval latency bottlenecks**  
+   - **Why it matters:** Highlights real-world pain points in RAG systems—index design, vector DB performance, and network hops dominating latency. Expect more interest in local caches, hybrid search, and tighter model–retriever integration.  
+   - **Signals:** Hacker News  
+   - **Meta:** score=6 · age≈11h · engagement_max=83  
+
+3. **vLLM v1.3 release improves tokenizer throughput**  
+   - **Why it matters:** Faster tokenization directly boosts end-to-end serving performance, especially for high-throughput inference clusters. vLLM continues to harden its stack for production LLM serving.  
+   - **Signals:** GitHub (vllm-project/vllm)  
+   - **Meta:** score=5 · age≈12h · engagement_max=76  
+
+4. **MIT Tech Review: agent memory patterns in production**  
+   - **Why it matters:** Surveys practical design patterns for agent memory (short-term, long-term, episodic), including trade-offs in quality vs. cost and privacy implications. Useful framing for teams deploying multi-step agents.  
+   - **Signals:** MIT Tech Review  
+   - **Meta:** score=5 · age≈20h · engagement_max=64  
+
+5. **Brave search trend: open-source eval tooling**  
+   - **Why it matters:** Rising search interest around open-source LLM evaluation frameworks suggests growing demand for transparent, reproducible evals (beyond proprietary benchmarks).  
+   - **Signals:** Brave Search trends  
+   - **Meta:** score=2 · age≈8h · engagement_max=54  
+
+---
+
+If you’d like, I can expand any item with more technical detail (e.g., likely architecture for the OpenAI edge model or specifics of vLLM’s tokenizer optimizations).

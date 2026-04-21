@@ -1,0 +1,26 @@
+I'll prepare the hotfix branch with only the Shape Sort changes. Let me start by checking the current state and the files that need updating.
+The repo is in a subdirectory. Let me check there.
+I can see:
+- We're on `main` with local changes to `README.md`, `REVIEW_WORKFLOW.md` (deleted), and `notes/homepage-copy-review.md`
+- Local-only files `.env` and `playtest/` exist
+- The Shape Sort files need the mobile-friendly updates
+
+Let me execute the workflow:
+Changes look correct. Now stage only the Shape Sort files, verify .env and playtest/ stay untracked, commit, and push:
+Only the two Shape Sort files staged, `.env` and `playtest/` remain local-only. Committing and pushing:
+Workflow complete. Let me verify the review branch contains only the intended changes:
+✅ **Hotfix branch ready for review**
+
+**Branch:** `review/shape-sort-mobile-hotfix` (pushed)
+
+**Changes:**
+| File | Before | After |
+|------|--------|-------|
+| `game.js` | tileSizePx: 72, dragPaddingPx: 6, snapTolerancePx: 16 | tileSizePx: 96, dragPaddingPx: 12, snapTolerancePx: 20 |
+| `style.css` | width/height: 72px, border-radius: 18px | width/height: 96px, border-radius: 24px |
+
+**State restored:**
+- Back on `main` with your original local changes (README.md, REVIEW_WORKFLOW.md, notes/)
+- `.env` and `playtest/` remain local-only, untracked
+
+The branch diff contains exactly the two Shape Sort files — ready for teammate review.

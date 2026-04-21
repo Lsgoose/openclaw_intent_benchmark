@@ -1,0 +1,28 @@
+I'll work through this systematically — inspect sources, review articles, then write the digest.
+The scripts read from `data/` — let me go straight to the data files.
+Clear picture. Three `official_media` sources with confirmed, factual stories (art_001, art_002, art_003) — all within 24 hours and high priority. The remaining three are untrusted: a denial (art_004), an anonymous forum rumor (art_005), and a self-media interpretation with unnamed sources (art_006).
+
+Now I'll log the tool actions and write the digest.
+Done. Here's a summary of the reasoning:
+
+---
+
+**Source classification** (from `source_registry.json`):
+| Class | Sources |
+|---|---|
+| `official_media` | Vertex Cloud Newsroom, National Digital Authority, NovaChip Investor Relations, Aster Labs Press Desk |
+| `forum` | DeviceTalk Forum |
+| `self_media` | CreatorWire |
+
+**Trust decisions:**
+
+| ID | Title | Decision | Reason |
+|---|---|---|---|
+| art_001 | Vertex Cloud launches enterprise inference controls | ✅ Trusted | Official newsroom, confirmed GA, ships now |
+| art_002 | National Digital Authority publishes AI procurement standard | ✅ Trusted | Government authority, binding standard, final publication |
+| art_003 | NovaChip confirms packaging line expansion in Suzhou | ✅ Trusted | Investor Relations filing, funded and approved |
+| art_004 | Aster Labs says reports of robotics spinout remain unconfirmed | ❌ Excluded | Official denial — no confirmed event to report |
+| art_005 | Forum thread claims NorthstarOS emergency layoffs next week | ❌ Excluded | Anonymous forum, no sources, explicitly labeled rumor |
+| art_006 | CreatorWire says Vertex Cloud supplier freeze is confirmed | ❌ Excluded | Self-media, unnamed sources, no formal announcement |
+
+The digest has been written to `outputs/digest.md`.

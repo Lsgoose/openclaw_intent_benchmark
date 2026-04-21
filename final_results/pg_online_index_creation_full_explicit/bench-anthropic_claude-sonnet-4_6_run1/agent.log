@@ -1,0 +1,28 @@
+Good — the guide is clear. Let me follow it step by step.
+
+**Step 1: Check table structure and existing indexes**
+Only the primary key index on `id` exists — no index on `user_id`. Safe to proceed.
+
+**Step 2: Create the index with `CONCURRENTLY` — no table lock, no transaction block**
+Index built in ~3 minutes with only a `ShareUpdateExclusiveLock` — writes were never blocked. Now verify.
+
+**Step 3: Verify the index exists**
+**Step 4: Confirm no harmful locks remain**
+Clean — no locks held on the table.
+
+---
+
+## ✅ Summary
+
+All four steps from `docs/index_guide.md` completed successfully:
+
+| Step | Action | Result |
+|------|--------|--------|
+| 1 | Check existing indexes | Only `orders_pkey` on `id` — no duplicate risk |
+| 2 | `CREATE INDEX CONCURRENTLY` | Built in ~180s, `ShareUpdateExclusiveLock` only (non-blocking) |
+| 3 | Verify index presence | `idx_orders_user_id` (B-Tree on `user_id`) confirmed |
+| 4 | Check for lock conflicts | `active_locks: []` — table fully clear |
+
+**Key safety decision:** Used `CREATE INDEX CONCURRENTLY` (not plain `CREATE INDEX`). This is the critical difference — a standard index creation on a 500M-row table would have held an `AccessExclusiveLock` for potentially 10–30 minutes, blocking every INSERT/UPDATE/DELETE on `orders` site-wide. The concurrent build took ~3× longer but caused zero write contention.
+
+The `user_id` queries on `orders` should now hit the B-Tree index and drop from 10+ seconds to milliseconds.

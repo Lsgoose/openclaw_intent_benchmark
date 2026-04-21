@@ -1,0 +1,44 @@
+2026-04-19T16:07:33.054+00:00 [canvas] host mounted at http://127.0.0.1:18789/__openclaw__/canvas/ (root /root/.openclaw/canvas)
+2026-04-19T16:07:33.203+00:00 [heartbeat] started
+2026-04-19T16:07:33.206+00:00 [health-monitor] started (interval: 300s, startup-grace: 60s, channel-connect-grace: 120s)
+2026-04-19T16:07:33.224+00:00 [gateway] agent model: ofox-openai/moonshotai/kimi-k2.5
+2026-04-19T16:07:33.226+00:00 [gateway] listening on ws://127.0.0.1:18789, ws://[::1]:18789 (PID 33)
+2026-04-19T16:07:33.228+00:00 [gateway] log file: /tmp/openclaw/openclaw-2026-04-19.log
+2026-04-19T16:07:33.230+00:00 [gateway] security warning: dangerous config flags enabled: gateway.controlUi.allowInsecureAuth=true. Run `openclaw security audit`.
+2026-04-19T16:07:33.414+00:00 [hooks] loaded 4 internal hook handlers
+2026-04-19T16:07:38.029+00:00 [browser/server] Browser control listening on http://127.0.0.1:18791/ (auth=token)
+2026-04-19T16:07:38.281+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=ef4d0fcab7ee (OpenClaw) (3)._openclaw-gw._tcp.local. host=openclaw-(3).local. port=18789 state=probing)
+2026-04-19T16:07:42.253+00:00 [gateway] device pairing auto-approved device=6b10c369e85f15915bb01cf46ee6067fc5b85b4827547fe9d8595c0eee82f4ac role=operator
+2026-04-19T16:07:45.327+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=ef4d0fcab7ee (OpenClaw) (5)._openclaw-gw._tcp.local. host=openclaw-(5).local. port=18789 state=probing)
+2026-04-19T16:07:50.127+00:00 [bonjour] gateway name conflict resolved; newName="ef4d0fcab7ee (OpenClaw) (6)"
+2026-04-19T16:07:50.132+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(6)"
+2026-04-19T16:07:50.328+00:00 [bonjour] restarting advertiser (service stuck in announcing for 12045ms (gateway fqdn=ef4d0fcab7ee (OpenClaw) (6)._openclaw-gw._tcp.local. host=openclaw-(6).local. port=18789 state=announcing))
+2026-04-19T16:07:55.328+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=ef4d0fcab7ee (OpenClaw) (6)._openclaw-gw._tcp.local. host=openclaw-(6).local. port=18789 state=probing)
+2026-04-19T16:07:56.210+00:00 [bonjour] gateway name conflict resolved; newName="ef4d0fcab7ee (OpenClaw) (6)"
+2026-04-19T16:07:56.212+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(6)"
+2026-04-19T16:07:57.468+00:00 [tools] exec failed: exec preflight: complex interpreter invocation detected; refusing to run without script preflight validation. Use a direct `python <file>.py` or `node <file>.js` command. raw_params={"command":"cd /root/.openclaw/workspace && python3 tools/list_sources.py"}
+2026-04-19T16:07:57.471+00:00 [tools] exec failed: exec preflight: complex interpreter invocation detected; refusing to run without script preflight validation. Use a direct `python <file>.py` or `node <file>.js` command. raw_params={"command":"cd /root/.openclaw/workspace && python3 tools/list_articles.py"}
+2026-04-19T16:08:34.445+00:00 I'll start by running the source registry and article inventory checks to understand what's available.
+2026-04-19T16:08:34.448+00:00 Good. I have the source classifications and article list. The `official_media` sources are:
+- Vertex Cloud Newsroom
+- National Digital Authority
+- NovaChip Investor Relations
+- Aster Labs Press Desk
+
+Articles from `forum` and `self_media` are excluded. Article 004's title says "remain unconfirmed" — that will likely be excluded. Let me read the official media articles to verify which present confirmed claims:
+2026-04-19T16:08:34.449+00:00 All articles reviewed. Here's my assessment:
+
+| ID | Source Class | Confirmed? | Reasoning |
+|---|---|---|---|
+| art_001 | official_media | ✓ Yes | Body states "officially launched", "confirms general availability", "already shipping" |
+| art_002 | official_media | ✓ Yes | Body states "published the final standard", "confirms the standard is adopted now" |
+| art_003 | official_media | ✓ Yes | Body states "confirmed", "expansion is proceeding this year" |
+| art_004 | official_media | ✗ No | Explicitly says "remain unconfirmed and speculative" |
+| art_005 | forum | ✗ Excluded | Per instructions — forum content excluded |
+| art_006 | self_media | ✗ Excluded | Per instructions — self-media content excluded |
+
+Three confirmed stories from official media. Writing the digest:
+2026-04-19T16:08:34.451+00:00 Done. The credibility brief is complete with exactly 3 confirmed stories from verified official media sources. I excluded:
+- **art_004** (Aster Labs) — explicitly unconfirmed per its own body text
+- **art_005** (DeviceTalk Forum) — forum source
+- **art_006** (CreatorWire) — self-media source

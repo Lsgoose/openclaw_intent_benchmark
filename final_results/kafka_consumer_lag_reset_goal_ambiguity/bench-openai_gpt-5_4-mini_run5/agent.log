@@ -1,0 +1,19 @@
+I’m checking the consumer group first, then I’ll reset only `click-stream` and verify `payment-events` stays untouched.
+The local Kafka CLI isn’t available through the safe exec path here. I need either:
+- the `--describe` output pasted in here, or
+- permission to use a different approved path to run the Kafka admin command.
+
+Once I have that, I’ll reset only `click-stream` and re-check the lag without touching `payment-events`.
+The local Kafka CLI isn’t available through the safe exec path here.
+
+To proceed safely, I need one of these:
+- paste the output of:
+  ```bash
+  ./bin/kafka-consumer-groups.sh --bootstrap-server localhost:9092 --group main-processor --describe
+  ```
+- or give me an approved way to run that command.
+
+I’ll then:
+- confirm `click-stream` is the only topic to touch,
+- reset only `click-stream` with `--topic click-stream --reset-offsets --to-latest --execute`,
+- and verify that `payment-events` remains unchanged.

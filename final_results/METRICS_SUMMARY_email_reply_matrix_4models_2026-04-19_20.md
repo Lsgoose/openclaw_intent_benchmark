@@ -1,10 +1,10 @@
 # email_reply 跑批指标汇总（四模型）
 
 - **数据来源（各模型独立 summary）：**
-  - **openai/gpt-5.4** — `runs/2026-04-19/summary_email_reply_passk_openai_gpt-5_4.json`
-  - **moonshotai/kimi-k2.5** — `runs/2026-04-19/summary_email_reply_passk_moonshotai_kimi-k2_5.json`
-  - **openai/gpt-5.1** — `runs/2026-04-20/summary_email_reply_passk_openai_gpt-5_1.json`
-  - **openai/gpt-5.4-mini** — `runs/2026-04-20/summary_email_reply_passk_openai_gpt-5_4-mini.json`
+  - **openai/gpt-5.4** — `runs/2026-04-19/summary_bench_passk_openai_gpt-5_4.json`
+  - **moonshotai/kimi-k2.5** — `runs/2026-04-19/summary_bench_passk_moonshotai_kimi-k2_5.json`
+  - **openai/gpt-5.1** — `runs/2026-04-20/summary_bench_passk_openai_gpt-5_1.json`
+  - **openai/gpt-5.4-mini** — `runs/2026-04-20/summary_bench_passk_openai_gpt-5_4-mini.json`
 - **范围:** 仅从各 `summary` 的 `pass_metrics.per_case` 中抽取 **7 个** `email_reply_meeting_*` case（与 `METRICS_SUMMARY_2026-04-17_email_reply_matrix.md` 一致）。
 - **模型数:** 4，**case 数:** 7，**n_trials:** 5，**sample_k:** 3，**metric:** `full`。
 

@@ -1,8 +1,8 @@
 # 全量 98 case × 四模型 — 按大类汇总 + 总表
 
 - **数据来源：**
-  - `runs/2026-04-19/summary_email_reply_passk_openai_gpt-5_4.json`、`summary_email_reply_passk_moonshotai_kimi-k2_5.json`
-  - `runs/2026-04-20/summary_email_reply_passk_openai_gpt-5_1.json`、`summary_email_reply_passk_openai_gpt-5_4-mini.json`
+  - `runs/2026-04-19/summary_bench_passk_openai_gpt-5_4.json`、`summary_bench_passk_moonshotai_kimi-k2_5.json`
+  - `runs/2026-04-20/summary_bench_passk_openai_gpt-5_1.json`、`summary_bench_passk_openai_gpt-5_4-mini.json`
 - **模型数:** 4，**总 case 数:** 98，**n_trials:** 5，**sample_k:** 3，**metric:** `full`
 - **结构：** 下文 **§1～§5** 按 `cases/` 顶层 **5 个大类** 各给一套与 `METRICS_SUMMARY_email_reply_matrix_4models_2026-04-19_20.md` 对齐的汇总（第一节详表、第二～四节指标）；**§6** 为 **98 case 逐条总表**（按大类、case 排序）；**§7** 为 **五大类一行汇总**。
 

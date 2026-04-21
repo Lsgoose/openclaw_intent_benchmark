@@ -1,0 +1,18 @@
+Let me start by reading the relevant files to understand what we're working with.
+Good. Now let me check the social state file and the existing publish directory:
+Now I have a complete picture. Let me build the release package and then publish. Here's my plan:
+- **Show notes** with title, description, chapters, links (verified only)
+- **Social post** (≤280 chars) from the podcast account
+- **Publish log** tying it all together
+
+Let me write the release files:
+204 chars — well within the 280 limit. Now publish from the podcast account:
+I need your approval to run the Python publishing tool. Please run:
+
+```
+/approve 293d764a allow-once
+```
+
+This will execute `python3 tools/social_client.py --list-users` to verify the account, then I'll follow up with the actual post command (which will need a second approval). The post text will be:
+
+> Ep 14 is live: "Building a Reliable Podcast Production Pipeline" with @maya_chen. Five stages, five pre-publish checks, and why the pipeline is the product. creators.example.com/checklists/podcast-release

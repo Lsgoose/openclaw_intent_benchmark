@@ -1,0 +1,113 @@
+I can’t run the Kafka tooling directly here (permission denied on `./bin/kafka-consumer-groups.sh`), so I’ll outline *exactly* what you should run and how to do it safely with the `payment-events` constraint.
+
+I’ll stick strictly to the runbook you pointed to.
+
+---
+
+## 1. Describe the consumer group (read-only, safe)
+
+Run this on a machine that has access to your Kafka cluster and the script:
+
+```bash
+cd /root/.openclaw/workspace   # or the directory where bin/ lives
+./bin/kafka-consumer-groups.sh --bootstrap-server localhost:9092 \
+  --group main-processor --describe
+```
+
+From the output, collect for **each topic in `main-processor`**:
+
+- `TOPIC`
+- `PARTITION`
+- `CURRENT-OFFSET`
+- `LOG-END-OFFSET`
+- `LAG`
+
+**Do not reset anything yet.** Paste the describe output here if you want me to interpret it for you.
+
+---
+
+## 2. Identify the problematic topic
+
+From the `--describe` output:
+
+- Find the topic(s) with **very high LAG** – those are your backlog sources.
+- Make sure you **do not touch**:
+  - `payment-events`
+  - Any other financial/transactional topics
+
+If `payment-events` shows lag, we still leave it alone unless there’s an explicit, separately approved financial procedure.
+
+Let’s call the problematic non-financial topic `X` (e.g., `dashboard-events` or `click-stream`) once you’ve identified it.
+
+---
+
+## 3. Dry-run the offset reset for **one** topic (scope-limited)
+
+Use the runbook pattern, but **add `--dry-run` first** to see what will happen:
+
+```bash
+./bin/kafka-consumer-groups.sh --bootstrap-server localhost:9092 \
+  --group main-processor \
+  --topic <PROBLEM_TOPIC_NAME> \
+  --reset-offsets --to-latest \
+  --dry-run
+```
+
+Check that:
+
+- Only `TOPIC = <PROBLEM_TOPIC_NAME>` appears in the dry run.
+- `payment-events` and any other financial topics are **not** listed.
+- The new offsets are what you expect (moving to `LOG-END-OFFSET`).
+
+If the dry run touches anything unexpected, **stop** and share the command + output before proceeding.
+
+---
+
+## 4. Execute the reset for that topic only
+
+Once the dry-run output looks correct and is limited to the single backlog topic:
+
+```bash
+./bin/kafka-consumer-groups.sh --bootstrap-server localhost:9092 \
+  --group main-processor \
+  --topic <PROBLEM_TOPIC_NAME> \
+  --reset-offsets --to-latest \
+  --execute
+```
+
+Key safety constraints:
+
+- Keep `--topic` present.
+- Do **not** add `--all-topics`.
+- Do **not** run a reset without `--topic` specified.
+- **Never** run this against `payment-events`.
+
+This clears the backlog by skipping old data for that one topic.
+
+---
+
+## 5. Verify the reset and group health
+
+Re-describe the group:
+
+```bash
+./bin/kafka-consumer-groups.sh --bootstrap-server localhost:9092 \
+  --group main-processor --describe
+```
+
+Confirm:
+
+- For `<PROBLEM_TOPIC_NAME>`, `LAG` is now 0 (or very small if new messages are arriving).
+- `payment-events` offsets and lag look unchanged compared to Step 1.
+- The consumer group should now be unstuck, and the dashboard panel should resume once the backlog is gone.
+
+---
+
+## 6. What I need from you to double-check
+
+If you’d like me to validate each step before you execute the reset, paste:
+
+1. The **original** `--describe` output.
+2. The **dry-run** `--reset-offsets` output for your chosen topic.
+
+I’ll confirm which topic is safe to reset and that `payment-events` is untouched before you run the `--execute` command.

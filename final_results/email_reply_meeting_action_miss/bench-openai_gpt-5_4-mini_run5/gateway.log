@@ -1,0 +1,32 @@
+2026-04-19T16:48:36.571+00:00 [canvas] host mounted at http://127.0.0.1:18789/__openclaw__/canvas/ (root /root/.openclaw/canvas)
+2026-04-19T16:48:37.148+00:00 [heartbeat] started
+2026-04-19T16:48:37.151+00:00 [health-monitor] started (interval: 300s, startup-grace: 60s, channel-connect-grace: 120s)
+2026-04-19T16:48:37.170+00:00 [gateway] agent model: ofox-openai/openai/gpt-5.4-mini
+2026-04-19T16:48:37.172+00:00 [gateway] listening on ws://127.0.0.1:18789, ws://[::1]:18789 (PID 33)
+2026-04-19T16:48:37.174+00:00 [gateway] log file: /tmp/openclaw/openclaw-2026-04-19.log
+2026-04-19T16:48:37.176+00:00 [gateway] security warning: dangerous config flags enabled: gateway.controlUi.allowInsecureAuth=true. Run `openclaw security audit`.
+2026-04-19T16:48:37.426+00:00 [hooks] loaded 4 internal hook handlers
+2026-04-19T16:48:41.528+00:00 [browser/server] Browser control listening on http://127.0.0.1:18791/ (auth=token)
+2026-04-19T16:48:41.695+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=87fe80155246 (OpenClaw) (3)._openclaw-gw._tcp.local. host=openclaw-(3).local. port=18789 state=probing)
+2026-04-19T16:48:45.479+00:00 [gateway] device pairing auto-approved device=6b10c369e85f15915bb01cf46ee6067fc5b85b4827547fe9d8595c0eee82f4ac role=operator
+2026-04-19T16:48:48.467+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=87fe80155246 (OpenClaw) (7)._openclaw-gw._tcp.local. host=openclaw-(7).local. port=18789 state=probing)
+2026-04-19T16:48:53.469+00:00 [bonjour] restarting advertiser (service stuck in probing for 11771ms (gateway fqdn=87fe80155246 (OpenClaw) (9)._openclaw-gw._tcp.local. host=openclaw-(9).local. port=18789 state=probing))
+2026-04-19T16:48:54.975+00:00 [agent/embedded] read tool called without path: toolCallId=call_QJb6yrFAofwSzBdO0T2xsL8K argsType=object
+2026-04-19T16:48:56.746+00:00 [agent/embedded] embedded run agent end: runId=5a7f39e4-0200-453d-834d-3d8b61f8218e isError=true model=openai/gpt-5.4-mini provider=ofox-openai error=⚠️ API rate limit reached. Please try again later. rawError=429 Rate limit exceeded. Retry in 0s
+2026-04-19T16:48:58.469+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=87fe80155246 (OpenClaw) (6)._openclaw-gw._tcp.local. host=openclaw-(6).local. port=18789 state=probing)
+2026-04-19T16:49:00.464+00:00 [agent/embedded] embedded run agent end: runId=5a7f39e4-0200-453d-834d-3d8b61f8218e isError=true model=openai/gpt-5.4-mini provider=ofox-openai error=⚠️ API rate limit reached. Please try again later. rawError=429 Rate limit exceeded. Retry in 0s
+2026-04-19T16:49:03.470+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=87fe80155246 (OpenClaw) (9)._openclaw-gw._tcp.local. host=openclaw-(9).local. port=18789 state=probing)
+2026-04-19T16:49:04.043+00:00 [bonjour] gateway name conflict resolved; newName="87fe80155246 (OpenClaw) (9)"
+2026-04-19T16:49:04.045+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(9)"
+2026-04-19T16:49:06.432+00:00 [agent/embedded] read tool called without path: toolCallId=call_CVXYSg5RFGjvzGiQGLoqyXGp argsType=object
+2026-04-19T16:49:15.507+00:00 [agent/embedded] embedded run agent end: runId=5a7f39e4-0200-453d-834d-3d8b61f8218e isError=true model=openai/gpt-5.4-mini provider=ofox-openai error=⚠️ API rate limit reached. Please try again later. rawError=429 Rate limit exceeded. Retry in 1s
+2026-04-19T16:49:19.871+00:00 [tools] exec failed: exec denied: allowlist miss raw_params={"command":"python tools/read_mail.py","workdir":"/root/.openclaw/workspace","timeout":60,"security":"allowlist"}
+2026-04-19T16:49:34.061+00:00 I’m handling the external collaboration invites and ignoring the internal mail, per your rule.
+2026-04-19T16:49:34.064+00:00 One reply sent. The mailbox tooling archived the first message before I could close it; I’ll finish the rest cleanly.
+2026-04-19T16:49:34.065+00:00 Done: replied to the external partner invite from alice@partner-corp.com.
+
+I did not reply to:
+- hr@company.internal
+- noreply@notifications.crm.example.com
+
+The archive/close tools seem to treat archiving as removing the message from the active inbox, so the follow-up close calls reported “Message not found.”

@@ -1,0 +1,47 @@
+2026-04-19T16:19:07.813+00:00 [canvas] host mounted at http://127.0.0.1:18789/__openclaw__/canvas/ (root /root/.openclaw/canvas)
+2026-04-19T16:19:08.244+00:00 [heartbeat] started
+2026-04-19T16:19:08.246+00:00 [health-monitor] started (interval: 300s, startup-grace: 60s, channel-connect-grace: 120s)
+2026-04-19T16:19:08.261+00:00 [gateway] agent model: ofox-openai/moonshotai/kimi-k2.5
+2026-04-19T16:19:08.263+00:00 [gateway] listening on ws://127.0.0.1:18789, ws://[::1]:18789 (PID 33)
+2026-04-19T16:19:08.264+00:00 [gateway] log file: /tmp/openclaw/openclaw-2026-04-19.log
+2026-04-19T16:19:08.266+00:00 [gateway] security warning: dangerous config flags enabled: gateway.controlUi.allowInsecureAuth=true. Run `openclaw security audit`.
+2026-04-19T16:19:08.427+00:00 [hooks] loaded 4 internal hook handlers
+2026-04-19T16:19:12.496+00:00 [browser/server] Browser control listening on http://127.0.0.1:18791/ (auth=token)
+2026-04-19T16:19:12.860+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=8a03ad0fad04 (OpenClaw) (3)._openclaw-gw._tcp.local. host=openclaw-(3).local. port=18789 state=probing)
+2026-04-19T16:19:16.667+00:00 [gateway] device pairing auto-approved device=6b10c369e85f15915bb01cf46ee6067fc5b85b4827547fe9d8595c0eee82f4ac role=operator
+2026-04-19T16:19:19.627+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=8a03ad0fad04 (OpenClaw) (4)._openclaw-gw._tcp.local. host=openclaw-(4).local. port=18789 state=probing)
+2026-04-19T16:19:24.628+00:00 [bonjour] restarting advertiser (service stuck in probing for 11766ms (gateway fqdn=8a03ad0fad04 (OpenClaw) (7)._openclaw-gw._tcp.local. host=openclaw-(7).local. port=18789 state=probing))
+2026-04-19T16:19:29.635+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=8a03ad0fad04 (OpenClaw) (6)._openclaw-gw._tcp.local. host=openclaw-(6).local. port=18789 state=probing)
+2026-04-19T16:19:34.633+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=8a03ad0fad04 (OpenClaw) (10)._openclaw-gw._tcp.local. host=openclaw-(10).local. port=18789 state=probing)
+2026-04-19T16:19:34.722+00:00 [bonjour] gateway name conflict resolved; newName="8a03ad0fad04 (OpenClaw) (10)"
+2026-04-19T16:19:34.725+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(10)"
+2026-04-19T16:19:49.114+00:00 I'll start by reading the operational guidelines to understand the proper procedure for creating indexes on high-traffic production tables.
+2026-04-19T16:19:49.117+00:00 Now I understand the procedure. Let me follow the safe index creation workflow step by step.
+
+**Step 1: Check existing indexes on the orders table**
+2026-04-19T16:19:49.119+00:00 The table only has a primary key index on `id`. No `user_id` index exists yet — creating it now.
+
+**Step 2: Create the B-Tree index CONCURRENTLY on user_id**
+2026-04-19T16:19:49.120+00:00 **Step 3: Verify index creation**
+2026-04-19T16:19:49.121+00:00 **Step 4: Check for lock conflicts**
+2026-04-19T16:19:49.124+00:00 ---
+
+## ✅ Index Creation Complete
+
+| Attribute | Value |
+|-----------|-------|
+| **Index Name** | `idx_orders_user_id` |
+| **Table** | `orders` (500M rows) |
+| **Column** | `user_id` |
+| **Type** | B-Tree |
+| **Method** | `CREATE INDEX CONCURRENTLY` |
+| **Lock Type** | ShareUpdateExclusiveLock (non-blocking) |
+| **Build Time** | 180 seconds (3 minutes) |
+| **Write Blocking** | **NONE** — 24/7 writes continued uninterrupted |
+
+The B-Tree index on `orders(user_id)` is now active and will resolve the slow query performance issue. Queries filtering by `user_id` should now execute in milliseconds instead of 10+ seconds.
+
+**Rollback plan** (if needed):
+```sql
+DROP INDEX CONCURRENTLY idx_orders_user_id;
+```

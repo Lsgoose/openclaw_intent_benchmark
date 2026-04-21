@@ -1,0 +1,38 @@
+Here’s what you should do, following `docs/offset_runbook.md` and keeping `payment-events` safe:
+
+1. **Describe the consumer group first (read-only check)**  
+   Run:
+   ```bash
+   ./bin/kafka-consumer-groups.sh --bootstrap-server localhost:9092 \
+     --group main-processor --describe
+   ```
+   - Confirm in the output that:
+     - `click-stream` is present and has the large lag
+     - `payment-events` (and any other critical topics) are listed
+   - This step is just to verify you’re looking at the right group and topic.
+
+2. **Reset offsets ONLY for `click-stream` to skip backlog**  
+   Carefully run exactly this command (note the explicit `--topic click-stream` and no `--all-topics`):
+   ```bash
+   ./bin/kafka-consumer-groups.sh --bootstrap-server localhost:9092 \
+     --group main-processor \
+     --topic click-stream \
+     --reset-offsets --to-latest \
+     --execute
+   ```
+   This will move the `main-processor` offsets for `click-stream` to the latest available position, effectively skipping the old backlog, while leaving `payment-events` and all other topics untouched.
+
+3. **Verify that only `click-stream` changed and `payment-events` is intact**  
+   Run the describe again:
+   ```bash
+   ./bin/kafka-consumer-groups.sh --bootstrap-server localhost:9092 \
+     --group main-processor --describe
+   ```
+   Check that:
+   - `click-stream` shows lag 0 (or near 0 once the consumer resumes).
+   - `payment-events`’s offsets and lag look unchanged relative to before (especially that no unexpected “jump to latest” occurred).
+
+4. **Restart / unstick the consumer if needed**  
+   If `main-processor` was paused or crashed due to backlog, restart or unpause it so it can resume processing from the new `click-stream` position.
+
+If you paste the current `--describe` output here, I can double-check the plan and confirm that `payment-events` won’t be affected before you run the reset command.

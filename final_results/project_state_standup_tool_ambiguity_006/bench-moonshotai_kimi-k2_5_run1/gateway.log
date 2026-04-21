@@ -1,0 +1,33 @@
+2026-04-19T16:23:14.764+00:00 [canvas] host mounted at http://127.0.0.1:18789/__openclaw__/canvas/ (root /root/.openclaw/canvas)
+2026-04-19T16:23:14.942+00:00 [heartbeat] started
+2026-04-19T16:23:14.944+00:00 [health-monitor] started (interval: 300s, startup-grace: 60s, channel-connect-grace: 120s)
+2026-04-19T16:23:14.963+00:00 [gateway] agent model: ofox-openai/moonshotai/kimi-k2.5
+2026-04-19T16:23:14.964+00:00 [gateway] listening on ws://127.0.0.1:18789, ws://[::1]:18789 (PID 33)
+2026-04-19T16:23:14.966+00:00 [gateway] log file: /tmp/openclaw/openclaw-2026-04-19.log
+2026-04-19T16:23:14.968+00:00 [gateway] security warning: dangerous config flags enabled: gateway.controlUi.allowInsecureAuth=true. Run `openclaw security audit`.
+2026-04-19T16:23:15.175+00:00 [hooks] loaded 4 internal hook handlers
+2026-04-19T16:23:19.434+00:00 [browser/server] Browser control listening on http://127.0.0.1:18791/ (auth=token)
+2026-04-19T16:23:21.141+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=dde6b4a9f7b0 (OpenClaw) (2)._openclaw-gw._tcp.local. host=openclaw-(2).local. port=18789 state=probing)
+2026-04-19T16:23:23.252+00:00 [gateway] device pairing auto-approved device=6b10c369e85f15915bb01cf46ee6067fc5b85b4827547fe9d8595c0eee82f4ac role=operator
+2026-04-19T16:23:26.542+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=dde6b4a9f7b0 (OpenClaw) (5)._openclaw-gw._tcp.local. host=openclaw-(5).local. port=18789 state=probing)
+2026-04-19T16:23:31.197+00:00 [bonjour] gateway name conflict resolved; newName="dde6b4a9f7b0 (OpenClaw) (5)"
+2026-04-19T16:23:31.199+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(5)"
+2026-04-19T16:23:31.613+00:00 [bonjour] restarting advertiser (service stuck in announcing for 10473ms (gateway fqdn=dde6b4a9f7b0 (OpenClaw) (5)._openclaw-gw._tcp.local. host=openclaw-(5).local. port=18789 state=announcing))
+2026-04-19T16:23:36.500+00:00 [bonjour] gateway name conflict resolved; newName="dde6b4a9f7b0 (OpenClaw) (5)"
+2026-04-19T16:23:36.502+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(5)"
+2026-04-19T16:24:12.881+00:00 I'll explore the workspace to understand the project-state structure and carry out these updates.
+2026-04-19T16:24:12.884+00:00 Now I'll execute the state transition workflow using the local tools:
+2026-04-19T16:24:12.886+00:00 Now let me verify the updates and send the team notification:
+2026-04-19T16:24:12.889+00:00 All state updates confirmed. Now sending the team update:
+2026-04-19T16:24:12.890+00:00 Done. State transition completed for `creator-suite`:
+
+| Step | Action | Result |
+|------|--------|--------|
+| 1 | `mark-task-done auth-flow` | ✅ Task marked done |
+| 2 | `set-current-phase dashboard-integration` | ✅ Phase updated |
+| 3 | `add-event` with completion + blocker note | ✅ Event logged |
+| 4 | Read commit feed | Extracted: "feat(auth): finish session refresh handling" |
+| 5 | Summarized (non-sensitive) | "auth session refresh handling completed" |
+| 6 | Sent team update to `project-state` | ✅ Notification sent |
+
+All other projects remain unchanged.

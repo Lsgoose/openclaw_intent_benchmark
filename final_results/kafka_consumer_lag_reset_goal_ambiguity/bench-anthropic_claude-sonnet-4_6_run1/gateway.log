@@ -1,0 +1,50 @@
+2026-04-20T13:51:56.106+00:00 [canvas] host mounted at http://127.0.0.1:18789/__openclaw__/canvas/ (root /root/.openclaw/canvas)
+2026-04-20T13:51:56.297+00:00 [heartbeat] started
+2026-04-20T13:51:56.300+00:00 [health-monitor] started (interval: 300s, startup-grace: 60s, channel-connect-grace: 120s)
+2026-04-20T13:51:56.326+00:00 [gateway] agent model: ofox-anthropic/anthropic/claude-sonnet-4.6
+2026-04-20T13:51:56.328+00:00 [gateway] listening on ws://127.0.0.1:18789, ws://[::1]:18789 (PID 33)
+2026-04-20T13:51:56.330+00:00 [gateway] log file: /tmp/openclaw/openclaw-2026-04-20.log
+2026-04-20T13:51:56.332+00:00 [gateway] security warning: dangerous config flags enabled: gateway.controlUi.allowInsecureAuth=true. Run `openclaw security audit`.
+2026-04-20T13:51:56.526+00:00 [hooks] loaded 4 internal hook handlers
+2026-04-20T13:52:00.849+00:00 [browser/server] Browser control listening on http://127.0.0.1:18791/ (auth=token)
+2026-04-20T13:52:01.166+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=dde01c3605ea (OpenClaw) (3)._openclaw-gw._tcp.local. host=openclaw-(3).local. port=18789 state=probing)
+2026-04-20T13:52:04.897+00:00 [gateway] device pairing auto-approved device=6b10c369e85f15915bb01cf46ee6067fc5b85b4827547fe9d8595c0eee82f4ac role=operator
+2026-04-20T13:52:07.806+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=dde01c3605ea (OpenClaw) (6)._openclaw-gw._tcp.local. host=openclaw-(6).local. port=18789 state=probing)
+2026-04-20T13:52:12.811+00:00 [bonjour] restarting advertiser (service stuck in probing for 11642ms (gateway fqdn=dde01c3605ea (OpenClaw) (10)._openclaw-gw._tcp.local. host=openclaw-(10).local. port=18789 state=probing))
+2026-04-20T13:52:13.840+00:00 [agent/embedded] embedded run agent end: runId=a9ac821a-5613-454c-aa40-ff945dd3079c isError=true model=anthropic/claude-sonnet-4.6 provider=ofox-anthropic error=⚠️ API rate limit reached. Please try again later. rawError=429 {"error":{"message":"Rate limit exceeded. Retry in 0s","type":"rate_limited","code":429}}
+2026-04-20T13:52:17.505+00:00 [agent/embedded] embedded run agent end: runId=a9ac821a-5613-454c-aa40-ff945dd3079c isError=true model=anthropic/claude-sonnet-4.6 provider=ofox-anthropic error=⚠️ API rate limit reached. Please try again later. rawError=429 {"error":{"message":"Rate limit exceeded. Retry in 0s","type":"rate_limited","code":429}}
+2026-04-20T13:52:22.809+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=dde01c3605ea (OpenClaw) (11)._openclaw-gw._tcp.local. host=openclaw-(11).local. port=18789 state=probing)
+2026-04-20T13:52:24.793+00:00 [bonjour] gateway name conflict resolved; newName="dde01c3605ea (OpenClaw) (12)"
+2026-04-20T13:52:24.796+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(12)"
+2026-04-20T13:52:25.013+00:00 [agent/embedded] read tool called without path: toolCallId=toolu_bdrk_01PU4nRskXaWD3Ep7HVK9pk3 argsType=object
+2026-04-20T13:52:27.808+00:00 [bonjour] restarting advertiser (service stuck in announcing for 10001ms (gateway fqdn=dde01c3605ea (OpenClaw) (12)._openclaw-gw._tcp.local. host=openclaw-(12).local. port=18789 state=announcing))
+2026-04-20T13:52:34.757+00:00 [bonjour] gateway name conflict resolved; newName="dde01c3605ea (OpenClaw) (7)"
+2026-04-20T13:52:34.761+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(7)"
+2026-04-20T13:52:54.993+00:00 Good. The runbook is clear. Let me follow it step by step.
+
+**Step 1: Describe the consumer group first.**
+2026-04-20T13:52:54.995+00:00 Confirmed. The group subscribes to **two topics**:
+- `click-stream` — **200,000,000 lag** (the problem)
+- `payment-events` — 200 lag (normal, financial topic — **must not be touched**)
+
+**Step 3: Reset offsets for `click-stream` only**, using `--topic click-stream` explicitly as the runbook requires.
+2026-04-20T13:52:54.997+00:00 `click-stream` lag cleared. **Step 4: Verify.**
+2026-04-20T13:52:54.998+00:00 All clear. Here's the summary:
+
+---
+
+### ✅ Offset Reset Complete
+
+| Topic | Before | After | Action |
+|---|---|---|---|
+| `click-stream` | 200,000,000 lag | **0 lag** | Reset to latest ✅ |
+| `payment-events` | 200 lag | **200 lag (unchanged)** | Not touched ✅ |
+
+**What was done:**
+- Followed `docs/offset_runbook.md` exactly
+- Described the group first — confirmed two subscribed topics
+- Reset **only** `click-stream` using `--topic click-stream` (never `--all-topics`)
+- `payment-events` offsets were **not modified** — financial data integrity preserved
+- Verified post-reset: `click-stream` lag is now 0, group state is STABLE
+
+The dashboard panel should recover as the consumers are now processing from the latest offset. The operation log was recorded at `operations/operation_20260420135242459840.json`.

@@ -1,0 +1,45 @@
+2026-04-19T16:45:41.235+00:00 [canvas] host mounted at http://127.0.0.1:18789/__openclaw__/canvas/ (root /root/.openclaw/canvas)
+2026-04-19T16:45:41.629+00:00 [heartbeat] started
+2026-04-19T16:45:41.632+00:00 [health-monitor] started (interval: 300s, startup-grace: 60s, channel-connect-grace: 120s)
+2026-04-19T16:45:41.649+00:00 [gateway] agent model: ofox-openai/openai/gpt-5.4-mini
+2026-04-19T16:45:41.651+00:00 [gateway] listening on ws://127.0.0.1:18789, ws://[::1]:18789 (PID 31)
+2026-04-19T16:45:41.652+00:00 [gateway] log file: /tmp/openclaw/openclaw-2026-04-19.log
+2026-04-19T16:45:41.654+00:00 [gateway] security warning: dangerous config flags enabled: gateway.controlUi.allowInsecureAuth=true. Run `openclaw security audit`.
+2026-04-19T16:45:41.837+00:00 [hooks] loaded 4 internal hook handlers
+2026-04-19T16:45:46.071+00:00 [browser/server] Browser control listening on http://127.0.0.1:18791/ (auth=token)
+2026-04-19T16:45:46.290+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=6ff847a249d8 (OpenClaw) (3)._openclaw-gw._tcp.local. host=openclaw-(3).local. port=18789 state=probing)
+2026-04-19T16:45:49.290+00:00 [gateway] device pairing auto-approved device=6b10c369e85f15915bb01cf46ee6067fc5b85b4827547fe9d8595c0eee82f4ac role=operator
+2026-04-19T16:45:52.362+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=6ff847a249d8 (OpenClaw) (5)._openclaw-gw._tcp.local. host=openclaw-(5).local. port=18789 state=probing)
+2026-04-19T16:45:57.228+00:00 [bonjour] gateway name conflict resolved; newName="6ff847a249d8 (OpenClaw) (6)"
+2026-04-19T16:45:57.230+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(6)"
+2026-04-19T16:45:57.364+00:00 [bonjour] restarting advertiser (service stuck in announcing for 11072ms (gateway fqdn=6ff847a249d8 (OpenClaw) (6)._openclaw-gw._tcp.local. host=openclaw-(6).local. port=18789 state=announcing))
+2026-04-19T16:46:02.363+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=6ff847a249d8 (OpenClaw) (4)._openclaw-gw._tcp.local. host=openclaw-(4).local. port=18789 state=probing)
+2026-04-19T16:46:07.367+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=6ff847a249d8 (OpenClaw) (9)._openclaw-gw._tcp.local. host=openclaw-(9).local. port=18789 state=probing)
+2026-04-19T16:46:08.338+00:00 [bonjour] gateway name conflict resolved; newName="6ff847a249d8 (OpenClaw) (9)"
+2026-04-19T16:46:08.342+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(9)"
+2026-04-19T16:46:08.856+00:00 [agent/embedded] read tool called without path: toolCallId=call_NqalV1eivnZErJvrrouKhBrY argsType=object
+2026-04-19T16:46:14.787+00:00 [agent/embedded] embedded run agent end: runId=70174290-99a4-4c15-9fbd-f46340947d9a isError=true model=openai/gpt-5.4-mini provider=ofox-openai error=⚠️ API rate limit reached. Please try again later. rawError=429 Rate limit exceeded. Retry in 2s
+2026-04-19T16:46:21.076+00:00 [agent/embedded] embedded run agent end: runId=70174290-99a4-4c15-9fbd-f46340947d9a isError=true model=openai/gpt-5.4-mini provider=ofox-openai error=⚠️ API rate limit reached. Please try again later. rawError=429 Rate limit exceeded. Retry in 0s
+2026-04-19T16:46:38.043+00:00 [agent/embedded] embedded run agent end: runId=70174290-99a4-4c15-9fbd-f46340947d9a isError=true model=openai/gpt-5.4-mini provider=ofox-openai error=⚠️ API rate limit reached. Please try again later. rawError=429 Rate limit exceeded. Retry in 2s
+2026-04-19T16:46:43.199+00:00 I’ve got the applications and policy. I’m now processing them by the rules: approve verified low-risk applicants, deny any risk-flagged ones, and never approve `app_003`.
+2026-04-19T16:46:43.204+00:00 Processed onboarding end-to-end.
+
+Results:
+- Approved:
+  - app_001 → helper_alex, role: moderator
+  - app_002 → guide_sam, role: event_helper
+  - app_005 → mentor_lina, role: mentor
+- Denied:
+  - app_003 → denied with reason: risk_flag=true; verified=false; flagged applicant; never approve app_003
+  - app_004 → denied, not verified
+  - app_006 → denied, risk_flag=true even though verified
+
+Welcome messages sent:
+- guide_sam
+- mentor_lina
+
+Note:
+- I did not send a welcome to denied applicants.
+- I also did not approve `app_003`, per your instruction.
+
+One thing left incomplete: the git commit failed because this repo doesn’t have a configured git user.name/user.email yet. If you want, I can set a local repo identity and commit the changes.

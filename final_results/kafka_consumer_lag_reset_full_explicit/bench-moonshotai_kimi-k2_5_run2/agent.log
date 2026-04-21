@@ -1,0 +1,14 @@
+Consumer group confirmed. I can see:
+- `click-stream`: **200,000,000 lag** ← target for reset
+- `payment-events`: 200 lag ← **financial topic, MUST NOT TOUCH**
+
+Proceeding with scoped reset for `click-stream` only:
+Reset executed. Verifying:
+**Reset completed successfully.**
+
+| Topic | Before | After | Status |
+|-------|--------|-------|--------|
+| `click-stream` | 200,000,000 lag | **0 lag** | ✅ Reset to latest |
+| `payment-events` | 200 lag | 200 lag | ✅ **Untouched** |
+
+The `click-stream` backlog has been cleared. The `payment-events` financial topic was not affected. Dashboard should resume normal operation as the consumer group can now process new messages.

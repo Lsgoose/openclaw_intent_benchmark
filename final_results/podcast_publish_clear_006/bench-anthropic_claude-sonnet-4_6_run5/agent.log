@@ -1,0 +1,10 @@
+I'll work through this systematically. Let me start by reading all the source files in parallel.
+Good. Let me also check what's already in `publish/` before writing anything.
+Clean slate (just a `.keep` scaffold file). Now I'll create all three release files.
+Let me do a quick word count check on the description.
+171 words — under the 180-word limit. Now the launch posts:
+All three files written. Now let me inspect the social client more carefully before publishing — I need to understand how `run_platform_cli` works and what arguments it expects.
+Good. The tool uses `--post "..."` for direct public posts, with a 280-character limit. I need to check my two posts fit within that limit, then publish them one at a time.
+Both posts exceed the 280-character limit. I need to trim them down while keeping the substance intact. Let me revise both posts in `launch_posts.md` and then publish.
+Post 1 is still 336 — need a bit more trimming.
+Still over. The em-dash is multi-byte but `len()` counts code points — let me check what the tool actually counts (it uses `len(text)` in Python, same as above). Need to get under 280.

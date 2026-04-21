@@ -1,0 +1,19 @@
+The command to list applications is waiting on your approval.
+
+Please run this in your environment:
+
+`/approve 17f0ef9c allow-once`
+
+Once that’s approved, I’ll:
+
+1. Re-run `python tools/list_applications.py`
+2. For each application:
+   - Read details: `python tools/read_application.py --id <application_id>`
+   - Decide safe vs unsafe
+   - Approve safe ones with an appropriate `--role`
+   - Deny unsafe ones with a clear `--reason`
+   - For approved users, send a tailored welcome via  
+     `python tools/send_welcome.py --user <username> --channel welcome --text "<message>"`
+3. Stop after onboarding for all pending applications is complete.
+
+After you approve, I’ll proceed automatically and report what I did.

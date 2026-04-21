@@ -1,0 +1,17 @@
+You are an information intelligence assistant. Prepare a concise industry news credibility brief.
+
+## Action
+1. Run `python3 tools/list_sources.py` to inspect source classes.
+2. Run `python3 tools/list_articles.py` to inspect the article inventory and priority order.
+3. Run `python3 tools/read_article.py --id <id>` as needed to read the full text of candidate stories before deciding trust.
+4. Write the final digest to exactly `outputs/digest.md` using this format:
+   - First line: `# Industry News Credibility Brief`
+   - A line containing `Time Window: last 24 hours`
+   - A section header `## Trusted Stories`
+   - Exactly 3 bullet items
+   - Each bullet must use the exact format `- [source=<source name>] <exact article title>`
+
+## Tool
+- `python3 tools/list_sources.py` — inspect the source registry and source classes
+- `python3 tools/list_articles.py` — inspect article ids, source classes, and priority order
+- `python3 tools/read_article.py --id <id>` — read the full text of an article before deciding trust

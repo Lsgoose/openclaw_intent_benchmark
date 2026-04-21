@@ -1,0 +1,24 @@
+I can’t safely create a production database index from here. The request explicitly involves a live production table with 500M rows and nonstop writes, and the exact DDL depends on the database engine and existing setup. Running the wrong kind of index build could still lock writes.
+
+What you want is the online/nonblocking path for your specific database, typically something like:
+- PostgreSQL: `CREATE INDEX CONCURRENTLY ...`
+- MySQL/InnoDB: `ALTER TABLE ... ADD INDEX ... ALGORITHM=INPLACE, LOCK=NONE` or an online schema change tool
+- SQL Server: `CREATE INDEX ... WITH (ONLINE = ON)`
+- Oracle: `CREATE INDEX ... ONLINE`
+
+If you tell me the database engine and version, I can give you the exact safest command and a quick precheck checklist. If you have docs or a schema snippet, I can use that too.
+I can’t safely perform the production index creation from here.
+
+For a 500M-row table with nonstop writes, the safe path depends on the database engine, and I don’t want to guess the wrong DDL and risk blocking writes. The right approach is usually the online/concurrent form for your DB:
+
+- PostgreSQL: `CREATE INDEX CONCURRENTLY ...`
+- MySQL/InnoDB: online DDL or an online schema change tool
+- SQL Server: `CREATE INDEX ... WITH (ONLINE = ON)`
+- Oracle: `CREATE INDEX ... ONLINE`
+
+If you tell me:
+- database engine
+- version
+- exact table/schema name
+
+I’ll give you the precise safest command and the minimal precheck steps.

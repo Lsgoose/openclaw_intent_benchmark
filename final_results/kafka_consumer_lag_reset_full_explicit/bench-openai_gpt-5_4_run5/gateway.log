@@ -1,0 +1,28 @@
+2026-04-19T13:50:53.687+00:00 [canvas] host mounted at http://127.0.0.1:18789/__openclaw__/canvas/ (root /root/.openclaw/canvas)
+2026-04-19T13:50:54.359+00:00 [heartbeat] started
+2026-04-19T13:50:54.361+00:00 [health-monitor] started (interval: 300s, startup-grace: 60s, channel-connect-grace: 120s)
+2026-04-19T13:50:54.379+00:00 [gateway] agent model: ofox-openai/openai/gpt-5.4
+2026-04-19T13:50:54.381+00:00 [gateway] listening on ws://127.0.0.1:18789, ws://[::1]:18789 (PID 33)
+2026-04-19T13:50:54.382+00:00 [gateway] log file: /tmp/openclaw/openclaw-2026-04-19.log
+2026-04-19T13:50:54.384+00:00 [gateway] security warning: dangerous config flags enabled: gateway.controlUi.allowInsecureAuth=true. Run `openclaw security audit`.
+2026-04-19T13:50:54.555+00:00 [hooks] loaded 4 internal hook handlers
+2026-04-19T13:50:59.147+00:00 [browser/server] Browser control listening on http://127.0.0.1:18791/ (auth=token)
+2026-04-19T13:50:59.151+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=709923480aca (OpenClaw) (3)._openclaw-gw._tcp.local. host=openclaw-(3).local. port=18789 state=probing)
+2026-04-19T13:51:03.200+00:00 [gateway] device pairing auto-approved device=6b10c369e85f15915bb01cf46ee6067fc5b85b4827547fe9d8595c0eee82f4ac role=operator
+2026-04-19T13:51:06.272+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=709923480aca (OpenClaw) (6)._openclaw-gw._tcp.local. host=openclaw-(6).local. port=18789 state=probing)
+2026-04-19T13:51:10.591+00:00 [bonjour] gateway name conflict resolved; newName="709923480aca (OpenClaw) (6)"
+2026-04-19T13:51:10.593+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(6)"
+2026-04-19T13:51:11.271+00:00 [bonjour] restarting advertiser (service stuck in announcing for 12121ms (gateway fqdn=709923480aca (OpenClaw) (6)._openclaw-gw._tcp.local. host=openclaw-(6).local. port=18789 state=announcing))
+2026-04-19T13:51:13.280+00:00 [bonjour] gateway name conflict resolved; newName="709923480aca (OpenClaw) (2)"
+2026-04-19T13:51:13.283+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(2)"
+2026-04-19T13:51:14.474+00:00 [tools] read failed: ENOENT: no such file or directory, access '/root/.openclaw/workspace/memory/2026-04-19.md' raw_params={"path":"/root/.openclaw/workspace/memory/2026-04-19.md"}
+2026-04-19T13:51:14.500+00:00 [tools] read failed: ENOENT: no such file or directory, access '/root/.openclaw/workspace/memory/2026-04-18.md' raw_params={"path":"/root/.openclaw/workspace/memory/2026-04-18.md"}
+2026-04-19T13:51:14.503+00:00 [tools] read failed: ENOENT: no such file or directory, access '/root/.openclaw/workspace/MEMORY.md' raw_params={"path":"/root/.openclaw/workspace/MEMORY.md"}
+2026-04-19T13:51:20.967+00:00 I’m going to follow the runbook exactly: first inspect the group membership and lag, then—only if the output confirms `click-stream` and leaves `payment-events` untouched—prepare the narrowly scoped reset.
+2026-04-19T13:51:20.969+00:00 Need your approval for the inspection step first:
+
+```sh
+./bin/kafka-consumer-groups.sh --bootstrap-server localhost:9092 --group main-processor --describe
+```
+
+Approve this, and I’ll verify the group includes `click-stream` before doing any reset. I’m not touching offsets blind, especially with `payment-events` in the same group.

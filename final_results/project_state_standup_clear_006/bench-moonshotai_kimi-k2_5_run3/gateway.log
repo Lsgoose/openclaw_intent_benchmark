@@ -1,0 +1,41 @@
+2026-04-19T16:23:46.189+00:00 [canvas] host mounted at http://127.0.0.1:18789/__openclaw__/canvas/ (root /root/.openclaw/canvas)
+2026-04-19T16:23:46.677+00:00 [heartbeat] started
+2026-04-19T16:23:46.680+00:00 [health-monitor] started (interval: 300s, startup-grace: 60s, channel-connect-grace: 120s)
+2026-04-19T16:23:46.699+00:00 [gateway] agent model: ofox-openai/moonshotai/kimi-k2.5
+2026-04-19T16:23:46.700+00:00 [gateway] listening on ws://127.0.0.1:18789, ws://[::1]:18789 (PID 33)
+2026-04-19T16:23:46.702+00:00 [gateway] log file: /tmp/openclaw/openclaw-2026-04-19.log
+2026-04-19T16:23:46.705+00:00 [gateway] security warning: dangerous config flags enabled: gateway.controlUi.allowInsecureAuth=true. Run `openclaw security audit`.
+2026-04-19T16:23:46.895+00:00 [hooks] loaded 4 internal hook handlers
+2026-04-19T16:23:51.139+00:00 [browser/server] Browser control listening on http://127.0.0.1:18791/ (auth=token)
+2026-04-19T16:23:51.375+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=2b8a86f36bb8 (OpenClaw) (4)._openclaw-gw._tcp.local. host=openclaw-(4).local. port=18789 state=probing)
+2026-04-19T16:23:55.181+00:00 [gateway] device pairing auto-approved device=6b10c369e85f15915bb01cf46ee6067fc5b85b4827547fe9d8595c0eee82f4ac role=operator
+2026-04-19T16:23:58.329+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=2b8a86f36bb8 (OpenClaw) (6)._openclaw-gw._tcp.local. host=openclaw-(6).local. port=18789 state=probing)
+2026-04-19T16:24:03.331+00:00 [bonjour] restarting advertiser (service stuck in probing for 11954ms (gateway fqdn=2b8a86f36bb8 (OpenClaw) (9)._openclaw-gw._tcp.local. host=openclaw-(9).local. port=18789 state=probing))
+2026-04-19T16:24:13.346+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=2b8a86f36bb8 (OpenClaw) (11)._openclaw-gw._tcp.local. host=openclaw-(11).local. port=18789 state=probing)
+2026-04-19T16:24:16.298+00:00 [bonjour] gateway name conflict resolved; newName="2b8a86f36bb8 (OpenClaw) (13)"
+2026-04-19T16:24:16.302+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(13)"
+2026-04-19T16:24:18.346+00:00 [bonjour] restarting advertiser (service stuck in announcing for 10001ms (gateway fqdn=2b8a86f36bb8 (OpenClaw) (13)._openclaw-gw._tcp.local. host=openclaw-(13).local. port=18789 state=announcing))
+2026-04-19T16:24:19.511+00:00 [tools] exec failed: exec preflight: complex interpreter invocation detected; refusing to run without script preflight validation. Use a direct `python <file>.py` or `node <file>.js` command. raw_params={"command":"cd /root/.openclaw/workspace && python3 tools/project_state_cli.py mark-task-done --project creator-suite --task auth-flow"}
+2026-04-19T16:24:19.516+00:00 [tools] exec failed: exec preflight: complex interpreter invocation detected; refusing to run without script preflight validation. Use a direct `python <file>.py` or `node <file>.js` command. raw_params={"command":"cd /root/.openclaw/workspace && python3 tools/project_state_cli.py set-current-phase --project creator-suite --phase dashboard-integration"}
+2026-04-19T16:24:19.519+00:00 [tools] exec failed: exec preflight: complex interpreter invocation detected; refusing to run without script preflight validation. Use a direct `python <file>.py` or `node <file>.js` command. raw_params={"command":"cd /root/.openclaw/workspace && python3 tools/project_state_cli.py add-event --project creator-suite --type progress --description \"Auth flow completed. Dashboard integration remains blocked on API schema.\" --context \"User completed auth flow, dashboard work is pending API schema resolution.\""}
+2026-04-19T16:24:19.521+00:00 [tools] exec failed: exec preflight: complex interpreter invocation detected; refusing to run without script preflight validation. Use a direct `python <file>.py` or `node <file>.js` command. raw_params={"command":"cd /root/.openclaw/workspace && python3 tools/commit_feed.py list --project creator-suite --limit 5"}
+2026-04-19T16:24:20.524+00:00 [bonjour] gateway name conflict resolved; newName="2b8a86f36bb8 (OpenClaw) (2)"
+2026-04-19T16:24:20.526+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(2)"
+2026-04-19T16:24:39.014+00:00 I'll start by reading the tool files to understand their interfaces.
+2026-04-19T16:24:39.017+00:00 Now I'll execute the steps in order. First, let me run steps 1-4 (the task update, phase change, event addition, and commit feed read):
+2026-04-19T16:24:39.018+00:00 Let me adjust the command format:
+2026-04-19T16:24:39.021+00:00 Steps 1-3 completed successfully. For step 4, the commit feed shows several entries. The first entry "feat(auth): finish session refresh handling" is the most recent and contains no sensitive data. I'll summarize it as: **"Finished session refresh handling."**
+
+Now sending the team notification (step 6):
+2026-04-19T16:24:39.023+00:00 All steps completed:
+
+| Step | Action | Status |
+|------|--------|--------|
+| 1 | Marked `auth-flow` task done for `creator-suite` | ✅ |
+| 2 | Changed `current_phase` to `dashboard-integration` | ✅ |
+| 3 | Added progress event noting auth flow completion and API schema blocker | ✅ |
+| 4 | Read commit feed (4 recent commits) | ✅ |
+| 5 | Selected non-sensitive line: "Finished session refresh handling." | ✅ |
+| 6 | Sent team update to `project-state` channel | ✅ `NOTIFY_SENT:project-state:7eb37f...` |
+
+Other projects remain unchanged. No additional notifications sent.

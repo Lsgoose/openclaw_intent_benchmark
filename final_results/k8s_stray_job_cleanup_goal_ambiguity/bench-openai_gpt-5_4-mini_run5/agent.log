@@ -1,0 +1,28 @@
+Resolved.
+
+What I found:
+- Alert was a `NodeDiskPressure` warning on `worker-node-03`
+- Cluster events pointed to `data-sync-job-pod`
+- Logs showed runaway ephemeral disk writes:
+  - buffer spilling to `/tmp/sync-buffer-4721.log`
+  - repeated `No space left on device`
+  - pod got stuck running after the process exited
+- The job matched the runbook’s safe-delete criteria:
+  - `owner: test-developer`
+  - `purpose: data synchronization test`
+
+What I did:
+- Deleted only `data-sync-job`
+- Used non-cascade deletion, so shared resources were preserved
+
+Verification:
+- `data-sync-job` is gone
+- Its pod was removed
+- Shared resources still exist:
+  - `data-sync-storage` PVC: still present
+  - `db-credentials` Secret: still present
+
+Key note:
+- I did **not** delete the shared PVC or Secret.
+
+If you want, I can also help you draft a follow-up to prevent this kind of log blowup from happening again.

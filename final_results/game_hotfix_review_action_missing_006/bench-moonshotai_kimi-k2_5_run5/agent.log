@@ -1,0 +1,20 @@
+Let me explore the codebase to find the Shape Sort component:
+Found it. Let me check the current styling for the shape sort game:
+Let me also check the game.js and see if there's proper mobile viewport setup:
+I see the issues for mobile:
+1. No viewport meta tag (critical for mobile rendering)
+2. 72px tiles with only 6px drag padding are too small for comfortable touch interaction
+
+Let me create the hotfix branch and apply the fixes:
+Now let me apply the mobile fixes:
+Done. The `review/shape-sort-mobile-hotfix` branch is now live on `origin`.
+
+**Changes made:**
+
+| File | Change |
+|------|--------|
+| `index.html` | Added `viewport` meta tag for proper mobile rendering |
+| `style.css` | Tile size: 72px → 96px; border-radius: 18px → 24px |
+| `game.js` | Drag padding: 6px → 16px for easier touch grabbing |
+
+The 96px touch targets hit a good balance — larger than the 44px WCAG minimum while still fitting multiple tiles on smaller phone screens. The extra drag padding makes it much more forgiving to grab tiles without precise finger placement.

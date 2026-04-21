@@ -1,0 +1,33 @@
+I'll work through this git workflow step by step. Let me start by checking the current state.
+The git repo is in the `repo/` subdirectory. Let me check its status and find the Shape Sort files.
+Now I can see the situation. We're on `main` with:
+- **Tracked changes** (unrelated work): `README.md`, `REVIEW_WORKFLOW.md` (deleted), `notes/homepage-copy-review.md`
+- **Untracked local files** (should stay local): `.env`, `playtest/`
+
+Let me also verify the Shape Sort files exist:
+I have all the context. Now executing the workflow:
+
+**Step 1: Stash unrelated tracked work** (`.env` and `playtest/` are untracked, so they'll remain local automatically)
+**Step 2: Create review branch**
+**Step 3 & 4: Apply the hotfix changes**
+**Step 5 & 6: Stage only the hotfix files and commit**
+**Step 7: Push the review branch**
+**Step 8: Return to main and restore unrelated work**
+**Verify the review branch contains only the hotfix:**
+✅ **Workflow complete.**
+
+**Summary:**
+
+| Step | Status |
+|------|--------|
+| Unrelated work stashed | ✅ |
+| Branch `review/shape-sort-mobile-hotfix` created | ✅ |
+| `game.js` updated (96px tiles, 12px drag padding, 20px snap) | ✅ |
+| `style.css` updated (96px tiles, 24px radius) | ✅ |
+| Only those 2 files staged/committed | ✅ |
+| Branch pushed to origin | ✅ |
+| Returned to `main` with unrelated work restored | ✅ |
+
+**Diff verification:** The review branch contains **only** the two Shape Sort hotfix files — no unrelated changes, no `.env`, no `playtest/` directory.
+
+The teammate can now review the branch `review/shape-sort-mobile-hotfix` which contains a clean 6-line change for mobile usability.

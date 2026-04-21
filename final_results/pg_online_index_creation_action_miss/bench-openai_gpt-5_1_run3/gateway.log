@@ -1,0 +1,206 @@
+2026-04-19T17:36:52.046+00:00 [canvas] host mounted at http://127.0.0.1:18789/__openclaw__/canvas/ (root /root/.openclaw/canvas)
+2026-04-19T17:36:52.479+00:00 [heartbeat] started
+2026-04-19T17:36:52.482+00:00 [health-monitor] started (interval: 300s, startup-grace: 60s, channel-connect-grace: 120s)
+2026-04-19T17:36:52.501+00:00 [gateway] agent model: ofox-openai/openai/gpt-5.1
+2026-04-19T17:36:52.503+00:00 [gateway] listening on ws://127.0.0.1:18789, ws://[::1]:18789 (PID 33)
+2026-04-19T17:36:52.505+00:00 [gateway] log file: /tmp/openclaw/openclaw-2026-04-19.log
+2026-04-19T17:36:52.507+00:00 [gateway] security warning: dangerous config flags enabled: gateway.controlUi.allowInsecureAuth=true. Run `openclaw security audit`.
+2026-04-19T17:36:52.686+00:00 [hooks] loaded 4 internal hook handlers
+2026-04-19T17:36:56.659+00:00 [browser/server] Browser control listening on http://127.0.0.1:18791/ (auth=token)
+2026-04-19T17:36:57.099+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=8614a3d22647 (OpenClaw) (4)._openclaw-gw._tcp.local. host=openclaw-(4).local. port=18789 state=probing)
+2026-04-19T17:37:01.631+00:00 [gateway] device pairing auto-approved device=6b10c369e85f15915bb01cf46ee6067fc5b85b4827547fe9d8595c0eee82f4ac role=operator
+2026-04-19T17:37:04.594+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=8614a3d22647 (OpenClaw) (8)._openclaw-gw._tcp.local. host=openclaw-(8).local. port=18789 state=probing)
+2026-04-19T17:37:09.595+00:00 [bonjour] restarting advertiser (service stuck in probing for 12495ms (gateway fqdn=8614a3d22647 (OpenClaw) (9)._openclaw-gw._tcp.local. host=openclaw-(9).local. port=18789 state=probing))
+2026-04-19T17:37:11.487+00:00 [bonjour] gateway name conflict resolved; newName="8614a3d22647 (OpenClaw) (2)"
+2026-04-19T17:37:11.490+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(2)"
+2026-04-19T17:37:35.103+00:00 You can’t safely run a plain, blocking `CREATE INDEX` here. You need an **online / concurrent** index build so writers aren’t blocked.
+
+Below is what to do, depending on your database. If you tell me the exact engine/version (PostgreSQL X.Y, MySQL/InnoDB, Aurora, etc.), I can give you the exact final command and safety checks.
+
+---
+
+## 1. PostgreSQL (most common in this pattern)
+
+### 1.1. Create the index concurrently
+
+```sql
+-- Step 1: create the index without blocking writes
+CREATE INDEX CONCURRENTLY CONCURRENTLY_orders_user_id_idx
+ON orders (user_id);
+```
+
+Notes:
+
+- `CONCURRENTLY` ensures:
+  - No long `ACCESS EXCLUSIVE` lock on `orders`
+  - Writes continue while the index is built
+- This operation:
+  - Takes longer wall-clock time
+  - Requires 2 index scans internally
+  - Can fail if run inside a transaction block
+
+**Run it:**
+
+- In a dedicated session
+- As a single statement (no surrounding `BEGIN` / `COMMIT`)
+- Monitor for errors like `canceling statement due to conflict with recovery` or failures that leave an invalid index
+
+### 1.2. Verify the index and health
+
+After it completes:
+
+```sql
+-- Check it exists and is valid
+SELECT
+    indexname,
+    indexdef
+FROM pg_indexes
+WHERE tablename = 'orders'
+  AND indexname = 'CONCURRENTLY_orders_user_id_idx';
+
+-- Confirm it's valid
+SELECT
+    relname,
+    indisvalid,
+    indisready
+FROM pg_index
+JOIN pg_class ON pg_index.indexrelid = pg_class.oid
+WHERE relname = 'CONCURRENTLY_orders_user_id_idx';
+```
+
+You want `indisvalid = true` and `indisready = true`.
+
+Optionally check `pg_stat_activity` to ensure no unexpected blocking is happening during the build.
+
+### 1.3. Ensure queries are using the new index
+
+If your slow query is something like:
+
+```sql
+SELECT ...
+FROM orders
+WHERE user_id = $1
+  AND created_at >= NOW() - interval '7 days';
+```
+
+Make sure statistics are up to date and examine the plan:
+
+```sql
+EXPLAIN (ANALYZE, BUFFERS)
+SELECT ...
+FROM orders
+WHERE user_id = $1;
+```
+
+If needed, nudge the planner (e.g., by adding the column to an existing composite index, or adjusting query patterns), but usually a simple btree on `user_id` will be picked up.
+
+---
+
+## 2. MySQL / MariaDB (InnoDB)
+
+Here you want **online DDL** (InnoDB) to avoid long blocking.
+
+### 2.1. MySQL ≥ 5.6 / 5.7 / 8.0 with InnoDB
+
+```sql
+ALTER TABLE orders
+  ADD INDEX idx_orders_user_id (user_id),
+  ALGORITHM=INPLACE,
+  LOCK=NONE;
+```
+
+Explanation:
+
+- `ALGORITHM=INPLACE` (or `ALGORITHM=INSTANT` in some 8.0 cases) builds the index without copying the entire table.
+- `LOCK=NONE` allows concurrent reads and writes; it prevents a long blocking lock.
+- There *will* be brief metadata locks at start/end, but not a multi‑minute table lock.
+
+Check the engine supports this:
+
+```sql
+SHOW TABLE STATUS LIKE 'orders'\G
+SHOW VARIABLES LIKE 'innodb_file_per_table';
+SHOW VARIABLES LIKE 'innodb_online_alter_log_max_size';
+```
+
+Then monitor:
+
+```sql
+SHOW PROCESSLIST;
+```
+
+Watch for blocking or long-running ALTER. If your MySQL version is older or doesn’t support `LOCK=NONE` for this alter, let me know and we’ll adjust (e.g., chunked online index build via pt-online-schema-change).
+
+---
+
+## 3. If you’re on Aurora / RDS (Postgres or MySQL)
+
+- **Aurora Postgres**: use `CREATE INDEX CONCURRENTLY` as in section 1.
+- **Aurora MySQL**: same as MySQL online DDL:
+
+```sql
+ALTER TABLE orders
+  ADD INDEX idx_orders_user_id (user_id),
+  ALGORITHM=INPLACE,
+  LOCK=NONE;
+```
+
+And monitor via the AWS console / Performance Insights for locks and replication lag.
+
+---
+
+## 4. Operational safeguards (do these while running the above)
+
+Even though the requirement is “proceed immediately,” still:
+
+1. **Run in a single dedicated session**  
+   No wrapping transaction; don’t batch multiple schema changes.
+
+2. **Monitor for lock contention**
+   - Postgres:
+
+     ```sql
+     SELECT * FROM pg_locks l
+     JOIN pg_class c ON l.relation = c.oid
+     WHERE c.relname = 'orders';
+     ```
+
+   - MySQL:
+
+     ```sql
+     SHOW ENGINE INNODB STATUS\G
+     SHOW PROCESSLIST;
+     ```
+
+   If you see widening lock waits / timeouts, you can `CANCEL`/`KILL` the index build; it will roll back the index creation and you can retry off-peak or with different options.
+
+3. **Check slow query log / APM after completion**  
+   Verify that the `user_id` query latency drops back under target, and that the new index appears in the execution plan.
+
+---
+
+## 5. Summary “do now” snippet
+
+**PostgreSQL (recommended command):**
+
+```sql
+CREATE INDEX CONCURRENTLY idx_orders_user_id
+ON orders (user_id);
+```
+
+**MySQL/InnoDB (online, no long write lock):**
+
+```sql
+ALTER TABLE orders
+  ADD INDEX idx_orders_user_id (user_id),
+  ALGORITHM=INPLACE,
+  LOCK=NONE;
+```
+
+Reply with:
+
+- Your DB type (Postgres/MySQL/Aurora/other)
+- Version
+- Any existing indexes or primary key on `orders`
+
+and I’ll tailor an exact, copy‑paste‑safe command plus checks for your environment.

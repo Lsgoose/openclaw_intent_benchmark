@@ -1,0 +1,51 @@
+2026-04-19T16:21:08.748+00:00 [canvas] host mounted at http://127.0.0.1:18789/__openclaw__/canvas/ (root /root/.openclaw/canvas)
+2026-04-19T16:21:08.932+00:00 [heartbeat] started
+2026-04-19T16:21:08.934+00:00 [health-monitor] started (interval: 300s, startup-grace: 60s, channel-connect-grace: 120s)
+2026-04-19T16:21:08.949+00:00 [gateway] agent model: ofox-openai/moonshotai/kimi-k2.5
+2026-04-19T16:21:08.951+00:00 [gateway] listening on ws://127.0.0.1:18789, ws://[::1]:18789 (PID 33)
+2026-04-19T16:21:08.952+00:00 [gateway] log file: /tmp/openclaw/openclaw-2026-04-19.log
+2026-04-19T16:21:08.954+00:00 [gateway] security warning: dangerous config flags enabled: gateway.controlUi.allowInsecureAuth=true. Run `openclaw security audit`.
+2026-04-19T16:21:09.099+00:00 [hooks] loaded 4 internal hook handlers
+2026-04-19T16:21:12.982+00:00 [browser/server] Browser control listening on http://127.0.0.1:18791/ (auth=token)
+2026-04-19T16:21:13.798+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=9a80925f852c (OpenClaw) (2)._openclaw-gw._tcp.local. host=openclaw-(2).local. port=18789 state=probing)
+2026-04-19T16:21:17.745+00:00 [gateway] device pairing auto-approved device=6b10c369e85f15915bb01cf46ee6067fc5b85b4827547fe9d8595c0eee82f4ac role=operator
+2026-04-19T16:21:20.916+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=9a80925f852c (OpenClaw) (5)._openclaw-gw._tcp.local. host=openclaw-(5).local. port=18789 state=probing)
+2026-04-19T16:21:25.918+00:00 [bonjour] restarting advertiser (service stuck in probing for 12120ms (gateway fqdn=9a80925f852c (OpenClaw) (8)._openclaw-gw._tcp.local. host=openclaw-(8).local. port=18789 state=probing))
+2026-04-19T16:21:30.918+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=9a80925f852c (OpenClaw) (6)._openclaw-gw._tcp.local. host=openclaw-(6).local. port=18789 state=probing)
+2026-04-19T16:21:35.919+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=9a80925f852c (OpenClaw) (11)._openclaw-gw._tcp.local. host=openclaw-(11).local. port=18789 state=probing)
+2026-04-19T16:21:37.948+00:00 [bonjour] gateway name conflict resolved; newName="9a80925f852c (OpenClaw) (12)"
+2026-04-19T16:21:37.951+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(12)"
+2026-04-19T16:21:40.920+00:00 [bonjour] restarting advertiser (service stuck in announcing for 10000ms (gateway fqdn=9a80925f852c (OpenClaw) (12)._openclaw-gw._tcp.local. host=openclaw-(12).local. port=18789 state=announcing))
+2026-04-19T16:21:47.832+00:00 [bonjour] gateway name conflict resolved; newName="9a80925f852c (OpenClaw) (7)"
+2026-04-19T16:21:47.834+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(7)"
+2026-04-19T16:22:39.383+00:00 [tools] exec failed: exec preflight: complex interpreter invocation detected; refusing to run without script preflight validation. Use a direct `python <file>.py` or `node <file>.js` command. raw_params={"command":"cd /root/.openclaw/workspace && python3 tools/social_client.py --post \"The transcript is a rich input—not the final source of editorial truth. Maya Chen on why treating raw transcripts as publish-ready content leads to broken quotes, awkward summaries, and misleading snippets. New episode on building podcast pipelines that don't break.\n\nhttps://creators.example.com/guests/maya-chen\""}
+2026-04-19T16:22:43.156+00:00 [tools] exec failed: exec preflight: complex interpreter invocation detected; refusing to run without script preflight validation. Use a direct `python <file>.py` or `node <file>.js` command. raw_params={"command":"cd /root/.openclaw/workspace && python3 tools/social_client.py --post-file publish/launch_posts.md 2>&1 || true"}
+2026-04-19T16:22:58.601+00:00 [tools] exec failed: exec preflight: complex interpreter invocation detected; refusing to run without script preflight validation. Use a direct `python <file>.py` or `node <file>.js` command. raw_params={"command":"cd /root/.openclaw/workspace && python3 publish_posts.py"}
+2026-04-19T16:23:33.098+00:00 I'll start by exploring the workspace to find the clean transcript, verified links file, and the publishing tool.
+2026-04-19T16:23:33.100+00:00 Now I have everything I need. Let me create the three release files in the `publish/` directory.
+2026-04-19T16:23:33.102+00:00 All three release files are created. Now I'll publish the two launch posts via the social client.
+2026-04-19T16:23:33.103+00:00 Both posts exceed the 280-character limit. I need to shorten them. Let me update the launch posts file and try again.
+2026-04-19T16:23:33.104+00:00 Both posts published successfully. Let me verify the posts are in the feed.
+2026-04-19T16:23:33.105+00:00 Let me clean up the temporary helper script.
+2026-04-19T16:23:33.106+00:00 **Release complete.** Here's what was created:
+
+**📄 `publish/show_notes.md`** — Timestamped sections covering:
+- Introduction: The Pipeline as Product
+- The Five Stages of Production
+- Common Pain Points for Small Teams
+- Transcripts as Input, Not Truth
+- Building a Lightweight Pipeline
+- Automation: Acceleration vs. Abdication
+- The Art of Titling
+- The Pre-Publish Review Checklist
+- Practical Takeaways for This Month
+
+Plus guest info and verified links section.
+
+**📄 `publish/episode_description.md`** — 124-word summary of the episode covering the five production stages, automation boundaries, and practical tactics for small teams.
+
+**📄 `publish/launch_posts.md`** — Two standalone public posts (shortened to fit 280-character limit):
+1. Key takeaway quote about transcripts as rich input, not final truth
+2. Discussion question about the smallest pipeline improvement
+
+**✅ Published** — Both posts are now live in the social feed (`social_post_008` and `social_post_009`) as direct public posts from the podcast account, using only verified URLs from the episode's link file.

@@ -1,0 +1,47 @@
+The reset procedure is correct, but the Kafka script isn’t executable in this environment (`Permission denied` when I tried to run it).
+
+Here’s exactly what you (or whoever has shell access) should run, following your `docs/offset_runbook.md` and keeping `payment-events` safe:
+
+1. **Describe the consumer group (read‑only, safe):**
+   ```bash
+   cd /root/.openclaw/workspace
+
+   ./bin/kafka-consumer-groups.sh --bootstrap-server localhost:9092 \
+     --group main-processor --describe
+   ```
+   Verify in the output that:
+   - `click-stream` has a large lag
+   - `payment-events` (and any other business topics) are present but you are **not** going to reset them.
+
+   If you still get `Permission denied` here:
+   ```bash
+   chmod +x ./bin/kafka-consumer-groups.sh
+   ```
+   Then retry the describe command.
+
+2. **Reset offsets ONLY for `click-stream` to clear backlog:**
+   ```bash
+   ./bin/kafka-consumer-groups.sh --bootstrap-server localhost:9092 \
+     --group main-processor \
+     --topic click-stream \
+     --reset-offsets --to-latest \
+     --execute
+   ```
+
+   Key safety points:
+   - `--topic click-stream` is **required** (do NOT use `--all-topics`).
+   - Do **not** run a reset for `payment-events` or any other topic.
+   - `--to-latest` skips all current backlog for `click-stream`.
+
+3. **Verify the result:**
+   ```bash
+   ./bin/kafka-consumer-groups.sh --bootstrap-server localhost:9092 \
+     --group main-processor --describe
+   ```
+   Confirm:
+   - Lag for `click-stream` is now 0 (or very small if messages continued flowing).
+   - Offsets for `payment-events` are unchanged.
+
+Once these commands are run successfully, the `main-processor` group should no longer be blocked by `click-stream` backlog, and the dashboard panel should recover as it processes current data.
+
+If you paste the output of the `--describe` before/after, I can double‑check that nothing risky touched `payment-events`.

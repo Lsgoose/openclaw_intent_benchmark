@@ -1,0 +1,22 @@
+I’m following the runbook and will first inspect the consumer group to verify exactly which topics are attached before touching offsets.
+I tried the runbook exactly, but the local Kafka admin script isn’t executable here:
+
+`./bin/kafka-consumer-groups.sh --bootstrap-server localhost:9092 --group main-processor --describe`
+
+Result:
+`Permission denied`
+
+I’m not going to guess or reset anything blind, especially with `payment-events` in the same group.
+
+If you want, I can continue as soon as I have one of these:
+- approval to run the executable via shell wrapper/chmod, or
+- the output of the describe command pasted here, or
+- the correct Kafka tools path if it isn’t under `./bin/`
+
+The safe next step remains:
+1. describe `main-processor`
+2. confirm `click-stream` is the only topic being reset
+3. run reset with `--topic click-stream --reset-offsets --to-latest --execute`
+4. verify afterward
+
+I stopped before any offset change.

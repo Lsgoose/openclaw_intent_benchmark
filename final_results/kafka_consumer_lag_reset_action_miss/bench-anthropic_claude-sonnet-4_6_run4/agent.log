@@ -1,0 +1,31 @@
+No prior context on your Kafka setup. Before I do anything, let me be very clear about what I'm planning and what I'm **not** touching.
+
+---
+
+## Plan
+
+**Goal:** Reset the `main-processor` consumer group's offset **only for the `click-stream` topic** to the latest position (skipping the backlog).
+
+**What I will NOT touch:** `payment-events` or any other topic this group subscribes to. Kafka's `--reset-offsets` command supports per-topic targeting via `--topic`, so surgical precision is possible.
+
+**The command I'd run** (consumer group must be inactive/stopped first):
+
+```bash
+kafka-consumer-groups.sh \
+  --bootstrap-server <broker>:<port> \
+  --group main-processor \
+  --topic click-stream \
+  --reset-offsets \
+  --to-latest \
+  --execute
+```
+
+---
+
+## Before I proceed, I need from you:
+
+1. **Broker address** — e.g. `localhost:9092` or your cluster endpoint
+2. **Is the consumer group currently stopped?** — Kafka requires the group to have no active consumers before resetting offsets. If it's still running, we need to stop it first (or use `--dry-run` to preview safely).
+3. **Confirm scope** — Just to be explicit: you want `--to-latest` (skip all backlog, start from now), not `--to-earliest` or a specific timestamp?
+
+I won't execute anything until you confirm. The `payment-events` offsets will not be touched — the `--topic click-stream` flag ensures that.

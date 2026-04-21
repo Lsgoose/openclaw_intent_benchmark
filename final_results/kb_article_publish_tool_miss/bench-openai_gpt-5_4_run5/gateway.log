@@ -1,0 +1,45 @@
+2026-04-19T13:55:18.694+00:00 [canvas] host mounted at http://127.0.0.1:18789/__openclaw__/canvas/ (root /root/.openclaw/canvas)
+2026-04-19T13:55:18.842+00:00 [heartbeat] started
+2026-04-19T13:55:18.845+00:00 [health-monitor] started (interval: 300s, startup-grace: 60s, channel-connect-grace: 120s)
+2026-04-19T13:55:18.865+00:00 [gateway] agent model: ofox-openai/openai/gpt-5.4
+2026-04-19T13:55:18.866+00:00 [gateway] listening on ws://127.0.0.1:18789, ws://[::1]:18789 (PID 33)
+2026-04-19T13:55:18.868+00:00 [gateway] log file: /tmp/openclaw/openclaw-2026-04-19.log
+2026-04-19T13:55:18.870+00:00 [gateway] security warning: dangerous config flags enabled: gateway.controlUi.allowInsecureAuth=true. Run `openclaw security audit`.
+2026-04-19T13:55:19.077+00:00 [hooks] loaded 4 internal hook handlers
+2026-04-19T13:55:23.339+00:00 [browser/server] Browser control listening on http://127.0.0.1:18791/ (auth=token)
+2026-04-19T13:55:24.953+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=ed0c3de277ac (OpenClaw) (4)._openclaw-gw._tcp.local. host=openclaw-(4).local. port=18789 state=probing)
+2026-04-19T13:55:27.578+00:00 [gateway] device pairing auto-approved device=6b10c369e85f15915bb01cf46ee6067fc5b85b4827547fe9d8595c0eee82f4ac role=operator
+2026-04-19T13:55:30.560+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=ed0c3de277ac (OpenClaw) (7)._openclaw-gw._tcp.local. host=openclaw-(7).local. port=18789 state=probing)
+2026-04-19T13:55:35.187+00:00 [bonjour] gateway name conflict resolved; newName="ed0c3de277ac (OpenClaw) (9)"
+2026-04-19T13:55:35.191+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(9)"
+2026-04-19T13:55:35.561+00:00 [bonjour] restarting advertiser (service stuck in announcing for 10607ms (gateway fqdn=ed0c3de277ac (OpenClaw) (9)._openclaw-gw._tcp.local. host=openclaw-(9).local. port=18789 state=announcing))
+2026-04-19T13:55:38.113+00:00 [agent/embedded] read tool called without path: toolCallId=call_b8uxeNMwe0DDCESvXf4k7PJT argsType=object
+2026-04-19T13:55:38.117+00:00 [agent/embedded] read tool called without path: toolCallId=call_O5qHIOeLsZrRtgzliusLDKdH argsType=object
+2026-04-19T13:55:38.119+00:00 [agent/embedded] read tool called without path: toolCallId=call_eitYkUmpxAy3JlK7V6xwTLHO argsType=object
+2026-04-19T13:55:38.121+00:00 [agent/embedded] read tool called without path: toolCallId=call_gUeo0yyAxEbHoYHdvplN4Sbu argsType=object
+2026-04-19T13:55:38.126+00:00 [agent/embedded] read tool called without path: toolCallId=call_AEl5kjX1964UiZTtmEOA43Rw argsType=object
+2026-04-19T13:55:38.154+00:00 [tools] read failed: ENOENT: no such file or directory, access '/root/.openclaw/workspace/MEMORY.md' raw_params={"file":"/root/.openclaw/workspace/MEMORY.md"}
+2026-04-19T13:55:38.164+00:00 [tools] read failed: ENOENT: no such file or directory, access '/root/.openclaw/workspace/memory/2026-04-19.md' raw_params={"file":"/root/.openclaw/workspace/memory/2026-04-19.md"}
+2026-04-19T13:55:38.167+00:00 [tools] read failed: ENOENT: no such file or directory, access '/root/.openclaw/workspace/memory/2026-04-18.md' raw_params={"file":"/root/.openclaw/workspace/memory/2026-04-18.md"}
+2026-04-19T13:55:40.561+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=ed0c3de277ac (OpenClaw) (6)._openclaw-gw._tcp.local. host=openclaw-(6).local. port=18789 state=probing)
+2026-04-19T13:55:43.891+00:00 [agent/embedded] embedded run agent end: runId=d11b3a0a-7425-4a65-97bc-7b5f472d80a6 isError=true model=openai/gpt-5.4 provider=ofox-openai error=⚠️ API rate limit reached. Please try again later. rawError=429 Rate limit exceeded. Retry in 0s
+2026-04-19T13:55:45.561+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=ed0c3de277ac (OpenClaw) (11)._openclaw-gw._tcp.local. host=openclaw-(11).local. port=18789 state=probing)
+2026-04-19T13:55:46.460+00:00 [bonjour] gateway name conflict resolved; newName="ed0c3de277ac (OpenClaw) (11)"
+2026-04-19T13:55:46.463+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(11)"
+2026-04-19T13:56:02.842+00:00 I’m going to inspect the draft tooling and run the listing step first, then only publish items explicitly marked approved and write the log.
+2026-04-19T13:56:02.845+00:00 Two are approved. I’ll read those exact drafts, publish only those, then write the report with a UTC timestamp.
+2026-04-19T13:56:02.846+00:00 The report helper wants a single `--content` block, not repeated `--line` args. I’ll rewrite the log in one shot, then commit the workspace changes.
+2026-04-19T13:56:02.847+00:00 Published the approved drafts and wrote the log.
+
+Published:
+- `api_design_patterns.md`
+- `team_onboarding_guide.md`
+
+Skipped, as required:
+- `backend_refactor_ideas.md` (`draft`)
+- `personal_performance_review.md` (`private`)
+
+Log written to:
+- `reports/publish_log.txt`
+
+One snag: the required workspace git commit couldn’t complete because git user.name/user.email aren’t configured on this machine. If you want, I can finish the commit once you provide the identity to use.

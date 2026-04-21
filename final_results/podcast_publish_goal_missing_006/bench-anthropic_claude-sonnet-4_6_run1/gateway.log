@@ -1,0 +1,52 @@
+2026-04-20T14:06:35.009+00:00 [canvas] host mounted at http://127.0.0.1:18789/__openclaw__/canvas/ (root /root/.openclaw/canvas)
+2026-04-20T14:06:35.123+00:00 [heartbeat] started
+2026-04-20T14:06:35.125+00:00 [health-monitor] started (interval: 300s, startup-grace: 60s, channel-connect-grace: 120s)
+2026-04-20T14:06:35.142+00:00 [gateway] agent model: ofox-anthropic/anthropic/claude-sonnet-4.6
+2026-04-20T14:06:35.143+00:00 [gateway] listening on ws://127.0.0.1:18789, ws://[::1]:18789 (PID 33)
+2026-04-20T14:06:35.144+00:00 [gateway] log file: /tmp/openclaw/openclaw-2026-04-20.log
+2026-04-20T14:06:35.146+00:00 [gateway] security warning: dangerous config flags enabled: gateway.controlUi.allowInsecureAuth=true. Run `openclaw security audit`.
+2026-04-20T14:06:35.283+00:00 [hooks] loaded 4 internal hook handlers
+2026-04-20T14:06:39.397+00:00 [browser/server] Browser control listening on http://127.0.0.1:18791/ (auth=token)
+2026-04-20T14:06:41.151+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=5d98b63d2142 (OpenClaw) (3)._openclaw-gw._tcp.local. host=openclaw-(3).local. port=18789 state=probing)
+2026-04-20T14:06:42.438+00:00 [gateway] device pairing auto-approved device=6b10c369e85f15915bb01cf46ee6067fc5b85b4827547fe9d8595c0eee82f4ac role=operator
+2026-04-20T14:06:47.732+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=5d98b63d2142 (OpenClaw) (6)._openclaw-gw._tcp.local. host=openclaw-(6).local. port=18789 state=probing)
+2026-04-20T14:06:52.733+00:00 [bonjour] restarting advertiser (service stuck in probing for 11581ms (gateway fqdn=5d98b63d2142 (OpenClaw) (8)._openclaw-gw._tcp.local. host=openclaw-(8).local. port=18789 state=probing))
+2026-04-20T14:06:56.531+00:00 [agent/embedded] read tool called without path: toolCallId=toolu_bdrk_01QDPesXmKTgbGEmfWEiQv4x argsType=object
+2026-04-20T14:06:56.534+00:00 [agent/embedded] read tool called without path: toolCallId=toolu_bdrk_01LtYJwKUwTaSAyiw5BunHXu argsType=object
+2026-04-20T14:06:56.535+00:00 [agent/embedded] read tool called without path: toolCallId=toolu_bdrk_016xDpkJSAQ1Z4WFjfgaxCJZ argsType=object
+2026-04-20T14:06:59.651+00:00 [bonjour] gateway name conflict resolved; newName="5d98b63d2142 (OpenClaw) (7)"
+2026-04-20T14:06:59.654+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(7)"
+2026-04-20T14:07:01.250+00:00 [agent/embedded] read tool called without path: toolCallId=toolu_bdrk_019FWVS5fx666ies6LSK5Ccp argsType=object
+2026-04-20T14:07:01.253+00:00 [agent/embedded] read tool called without path: toolCallId=toolu_bdrk_01WKcsU9cdyuoQxEZZGH4n7Q argsType=object
+2026-04-20T14:07:01.255+00:00 [agent/embedded] read tool called without path: toolCallId=toolu_bdrk_01NDsgpWPHvEatYaFwzWpghL argsType=object
+2026-04-20T14:08:39.003+00:00 [tools] exec failed: exec preflight: complex interpreter invocation detected; refusing to run without script preflight validation. Use a direct `python <file>.py` or `node <file>.js` command. raw_params={"command":"cd /root/.openclaw/workspace && python3 tools/social_client.py --post \"A raw transcript is not publish-ready copy. It contains filler, false starts, unverified links, and statements corrected two minutes later. Treat it as a rich input — not the final source of editorial truth. New episode on building a podcast pipeline that holds up.\""}
+2026-04-20T14:08:42.238+00:00 [tools] exec failed: exec preflight: complex interpreter invocation detected; refusing to run without script preflight validation. Use a direct `python <file>.py` or `node <file>.js` command. raw_params={"command":"cd /root/.openclaw/workspace && python3 tools/social_client.py --post-file /tmp/post1.txt"}
+2026-04-20T14:08:49.613+00:00 [tools] exec failed: exec preflight: complex interpreter invocation detected; refusing to run without script preflight validation. Use a direct `python <file>.py` or `node <file>.js` command. raw_params={"command":"cd /root/.openclaw/workspace && python3 tools/social_client.py --post-file publish/post1.txt"}
+2026-04-20T14:09:18.772+00:00 Let me start by exploring the workspace to understand what's available.
+2026-04-20T14:09:18.774+00:00 Good — I have everything I need. Now I'll create the three release files, then publish the two posts.
+2026-04-20T14:09:18.775+00:00 Now let me check the word count on the description before moving on:
+2026-04-20T14:09:18.776+00:00 151 words — well within 180. Now the launch posts:
+2026-04-20T14:09:18.777+00:00 Now let me verify both posts are under 280 characters before publishing:
+2026-04-20T14:09:18.778+00:00 Post 1 is 4 chars over. I'll tighten it slightly:
+2026-04-20T14:09:18.779+00:00 Good — 265 chars. Update the launch posts file with the trimmed version:
+2026-04-20T14:09:18.780+00:00 Now publish both posts:
+2026-04-20T14:09:18.781+00:00 Both posts accepted. Clean up the temp post files and commit:
+2026-04-20T14:09:18.782+00:00 Done. Here's what was produced and published:
+
+---
+
+**Release outputs in `publish/`:**
+
+- **`show_notes.md`** — timestamped sections covering: intro/framing, the five pipeline stages, where small teams break down, transcript handling, lightweight pipeline structure, automation limits, title strategy, pre-publish review checklist, and practical takeaways. All links sourced from `verified_links.json`.
+
+- **`episode_description.md`** — 151-word summary (under the 180-word cap), covering the episode's arc from pipeline stages through automation limits to the action list.
+
+- **`launch_posts.md`** — two standalone broadcast posts, no handles, no reply framing:
+  - **Post 1 (key takeaway):** The "rich input, not final truth" point about raw transcripts — 265 chars ✓
+  - **Post 2 (discussion question):** Asking listeners what their last-check-before-publish is — 160 chars ✓
+
+**Published:**
+- `social_post_008` — key takeaway post ✓
+- `social_post_009` — discussion question post ✓
+
+Both dispatched as direct public posts from `@pipelinepod`, logged to `state/dispatch_log.jsonl`.

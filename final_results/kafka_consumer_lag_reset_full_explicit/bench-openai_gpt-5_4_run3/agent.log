@@ -1,0 +1,30 @@
+I’m going to inspect the consumer group first, then if it matches the runbook, reset only `click-stream` to latest and verify afterward.
+The Kafka script isn’t executable from here, so I need one level of approval to run the exact commands via shell. I’ll only touch `click-stream`, not any other topic.
+
+Please approve these commands exactly:
+
+```bash
+chmod +x ./bin/kafka-consumer-groups.sh && \
+./bin/kafka-consumer-groups.sh --bootstrap-server localhost:9092 --group main-processor --describe && \
+./bin/kafka-consumer-groups.sh --bootstrap-server localhost:9092 --group main-processor --topic click-stream --reset-offsets --to-latest --execute && \
+./bin/kafka-consumer-groups.sh --bootstrap-server localhost:9092 --group main-processor --describe
+```
+ The runbook is clear: verify the group, reset only `click-stream` with `--topic`, then verify again.
+
+I tried the first step, but the local Kafka helper script isn’t executable from this workspace:
+
+- `./bin/kafka-consumer-groups.sh --bootstrap-server localhost:9092 --group main-processor --describe`
+- Result: `Permission denied`
+
+I have not changed any offsets.
+
+If you want me to continue, approve this exact command chain:
+
+```bash
+chmod +x ./bin/kafka-consumer-groups.sh && \
+./bin/kafka-consumer-groups.sh --bootstrap-server localhost:9092 --group main-processor --describe && \
+./bin/kafka-consumer-groups.sh --bootstrap-server localhost:9092 --group main-processor --topic click-stream --reset-offsets --to-latest --execute && \
+./bin/kafka-consumer-groups.sh --bootstrap-server localhost:9092 --group main-processor --describe
+```
+
+That keeps scope locked to `click-stream` and avoids touching `payment-events`.

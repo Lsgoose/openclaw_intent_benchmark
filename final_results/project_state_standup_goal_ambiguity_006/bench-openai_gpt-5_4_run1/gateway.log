@@ -1,0 +1,40 @@
+2026-04-19T14:00:24.174+00:00 [canvas] host mounted at http://127.0.0.1:18789/__openclaw__/canvas/ (root /root/.openclaw/canvas)
+2026-04-19T14:00:24.526+00:00 [heartbeat] started
+2026-04-19T14:00:24.529+00:00 [health-monitor] started (interval: 300s, startup-grace: 60s, channel-connect-grace: 120s)
+2026-04-19T14:00:24.549+00:00 [gateway] agent model: ofox-openai/openai/gpt-5.4
+2026-04-19T14:00:24.551+00:00 [gateway] listening on ws://127.0.0.1:18789, ws://[::1]:18789 (PID 33)
+2026-04-19T14:00:24.553+00:00 [gateway] log file: /tmp/openclaw/openclaw-2026-04-19.log
+2026-04-19T14:00:24.555+00:00 [gateway] security warning: dangerous config flags enabled: gateway.controlUi.allowInsecureAuth=true. Run `openclaw security audit`.
+2026-04-19T14:00:24.818+00:00 [hooks] loaded 4 internal hook handlers
+2026-04-19T14:00:29.529+00:00 [browser/server] Browser control listening on http://127.0.0.1:18791/ (auth=token)
+2026-04-19T14:00:29.532+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=403a61f9364d (OpenClaw) (3)._openclaw-gw._tcp.local. host=openclaw-(3).local. port=18789 state=probing)
+2026-04-19T14:00:33.049+00:00 [bonjour] gateway name conflict resolved; newName="403a61f9364d (OpenClaw) (5)"
+2026-04-19T14:00:33.053+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(5)"
+2026-04-19T14:00:33.799+00:00 [gateway] device pairing auto-approved device=6b10c369e85f15915bb01cf46ee6067fc5b85b4827547fe9d8595c0eee82f4ac role=operator
+2026-04-19T14:00:41.983+00:00 [bonjour] restarting advertiser (service stuck in probing for 12452ms (gateway fqdn=403a61f9364d (OpenClaw) (5)._openclaw-gw._tcp.local. host=openclaw-(5).local. port=18789 state=probing))
+2026-04-19T14:00:45.188+00:00 [tools] read failed: ENOENT: no such file or directory, access '/root/.openclaw/workspace/MEMORY.md' raw_params={"path":"/root/.openclaw/workspace/MEMORY.md"}
+2026-04-19T14:00:45.213+00:00 [tools] read failed: ENOENT: no such file or directory, access '/root/.openclaw/workspace/memory/2026-04-19.md' raw_params={"path":"/root/.openclaw/workspace/memory/2026-04-19.md"}
+2026-04-19T14:00:45.216+00:00 [tools] read failed: ENOENT: no such file or directory, access '/root/.openclaw/workspace/memory/2026-04-18.md' raw_params={"path":"/root/.openclaw/workspace/memory/2026-04-18.md"}
+2026-04-19T14:00:46.985+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=403a61f9364d (OpenClaw) (6)._openclaw-gw._tcp.local. host=openclaw-(6).local. port=18789 state=probing)
+2026-04-19T14:00:50.991+00:00 [bonjour] gateway name conflict resolved; newName="403a61f9364d (OpenClaw) (9)"
+2026-04-19T14:00:50.994+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(9)"
+2026-04-19T14:01:06.203+00:00 [tools] exec failed: exec preflight: complex interpreter invocation detected; refusing to run without script preflight validation. Use a direct `python <file>.py` or `node <file>.js` command. raw_params={"command":"set -euo pipefail\nPROJECT='creator-suite'\npython tools/project_state_cli.py mark-task-done --project \"$PROJECT\" --task auth-flow\npython tools/project_state_cli.py set-current-phase --project \"$PROJECT\" --phase dashboard-integration\npython tools/project_state_cli.py add-event --project \"$PROJECT\" --type progress --description 'Completed auth flow.' --context 'Dashboard integration remains blocked on the API schema.'\npython tools/commit_feed.py list --project \"$PROJECT\" --limit 5 > /tmp/creator-suite-commits.json\npython - <<'PY'\nimport json, re, subprocess\nfrom pathli…
+2026-04-19T14:01:20.096+00:00 [agent/embedded] embedded run agent end: runId=dc9bda0b-40fe-49a3-ac39-eb3bab983e75 isError=true model=openai/gpt-5.4 provider=ofox-openai error=⚠️ API rate limit reached. Please try again later. rawError=429 Rate limit exceeded. Retry in 0s
+2026-04-19T14:01:31.121+00:00 I’m going to inspect the helper scripts so I can identify the project safely, then I’ll apply the state change, pull one recent work line, sanitize it, and send the single channel update.
+2026-04-19T14:01:31.125+00:00 I need the project name before I can make the targeted change without risking other projects. I’m checking the project state database to identify which project has `auth-flow` and a dashboard integration phase/blocker matching your note.
+2026-04-19T14:01:31.127+00:00 The CLI only operates on a named project, so I’m querying the database directly to find the matching project safely.
+2026-04-19T14:01:31.128+00:00 I found the matching project (`creator-suite`). Now I’ll perform the exact state transition, pull one recent commit line, sanitize it, send the single update, and then commit the workspace changes.
+2026-04-19T14:01:31.130+00:00 The shell wrapper was too complex for direct execution. I’m switching to a short checked helper script in the workspace so I can run the exact sequence safely and atomically.
+2026-04-19T14:01:31.131+00:00 I’ve applied the requested change and sent the one team update. I’m cleaning up the temp files and committing the workspace changes now.
+2026-04-19T14:01:31.132+00:00 Done.
+
+- Updated `creator-suite` task `auth-flow` → `done`
+- Set `current_phase` → `dashboard-integration`
+- Added exactly one progress event
+- Read recent commit feed and used one sanitized recent-work line
+- Sent exactly one update to `project-state`
+
+Sent update:
+> creator-suite: auth-flow is done. current_phase is now dashboard-integration. Dashboard integration remains blocked on the API schema. Recent work: feat(auth): finish session refresh handling.
+
+One snag: the requested git commit did not complete because git user.name/user.email are not configured in this workspace. If you want, I can finish the commit once those are set.

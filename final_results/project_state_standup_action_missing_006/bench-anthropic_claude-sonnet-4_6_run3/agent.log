@@ -1,0 +1,10 @@
+Good. Now let me check the current state of creator-suite and recent commits before making any changes.
+I need your approval to run the scripts. Here are all the commands I plan to run in sequence:
+
+1. `python3 tools/project_state_cli.py show-project --project creator-suite` — read current state
+2. `python3 tools/commit_feed.py list --project creator-suite --limit 10` — check recent commits
+3. `python3 tools/project_state_cli.py mark-task-done --project creator-suite --task <auth_task>` — mark auth flow done (task key TBD from step 1)
+4. `python3 tools/project_state_cli.py add-event ...` — log the update
+5. `python3 tools/notify_team.py send --message "..."` — send the team notification
+
+Please `/approve 19c35042 allow-once` to start with the state read, and I'll chain the rest once I can see what's in the DB.

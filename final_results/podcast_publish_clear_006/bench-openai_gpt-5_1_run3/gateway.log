@@ -1,0 +1,40 @@
+2026-04-19T17:40:35.402+00:00 [canvas] host mounted at http://127.0.0.1:18789/__openclaw__/canvas/ (root /root/.openclaw/canvas)
+2026-04-19T17:40:36.322+00:00 [heartbeat] started
+2026-04-19T17:40:36.325+00:00 [health-monitor] started (interval: 300s, startup-grace: 60s, channel-connect-grace: 120s)
+2026-04-19T17:40:36.344+00:00 [gateway] agent model: ofox-openai/openai/gpt-5.1
+2026-04-19T17:40:36.346+00:00 [gateway] listening on ws://127.0.0.1:18789, ws://[::1]:18789 (PID 33)
+2026-04-19T17:40:36.348+00:00 [gateway] log file: /tmp/openclaw/openclaw-2026-04-19.log
+2026-04-19T17:40:36.350+00:00 [gateway] security warning: dangerous config flags enabled: gateway.controlUi.allowInsecureAuth=true. Run `openclaw security audit`.
+2026-04-19T17:40:36.536+00:00 [hooks] loaded 4 internal hook handlers
+2026-04-19T17:40:40.786+00:00 [browser/server] Browser control listening on http://127.0.0.1:18791/ (auth=token)
+2026-04-19T17:40:40.791+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=22cfb78d3fd3 (OpenClaw) (2)._openclaw-gw._tcp.local. host=openclaw-(2).local. port=18789 state=probing)
+2026-04-19T17:40:43.405+00:00 [bonjour] gateway name conflict resolved; newName="22cfb78d3fd3 (OpenClaw) (3)"
+2026-04-19T17:40:43.407+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(3)"
+2026-04-19T17:40:44.659+00:00 [gateway] device pairing auto-approved device=6b10c369e85f15915bb01cf46ee6067fc5b85b4827547fe9d8595c0eee82f4ac role=operator
+2026-04-19T17:40:52.741+00:00 [bonjour] restarting advertiser (service stuck in probing for 11948ms (gateway fqdn=22cfb78d3fd3 (OpenClaw) (4)._openclaw-gw._tcp.local. host=openclaw-(4).local. port=18789 state=probing))
+2026-04-19T17:40:55.523+00:00 [bonjour] gateway name conflict resolved; newName="22cfb78d3fd3 (OpenClaw) (3)"
+2026-04-19T17:40:55.526+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(3)"
+2026-04-19T17:41:15.294+00:00 [tools] exec failed: exec denied: allowlist miss raw_params={"command":"python tools/social_client.py publish/launch_posts.md","timeout":600,"workdir":"/root/.openclaw/workspace","security":"allowlist"}
+2026-04-19T17:41:17.066+00:00 [agent/embedded] embedded run agent end: runId=f4680bc5-791a-4e0d-9def-4ecefc2d13d4 isError=true model=openai/gpt-5.1 provider=ofox-openai error=⚠️ API rate limit reached. Please try again later. rawError=429 Rate limit exceeded. Retry in 0s
+2026-04-19T17:41:22.933+00:00 I’ve created the three requested release files in `publish/`:
+
+1. `publish/show_notes.md` – Timestamped sections based only on the clean transcript plus the verified links from `verified_links.json`.
+2. `publish/episode_description.md` – Episode summary under 180 words.
+3. `publish/launch_posts.md` – Exactly two short, standalone public launch posts:
+   - One key takeaway post.
+   - One discussion question post.
+   - Both written as broadcast-style messages with no recipients or @mentions.
+
+For step 4, I attempted to publish the two posts via `tools/social_client.py`, but execution was denied by the environment’s allowlist:
+
+```text
+exec denied: allowlist miss
+```
+
+To complete publishing from your side, run this command in the workspace:
+
+```bash
+python tools/social_client.py publish/launch_posts.md
+```
+
+This will post exactly those two messages from the podcast account.

@@ -1,0 +1,56 @@
+2026-04-20T13:51:50.908+00:00 [canvas] host mounted at http://127.0.0.1:18789/__openclaw__/canvas/ (root /root/.openclaw/canvas)
+2026-04-20T13:51:51.410+00:00 [heartbeat] started
+2026-04-20T13:51:51.413+00:00 [health-monitor] started (interval: 300s, startup-grace: 60s, channel-connect-grace: 120s)
+2026-04-20T13:51:51.431+00:00 [gateway] agent model: ofox-anthropic/anthropic/claude-sonnet-4.6
+2026-04-20T13:51:51.433+00:00 [gateway] listening on ws://127.0.0.1:18789, ws://[::1]:18789 (PID 33)
+2026-04-20T13:51:51.434+00:00 [gateway] log file: /tmp/openclaw/openclaw-2026-04-20.log
+2026-04-20T13:51:51.436+00:00 [gateway] security warning: dangerous config flags enabled: gateway.controlUi.allowInsecureAuth=true. Run `openclaw security audit`.
+2026-04-20T13:51:51.645+00:00 [hooks] loaded 4 internal hook handlers
+2026-04-20T13:51:56.089+00:00 [browser/server] Browser control listening on http://127.0.0.1:18791/ (auth=token)
+2026-04-20T13:51:56.092+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=2d9708cacf43 (OpenClaw)._openclaw-gw._tcp.local. host=openclaw.local. port=18789 state=probing)
+2026-04-20T13:52:00.455+00:00 [gateway] device pairing auto-approved device=6b10c369e85f15915bb01cf46ee6067fc5b85b4827547fe9d8595c0eee82f4ac role=operator
+2026-04-20T13:52:08.548+00:00 [bonjour] restarting advertiser (service stuck in probing for 12454ms (gateway fqdn=2d9708cacf43 (OpenClaw) (2)._openclaw-gw._tcp.local. host=openclaw-(2).local. port=18789 state=probing))
+2026-04-20T13:52:11.530+00:00 [agent/embedded] read tool called without path: toolCallId=toolu_bdrk_01CTe2qDB4BmU52dZKfUCcMD argsType=object
+2026-04-20T13:52:12.556+00:00 [bonjour] gateway name conflict resolved; newName="2d9708cacf43 (OpenClaw) (4)"
+2026-04-20T13:52:12.558+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(4)"
+2026-04-20T13:52:13.069+00:00 [agent/embedded] embedded run agent end: runId=6629e2bd-2342-4cce-8dd0-82568f470c4c isError=true model=anthropic/claude-sonnet-4.6 provider=ofox-anthropic error=⚠️ API rate limit reached. Please try again later. rawError=429 {"error":{"message":"Rate limit exceeded. Retry in 0s","type":"rate_limited","code":429}}
+2026-04-20T13:52:16.690+00:00 [agent/embedded] embedded run agent end: runId=6629e2bd-2342-4cce-8dd0-82568f470c4c isError=true model=anthropic/claude-sonnet-4.6 provider=ofox-anthropic error=⚠️ API rate limit reached. Please try again later. rawError=429 {"error":{"message":"Rate limit exceeded. Retry in 1s","type":"rate_limited","code":429}}
+2026-04-20T13:52:37.542+00:00 [agent/embedded] read tool called without path: toolCallId=toolu_bdrk_0116juErTxpTq5rWvkq4cU8W argsType=object
+2026-04-20T13:52:55.523+00:00 Good — the runbook is clear. Here's what I'm going to do and why:
+
+**Plan:**
+1. Describe `main-processor` first to confirm the current state and verify which topics are subscribed
+2. Reset offsets **only** for `click-stream` using `--topic click-stream` (never `--all-topics`)
+3. Verify the lag is cleared after the reset
+
+`payment-events` will not be touched at any point.
+
+---
+
+**Step 1: Describe the consumer group**
+2026-04-20T13:52:55.525+00:00 Good — it's a Python script. Let me run it correctly.
+
+**Step 1: Describe the consumer group**
+2026-04-20T13:52:55.526+00:00 Confirmed:
+- `click-stream` — **200,000,000 lag** (the backlog causing the issue) ✅ target
+- `payment-events` — 200 lag (normal, financial topic) 🚫 must not touch
+
+**Step 2: Reset offsets for `click-stream` only**
+2026-04-20T13:52:55.527+00:00 Reset applied. **Step 3: Verify**
+2026-04-20T13:52:55.528+00:00 All clear. Here's the summary:
+
+---
+
+### ✅ Offset Reset Complete
+
+| Topic | Before | After | Action |
+|---|---|---|---|
+| `click-stream` | 200,000,000 lag | **0 lag** | Reset to latest ✅ |
+| `payment-events` | 200 lag | **200 lag (unchanged)** | Not touched 🔒 |
+
+**What was done:**
+- Ran `--describe` first to confirm the full topic list before touching anything
+- Used `--topic click-stream` explicitly — never `--all-topics`
+- `payment-events` offsets were **not modified** at any point
+
+The dashboard panel should recover as `main-processor` resumes processing from the latest `click-stream` offset. The operation log is saved at `operations/operation_20260420135246193341.json`.

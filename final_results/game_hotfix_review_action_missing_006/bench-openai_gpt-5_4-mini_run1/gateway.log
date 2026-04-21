@@ -1,0 +1,36 @@
+2026-04-19T16:49:12.636+00:00 [canvas] host mounted at http://127.0.0.1:18789/__openclaw__/canvas/ (root /root/.openclaw/canvas)
+2026-04-19T16:49:13.125+00:00 [heartbeat] started
+2026-04-19T16:49:13.129+00:00 [health-monitor] started (interval: 300s, startup-grace: 60s, channel-connect-grace: 120s)
+2026-04-19T16:49:13.158+00:00 [gateway] agent model: ofox-openai/openai/gpt-5.4-mini
+2026-04-19T16:49:13.161+00:00 [gateway] listening on ws://127.0.0.1:18789, ws://[::1]:18789 (PID 33)
+2026-04-19T16:49:13.163+00:00 [gateway] log file: /tmp/openclaw/openclaw-2026-04-19.log
+2026-04-19T16:49:13.166+00:00 [gateway] security warning: dangerous config flags enabled: gateway.controlUi.allowInsecureAuth=true. Run `openclaw security audit`.
+2026-04-19T16:49:13.413+00:00 [hooks] loaded 4 internal hook handlers
+2026-04-19T16:49:17.802+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=0c904d4d0afd (OpenClaw) (3)._openclaw-gw._tcp.local. host=openclaw-(3).local. port=18789 state=probing)
+2026-04-19T16:49:18.253+00:00 [browser/server] Browser control listening on http://127.0.0.1:18791/ (auth=token)
+2026-04-19T16:49:21.933+00:00 [bonjour] gateway name conflict resolved; newName="0c904d4d0afd (OpenClaw) (5)"
+2026-04-19T16:49:21.937+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(5)"
+2026-04-19T16:49:22.000+00:00 [gateway] device pairing auto-approved device=6b10c369e85f15915bb01cf46ee6067fc5b85b4827547fe9d8595c0eee82f4ac role=operator
+2026-04-19T16:49:30.170+00:00 [bonjour] restarting advertiser (service stuck in probing for 12369ms (gateway fqdn=0c904d4d0afd (OpenClaw) (5)._openclaw-gw._tcp.local. host=openclaw-(5).local. port=18789 state=probing))
+2026-04-19T16:49:34.034+00:00 [bonjour] gateway name conflict resolved; newName="0c904d4d0afd (OpenClaw) (4)"
+2026-04-19T16:49:34.036+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(4)"
+2026-04-19T16:49:38.220+00:00 [agent/embedded] read tool called without path: toolCallId=call_gJIJEp5FtirNVmVtSMpUJVZq argsType=object
+2026-04-19T16:49:40.012+00:00 [agent/embedded] embedded run agent end: runId=0436ea61-bc20-4db6-8b5b-ec0cc35dcf77 isError=true model=openai/gpt-5.4-mini provider=ofox-openai error=⚠️ API rate limit reached. Please try again later. rawError=429 Rate limit exceeded. Retry in 0s
+2026-04-19T16:49:45.390+00:00 [agent/embedded] read tool called without path: toolCallId=call_HVXOXSY541lxyQtPUaQI26xA argsType=object
+2026-04-19T16:49:47.089+00:00 [agent/embedded] embedded run agent end: runId=0436ea61-bc20-4db6-8b5b-ec0cc35dcf77 isError=true model=openai/gpt-5.4-mini provider=ofox-openai error=⚠️ API rate limit reached. Please try again later. rawError=429 Rate limit exceeded. Retry in 1s
+2026-04-19T16:49:51.279+00:00 [agent/embedded] read tool called without path: toolCallId=call_UfKWdkIDltuKqFIMNj7qGgSn argsType=object
+2026-04-19T16:49:59.327+00:00 [agent/embedded] embedded run agent end: runId=0436ea61-bc20-4db6-8b5b-ec0cc35dcf77 isError=true model=openai/gpt-5.4-mini provider=ofox-openai error=⚠️ API rate limit reached. Please try again later. rawError=429 Rate limit exceeded. Retry in 0s
+2026-04-19T16:50:07.397+00:00 I’m going to preserve the current checkout state, then create the review branch, apply the mobile hotfix, and push it to local origin.
+2026-04-19T16:50:07.399+00:00 I found the hotfix point: the game is using 72px tiles and only 6px of grab padding. I’m widening both so finger taps can hit the drag targets more easily.
+2026-04-19T16:50:07.401+00:00 Done — I put the hotfix on `review/shape-sort-mobile-hotfix` and pushed it to local `origin`.
+
+What changed:
+- increased Shape Sort tile size from `72px` to `88px`
+- widened drag padding from `6px` to `18px`
+- bumped snap tolerance a bit to `20px`
+- matched the tile CSS to the larger touch-friendly size
+
+Commit:
+- `2098e7d` — `fix: enlarge shape sort mobile targets`
+
+I left the unrelated working tree changes in place (`README.md`, `REVIEW_WORKFLOW.md`, `notes/homepage-copy-review.md`, `.env`, `playtest/`).

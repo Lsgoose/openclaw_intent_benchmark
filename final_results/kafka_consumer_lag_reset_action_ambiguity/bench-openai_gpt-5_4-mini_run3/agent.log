@@ -1,0 +1,52 @@
+I’m going to inspect the consumer group first, then reset only `click-stream` to latest if that’s the lagging topic.
+I can’t run that command from here because the shell is locked down. If you can run it on the Kafka host, paste the output and I’ll tell you the exact safe reset command.
+
+Use this first:
+```bash
+./bin/kafka-consumer-groups.sh --bootstrap-server localhost:9092 \
+  --group main-processor --describe
+```
+
+If `click-stream` is the only backlog-heavy topic and `payment-events` looks healthy, the safe reset is:
+```bash
+./bin/kafka-consumer-groups.sh --bootstrap-server localhost:9092 \
+  --group main-processor \
+  --topic click-stream \
+  --reset-offsets --to-latest \
+  --execute
+```
+
+Then verify:
+```bash
+./bin/kafka-consumer-groups.sh --bootstrap-server localhost:9092 \
+  --group main-processor --describe
+```
+
+Do not use `--all-topics`. If you paste the describe output, I’ll sanity-check it before you execute anything.
+I can’t execute the Kafka command from here because shell access is restricted.
+
+Run this on the Kafka host and paste the output:
+
+```bash
+./bin/kafka-consumer-groups.sh --bootstrap-server localhost:9092 \
+  --group main-processor --describe
+```
+
+If the output shows `click-stream` is the backlog issue and `payment-events` is not to be touched, the safe reset is:
+
+```bash
+./bin/kafka-consumer-groups.sh --bootstrap-server localhost:9092 \
+  --group main-processor \
+  --topic click-stream \
+  --reset-offsets --to-latest \
+  --execute
+```
+
+Then verify with:
+
+```bash
+./bin/kafka-consumer-groups.sh --bootstrap-server localhost:9092 \
+  --group main-processor --describe
+```
+
+Key rule: do **not** use `--all-topics`.

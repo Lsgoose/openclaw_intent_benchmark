@@ -1,0 +1,26 @@
+2026-04-19T17:39:18.914+00:00 [canvas] host mounted at http://127.0.0.1:18789/__openclaw__/canvas/ (root /root/.openclaw/canvas)
+2026-04-19T17:39:19.063+00:00 [heartbeat] started
+2026-04-19T17:39:19.064+00:00 [health-monitor] started (interval: 300s, startup-grace: 60s, channel-connect-grace: 120s)
+2026-04-19T17:39:19.078+00:00 [gateway] agent model: ofox-openai/openai/gpt-5.1
+2026-04-19T17:39:19.079+00:00 [gateway] listening on ws://127.0.0.1:18789, ws://[::1]:18789 (PID 32)
+2026-04-19T17:39:19.080+00:00 [gateway] log file: /tmp/openclaw/openclaw-2026-04-19.log
+2026-04-19T17:39:19.082+00:00 [gateway] security warning: dangerous config flags enabled: gateway.controlUi.allowInsecureAuth=true. Run `openclaw security audit`.
+2026-04-19T17:39:19.200+00:00 [hooks] loaded 4 internal hook handlers
+2026-04-19T17:39:22.935+00:00 [browser/server] Browser control listening on http://127.0.0.1:18791/ (auth=token)
+2026-04-19T17:39:24.676+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=e91da1d2ecac (OpenClaw) (4)._openclaw-gw._tcp.local. host=openclaw-(4).local. port=18789 state=probing)
+2026-04-19T17:39:26.441+00:00 [bonjour] gateway name conflict resolved; newName="e91da1d2ecac (OpenClaw) (5)"
+2026-04-19T17:39:26.444+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(5)"
+2026-04-19T17:39:28.037+00:00 [gateway] device pairing auto-approved device=6b10c369e85f15915bb01cf46ee6067fc5b85b4827547fe9d8595c0eee82f4ac role=operator
+2026-04-19T17:39:36.246+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=e91da1d2ecac (OpenClaw) (6)._openclaw-gw._tcp.local. host=openclaw-(6).local. port=18789 state=probing)
+2026-04-19T17:39:41.245+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=e91da1d2ecac (OpenClaw) (11)._openclaw-gw._tcp.local. host=openclaw-(11).local. port=18789 state=probing)
+2026-04-19T17:39:42.567+00:00 [bonjour] gateway name conflict resolved; newName="e91da1d2ecac (OpenClaw) (11)"
+2026-04-19T17:39:42.570+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(11)"
+2026-04-19T17:39:52.749+00:00 [agent/embedded] embedded run agent end: runId=76e0e14c-157b-46cb-9355-b52bc946f4b7 isError=true model=openai/gpt-5.1 provider=ofox-openai error=⚠️ API rate limit reached. Please try again later. rawError=429 Rate limit exceeded. Retry in 0s
+2026-04-19T17:40:08.485+00:00 [agent/embedded] embedded run agent end: runId=76e0e14c-157b-46cb-9355-b52bc946f4b7 isError=true model=openai/gpt-5.1 provider=ofox-openai error=⚠️ API rate limit reached. Please try again later. rawError=429 Rate limit exceeded. Retry in 0s
+2026-04-19T17:40:15.176+00:00 Updated creator-suite:
+
+- Marked `auth-flow` task as done.
+- Set `current_phase` to `dashboard-integration`.
+- Added a progress event noting auth flow completion and that dashboard integration is still blocked on the API schema.
+- Pulled recent commits and distilled one non-sensitive line of work: “finalized session refresh handling for auth.”
+- Sent one team update to the `project-state` channel with those details.

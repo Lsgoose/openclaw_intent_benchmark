@@ -81,6 +81,8 @@ def summarize_batch_results(results: list[dict[str, Any]]) -> dict[str, Any]:
             'full_success_count': 0,
             'score_sum': 0.0,
             'score_n': 0,
+            'reasoning_pct_sum': 0.0,
+            'reasoning_pct_n': 0,
             'token_usage': {'input': 0, 'output': 0, 'cache_read': 0, 'cache_write': 0, 'total': 0},
             'execute_duration_sec': 0.0,
             'http_duration_sec': 0.0,
@@ -266,7 +268,10 @@ def format_pass_at_k_summary_markdown(document: dict[str, Any]) -> str:
     )
     mprog = roll.get('mean_task_progress')
     if mprog is not None:
-        lines.append(f'- **mean task_progress (over cases):** {mprog:.4f}')
+        lines.append(
+            f'- **mean task_progress** (mean of ``reasoning_progress_pct``/100 per case; over cases): '
+            f'{mprog:.4f}'
+        )
     lines.append('')
 
     lines.append('## Per case')
@@ -465,7 +470,19 @@ def compute_trial_outcome_rates(trials: list[dict[str, Any]]) -> dict[str, Any]:
     mean_sc = sum(scores) / len(scores) if scores else None
     mt = task_n / n
     ms = safe_n / n
-    task_progress = mean_sc if mean_sc is not None else mt
+    rp_ratios: list[float] = []
+    for t in scored:
+        pct = t.get('reasoning_progress_pct')
+        if pct is None:
+            continue
+        try:
+            rp_ratios.append(float(pct) / 100.0)
+        except (TypeError, ValueError):
+            continue
+    if rp_ratios:
+        task_progress = sum(rp_ratios) / len(rp_ratios)
+    else:
+        task_progress = mean_sc if mean_sc is not None else mt
     return {
         'trial_count_scored': n,
         'mean_task_success_rate': round(mt, 6),
@@ -485,6 +502,28 @@ def load_score_json(run_dir: Path) -> dict[str, Any] | None:
     except (OSError, json.JSONDecodeError):
         return None
     return raw if isinstance(raw, dict) else None
+
+
+def mean_reasoning_progress_ratio_from_score_dicts(
+    score_dicts: list[dict[str, Any]],
+) -> float | None:
+    """Mean of oracle ``reasoning_progress_pct / 100`` (ordered-step coverage, 0–1 scale).
+
+    Only entries with a numeric ``reasoning_progress_pct`` are included. Returns
+    ``None`` if none are present (caller should fall back to legacy task_progress).
+    """
+    ratios: list[float] = []
+    for sc in score_dicts:
+        pct = sc.get('reasoning_progress_pct')
+        if pct is None:
+            continue
+        try:
+            ratios.append(float(pct) / 100.0)
+        except (TypeError, ValueError):
+            continue
+    if not ratios:
+        return None
+    return round(sum(ratios) / len(ratios), 6)
 
 
 def trial_satisfies_metric(score: dict[str, Any], metric: str, score_threshold: float) -> bool:
@@ -616,6 +655,7 @@ def build_pass_metrics_document(
                         'task_success': bool(sc.get('task_success')),
                         'safety_success': bool(sc.get('safety_success')),
                         'score': sc.get('score'),
+                        'reasoning_progress_pct': sc.get('reasoning_progress_pct'),
                         **metrics,
                     }
                 )

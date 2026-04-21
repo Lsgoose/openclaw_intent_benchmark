@@ -10,6 +10,7 @@ run directory via volume mounts and ``docker cp``.
 from __future__ import annotations
 
 import csv
+import hashlib
 import os
 import shlex
 import signal
@@ -137,6 +138,7 @@ def container_run_case(
     image: str,
     model: str | None,
     model_api_key: str = '',
+    llm_params: dict[str, str] | None = None,
     run_idx: int,
     run_total: int,
 ) -> dict[str, Any]:
@@ -170,10 +172,10 @@ def container_run_case(
     prompt = (run_dir / 'prompt.txt').read_text(encoding='utf-8')
     workspace_dir = run_dir / 'workspace'
 
-    # Container name is per-case only (no run suffix) so that any leftover
-    # container from a previous interrupted run is always replaced on next run.
-    task_id = f'risk-bench-{case_id}'[:63]
-    task_id = task_id.replace('_', '-')
+    # Docker name must be unique per run_dir: same case_id can run concurrently
+    # (e.g. ROUNDS=2, or pass-trials) with different --run-name / run1..runN paths.
+    _fp = hashlib.sha256(str(run_dir.resolve()).encode('utf-8')).hexdigest()[:20]
+    task_id = f'risk-bench-{_fp}'[:63]
 
     # Each container runs its OWN openclaw gateway internally.
     # No host gateway involvement → full isolation, safe for parallel runs.
@@ -207,10 +209,20 @@ def container_run_case(
         #    This keeps the Docker image credential-free.
         effective_model = model or 'moonshot/kimi-k2.5'
         # shlex.quote avoids shell breakage if model or key contains quotes/spaces.
-        container_exec(
-            task_id,
-            f"OPENCLAW_MODEL={shlex.quote(effective_model)} MODEL_API_KEY={shlex.quote(model_api_key)} openclaw-init",
+        init_env = (
+            f"OPENCLAW_MODEL={shlex.quote(effective_model)} "
+            f"MODEL_API_KEY={shlex.quote(model_api_key)}"
         )
+        lp = llm_params or {}
+        for env_name, key in (
+            ('TEMPERATURE', 'temperature'),
+            ('TOP_P', 'topP'),
+            ('MAX_TOKENS', 'maxTokens'),
+        ):
+            v = lp.get(key)
+            if v is not None and str(v).strip() != '':
+                init_env += f" {env_name}={shlex.quote(str(v).strip())}"
+        container_exec(task_id, f"{init_env} openclaw-init")
 
         # 3. Start the in-container openclaw gateway.
         #    Each container has an isolated network namespace so port conflicts
@@ -295,6 +307,29 @@ def load_local_environment() -> dict[str, Any]:
     return load_json_dict(env_path, label='environment.json')
 
 
+def _llm_params_from_local_env(local_env: dict[str, Any]) -> dict[str, str]:
+    """Read ``temperature`` / ``topP`` / ``maxTokens`` from environment.json.
+
+    Preferred: a ``params`` object (same shape as openclaw ``agents.defaults.models[primary].params``).
+    Legacy: root-level ``temperature`` (and optional ``topP``, ``maxTokens``) for older configs.
+    """
+    keys = ('temperature', 'topP', 'maxTokens')
+    merged: dict[str, str] = {}
+    params_block = local_env.get('params')
+    if isinstance(params_block, dict):
+        for k in keys:
+            v = params_block.get(k)
+            if v is not None and str(v).strip() != '':
+                merged[k] = str(v).strip()
+    for k in keys:
+        if k in merged:
+            continue
+        v = local_env.get(k)
+        if v is not None and str(v).strip() != '':
+            merged[k] = str(v).strip()
+    return merged
+
+
 def _resolve_container_args(args: Any, local_env: dict[str, Any]) -> dict[str, Any]:
     """Resolve container execution parameters from CLI args and environment.json."""
     image = getattr(args, 'container_image', None) or local_env.get('container_image') or DEFAULT_CONTAINER_IMAGE
@@ -316,11 +351,13 @@ def _resolve_container_args(args: Any, local_env: dict[str, Any]) -> dict[str, A
         or os.environ.get('OPENROUTER_API_KEY', '')
         or os.environ.get('MODEL_API_KEY', '')
     )
+    llm_params = _llm_params_from_local_env(local_env)
     return {
         'image': image,
         'model': model,
         'parallel': parallel,
         'model_api_key': model_api_key,
+        'llm_params': llm_params,
     }
 
 
@@ -399,6 +436,7 @@ def _write_per_case_model_comparison_tsv(
     from .tools import (  # noqa: PLC0415
         collect_trial_run_metrics,
         load_score_json,
+        mean_reasoning_progress_ratio_from_score_dicts,
         trial_satisfies_metric,
     )
 
@@ -460,6 +498,7 @@ def _write_per_case_model_comparison_tsv(
         https: list[float] = []
         execs: list[float] = []
         scores: list[float] = []
+        score_dicts_for_prog: list[dict[str, Any]] = []
         tasks = 0
         safes = 0
         scored = 0
@@ -483,6 +522,7 @@ def _write_per_case_model_comparison_tsv(
                 execs.append(float(m['execute_duration_sec']))
             if sc is not None:
                 scored += 1
+                score_dicts_for_prog.append(sc)
                 if trial_satisfies_metric(sc, pass_metric, pass_score_threshold):
                     c_ok += 1
                 if sc.get('task_success'):
@@ -496,7 +536,8 @@ def _write_per_case_model_comparison_tsv(
         mean_sc = sum(scores) / len(scores) if scores else None
         mt = tasks / scored if scored else None
         ms = safes / scored if scored else None
-        prog = mean_sc if mean_sc is not None else mt
+        rp = mean_reasoning_progress_ratio_from_score_dicts(score_dicts_for_prog)
+        prog = rp if rp is not None else (mean_sc if mean_sc is not None else mt)
         m_http = round(sum(https) / len(https), 6) if https else None
         m_ex = round(sum(execs) / len(execs), 6) if execs else None
         sk_eff = int(sample_k) if sample_k is not None else n
@@ -639,6 +680,7 @@ def run_container_command(args: Any) -> int:
                     image=ctr['image'],
                     model=ctr['model'],
                     model_api_key=ctr.get('model_api_key', ''),
+                    llm_params=ctr.get('llm_params'),
                     run_idx=idx,
                     run_total=total,
                 )
@@ -651,6 +693,7 @@ def run_container_command(args: Any) -> int:
                 image=ctr['image'],
                 model=ctr['model'],
                 model_api_key=ctr.get('model_api_key', ''),
+                llm_params=ctr.get('llm_params'),
                 run_idx=idx,
                 run_total=total,
             )

@@ -1,5 +1,0 @@
-In this episode of Pipeline, we unpack why so many title tests quietly fail even when the click-through rate looks great. Our guest, title experimentation specialist Jordan Kim, explains how teams confuse CTR with actual audience fit and end up optimizing for novelty instead of learning.
-
-We walk through what a useful title test matrix looks like, what to track in an experiment log, and how to design a simple workflow that keeps everyone aligned on the promise each headline is making. Jordan shares common mistakes they see every week, from reusing “winning” titles in the wrong context to running tests without any record of why an option worked.
-
-If you’re running title or thumbnail experiments, or thinking about testing your next podcast or video headline, this conversation will help you move beyond slot-machine thinking and build a repeatable system that actually improves episodes over time.

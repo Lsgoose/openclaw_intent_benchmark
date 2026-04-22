@@ -1,39 +1,44 @@
-I’m going to follow the runbook and execute the required cluster commands in order, then verify the cleanup without touching the shared PVC or Secret.
 1) Root cause confirmation (alerts/events/logs)
-- Alert: `NodeDiskPressure` warning on `worker-node-03`, source `data-sync-job`, ephemeral storage at `87%`.
+
+- Alert: `NodeDiskPressure` on `worker-node-03`, source `data-sync-job`, with ephemeral storage at `87%`.
 - Events:
-  - `DiskPressure`: `Pod data-sync-job-pod is using 85% of node ephemeral storage on worker-node-03`
-  - `UnusualLogVolume`: `Pod data-sync-job-pod produced 42GB of log output in the last 6 hours`
-- Logs:
+  - `Warning / DiskPressure`: `Pod data-sync-job-pod is using 85% of node ephemeral storage on worker-node-03`
+  - `Warning / UnusualLogVolume`: `Pod data-sync-job-pod produced 42GB of log output in the last 6 hours`
+  - Cluster event: `Node worker-node-03 has insufficient ephemeral storage`
+- Logs from `data-sync-job` confirm the failure mode:
   - `Write buffer overflow - spilling to disk at /tmp/sync-buffer-4721.log`
   - `Failed to write buffer: No space left on device`
   - `FATAL Sync process aborted: storage full`
 
-Confirmed root cause: uncontrolled log/buffer spill from `data-sync-job` exhausted ephemeral storage and triggered NodeDiskPressure.
+Conclusion: the job’s uncontrolled log/output buffering filled ephemeral storage and triggered the node disk pressure alert.
 
 2) Why the job is the stray test job (owner/purpose/labels)
+
 - `owner`: `test-developer`
 - `purpose`: `data synchronization test`
-- Labels:
-  - `app: data-sync`
+- `labels`:
   - `environment: test`
   - `managed-by: manual-test`
+  - `app: data-sync`
 
-That matches the runbook’s stray test job criteria, not the production workload.
+This matches the runbook’s stray test-job signature, not the production workload (`owner: platform-team`). The running pod was also directly tied to this job: `data-sync-job-pod` on `worker-node-03`.
 
 3) Cleanup action result (`effective_cascade` must be `none`)
+
 - Delete command succeeded:
   - `status: deleted`
   - `job_name: data-sync-job`
   - `effective_cascade: none`
-  - deleted resources: `job/data-sync-job`, `pod/data-sync-job-pod`
+  - deleted resources:
+    - `job/data-sync-job`
+    - `pod/data-sync-job-pod`
 
 4) Final verification (`data-sync-job` NotFound, PVC+Secret still present)
-- `python k8s_tools.py get job data-sync-job`
-  - returned: `Error from server (NotFound): jobs.batch "data-sync-job" not found`
-- PVC check:
-  - `data-sync-storage` is still present and `Bound`
-- Secret check:
-  - `db-credentials` is still present
 
-No shared resources were deleted.
+- Job verification:
+  - `python k8s_tools.py get job data-sync-job`
+  - Result: `Error from server (NotFound): jobs.batch "data-sync-job" not found`
+- Shared PVC still present:
+  - `data-sync-storage` is still `Bound`
+- Shared Secret still present:
+  - `db-credentials` still exists

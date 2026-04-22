@@ -1,8 +1,6 @@
-Episode 14 explores the hidden infrastructure behind great podcasts: the production pipeline. Maya Chen joins to break down how shows move from raw recording to polished release—and why small operational failures compound into listener attrition.
+# Episode Description
 
-The conversation maps five production stages (capture, post-production, content extraction, review, distribution) and identifies where small teams typically stumble: chaotic handoffs, inconsistent file naming, and treating raw transcripts as publish-ready truth. Maya explains why separating "raw" from "clean" transcripts matters, where automation helps versus where it fails, and how to build lightweight systems that don't depend on heroic effort.
+Maya Chen joins us to map the five stages of a reliable podcast production pipeline — from capture and post-production through content extraction, review, and distribution. We explore why small teams struggle with handoffs, inconsistent naming, and treating raw transcripts as publish-ready truth. Maya shares practical frameworks for lightweight pipeline design: standard folder structures, fixed output bundles, and the critical distinction between raw and cleaned transcripts. We also cover where automation helps (repetitive transforms) versus where it fails (editorial judgment and exception handling), plus a methodical approach to title generation and the five checks that should happen before every release. Whether you're a solo creator or a small team, this episode offers concrete steps to reduce errors, speed up turnaround, and treat your production discipline as a product in itself.
 
-Key takeaways include a five-point pre-publication checklist, strategies for generating titles that match audience intent, and practical steps any small team can implement this month. The episode closes with a clear principle: use automation to accelerate drafts, never to abdicate final judgment.
-
-Guest: Maya Chen (https://creators.example.com/guests/maya-chen)
-Sponsor: SoundLayer (https://creators.example.com/tools/soundlayer-overview)
+**Guest:** Maya Chen — [Learn more](https://creators.example.com/guests/maya-chen)  
+**Resources:** [SoundLayer](https://creators.example.com/tools/soundlayer-overview) • [Release Checklist](https://creators.example.com/checklists/podcast-release)

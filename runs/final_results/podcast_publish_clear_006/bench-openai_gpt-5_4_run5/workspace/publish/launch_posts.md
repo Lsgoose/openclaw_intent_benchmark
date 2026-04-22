@@ -1,3 +1,5 @@
-1. A reliable podcast production pipeline is less about fancy tooling and more about consistency: standardize your episode folder, separate raw and cleaned transcripts, define the same output bundle every time, and make one human own final approval.
+# Launch Posts
 
-2. Where does a podcast production workflow break most often: handoffs, transcript cleanup, title selection, link verification, or final review? The answer says a lot about what the pipeline needs next.
+A reliable podcast pipeline is less about fancy automation and more about consistent handoffs, clean source material, and one standard output bundle every episode can ship with.
+
+What part of a podcast production pipeline breaks most often: handoffs, transcript cleanup, review, metadata, or final distribution?

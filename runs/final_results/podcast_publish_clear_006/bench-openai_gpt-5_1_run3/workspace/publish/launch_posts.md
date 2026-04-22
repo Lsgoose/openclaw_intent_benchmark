@@ -1,3 +1,3 @@
-Building a reliable podcast production pipeline isn’t about fancy tools; it’s about consistent outputs and clear handoffs.
+Key takeaway: Treat transcripts as rich input—not final truth—so humans still own names, links, sponsor language, and what goes live.
 
-Where is your pipeline weakest right now: capture, editing, content extraction, review, or distribution?
+Discussion question: Whats the weakest link in your podcast pipeline—handoffs, file naming, transcripts, review, or distribution?

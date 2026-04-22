@@ -1,18 +1,21 @@
-I’m building the three release files from the clean transcript + verified links only, then I’ll post exactly those two launch messages unchanged via the provided client.
-Release files are written. Next I’m reading back the launch posts exactly as saved, then sending those exact two messages through the podcast social client without rewriting them.
-The client’s CLI shape was different than expected, so I’m retrying with its actual `--post` flag and the exact same two messages.
+I’m going to inspect the source files and publisher, generate the three release files, publish the two exact posts, then commit the workspace changes.
+I’ve got the transcript, the allowed links, and the thin social client wrapper. I’m checking how the social CLI expects input so I can publish the two exact posts without rewriting them.
+I know the CLI now: one post per invocation via `--post-file` or `--post`, public by default, mentions validated if present. Next I’ll draft the release files from the transcript only, then publish the two exact post bodies.
+Drafts are written. I’m doing a quick sanity check on the three files, then I’ll post the two exact launch messages as standalone public posts and commit everything.
+The files look good. I’m publishing the two exact post texts now as direct public posts, then I’ll record the work in git.
+Git commit hit the usual missing identity problem. I’m setting a local repo identity, then committing the release files and social state.
 Done.
 
-Created:
-- `publish/show_notes.md`
-- `publish/episode_description.md`
-- `publish/launch_posts.md`
+Created in `publish/`:
+- `show_notes.md`
+- `episode_description.md`
+- `launch_posts.md`
 
-Published exactly these two public posts, unchanged from `publish/launch_posts.md`:
-1. “A reliable podcast production pipeline is less about fancy tooling and more about consistency: standardize your episode folder, separate raw and cleaned transcripts, define the same output bundle every time, and make one human own final approval.”
-2. “Where does a podcast production workflow break most often: handoffs, transcript cleanup, title selection, link verification, or final review? The answer says a lot about what the pipeline needs next.”
+Published exactly two standalone public posts from `publish/launch_posts.md` via `tools/social_client.py`:
+- `social_post_008`
+- `social_post_009`
 
-Notes:
-- I used only `episodes/ep14_pipeline/transcript_clean.txt` and `episodes/ep14_pipeline/verified_links.json` for the content.
-- The social client accepted both posts successfully.
-- I also attempted to commit the release outputs, but git is missing configured author identity on this machine, so the commit failed. If you want, I can finish that once `git user.name` and `git user.email` are set.
+Committed the workspace changes:
+- `54f9298` — `Release Episode 14 assets and launch posts`
+
+One note: the repo had no git identity configured, so I set a local repo-only identity to complete the required commit.

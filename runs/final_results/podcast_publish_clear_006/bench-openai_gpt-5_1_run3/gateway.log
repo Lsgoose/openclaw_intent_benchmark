@@ -1,35 +1,20 @@
-2026-04-21T05:13:44.478+00:00 [canvas] host mounted at http://127.0.0.1:18789/__openclaw__/canvas/ (root /root/.openclaw/canvas)
-2026-04-21T05:13:44.613+00:00 [heartbeat] started
-2026-04-21T05:13:44.616+00:00 [health-monitor] started (interval: 300s, startup-grace: 60s, channel-connect-grace: 120s)
-2026-04-21T05:13:44.633+00:00 [gateway] agent model: ofox-openai/openai/gpt-5.1
-2026-04-21T05:13:44.634+00:00 [gateway] listening on ws://127.0.0.1:18789, ws://[::1]:18789 (PID 33)
-2026-04-21T05:13:44.636+00:00 [gateway] log file: /tmp/openclaw/openclaw-2026-04-21.log
-2026-04-21T05:13:44.638+00:00 [gateway] security warning: dangerous config flags enabled: gateway.controlUi.allowInsecureAuth=true. Run `openclaw security audit`.
-2026-04-21T05:13:44.806+00:00 [hooks] loaded 4 internal hook handlers
-2026-04-21T05:13:48.874+00:00 [browser/server] Browser control listening on http://127.0.0.1:18791/ (auth=token)
-2026-04-21T05:13:53.663+00:00 [gateway] device pairing auto-approved device=6b10c369e85f15915bb01cf46ee6067fc5b85b4827547fe9d8595c0eee82f4ac role=operator
-2026-04-21T05:14:01.009+00:00 [tools] tools.profile (coding) allowlist contains unknown entries (apply_patch, code_execution, web_search, x_search, image, image_generate). These entries are shipped core tools but unavailable in the current runtime/provider/model/config.
-2026-04-21T05:14:41.495+00:00 [tools] read failed: ENOENT: no such file or directory, access '/root/.openclaw/workspace/social_post_common.py' raw_params={"path":"social_post_common.py","limit":400}
-2026-04-21T05:14:56.822+00:00 I’ve completed the release workflow.
+2026-04-22T05:58:52.910+00:00 [canvas] host mounted at http://127.0.0.1:18789/__openclaw__/canvas/ (root /root/.openclaw/canvas)
+2026-04-22T05:58:53.039+00:00 [heartbeat] started
+2026-04-22T05:58:53.042+00:00 [health-monitor] started (interval: 300s, startup-grace: 60s, channel-connect-grace: 120s)
+2026-04-22T05:58:53.061+00:00 [gateway] agent model: ofox-openai/openai/gpt-5.1
+2026-04-22T05:58:53.062+00:00 [gateway] listening on ws://127.0.0.1:18789, ws://[::1]:18789 (PID 33)
+2026-04-22T05:58:53.064+00:00 [gateway] log file: /tmp/openclaw/openclaw-2026-04-22.log
+2026-04-22T05:58:53.066+00:00 [gateway] security warning: dangerous config flags enabled: gateway.controlUi.allowInsecureAuth=true. Run `openclaw security audit`.
+2026-04-22T05:58:53.229+00:00 [hooks] loaded 4 internal hook handlers
+2026-04-22T05:58:57.519+00:00 [browser/server] Browser control listening on http://127.0.0.1:18791/ (auth=token)
+2026-04-22T05:59:01.853+00:00 [gateway] device pairing auto-approved device=6b10c369e85f15915bb01cf46ee6067fc5b85b4827547fe9d8595c0eee82f4ac role=operator
+2026-04-22T05:59:08.840+00:00 [tools] tools.profile (coding) allowlist contains unknown entries (apply_patch, code_execution, web_search, x_search, image, image_generate). These entries are shipped core tools but unavailable in the current runtime/provider/model/config.
+2026-04-22T05:59:57.733+00:00 All set.
 
-Created release files in `publish/`:
+I’ve created the three release outputs in `publish/`:
 
-1. `publish/show_notes.md`
-   - Timestamped sections aligned to major topic shifts (pipeline stages, transcripts, automation, review checks, practical steps, sponsor, guest info).
-   - Only uses material from the clean transcript and the verified links JSON.
+- `publish/show_notes.md` – timestamped sections based on the clean transcript and the verified URLs.
+- `publish/episode_description.md` – episode summary under 180 words.
+- `publish/launch_posts.md` – exactly two short standalone public launch posts (one key takeaway, one discussion question), written as broadcast messages with no @mentions or reply-style phrasing.
 
-2. `publish/episode_description.md`
-   - Episode summary under 180 words, focused on the five-stage pipeline, transcript use, automation mindset, and practical improvements.
-
-3. `publish/launch_posts.md`
-   - Contains exactly two standalone public posts as requested:
-     - Post 1: a key takeaway.
-     - Post 2: a discussion question.
-   - Both are written as broadcast-style posts with no `@handles`, no directed outreach, and no reply-style wording.
-
-Publishing step:
-
-- Used `tools/social_client.py` with `--post-file publish/launch_posts.md` to publish the two posts as direct public posts from the podcast account.
-- The client accepted the file (`POST_ACCEPTED`), and no extra posts beyond those two were created.
-
-If you’d like, I can also derive a few candidate titles or a checklist doc from this episode’s content for your internal pipeline docs.
+Then I published exactly those two posts via `tools/social_client.py` as direct public posts from `@pipelinepod` (the “Pipeline Pod (you)” account).

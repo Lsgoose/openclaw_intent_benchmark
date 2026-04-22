@@ -1,13 +1,11 @@
----
+# Launch Posts
 
-## Launch Post 1: Key Takeaway
+## Post 1: Key Takeaway
 
-The most reliable podcast teams aren't the ones with the fanciest tools—they're the ones with consistent naming conventions, defined handoff points, and a standard output bundle for every episode. Small operational discipline beats heroic effort every time. New episode out now with Maya Chen on building production pipelines that actually hold up under pressure.
-
----
-
-## Launch Post 2: Discussion Question
-
-If you had to hand your podcast production process to someone else tomorrow, would they know which file is the source of truth? Episode 14 digs into the folder structures, checklists, and transcript workflows that prevent the "final_v2_real_final.wav" problem. What's the first thing you'd fix in your current pipeline?
+The biggest mistake small podcast teams make? Treating transcripts as publish-ready truth. Raw transcripts contain filler, false starts, and unverified claims. The teams that scale well separate raw transcripts (for internal reference) from cleaned transcripts (for everything downstream). That single discipline—reducing noise before asking tools or teammates to build on the result—prevents the awkward summaries and misleading quote cards that erode listener trust.
 
 ---
+
+## Post 2: Discussion Question
+
+Where does automation actually help your podcast workflow, and where has it created more cleanup than it saved? Production advisor Maya Chen argues the line sits between repetitive transforms (transcription, formatting, first drafts) and editorial judgment (titles, edge cases, what actually goes live). Curious where others have drawn that boundary—and where they've been burned.

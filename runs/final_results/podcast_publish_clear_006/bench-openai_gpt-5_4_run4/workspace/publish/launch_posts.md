@@ -1,5 +1,5 @@
 # Launch Posts
 
-A reliable podcast production pipeline is less about fancy tooling and more about consistency: clear handoffs, clean transcripts, fixed outputs, and human review before anything public goes live.
+A reliable podcast pipeline is less about fancy tooling and more about consistency: clear handoffs, clean transcripts, verified links, and a fixed output bundle for every episode.
 
-The fastest way to improve a podcast this month might be surprisingly simple: which part of the production pipeline breaks first—handoffs, transcripts, titles, review, or publishing?
+A lot of teams automate drafts before they standardize the pipeline underneath them. Which part of a podcast workflow breaks first when the process depends too much on memory and handoffs?

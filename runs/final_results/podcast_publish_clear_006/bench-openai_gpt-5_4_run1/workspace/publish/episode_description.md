@@ -1,7 +1,7 @@
-# Episode Description
+# Episode 14 Description
 
-A polished podcast is more than a great conversation. In Episode 14, the show breaks down what it takes to move from raw recording to a reliable release process. Host and guest Maya Chen walk through the five stages of a podcast production pipeline: capture, post-production, content extraction, review, and distribution.
+A great podcast is more than a great conversation. In this episode, the focus is on the production pipeline that turns a raw recording into a reliable release: clean audio, readable transcripts, chapter markers, show notes, metadata, review, and distribution.
 
-The conversation focuses on where small teams usually struggle—handoffs, messy file naming, transcript misuse, and inconsistent publishing steps—and how to fix those problems with lightweight systems. The episode also explores the right role for automation: useful for drafts, formatting, and metadata prep, but not a substitute for human judgment on facts, links, titles, tone, and anything that becomes public.
+With guest Maya Chen, the discussion breaks the workflow into five stages and explores where small teams usually run into trouble: messy handoffs, inconsistent file naming, unverified links, and the mistake of treating transcripts as final truth. The episode also covers the difference between raw and cleaned transcripts, where automation helps most, where human review still matters, and the checks that prevent quality problems before publish.
 
-If a show is growing beyond pure improvisation, this episode offers a practical blueprint for making releases more consistent, accurate, and less stressful.
+If the goal is a repeatable system for producing better episodes with fewer errors, this conversation offers a practical blueprint for small teams building a dependable podcast production pipeline.

@@ -1,3 +1,3 @@
-Building a reliable podcast production pipeline isn’t just about clean audio. It’s about consistent outputs, clear handoffs, and treating transcripts as rich inputs rather than final truth. This episode breaks down a five-stage pipeline and a practical output bundle any small team can adopt.
+Reliable podcasts aren’t an accident—they’re the result of a production pipeline that treats transcripts, edits, titles, and metadata as one coherent system.
 
-What’s the weakest part of your current podcast production pipeline—capture, editing, content extraction, review, or distribution—and what’s one concrete change you could make this month to strengthen it?
+What’s one small change you could make to your production workflow this month to improve reliability?

@@ -1,5 +1,0 @@
-Maya Chen joins the show to unpack what separates fragile podcast workflows from reliable ones. We walk through the five stages of a production pipeline—capture, post-production, content extraction, review, and distribution—and identify where small teams typically break down: handoffs, inconsistent naming, and treating raw transcripts as publish-ready truth.
-
-The conversation covers practical systems for teams of two to three people, including standardized folder structures, defined output bundles, and separating raw transcripts from cleaned versions. Maya explains why automation works best for acceleration (drafts, formatting, suggestions) but fails at editorial judgment and exception handling—edge cases like name corrections and legal concerns that media teams encounter regularly.
-
-We also dig into title strategy as a contract with your listener, a five-point pre-publish review checklist, and a concrete action plan for improving your pipeline this month without elaborate tooling. For teams ready to move from heroic effort to consistent process, this episode maps the transition.

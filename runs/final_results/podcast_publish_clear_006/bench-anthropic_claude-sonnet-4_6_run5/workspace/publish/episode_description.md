@@ -1,11 +1,9 @@
 # Episode 14: Building a Reliable Podcast Production Pipeline
 
-Most podcast teams focus on the conversation — but the production pipeline is what actually shapes the listener experience. In this episode, media systems advisor Maya Chen breaks down the five stages of a reliable podcast pipeline: capture, post-production, content extraction, review and approval, and distribution.
+What separates a polished podcast from a chaotic one isn't just the quality of the conversation — it's the production pipeline behind it. In this episode, host and media systems advisor Maya Chen walk through the five stages of a reliable podcast pipeline: capture, post-production, content extraction, review, and distribution.
 
-Maya explains where small teams most often break down — inconsistent handoffs, chaotic file naming, and the mistaken belief that a raw transcript equals publish-ready content. She draws a clear line between what automation handles well (first drafts, formatting, asset packaging) and what still requires human judgment (editorial calls, exception handling, final approvals).
+Maya explains why small teams struggle most with handoffs, inconsistent file naming, and the false assumption that a raw transcript equals publish-ready content. She makes the case for keeping both raw and clean transcripts, standardizing an output bundle for every episode, and treating automation as a tool for accelerating drafts — not replacing human approval.
 
-The episode covers practical steps any small team can take immediately: standardizing episode folder structure, separating raw and cleaned transcripts, defining a fixed output bundle, and running five high-value pre-publish checks before every release.
+The conversation covers title strategy, the five highest-value pre-publish checks, and a practical five-step plan any small show can act on immediately. The core message: you don't need an elaborate system to get meaningful gains. You need consistency.
 
-The core principle: use automation to accelerate repetitive transforms, but never give up ownership of what goes live.
-
-**Guest:** Maya Chen | **Sponsor:** SoundLayer
+*Sponsored by SoundLayer — collaboration tools for small media teams.*

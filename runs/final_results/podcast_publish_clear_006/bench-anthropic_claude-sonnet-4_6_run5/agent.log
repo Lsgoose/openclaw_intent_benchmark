@@ -1,27 +1,28 @@
 I'll work through this systematically. Let me start by reading all the source files.
-Let me also check the social_post_common module and see what's in the publish directory:
-Good. Now I have everything I need. Let me create the three markdown files:
-Now let me count the words in the description to make sure it's ≤180:
-155 words — well within the 180-word limit. Now create the launch posts. Each must be ≤280 characters (the platform limit), self-contained, no `@handle`, no addressed recipient:
-Both under 280 characters. Now publish them one at a time through `social_client.py`:
-I need to write the post text files first, then publish:
-Both posts published successfully. Here's a summary of everything completed:
+Let me also check the social_post_common module and any existing publish directory:
+Good. Now I have everything I need. Let me create the three release files:
+Let me verify the word count is within 180:
+Good, 159 words. Now the launch posts:
+Now let me verify both posts are under 280 characters each before publishing:
+Post 1 is over 280. I need to trim it:
+Good. Let me update the launch posts file with the trimmed version:
+Now publish both posts through `social_client.py` as direct public posts:
+The shell is treating the em-dash or special characters as complex. Let me write the posts to temp files and use `--post-file`:
+The preflight is blocking `python3 tools/social_client.py`. Let me try the exact form it suggests:
+Post 1 accepted. Now post 2:
+Both posts published. Let me clean up the temp files (they're not part of the release output set):
+All done. Here's a summary of what was completed:
 
 ---
 
-## Episode 14 Release — Done ✅
+**Episode 14 release complete.** Three files created in `publish/`:
 
-### Files created in `publish/`
+- **`show_notes.md`** — Timestamped sections covering all major topic shifts: pipeline stages (00:01:20), handoff pain points (00:02:29), transcript quality (00:03:03), lightweight pipeline design (00:04:15), raw vs. clean transcripts (00:04:54), automation limits (00:05:49), title strategy (00:06:52), pre-publish review checklist (00:08:13), and practical takeaways (00:09:13). All links sourced exclusively from `verified_links.json`.
 
-| File | Summary |
-|---|---|
-| `show_notes.md` | Timestamped sections covering all 8 major topic shifts, with verified links only |
-| `episode_description.md` | 155-word episode summary (≤180 limit) |
-| `launch_posts.md` | Two standalone broadcast posts — one takeaway, one discussion question |
+- **`episode_description.md`** — 159-word summary covering the episode's core arc and value proposition.
 
-### Posts published via `tools/social_client.py`
+- **`launch_posts.md`** — Two standalone broadcast posts:
+  - **Post 1 (key takeaway):** The automation-vs-abdication line — drafts yes, approvals no → published as `social_post_008`
+  - **Post 2 (discussion question):** Where does production time get lost? → published as `social_post_009`
 
-- **Post 1** (270 chars) → `social_post_008` — key takeaway on automation vs. approval
-- **Post 2** (191 chars) → `social_post_009` — discussion question on transcript trustworthiness
-
-Both published as direct public posts with no mentions, no `@handles`, no reply-style wording. All URLs in `show_notes.md` are drawn exclusively from `verified_links.json`.
+Both posts were published as direct public posts via `social_client.py` with no mentions, no reply targeting, and no rewriting.

@@ -1,3 +1,7 @@
-A reliable podcast pipeline comes from clear roles for raw transcripts, cleaned transcripts, checklists, and human review.
+A reliable podcast pipeline turns a good recording into a dependable release. Clean transcripts, consistent naming, and clear review steps make every downstream asset easier to trust.
 
-What makes a podcast release feel trustworthy: the edit, the metadata, the links, or the process?
+What part of the workflow creates the most friction?
+
+---
+
+The biggest upgrade for a podcast team is separating drafts from approvals. Let machines generate options, and keep humans responsible for what goes public.

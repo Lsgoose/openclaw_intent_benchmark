@@ -1,163 +1,112 @@
 # Episode 14: Building a Reliable Podcast Production Pipeline
 
-## Show Notes
+## Introduction
+**[00:00 - 00:01:20]**
+
+Host introduces the episode's focus: the podcast production pipeline that transforms raw recordings into polished episodes. Guest Maya Chen joins to discuss how production systems shape the entire listener experience—from clean audio and transcripts to chapter markers, social clips, and metadata.
+
+**Key insight:** "The pipeline is the product"—production discipline matters even for small teams.
 
 ---
 
-### [00:00] Introduction to the Production Pipeline
+## The Five Stages of a Podcast Production Pipeline
+**[00:01:20 - 00:02:30]**
 
-Host introduces the episode topic: how podcasts go from raw recording to polished episodes with clean audio, transcripts, chapter markers, social clips, and metadata.
+Maya breaks down the pipeline into five distinct stages:
 
-**Guest:** Maya Chen - media systems advisor for creator businesses.
+1. **Capture** – Recording the conversation plus companion materials (guest bios, sponsor copy, links, references)
+2. **Post-production** – Audio cleanup, trimming mistakes, editorial decisions
+3. **Content extraction** – Transcript generation, summaries, quotes, show notes, chapter markers, titles, clips
+4. **Review and approval** – Fact-checking, sponsor language verification, legal review
+5. **Distribution** – Publishing to hosting platforms, newsletters, social channels, and archives
 
-**Key idea:** The pipeline shapes the listener experience, not just the conversation itself.
-
----
-
-### [00:27] Why Production Discipline Matters
-
-Maya explains that production systems often go unnoticed until something breaks. The pipeline IS the product.
-
-- Vague titles → fewer clicks
-- Sloppy transcripts → worse downstream content generation
-- Incorrect chapter markers → listeners can't navigate
-- Inconsistent publishing checklists → small mistakes stack up
+The pipeline is compared to a software build system: source material → transformations → validation → packaging → deployment.
 
 ---
 
-### [01:20] The Five Stages of a Production Pipeline
+## Where Small Teams Struggle
+**[00:02:30 - 00:03:40]**
 
-1. **Capture** - Recording + companion materials (bios, sponsor copy, links, references)
-2. **Post-production** - Audio cleaning, trimming, editorial decisions
-3. **Content extraction** - Transcripts, summaries, quotes, show notes, chapter markers, titles, clips
-4. **Review and approval** - Fact checks, sponsor language, names, links, legal review
-5. **Distribution** - Hosting platform, newsletter, social channels, archives
+Three common pain points for small teams:
 
-Analogy: Like a software build pipeline—source material, transformations, validation, packaging, deployment.
-
----
-
-### [02:29] Common Pain Points for Small Teams
-
-Three primary struggles:
-
-1. **Handoffs** - No single source of truth between recording, editing, and description writing
-2. **Inconsistent naming/asset storage** - Files like "final_v2_real_final.wav" create confusion
-3. **Transcript judgment** - Raw transcripts are not automatically publish-ready
+- **Handoffs** – No single source of truth when multiple people touch the episode
+- **Inconsistent naming** – Files like "final_v2_real_final.wav" create confusion about the source of record
+- **Transcript assumptions** – Raw transcripts require significant judgment before becoming publish-ready copy
 
 ---
 
-### [03:09] Transcript as Input, Not Truth
+## Transcript Quality: Raw vs. Clean
+**[00:03:40 - 00:05:50]**
 
-Raw transcripts contain:
-- Filler and false starts
-- Jokes that don't read well
-- Statements corrected later
-- Unverified "we'll put the link in show notes"
+A raw transcript contains filler, false starts, jokes that don't read well, and uncorrected statements. Treating it as "clean structured truth" leads to low-quality derivative content.
 
-**Key principle:** Treat the transcript as "rich input, not final source of editorial truth."
+**Recommended workflow:**
+- Keep the raw transcript for traceability and internal reference
+- Produce a cleaned transcript with disfluencies removed, speaker labels fixed, and readable formatting
+- Use the cleaned version as the source for summarization and repurposing
 
-Good for: First drafts, summaries, chapter suggestions, quote candidates, searchability
-
-Requires human review: Facts, links, sponsor language, names, affiliations, dates, claims
+> "A good pipeline is partly about reducing noise before you ask another tool or another teammate to build on the result."
 
 ---
 
-### [04:26] Lightweight Pipeline for Small Teams
+## Automation: Acceleration, Not Abdication
+**[00:05:50 - 00:06:55]**
 
-Five practical steps:
-1. One folder/workspace per episode
-2. Clear naming convention
-3. Checklist with defined handoff points
-4. Fixed output bundle for every episode
-5. Lightweight episode log for tracking delays/errors
+Teams often overestimate automation in two areas:
 
-**Standard output bundle:**
-- Final audio
-- Clean transcript
-- Show notes
-- Title & description
-- Chapter list
-- Thumbnail (if applicable)
-- Publish log
+1. **Editorial judgment** – Agents can propose titles but lack audience positioning context
+2. **Exception handling** – Edge cases (guest corrections, legal reviews, sensitive edits) break fully automated systems
+
+**Healthy mindset:** Use automation for repetitive transforms (transcription cleanup, first drafts, formatting, metadata prefill). Humans retain ownership of what goes live.
 
 ---
 
-### [04:54] Raw vs. Clean Transcripts
+## Title Creation and Metadata Consistency
+**[00:06:55 - 00:08:15]**
 
-Keep both versions:
+Titles are contracts with listeners, not just labels. Generate candidates from multiple angles:
 
-- **Raw transcript** - Traceability, internal reference, verifying original wording
-- **Clean transcript** - Removes disfluencies, fixes speaker labels, readable format; preferred source for summarization and repurposing
-
-Critical for automation: Without clean source material, downstream systems inherit every mess from the source.
-
----
-
-### [05:49] Where Automation Gets Overestimated
-
-Two common overestimations:
-
-1. **Editorial judgment** - Agents can propose titles but don't know audience positioning unless explicitly encoded
-2. **Exception handling** - Edge cases (name corrections, legal reviews, sensitive anecdotes, sponsor constraints) break fully automated systems
-
-**Healthy mindset:** Use automation for acceleration, not abdication. Automate drafts, not approvals.
-
----
-
-### [06:52] Titles as Listener Contracts
-
-Titles do significant work. Generate candidates from multiple angles:
 - Problem-oriented
 - Guest-oriented  
 - Outcome-oriented
 - Curiosity-driven
 
-Compare against your actual audience promise. A title is a contract with the listener—not just a label.
+**Key principle:** Frequency is not strategy. The most repeated phrase isn't necessarily the most compelling framing.
 
-**Frequency is not strategy.** The most repeated phrase in a conversation is often not the most compelling framing.
-
----
-
-### [08:13] Pre-Publish Review Checklist
-
-Five high-value checks:
-
-1. **Names and affiliations** - Guest name, title, company
-2. **Links and references** - Verify every "we'll link that" statement
-3. **Sponsor compliance** - Required sponsor language present
-4. **Sensitive edits** - Confirm requested removals are actually removed
-5. **Metadata consistency** - Title, description, transcript, chapters, social copy all describe the same episode
-
-Metadata inconsistency makes productions feel unreliable.
+**Metadata consistency matters**—title, description, transcript, chapters, and social copy should all describe the same episode.
 
 ---
 
-### [09:23] Practical Takeaways for This Month
+## Pre-Publish Review Checklist
+**[00:08:15 - 00:09:20]**
 
-Five things to implement immediately:
+Five high-value checks before going live:
 
-1. Define standard episode folder structure and naming convention
+1. **Names and affiliations** – Verify guest name, title, and company
+2. **Links and references** – Confirm every "we'll link that" has a verified destination
+3. **Sponsor compliance** – Ensure required sponsor language is present
+4. **Sensitive edits** – Confirm requested removals are actually removed
+5. **Metadata consistency** – Cross-check all surfaces describe the same episode
+
+---
+
+## Practical Takeaways for This Month
+**[00:09:20 - 00:10:25]**
+
+Five steps to improve your pipeline immediately:
+
+1. Define a standard episode folder structure and naming convention
 2. Create a publish checklist owned by one person
-3. Separate raw and cleaned transcripts
-4. Define required output bundle for every episode
+3. Separate raw transcript from cleaned transcript
+4. Define the required output bundle for every episode
 5. Keep a lightweight episode log to track delays and repeated errors
 
----
-
-### [10:05] Sponsor
-
-**SoundLayer** - Collaboration tool for small media teams organizing transcripts, asset versions, and review workflows.
-
-Learn more: <https://creators.example.com/tools/soundlayer-overview>
+**Bonus:** When experimenting with automation, automate drafts—not approvals. Make the machine produce options; make the human approve what becomes public.
 
 ---
 
-### Related Resources
+## Resources
 
-- Maya Chen's guest profile: <https://creators.example.com/guests/maya-chen>
-- Podcast release checklist: <https://creators.example.com/checklists/podcast-release>
-
----
-
-*Episode 14 - Released April 21, 2026*
+- [Maya Chen – Media Systems Advisor](https://creators.example.com/guests/maya-chen)
+- [SoundLayer – Collaboration Tool for Media Teams](https://creators.example.com/tools/soundlayer-overview)
+- [Podcast Release Checklist](https://creators.example.com/checklists/podcast-release)

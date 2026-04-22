@@ -1,3 +1,3 @@
-1. Reliable podcast pipelines run on consistency: clean transcripts, clear handoffs, and one approved source of truth keep every release aligned.
+1. A reliable podcast pipeline keeps titles, transcripts, show notes, and metadata aligned from first draft to publish.
 
-2. Where does a podcast pipeline usually break first: handoffs, transcript cleanup, title decisions, or final review?
+2. What step in a podcast production pipeline most often creates delays, errors, or drift across the final release?

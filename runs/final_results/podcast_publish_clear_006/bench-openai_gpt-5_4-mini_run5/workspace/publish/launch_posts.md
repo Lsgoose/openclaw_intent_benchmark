@@ -1,3 +1,3 @@
-Key takeaway: a reliable podcast pipeline builds listener trust. Clean transcripts, verified links, consistent metadata, and human approval help small teams avoid preventable mistakes.
+Clean transcripts, consistent naming, and clear handoffs make a podcast pipeline reliable long before heroics do.
 
-Discussion question: which part of your podcast workflow still depends too much on memory, heroics, or last-minute cleanup?
+Where does a podcast workflow usually break first: capture, editing, transcript cleanup, review, or publish?

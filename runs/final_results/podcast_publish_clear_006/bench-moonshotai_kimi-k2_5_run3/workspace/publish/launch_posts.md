@@ -1,5 +1,11 @@
-Key takeaway: A reliable podcast pipeline isn't about expensive tools—it's about separating raw transcripts from cleaned transcripts, defining a fixed output bundle for every episode, and never letting file names like "final_v2_real_final.wav" exist in your system. Small teams can build professional workflows with just a checklist and a naming convention.
+# Launch Posts for Episode 14
+
+## Post 1: Key Takeaway
+
+The biggest mistake small podcast teams make? Treating the transcript as publish-ready copy. A raw transcript contains filler, false starts, and forward-references that don't age well. Smart teams separate raw transcripts (for internal reference) from cleaned transcripts (for summaries, quotes, and social clips). The transcript is a rich input—not the final source of editorial truth.
 
 ---
 
-Discussion question: Where does your production pipeline break most often—during handoffs between people, when extracting content from transcripts, or at the final review stage before hitting publish?
+## Post 2: Discussion Question
+
+What's the one step in your podcast workflow that consistently causes delays or errors? Is it handoffs between teammates, version control on audio files, getting sponsor language right, or something else entirely? Curious where other teams feel the friction.

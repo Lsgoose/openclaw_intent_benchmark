@@ -1,76 +1,71 @@
 # Episode 14 Show Notes
 
-## [00:00:00] Why the production pipeline shapes the listener experience
-The episode opens with a full walkthrough of what turns a raw recording into a polished release: cleaned audio, transcript, chapter markers, social clips, titles, descriptions, and metadata. The core argument is that the pipeline is not just back-office operations; it directly affects how discoverable, navigable, and trustworthy the show feels.
+## 00:00:00 — Why the production pipeline shapes the listener experience
+The episode opens with a broad look at why a podcast production pipeline matters beyond simple recording and editing. The conversation frames the pipeline as the system that turns a raw conversation into a polished release package with clean audio, transcripts, chapter markers, descriptions, clips, and metadata. Maya Chen argues that when the pipeline breaks, the audience notices quickly because release quality depends on the full chain, not just the original conversation.
 
-## [00:01:20] The five stages of a podcast production pipeline
-Maya Chen breaks the process into five stages:
-- Capture
-- Post-production
-- Content extraction
-- Review and approval
-- Distribution
+## 00:01:20 — The five stages of a reliable production pipeline
+Maya breaks the workflow into five stages:
+- Capture: record the conversation and gather companion materials
+- Post-production: clean audio and decide what stays in the episode
+- Content extraction: generate transcripts, summaries, chapter ideas, quotes, titles, and clips
+- Review and approval: check facts, names, links, sponsor language, and risk points
+- Distribution: publish the finished package across hosting, newsletter, social, and archives
 
-The team compares the workflow to a software build pipeline: source material moves through transformations, validation, packaging, and deployment.
+## 00:02:29 — Where small teams usually struggle first
+The first failure points are handoffs, inconsistent file naming, and weak source-of-truth practices. The episode highlights how scattered ownership can create version confusion and make teams unsure which assets are final.
 
-## [00:02:29] Where small teams break first: handoffs, naming, and messy source material
-The first common failure points are inconsistent handoffs, unclear ownership, and poor file naming. The conversation also highlights a major misconception: transcript-driven work looks easy, but a raw transcript is not automatically publish-ready content.
+## 00:03:03 — Why transcripts are useful but not editorial truth
+A major theme in the episode is that transcripts are valuable inputs, but not automatically publish-ready outputs. Maya explains that transcripts can contain filler, false starts, unverified references, and statements corrected later in the conversation. The practical takeaway: use transcripts for drafts, but review anything factual, authoritative, or public-facing before release.
 
-## [00:03:03] Why a transcript is useful input, not final editorial truth
-This section focuses on the risks of treating transcripts as clean truth. False starts, filler, jokes, later corrections, and unverified “we’ll link it in the show notes” moments can all create low-quality or misleading derivative content.
+## 00:04:15 — A lightweight pipeline for small teams
+For teams of two or three people, the recommended approach is simple and standardized:
+- one folder or workspace per episode
+- a clear naming convention
+- a checklist with explicit handoff points
+- a fixed output bundle for every episode
 
-Key line from the episode:
-> “The transcript is a rich input, not the final source of editorial truth.”
+That output bundle should consistently include final audio, a clean transcript, show notes, title, description, chapter list, thumbnail if needed, and a publish log.
 
-## [00:04:15] What a lightweight but reliable pipeline looks like for a small team
-For teams of two or three people, Maya recommends:
-- One workspace per episode
-- A clear naming convention
-- A checklist with explicit handoff points
-- A fixed output bundle
+## 00:04:54 — Raw transcript vs. cleaned transcript
+The conversation draws a clear distinction between raw and cleaned transcripts. Raw transcripts support traceability and wording checks. Cleaned transcripts remove obvious disfluencies, improve speaker labels, and become the preferred source for summarization and repurposing. This separation reduces downstream noise for both human teammates and automated tools.
 
-The suggested output bundle includes final audio, clean transcript, show notes, title, description, chapter list, thumbnail (if used), and a publish log.
+## 00:05:49 — Where automation helps and where it fails
+The episode turns to agents and automation, with a warning against overestimating what can be automated. Automation works well for repetitive transforms such as transcript cleanup, first-draft notes, chapter suggestions, metadata prefills, and packaging. It works less well for editorial judgment and exception handling, especially when episodes involve edge cases like name corrections, legal concerns, sensitive stories, or sponsor constraints.
 
-## [00:04:54] Raw transcript vs. clean transcript
-A reliable system keeps both:
-- Raw transcript for traceability and internal reference
-- Clean transcript for summarization and repurposing
+## 00:06:26 — Automation should accelerate, not replace accountability
+A central operating principle emerges here: automation should speed up routine work, but humans still need to own what goes live. Public content requires human responsibility for correctness, tone, and release quality.
 
-The clean transcript becomes the preferred source for downstream content work, while the raw transcript stays available for verification.
+## 00:06:52 — Better titles come from positioning, not repetition
+The discussion on episode titles emphasizes that title generation should explore multiple angles rather than simply echoing the most frequent phrase in the transcript. Suggested framing approaches include:
+- problem-oriented
+- guest-oriented
+- outcome-oriented
+- curiosity-driven
 
-## [00:05:49] Where automation helps — and where it fails
-The discussion shifts to agents and automation. Automation is framed as useful for repetitive transforms such as transcription cleanup, first-draft notes, chapter suggestions, formatting, asset packaging, and metadata prefills. But editorial judgment and exception handling still require human ownership.
+The team also mentions a practical workflow of generating multiple title candidates plus short and long descriptions before final approval.
 
-## [00:06:52] Titles as audience positioning, not just labels
-The team explores title strategy and why repeated phrases are not enough. Strong title generation should produce multiple candidates from different angles — problem-oriented, guest-oriented, outcome-oriented, or curiosity-driven — and then evaluate them against audience intent.
+## 00:08:13 — The highest-value review checks before publishing
+Maya recommends five final checks before release:
+- names and affiliations
+- links and references
+- sponsor compliance
+- sensitive edits
+- metadata consistency across title, description, transcript, chapters, and social copy
 
-Example title references discussed in the episode:
-- How Small Teams Build a Reliable Podcast Production Pipeline
-- Why Podcast Production Breaks Even When the Recording Is Great
-- From Raw Recording to Publish: The Systems Behind a Great Podcast
+These checks are positioned as the highest-leverage safeguards against avoidable release mistakes.
 
-## [00:08:13] The five highest-value review checks before publishing
-Maya’s recommended pre-release review priorities are:
-- Names and affiliations
-- Links and references
-- Sponsor compliance
-- Sensitive edits
-- Metadata consistency
+## 00:09:13 — Five improvements small shows can make this month
+The practical closing advice is direct:
+- define a standard folder structure and naming convention
+- create a publish checklist with a single owner
+- separate raw and cleaned transcripts
+- define the required output bundle for every episode
+- keep a lightweight episode log to spot delays and repeated errors
 
-The hosts emphasize that title, description, transcript, chapter list, and social copy should all match the same editorial promise.
+## 00:10:05 — Sponsor and links
+Episode sponsor:
+- [SoundLayer overview](https://creators.example.com/tools/soundlayer-overview)
 
-## [00:09:13] Practical improvements a small show can make this month
-The closing takeaway is a five-step upgrade plan:
-- Define a standard folder structure and naming convention
-- Create a publish checklist with clear ownership
-- Separate raw and cleaned transcripts
-- Define the required output bundle for every episode
-- Keep a lightweight episode log to spot recurring delays and errors
-
-## [00:10:05] Sponsor mention and resources
-This episode includes a sponsor mention for SoundLayer, described as a collaboration tool for small media teams that helps organize transcripts, asset versions, and review workflows.
-
-Verified links mentioned in the release materials:
-- Maya Chen: https://creators.example.com/guests/maya-chen
-- SoundLayer overview: https://creators.example.com/tools/soundlayer-overview
-- Podcast release checklist: https://creators.example.com/checklists/podcast-release
+Related links:
+- [Maya Chen guest profile](https://creators.example.com/guests/maya-chen)
+- [Podcast release checklist](https://creators.example.com/checklists/podcast-release)

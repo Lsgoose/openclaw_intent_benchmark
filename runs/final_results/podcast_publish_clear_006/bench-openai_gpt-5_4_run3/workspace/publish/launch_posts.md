@@ -1,3 +1,7 @@
-A reliable podcast pipeline is less about fancy tooling and more about disciplined handoffs, clean source material, and a fixed output bundle. Automate drafts, not approvals.
+# Launch Posts
 
-What’s the weakest link in most podcast workflows today: recording, editing, transcripts, review, or publishing?
+## Post 1
+A reliable podcast production pipeline is not busywork around the episode. It is part of the product. Clean handoffs, verified links, consistent metadata, and a fixed output bundle are what turn a great recording into a trustworthy release.
+
+## Post 2
+What is the weakest link in most podcast workflows right now: handoffs, transcript cleanup, title selection, review, or publishing? The answer usually reveals where reliability breaks first.

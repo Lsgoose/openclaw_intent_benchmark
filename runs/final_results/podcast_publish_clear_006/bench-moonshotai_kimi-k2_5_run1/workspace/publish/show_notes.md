@@ -1,64 +1,80 @@
 # Episode 14: Building a Reliable Podcast Production Pipeline
 
-## Show Notes
+Maya Chen joins us to break down how podcasts go from raw recording to polished episode—and why your pipeline is more than just a checklist.
 
 ---
 
-### [00:00:00] Introduction: The Pipeline Is the Product
-- Host introduces the topic: podcast production pipelines and how they shape the entire listener experience
-- Guest Maya Chen joins to discuss how the way a conversation gets edited, packaged, labeled, and distributed matters as much as the conversation itself
+## Timestamps
 
-### [00:01:20] The Five Stages of a Production Pipeline
-- **Capture**: Recording the conversation and collecting companion materials (guest bios, sponsor copy, links, references)
-- **Post-production**: Cleaning audio, trimming mistakes, deciding what stays in the episode
-- **Content extraction**: Transcript generation, summaries, quotes, show notes, chapter markers, titles, clips
-- **Review and approval**: Checking facts, sponsor language, names, links, and anything that could create editorial or legal issues
-- **Distribution**: Publishing the final package to hosting platforms, newsletters, social channels, and archives
+### [00:00] Introduction: Why Pipeline Matters
+The episode opens with the premise that production pipeline shapes listener experience. It's not just about the conversation—it's how that conversation gets edited, packaged, labeled, and distributed.
 
-### [00:02:33] Where Small Teams Struggle First
-- **Handoffs**: When one person records, another edits, and someone else writes the description, with no single source of truth
-- **Inconsistent naming and asset storage**: Files with names like "final_v2_real_final.wav" create confusion about which version is the source of record
-- **Transcript-driven tasks**: Raw transcripts look easy to work with but actually require significant editorial judgment
+### [00:27] Guest Introduction: Maya Chen
+Maya Chen, who advises media teams on production systems, joins the show. As she notes: *"the pipeline is the product."*
 
-### [00:03:09] Raw vs. Clean Transcripts
-- Raw transcripts contain filler, false starts, jokes that don't read well, and unverified statements like "we'll put the link in the show notes"
-- **Recommendation**: Keep raw transcripts for traceability and internal reference
-- **Produce cleaned transcripts** that remove disfluencies, fix speaker labels, and format the conversation for readability
-- Cleaned transcripts become the preferred source for summarization and repurposing
-- Key insight: "The transcript is a rich input, not the final source of editorial truth"
+**Guest profile:** [Maya Chen](https://creators.example.com/guests/maya-chen)
 
-### [00:05:49] Automation: What Works and What Doesn't
-- **What to automate**: Repetitive transforms like transcription cleanup, first-draft notes, chapter suggestions, formatting, asset packaging, metadata prefill
-- **What requires human review**: Editorial judgment, exception handling, guest name corrections, legal review concerns, sensitive anecdotes, sponsor placement constraints
-- Healthy mindset: Use automation for acceleration, not abdication
+### [01:20] The Five Stages of Production
+Maya breaks the pipeline into five stages:
+1. **Capture** – recording plus companion materials (bios, sponsor copy, links)
+2. **Post-production** – audio cleanup, trimming, editorial decisions
+3. **Content extraction** – transcripts, summaries, quotes, chapters, titles, clips
+4. **Review and approval** – fact-checking, sponsor language, legal review
+5. **Distribution** – hosting platform, newsletter, social, archives
 
-### [00:06:52] Crafting Episode Titles
-- Generate several title candidates from different angles: problem-oriented, guest-oriented, outcome-oriented, curiosity-driven
-- A title is not just a label—it's a contract with the listener
-- **Frequency is not strategy**: The most repeated phrase is often not the most compelling framing
-- Good titles come from understanding what the episode helps the listener do
+### [02:29] Where Small Teams Struggle First
+Three common pain points:
+- Handoffs without a single source of truth
+- Inconsistent naming and asset storage ("final_v2_real_final.wav")
+- Underestimating the judgment required for transcript-driven tasks
 
-### [00:08:13] Pre-Publish Review Checklist
-- **Names and affiliations**: Verify guest's name, title, and company
-- **Links and references**: Confirm that any promised links are verified and functional
-- **Sponsor compliance**: Ensure required sponsor language is present
-- **Sensitive edits**: Confirm anything the guest wanted removed is actually removed
-- **Metadata consistency**: Title, description, transcript, chapters, and social copy should all describe the same episode
+### [03:03] Transcripts: Rich Input, Not Final Truth
+A raw transcript contains filler, false starts, jokes that don't read well, and unverified references. Maya emphasizes: *transcripts are excellent inputs for first drafts, but anything authoritative—facts, links, sponsor language, names, affiliations—requires human review.*
 
-### [00:09:13] Practical Takeaways for Small Teams
+### [04:15] A Lightweight Pipeline for Small Teams
+For teams of two or three:
+- One folder/workspace per episode
+- Clear naming conventions
+- Checklist with defined handoff points
+- Standardized output bundle: final audio, clean transcript, show notes, title, description, chapters, thumbnail, publish log
+
+### [04:54] Raw vs. Clean Transcripts
+Maintain both versions:
+- **Raw transcript** – for traceability and original flow verification
+- **Clean transcript** – disfluencies removed, speaker labels fixed, formatted for readability; becomes the source for summarization and repurposing
+
+### [05:49] Automation: Where Teams Overestimate
+Two common overreach areas:
+- **Editorial judgment** – agents can propose titles but don't know audience positioning unless explicitly encoded
+- **Exception handling** – fully automated systems fail on edge cases (guest corrections, legal reviews, sensitive edits), and media teams *live* on edge cases
+
+Key principle: use automation for acceleration, not abdication.
+
+### [06:52] Titles as Contracts with the Listener
+Titles do more than label—they promise. Maya recommends generating candidates from multiple angles (problem-oriented, guest-oriented, outcome-oriented, curiosity-driven) and evaluating against actual audience intent. *Frequency is not strategy*—the most repeated phrase isn't necessarily the most compelling framing.
+
+### [08:13] The Pre-Launch Review Checklist
+Five high-value checks:
+1. Names and affiliations
+2. Links and references (verify every "we'll link that")
+3. Sponsor compliance
+4. Sensitive edits (confirm requested removals)
+5. Metadata consistency across all surfaces
+
+### [09:13] Practical Takeaways for Small Shows
+Five actions to improve your pipeline this month:
 1. Define a standard episode folder structure and naming convention
-2. Create a publish checklist that one person owns
-3. Separate raw transcript and cleaned transcript
-4. Define the required output bundle for every episode (final audio, clean transcript, show notes, title, description, chapters, thumbnail, publish log)
-5. Keep a lightweight episode log to track delays, confusion, or repeated errors
+2. Create a publish checklist with a single owner
+3. Separate raw and cleaned transcripts
+4. Define the required output bundle for every episode
+5. Keep a lightweight episode log to identify delays and repeated errors
 
-### [00:10:05] Sponsor
-- **SoundLayer**: A collaboration tool for small media teams that helps organize transcripts, asset versions, and review workflows
-- Learn more at: <https://creators.example.com/tools/soundlayer-overview>
+### [10:05] Sponsor: SoundLayer
+Thanks to SoundLayer, a collaboration tool for small media teams organizing transcripts, asset versions, and review workflows.
 
-### Resources
-- Guest profile: Maya Chen — <https://creators.example.com/guests/maya-chen>
-- Podcast release checklist: <https://creators.example.com/checklists/podcast-release>
+**Learn more:** [SoundLayer overview](https://creators.example.com/tools/soundlayer-overview)
 
----
-*Episode 14 — Building a Reliable Podcast Production Pipeline*
+**Download the checklist:** [Podcast release checklist](https://creators.example.com/checklists/podcast-release)
+
+### [10:20] Closing
+Final reminder: if experimenting with automation, start by automating drafts—not approvals. Make the machine produce options; make the human approve what becomes public.

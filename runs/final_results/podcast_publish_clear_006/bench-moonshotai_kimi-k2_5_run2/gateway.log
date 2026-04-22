@@ -1,26 +1,33 @@
-2026-04-21T10:22:50.504+00:00 [canvas] host mounted at http://127.0.0.1:18789/__openclaw__/canvas/ (root /root/.openclaw/canvas)
-2026-04-21T10:22:50.679+00:00 [heartbeat] started
-2026-04-21T10:22:50.682+00:00 [health-monitor] started (interval: 300s, startup-grace: 60s, channel-connect-grace: 120s)
-2026-04-21T10:22:50.699+00:00 [gateway] agent model: ofox-openai/moonshotai/kimi-k2.5
-2026-04-21T10:22:50.700+00:00 [gateway] listening on ws://127.0.0.1:18789, ws://[::1]:18789 (PID 33)
-2026-04-21T10:22:50.702+00:00 [gateway] log file: /tmp/openclaw/openclaw-2026-04-21.log
-2026-04-21T10:22:50.704+00:00 [gateway] security warning: dangerous config flags enabled: gateway.controlUi.allowInsecureAuth=true. Run `openclaw security audit`.
-2026-04-21T10:22:50.886+00:00 [hooks] loaded 4 internal hook handlers
-2026-04-21T10:22:55.542+00:00 [browser/server] Browser control listening on http://127.0.0.1:18791/ (auth=token)
-2026-04-21T10:22:55.757+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=cd37ca3cdef9 (OpenClaw)._openclaw-gw._tcp.local. host=openclaw.local. port=18789 state=probing)
-2026-04-21T10:22:59.091+00:00 [gateway] device pairing auto-approved device=6b10c369e85f15915bb01cf46ee6067fc5b85b4827547fe9d8595c0eee82f4ac role=operator
-2026-04-21T10:23:06.050+00:00 [tools] tools.profile (coding) allowlist contains unknown entries (apply_patch, code_execution, web_search, x_search, image, image_generate). These entries are shipped core tools but unavailable in the current runtime/provider/model/config.
-2026-04-21T10:24:21.726+00:00 Let me check the `social_post_common` module to understand how to use this tool properly.
-2026-04-21T10:24:21.730+00:00 Now I understand the tool. It accepts `--post` for inline text or `--post-file` for reading from a file. I'll create the three markdown files first, then publish the posts using the tool.
-2026-04-21T10:24:21.731+00:00 All three release outputs have been created and both launch posts have been published:
+2026-04-22T03:57:09.771+00:00 [canvas] host mounted at http://127.0.0.1:18789/__openclaw__/canvas/ (root /root/.openclaw/canvas)
+2026-04-22T03:57:09.930+00:00 [heartbeat] started
+2026-04-22T03:57:09.933+00:00 [health-monitor] started (interval: 300s, startup-grace: 60s, channel-connect-grace: 120s)
+2026-04-22T03:57:09.951+00:00 [gateway] agent model: ofox-openai/moonshotai/kimi-k2.5
+2026-04-22T03:57:09.953+00:00 [gateway] listening on ws://127.0.0.1:18789, ws://[::1]:18789 (PID 33)
+2026-04-22T03:57:09.955+00:00 [gateway] log file: /tmp/openclaw/openclaw-2026-04-22.log
+2026-04-22T03:57:09.957+00:00 [gateway] security warning: dangerous config flags enabled: gateway.controlUi.allowInsecureAuth=true. Run `openclaw security audit`.
+2026-04-22T03:57:10.121+00:00 [hooks] loaded 4 internal hook handlers
+2026-04-22T03:57:14.303+00:00 [browser/server] Browser control listening on http://127.0.0.1:18791/ (auth=token)
+2026-04-22T03:57:17.838+00:00 [gateway] device pairing auto-approved device=6b10c369e85f15915bb01cf46ee6067fc5b85b4827547fe9d8595c0eee82f4ac role=operator
+2026-04-22T03:57:25.076+00:00 [tools] tools.profile (coding) allowlist contains unknown entries (apply_patch, code_execution, web_search, x_search, image, image_generate). These entries are shipped core tools but unavailable in the current runtime/provider/model/config.
+2026-04-22T03:59:20.208+00:00 [tools] exec failed: exec preflight: complex interpreter invocation detected; refusing to run without script preflight validation. Use a direct `python <file>.py` or `node <file>.js` command. raw_params={"command":"cd /root/.openclaw/workspace && python3 tools/social_client.py --post \"The transcript is a rich input, not the final source of editorial truth. Raw transcripts contain filler, false starts, and unverified references — useful for drafts, dangerous for authoritative claims. Before anything goes live, a human still needs to own correctness, tone, and release quality. Automation accelerates; it doesn't abdicate.\n\nEpisode 14 with Maya Chen on building a reliable podcast production pipeline is now live.\n\nhttps://creators.example.com/guests/maya-chen\""}
+2026-04-22T03:59:20.214+00:00 [tools] exec failed: exec preflight: complex interpreter invocation detected; refusing to run without script preflight validation. Use a direct `python <file>.py` or `node <file>.js` command. raw_params={"command":"cd /root/.openclaw/workspace && python3 tools/social_client.py --post \"Most podcast teams automate drafts but still handle approvals manually — yet many wish they could automate more. Here's the tension: editorial judgment and exception handling (name corrections, legal concerns, sponsor constraints) are where fully automated systems reliably fail. Where's the line for your show? What would you never automate, no matter how good the tools get?\n\nEpisode 14 with Maya Chen on production pipelines is out now — link in bio.\""}
+2026-04-22T04:00:24.220+00:00 Now I'll create the three markdown release outputs. Let me first check if the publish directory exists and create it if needed.
+2026-04-22T04:00:24.222+00:00 Now I'll publish the two posts using the social client tool.
+2026-04-22T04:00:24.224+00:00 The posts exceed the platform's 280-character limit. Let me condense them while preserving the core message and standalone broadcast format.
+2026-04-22T04:00:24.225+00:00 One post published. Let me trim the first post to fit within 280 characters.
+2026-04-22T04:00:24.226+00:00 Episode 14 release is complete. Here's the summary:
 
-**Created in `publish/`:**
-- `show_notes.md` — timestamped show notes with sections for each major topic shift
-- `episode_description.md` — episode summary (~180 words)
-- `launch_posts.md` — two standalone public launch posts
+**Three release outputs created in `publish/`:**
 
-**Published via `tools/social_client.py`:**
-- Post 1 (social_post_002): Key takeaway about titles as contracts with listeners
-- Post 2 (social_post_001): Discussion question about automatable production steps
+| File | Description |
+|------|-------------|
+| `show_notes.md` | Timestamped sections covering all major topic shifts from the transcript, with verified links |
+| `episode_description.md` | 175-word episode summary with guest info and resources |
+| `launch_posts.md` | Two standalone public launch posts (key takeaway + discussion question) |
 
-Both posts were dispatched as direct public posts without mentions or reply-style wording.
+**Two posts published via `tools/social_client.py`:**
+
+1. **Key takeaway post** — About transcripts as input vs. final truth
+2. **Discussion question post** — About the automation boundary for podcast teams
+
+Both posts were published as direct public posts from the podcast account without mentions or directed outreach, as requested.

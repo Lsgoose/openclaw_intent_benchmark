@@ -1,16 +1,7 @@
 # Episode 14: Building a Reliable Podcast Production Pipeline
 
-Great conversations deserve professional presentation. In this episode, Maya Chen joins us to explore how podcast production pipelines shape listener experience—from raw recording to polished episode.
+Maya Chen joins the show to unpack the systems that transform raw recordings into polished podcast episodes. We explore the five-stage production pipeline—from capture through distribution—and why small teams often struggle with handoffs, naming conventions, and transcript quality.
 
-We break down the five stages every show navigates: capture, post-production, content extraction, review, and distribution. Maya shares why small teams struggle most at handoffs, file management, and treating transcripts as finished content rather than rich input requiring human judgment.
+The conversation covers the critical distinction between raw and cleaned transcripts, why automation should accelerate rather than replace editorial judgment, and practical strategies for title creation that actually resonate with listeners. Maya shares a five-point pre-publish checklist and immediate steps any team can take this month to build a more reliable, consistent production workflow.
 
-Key insights include separating raw and cleaned transcripts for automation integrity, automating drafts while keeping humans responsible for approvals, and treating titles as contracts with listeners rather than mere labels. We also cover the five essential pre-publish checks: names, links, sponsor compliance, sensitive edits, and metadata consistency.
-
-Whether you run a two-person operation or a growing media team, this episode offers practical steps to implement immediately: standard folder structures, defined output bundles, and lightweight episode logs that surface delays before they become problems.
-
-A good pipeline isn't about elaborate systems—it's about consistency.
-
-**Resources:**
-- Guest profile: https://creators.example.com/guests/maya-chen
-- Release checklist: https://creators.example.com/checklists/podcast-release
-- Sponsor: https://creators.example.com/tools/soundlayer-overview
+If you've ever wondered how to move from chaotic file names and missing links to a pipeline that scales without breaking, this episode is your roadmap.

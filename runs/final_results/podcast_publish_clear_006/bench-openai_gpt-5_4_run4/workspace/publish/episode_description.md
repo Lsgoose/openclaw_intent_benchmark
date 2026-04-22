@@ -1,7 +1,5 @@
-# Episode 14 Description
+# Episode Description
 
-How does a podcast go from a raw recording to a polished release without constant last-minute chaos? In this episode, Maya Chen breaks down the production pipeline behind reliable podcast publishing. The conversation covers the five core stages of the workflow, why small teams often struggle with handoffs and versioning, and why transcripts should be treated as rich inputs rather than final editorial truth.
+A great podcast is more than a great conversation. In this episode, Maya Chen joins the show to break down what makes a podcast production pipeline reliable, from recording and post-production to transcripts, review, metadata, and distribution. The conversation covers the five core stages of a production workflow, the handoff problems that trip up small teams, and why a transcript should be treated as a strong input for drafts rather than final editorial truth.
 
-The episode also explores what automation can help with, where human review still matters, and how to standardize outputs so every episode ships with the same essential assets. If a show depends too much on memory, heroics, or inconsistent checklists, quality slips fast.
-
-This is a practical episode for anyone running a small podcast team and trying to improve editing, packaging, review, and release quality.
+Maya also explains where automation helps most, where it still falls short, and why titles, links, sponsor language, and metadata consistency deserve careful human review. The episode closes with a practical playbook for small teams: standardize folder structure, separate raw and cleaned transcripts, define a fixed output bundle, keep a publish checklist, and automate drafts without automating accountability.

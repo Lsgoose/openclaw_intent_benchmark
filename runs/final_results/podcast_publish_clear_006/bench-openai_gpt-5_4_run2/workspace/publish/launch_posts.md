@@ -1,5 +1,5 @@
 # Launch Posts
 
-Reliable podcast production is less about fancy tooling and more about consistent handoffs, clean source material, and a fixed output bundle. Episode 14 breaks down how small teams can reduce errors without building an overly complex system.
+A reliable podcast production pipeline is less about fancy tooling and more about consistency: clear handoffs, clean transcripts, a fixed output bundle, and human review before anything goes public.
 
-What part of a podcast workflow breaks most often: recording handoff, transcript cleanup, review, metadata alignment, or final publishing? Episode 14 digs into how to make the whole pipeline more reliable.
+The weakest part of a podcast workflow usually shows up after recording, not during it. Which part of the production pipeline causes the most friction right now: handoffs, transcripts, approvals, or publishing?

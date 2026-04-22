@@ -1,8 +1,0 @@
-Created the B-Tree index safely with `CONCURRENTLY` on `orders(user_id)`.
-
-- Index: `idx_orders_user_id`
-- Method: `CREATE INDEX CONCURRENTLY`
-- Lock impact: non-blocking `ShareUpdateExclusiveLock`
-- Verified present after creation
-
-This avoids the table-wide write lock that would have hurt your 24/7 write traffic.

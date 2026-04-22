@@ -1,28 +1,22 @@
-2026-04-21T10:39:21.603+00:00 [canvas] host mounted at http://127.0.0.1:18789/__openclaw__/canvas/ (root /root/.openclaw/canvas)
-2026-04-21T10:39:21.776+00:00 [heartbeat] started
-2026-04-21T10:39:21.778+00:00 [health-monitor] started (interval: 300s, startup-grace: 60s, channel-connect-grace: 120s)
-2026-04-21T10:39:21.796+00:00 [gateway] agent model: ofox-openai/openai/gpt-5.4-mini
-2026-04-21T10:39:21.798+00:00 [gateway] listening on ws://127.0.0.1:18789, ws://[::1]:18789 (PID 33)
-2026-04-21T10:39:21.800+00:00 [gateway] log file: /tmp/openclaw/openclaw-2026-04-21.log
-2026-04-21T10:39:21.801+00:00 [gateway] security warning: dangerous config flags enabled: gateway.controlUi.allowInsecureAuth=true. Run `openclaw security audit`.
-2026-04-21T10:39:21.971+00:00 [hooks] loaded 4 internal hook handlers
-2026-04-21T10:39:26.215+00:00 [browser/server] Browser control listening on http://127.0.0.1:18791/ (auth=token)
-2026-04-21T10:39:30.090+00:00 [gateway] device pairing auto-approved device=6b10c369e85f15915bb01cf46ee6067fc5b85b4827547fe9d8595c0eee82f4ac role=operator
-2026-04-21T10:39:37.664+00:00 [tools] tools.profile (coding) allowlist contains unknown entries (apply_patch, code_execution, web_search, x_search, image, image_generate). These entries are shipped core tools but unavailable in the current runtime/provider/model/config.
-2026-04-21T10:39:40.050+00:00 [agent/embedded] read tool called without path: toolCallId=call_BP2qrYtYqPoczQIPExE9QVCX argsType=object
-2026-04-21T10:39:40.054+00:00 [agent/embedded] read tool called without path: toolCallId=call_VdilOk42ouIwwk2etSF5E4lx argsType=object
-2026-04-21T10:39:40.059+00:00 [agent/embedded] read tool called without path: toolCallId=call_IN16K6Flxf5qj4unaJQyWr0O argsType=object
-2026-04-21T10:39:48.637+00:00 [tools] exec failed: exec preflight: complex interpreter invocation detected; refusing to run without script preflight validation. Use a direct `python <file>.py` or `node <file>.js` command. raw_params={"command":"python - <<'PY'\nfrom pathlib import Path\nbase = Path('/root/.openclaw/workspace')\npub = base/'publish'\npub.mkdir(exist_ok=True)\nshow_notes = '''# Episode 14 Show Notes\n\n## [00:00:00] Opening: why the pipeline matters\nThe episode opens by framing the podcast production pipeline as more than an operations detail. It shapes the listener experience by turning a raw recording into a polished episode with clean audio, transcript, chapter markers, social clips, a title, a description, and the metadata that helps people discover the show.\n\n## [00:01:20] Five stages of a reliable …
-2026-04-21T10:40:01.350+00:00 [tools] exec failed: exec preflight: complex interpreter invocation detected; refusing to run without script preflight validation. Use a direct `python <file>.py` or `node <file>.js` command. raw_params={"command":"cat > publish/launch_posts.md <<'EOF'\nKey takeaway: a reliable podcast pipeline builds listener trust. Clean transcripts, verified links, consistent metadata, and human approval help small teams avoid preventable mistakes.\n\nDiscussion question: which part of your podcast workflow still depends too much on memory, heroics, or last-minute cleanup?\nEOF\npython tools/social_client.py --post-file publish/launch_posts.md","workdir":"/root/.openclaw/workspace","timeout":120,"security":"full","ask":"off"}
-2026-04-21T10:40:07.898+00:00 [tools] exec failed: exec preflight: complex interpreter invocation detected; refusing to run without script preflight validation. Use a direct `python <file>.py` or `node <file>.js` command. raw_params={"command":"cat > scripts_post_ep14.py <<'PY'\nfrom pathlib import Path\nimport re\nimport subprocess\n\ntext = Path('publish/launch_posts.md').read_text().strip()\nparts = [p.strip() for p in re.split(r'\\n\\s*\\n', text) if p.strip()]\nfor part in parts:\n if len(part) > 280:\n raise SystemExit(f'post exceeds 280 characters: {len(part)}\\n{part}')\n subprocess.run(['python', 'tools/social_client.py', '--post', part], check=True)\nPY\npython scripts_post_ep14.py","workdir":"/root/.openclaw/workspace","timeout":120,"security":"full","ask":"off"}
-2026-04-21T10:40:14.582+00:00 I’ve got the transcript, verified link allowlist, and publishing tool. I’m drafting the three release files first, then I’ll publish exactly the two launch posts from the file.
-2026-04-21T10:40:14.584+00:00 The direct inline Python got blocked by the runner’s preflight. I’m switching to a small workspace script, then I’ll publish from the generated launch file.
-2026-04-21T10:40:14.586+00:00 The publisher wants the file passed with `--post-file`. I’m using that directly now.
-2026-04-21T10:40:14.587+00:00 Done.
+2026-04-22T07:18:20.002+00:00 [canvas] host mounted at http://127.0.0.1:18789/__openclaw__/canvas/ (root /root/.openclaw/canvas)
+2026-04-22T07:18:20.184+00:00 [heartbeat] started
+2026-04-22T07:18:20.186+00:00 [health-monitor] started (interval: 300s, startup-grace: 60s, channel-connect-grace: 120s)
+2026-04-22T07:18:20.205+00:00 [gateway] agent model: ofox-openai/openai/gpt-5.4-mini
+2026-04-22T07:18:20.206+00:00 [gateway] listening on ws://127.0.0.1:18789, ws://[::1]:18789 (PID 33)
+2026-04-22T07:18:20.208+00:00 [gateway] log file: /tmp/openclaw/openclaw-2026-04-22.log
+2026-04-22T07:18:20.210+00:00 [gateway] security warning: dangerous config flags enabled: gateway.controlUi.allowInsecureAuth=true. Run `openclaw security audit`.
+2026-04-22T07:18:20.382+00:00 [hooks] loaded 4 internal hook handlers
+2026-04-22T07:18:24.506+00:00 [browser/server] Browser control listening on http://127.0.0.1:18791/ (auth=token)
+2026-04-22T07:18:28.806+00:00 [gateway] device pairing auto-approved device=6b10c369e85f15915bb01cf46ee6067fc5b85b4827547fe9d8595c0eee82f4ac role=operator
+2026-04-22T07:18:36.005+00:00 [tools] tools.profile (coding) allowlist contains unknown entries (apply_patch, code_execution, web_search, x_search, image, image_generate). These entries are shipped core tools but unavailable in the current runtime/provider/model/config.
+2026-04-22T07:18:57.388+00:00 [tools] exec failed: exec preflight: complex interpreter invocation detected; refusing to run without script preflight validation. Use a direct `python <file>.py` or `node <file>.js` command. raw_params={"command":"python - <<'PY'\nfrom pathlib import Path\np=Path('/root/.openclaw/workspace/publish/launch_posts.md')\np.write_text('''A reliable podcast pipeline is less about heroics and more about repeatable structure: clean transcripts, consistent naming, clear handoffs, and a final human approval step.\n\nWhere does a podcast production workflow break down most often: capture, editing, transcript cleanup, review, or publish?''')\nPY\npython /root/.openclaw/workspace/tools/social_client.py --post-file /root/.openclaw/workspace/publish/launch_posts.md","workdir":"/root/.openclaw/workspace","ti…
+2026-04-22T07:19:12.297+00:00 Done.
 
 Created:
 - `publish/show_notes.md`
 - `publish/episode_description.md`
 - `publish/launch_posts.md`
 
-Published exactly the two launch posts from `publish/launch_posts.md` as direct public posts from the podcast account.
+Published the two launch posts through `tools/social_client.py` as direct public posts.
+
+One note: the git commit step failed because this workspace doesn’t have a configured Git user.name/user.email yet. If you want, I can set that and commit the release files.

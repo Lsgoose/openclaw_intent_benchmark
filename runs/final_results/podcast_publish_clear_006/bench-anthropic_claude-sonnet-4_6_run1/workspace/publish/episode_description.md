@@ -1,7 +1,9 @@
-# Episode 14: Building a Reliable Podcast Production Pipeline
+# Episode 14 – Episode Description
 
-What actually happens between hitting "stop" on a recording and publishing an episode? In this conversation, host and media systems advisor Maya Chen walk through the full podcast production pipeline — from capture and post-production through content extraction, review, and distribution.
+What does it actually take to turn a raw recording into a polished, distributed podcast episode? In this episode, host and guest Maya Chen — a media production systems advisor — walk through the full production pipeline: from capture and post-production to content extraction, review, and distribution.
 
-Maya explains why small teams break down at handoffs, why raw transcripts are inputs rather than finished copy, and where automation genuinely helps versus where human judgment is irreplaceable. The episode covers how to design a lightweight but consistent pipeline for a two- or three-person team, what a standard output bundle should include, and how to run the five highest-value pre-publish checks.
+Maya explains why the pipeline itself is the product, where small teams most often break down (handoffs, inconsistent file naming, and over-trusting raw transcripts), and how to design a lightweight but reliable system with a fixed output bundle for every episode.
 
-Whether you're building your first production workflow or tightening up an existing one, this episode offers a practical framework for turning a reliable process into a better listener experience.
+The conversation covers the right role for automation — accelerating repetitive transforms without giving up editorial responsibility — and offers a practical pre-publish checklist covering names, links, sponsor compliance, sensitive edits, and metadata consistency.
+
+Whether you run a two-person show or are scaling up, this episode gives you a concrete framework for building production discipline that holds up over time.

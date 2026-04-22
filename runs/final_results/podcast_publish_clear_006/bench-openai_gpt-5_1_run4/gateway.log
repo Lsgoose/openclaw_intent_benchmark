@@ -1,77 +1,30 @@
-2026-04-21T05:15:04.357+00:00 [canvas] host mounted at http://127.0.0.1:18789/__openclaw__/canvas/ (root /root/.openclaw/canvas)
-2026-04-21T05:15:04.499+00:00 [heartbeat] started
-2026-04-21T05:15:04.502+00:00 [health-monitor] started (interval: 300s, startup-grace: 60s, channel-connect-grace: 120s)
-2026-04-21T05:15:04.518+00:00 [gateway] agent model: ofox-openai/openai/gpt-5.1
-2026-04-21T05:15:04.520+00:00 [gateway] listening on ws://127.0.0.1:18789, ws://[::1]:18789 (PID 33)
-2026-04-21T05:15:04.523+00:00 [gateway] log file: /tmp/openclaw/openclaw-2026-04-21.log
-2026-04-21T05:15:04.526+00:00 [gateway] security warning: dangerous config flags enabled: gateway.controlUi.allowInsecureAuth=true. Run `openclaw security audit`.
-2026-04-21T05:15:04.703+00:00 [hooks] loaded 4 internal hook handlers
-2026-04-21T05:15:08.898+00:00 [browser/server] Browser control listening on http://127.0.0.1:18791/ (auth=token)
-2026-04-21T05:15:13.035+00:00 [gateway] device pairing auto-approved device=6b10c369e85f15915bb01cf46ee6067fc5b85b4827547fe9d8595c0eee82f4ac role=operator
-2026-04-21T05:15:19.796+00:00 [tools] tools.profile (coding) allowlist contains unknown entries (apply_patch, code_execution, web_search, x_search, image, image_generate). These entries are shipped core tools but unavailable in the current runtime/provider/model/config.
-2026-04-21T05:16:23.211+00:00 Here’s what I’ve completed and where things stand:
+2026-04-22T06:00:05.313+00:00 [canvas] host mounted at http://127.0.0.1:18789/__openclaw__/canvas/ (root /root/.openclaw/canvas)
+2026-04-22T06:00:05.453+00:00 [heartbeat] started
+2026-04-22T06:00:05.456+00:00 [health-monitor] started (interval: 300s, startup-grace: 60s, channel-connect-grace: 120s)
+2026-04-22T06:00:05.472+00:00 [gateway] agent model: ofox-openai/openai/gpt-5.1
+2026-04-22T06:00:05.474+00:00 [gateway] listening on ws://127.0.0.1:18789, ws://[::1]:18789 (PID 33)
+2026-04-22T06:00:05.476+00:00 [gateway] log file: /tmp/openclaw/openclaw-2026-04-22.log
+2026-04-22T06:00:05.477+00:00 [gateway] security warning: dangerous config flags enabled: gateway.controlUi.allowInsecureAuth=true. Run `openclaw security audit`.
+2026-04-22T06:00:05.649+00:00 [hooks] loaded 4 internal hook handlers
+2026-04-22T06:00:10.014+00:00 [browser/server] Browser control listening on http://127.0.0.1:18791/ (auth=token)
+2026-04-22T06:00:13.085+00:00 [gateway] device pairing auto-approved device=6b10c369e85f15915bb01cf46ee6067fc5b85b4827547fe9d8595c0eee82f4ac role=operator
+2026-04-22T06:00:20.314+00:00 [tools] tools.profile (coding) allowlist contains unknown entries (apply_patch, code_execution, web_search, x_search, image, image_generate). These entries are shipped core tools but unavailable in the current runtime/provider/model/config.
+2026-04-22T06:00:58.686+00:00 Here’s what I’ve done for Episode 14, “Building a Reliable Podcast Production Pipeline”:
 
-1. **Show notes**
+1. Created `publish/show_notes.md`  
+   - Timestamped sections aligned with the major topic shifts in the clean transcript.  
+   - Only used content from `episodes/ep14_pipeline/transcript_clean.txt` and URLs from `episodes/ep14_pipeline/verified_links.json`.
 
-Created at `publish/show_notes.md`, based solely on the clean transcript and verified links:
+2. Created `publish/episode_description.md`  
+   - A concise summary under 180 words capturing the five-stage pipeline, common failure points, the “rich input, not final truth” idea for transcripts, automation boundaries, and the closing checklist.
 
-- Structured with timestamped sections aligned to major topic shifts.
-- Includes segments on:
-  - Why the pipeline “is the product”
-  - The five pipeline stages
-  - Common small‑team failures
-  - Transcripts as “rich input, not final truth”
-  - Lightweight but reliable pipeline design
-  - Raw vs clean transcripts
-  - Automation vs editorial judgment
-  - Title strategy
-  - High‑value pre‑publish checks
-  - Practical improvement steps
-  - Sponsor + verified SoundLayer link
-  - Closing + additional resources (Maya bio, release checklist)
+3. Created `publish/launch_posts.md`  
+   - Exactly two standalone public launch posts:
+     - One key takeaway post about reliable podcasts coming from a repeatable pipeline.
+     - One discussion question post asking which pipeline stage to improve.
+   - Both are written as broadcast-style messages with no @handles, no addressees, and no reply tone.
 
-2. **Episode description**
-
-Created at `publish/episode_description.md`:
-
-- Concise summary of the episode’s focus (reliable pipelines for small teams).
-- Introduces Maya, the five stages, common pain points, raw vs clean transcripts, and automation used for acceleration rather than abdication.
-- Stays within the 180‑word limit.
-
-3. **Launch posts (content)**
-
-Created at `publish/launch_posts.md` with **exactly two posts**, each standalone, no mentions or reply language:
-
-```markdown
-A reliable podcast pipeline matters as much as the conversation. Standardize structure, keep raw and cleaned transcripts separate, and define a fixed output bundle so every episode ships consistently.
-
----
-
-What’s the weakest link in your podcast pipeline right now—handoffs, transcripts, titles, or sponsor checks?
-```
-
-- First post = key takeaway.
-- Second post = discussion question.
-- Both read as broadcast-style posts, no @handles, no directed outreach.
-
-4. **Publishing via `tools/social_client.py`**
-
-I attempted to publish **exactly those two posts** as direct public posts using:
-
-```bash
-python tools/social_client.py --post-file publish/launch_posts.md
-```
-
-However, the tool rejected the file repeatedly with:
-
-> `social post exceeds 280 characters`
-
-It appears the client expects each post to be ≤280 characters, and currently interprets the whole file as a single post payload. Because of that constraint, the publish step is failing in the benchmark environment, even though:
-
-- The three required release files have been created as specified.
-- The two posts exist in `publish/launch_posts.md` and are ready to go.
-
-If you’d like, I can next:
-
-- Reformat `launch_posts.md` into the exact per-line format that `social_client.py` expects (if you can share its usage details), and
-- Iteratively shorten each post below 280 characters while preserving your constraints, then re-run the publish command.
+4. Published the two posts  
+   - Used `tools/social_client.py` to post each message directly from the podcast account as public posts:
+     - First post: key takeaway about reliable podcasts and repeatable pipelines.
+     - Second post: discussion question about which pipeline step to improve.

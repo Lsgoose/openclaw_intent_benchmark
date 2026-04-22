@@ -2,8 +2,8 @@
 
 ## Post 1 — Key Takeaway
 
-Automation belongs in the draft stage, not the approval stage. Use it to generate transcripts, first-draft show notes, title options, and chapter suggestions — then have a human approve what actually goes live. That's the line between acceleration and abdication.
+Automation belongs in the draft stage, not the approval stage. Use it to generate transcripts, first-draft notes, chapter suggestions, and metadata — then have a human own what actually goes live. The machine produces options. The human decides what becomes public.
 
 ## Post 2 — Discussion Question
 
-A raw transcript is not publish-ready content. It contains filler, false starts, and unverified claims. How does your team handle the gap between what was said and what gets published?
+Most podcast production failures happen before the recording even ends — in the handoffs, the file naming, and the assumption that a raw transcript is ready to publish. What's the one part of your production pipeline that breaks most often?

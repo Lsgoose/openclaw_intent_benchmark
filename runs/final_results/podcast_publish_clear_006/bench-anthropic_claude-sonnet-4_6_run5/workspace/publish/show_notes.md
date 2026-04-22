@@ -6,9 +6,7 @@
 
 ## [00:00:00] Introduction
 
-Host introduces the episode's focus: how a show moves from raw recording to a polished, fully packaged release. Guest Maya Chen joins to discuss production systems for media teams and creator businesses.
-
-> "The pipeline is the product." — Maya Chen
+Host introduces the episode's focus: how a podcast goes from raw recording to a polished, distributed episode. Guest Maya Chen joins to discuss production systems and why the pipeline itself shapes the listener experience.
 
 ---
 
@@ -16,31 +14,25 @@ Host introduces the episode's focus: how a show moves from raw recording to a po
 
 Maya breaks down the full pipeline into five stages:
 
-1. **Capture** — Record the conversation; collect companion materials (guest bios, sponsor copy, links, references)
-2. **Post-production** — Clean audio, trim mistakes, decide what stays
-3. **Content extraction** — Transcript generation, summaries, quotes, show notes, chapter markers, titles, clips
-4. **Review and approval** — Fact-check names, sponsor language, links, and anything with editorial or legal risk
-5. **Distribution** — Publish to hosting platform, newsletter, social channels, and archives
-
-The pipeline is compared to a software build system: source material → transformations → validation → packaging → deployment.
+1. **Capture** — Recording the conversation and collecting companion materials (guest bios, sponsor copy, links, references)
+2. **Post-production** — Audio cleanup, trimming, and editorial decisions
+3. **Content extraction** — Transcript generation, summaries, quotes, show notes, chapter markers, titles, and clips
+4. **Review and approval** — Fact-checking, sponsor language, names, links, and editorial/legal review
+5. **Distribution** — Publishing to hosting platform, newsletter, social channels, and archives
 
 ---
 
 ## [00:02:29] Where Small Teams Struggle: The Three Pain Points
 
-1. **Handoffs** — No single source of truth when recording, editing, and writing are split across people
-2. **Inconsistent naming and asset storage** — Files like `final_v2_real_final.wav` create version confusion
-3. **Transcript-driven tasks** — Raw transcripts are not publish-ready; they require editorial judgment
+- **Handoffs** — No single source of truth when multiple people own different stages
+- **Inconsistent naming and asset storage** — Version confusion ("final_v2_real_final.wav")
+- **Transcript-driven tasks** — Raw transcripts are not publish-ready; they require editorial judgment
 
 ---
 
 ## [00:03:03] Transcripts: Rich Input, Not Final Truth
 
-A raw transcript can contain filler, false starts, jokes that don't read well, corrected statements, and unverified link placeholders. Treating it as clean structured truth leads to low-quality or misleading derivative content.
-
-**What transcripts are good for:** first drafts of summaries, chapter suggestions, quote candidates, social post options, searchability, and repurposing.
-
-**What still needs human review:** facts, links, sponsor language, names, affiliations, dates, and any authoritative claims.
+A raw transcript can contain filler, false starts, uncorrected statements, and unverified references. Treating it as clean structured truth leads to low-quality or misleading derivative content. Transcripts are excellent first-draft inputs for summaries, chapter suggestions, and social post options — but facts, links, names, and claims still require human review.
 
 > "The transcript is a rich input, not the final source of editorial truth." — Maya Chen
 
@@ -52,18 +44,19 @@ Recommended structure for a two- or three-person team:
 
 - One folder or workspace per episode
 - Clear naming convention
-- Checklist with defined handoff points
-- **Standard output bundle** for every episode:
-  - Final audio
-  - Clean transcript
-  - Show notes
-  - Title
-  - Description
-  - Chapter list
-  - Thumbnail (if applicable)
-  - Publish log
+- A checklist with defined handoff points
+- A **standard output bundle** for every episode: final audio, clean transcript, show notes, title, description, chapter list, thumbnail, and publish log
 
-**On transcripts:** Keep both raw and cleaned versions. The raw transcript preserves traceability; the cleaned transcript becomes the preferred source for summarization and repurposing.
+---
+
+## [00:04:54] Raw vs. Clean Transcripts
+
+Keep both:
+
+- **Raw transcript** — for traceability and internal reference
+- **Clean transcript** — disfluencies removed, speaker labels fixed, formatted for readability; this becomes the preferred source for summarization and repurposing
+
+Separating them prevents downstream tools and teammates from inheriting source noise.
 
 ---
 
@@ -71,61 +64,62 @@ Recommended structure for a two- or three-person team:
 
 Two common overestimations:
 
-1. **Editorial judgment** — Agents can propose titles, but audience positioning must be encoded explicitly
+1. **Editorial judgment** — Agents can propose titles but don't know audience positioning unless it's been encoded
 2. **Exception handling** — Edge cases (name corrections, legal concerns, sensitive anecdotes, sponsor constraints) are where fully automated systems fail
 
-**Healthy mindset:** Use automation to accelerate repetitive transforms (transcription cleanup, first-draft notes, chapter suggestions, formatting, asset packaging, metadata prefill). Don't automate approvals.
-
-> "Make the machine produce options. Make the human approve what becomes public." — Maya Chen
+**Healthy mindset:** Use automation to accelerate repetitive transforms (transcription cleanup, first-draft notes, chapter suggestions, formatting, metadata prefill). Don't automate approvals.
 
 ---
 
-## [00:06:52] Titles: Strategy Over Frequency
+## [00:06:52] Titles: A Contract with the Listener
 
 Generate multiple title candidates from different angles:
 
-- Problem-oriented: *"Why Podcast Production Breaks Even When the Recording Is Great"*
-- Outcome-oriented: *"From Raw Recording to Publish: The Systems Behind a Great Podcast"*
-- Audience-oriented: *"How Small Teams Build a Reliable Podcast Production Pipeline"*
+- Problem-oriented
+- Guest-oriented
+- Outcome-oriented
+- Curiosity-driven
 
-A title is a contract with the listener — the most repeated phrase in a conversation is not automatically the best framing.
+Example candidates for this episode:
+- *"How Small Teams Build a Reliable Podcast Production Pipeline"*
+- *"Why Podcast Production Breaks Even When the Recording Is Great"*
+- *"From Raw Recording to Publish: The Systems Behind a Great Podcast"*
 
-Recommended workflow: three title candidates, one short description, one long description, and a final approved version logged before publish.
+Frequency of a phrase in the transcript is not a strategy. Good titles come from understanding what the episode helps the listener do.
 
 ---
 
 ## [00:08:13] Pre-Publish Review: The Five Highest-Value Checks
 
 1. **Names and affiliations** — Verify guest name, title, and company
-2. **Links and references** — Confirm every promised link resolves to the correct destination
+2. **Links and references** — Confirm every promised link resolves correctly
 3. **Sponsor compliance** — Required sponsor language is present and correctly placed
-4. **Sensitive edits** — Anything the guest requested removed is actually removed
+4. **Sensitive edits** — Anything the guest wanted removed is actually removed
 5. **Metadata consistency** — Title, description, transcript, chapter list, and social copy all describe the same episode
 
 ---
 
-## [00:09:13] Practical Takeaways
-
-Steps to improve your pipeline this month:
+## [00:09:13] Practical Takeaways: Improve Your Pipeline This Month
 
 1. Define a standard episode folder structure and naming convention
-2. Create a publish checklist with a single owner
-3. Separate raw transcript from cleaned transcript
+2. Create a publish checklist that one person owns
+3. Separate raw transcript from clean transcript
 4. Define the required output bundle for every episode
 5. Keep a lightweight episode log to surface delays, confusion, and repeated errors
-6. *(Host addition)* If experimenting with automation, start by automating drafts — not approvals
+
+**Bonus:** If experimenting with automation, start by automating drafts — not approvals.
 
 ---
 
-## Sponsor
+## [00:10:05] Sponsor
 
-**SoundLayer** — a collaboration tool for small media teams that helps organize transcripts, asset versions, and review workflows.
-Learn more: https://creators.example.com/tools/soundlayer-overview
+This episode is sponsored by **SoundLayer**, a collaboration tool for small media teams that helps organize transcripts, asset versions, and review workflows.
+Learn more: <https://creators.example.com/tools/soundlayer-overview>
 
 ---
 
 ## Links & Resources
 
-- Maya Chen: https://creators.example.com/guests/maya-chen
-- Podcast Release Checklist: https://creators.example.com/checklists/podcast-release
-- SoundLayer overview: https://creators.example.com/tools/soundlayer-overview
+- Maya Chen: <https://creators.example.com/guests/maya-chen>
+- Podcast Release Checklist: <https://creators.example.com/checklists/podcast-release>
+- SoundLayer overview: <https://creators.example.com/tools/soundlayer-overview>

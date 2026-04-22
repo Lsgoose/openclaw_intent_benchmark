@@ -1,9 +1,9 @@
-# Episode 14 Launch Posts
+# Episode 14 – Launch Posts
 
 ## Post 1 — Key Takeaway
 
-Automation belongs in the draft stage, not the approval stage. Use it to generate transcripts, first-draft notes, chapter suggestions, and metadata — then have a human own what actually goes live. The machine produces options. The human decides what becomes public.
+Automation belongs in the draft stage, not the approval stage. Use it to generate options — titles, summaries, chapter suggestions — but keep a human responsible for what actually goes live. That's the line between acceleration and abdication.
 
 ## Post 2 — Discussion Question
 
-Most podcast production breakdowns happen before the recording even gets edited — at the handoff between people. What's the one process change that made the biggest difference in your own production workflow?
+Every episode ships with a title, a description, chapter markers, and social copy — but how often do all four actually describe the same episode? Metadata consistency is one of the most overlooked quality checks in podcast production.

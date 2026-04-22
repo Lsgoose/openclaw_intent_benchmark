@@ -2,8 +2,8 @@
 
 ## Post 1 — Key Takeaway
 
-Automation belongs in the draft stage, not the approval stage. Use it to generate transcripts, first-draft show notes, title options, and chapter suggestions — then have a human review what actually goes live. The machine produces options. The human owns what becomes public.
+Automation belongs in the draft stage, not the approval stage. Use it to generate transcripts, first-draft notes, and title options — then put a human in the chair before anything goes live. That's how small podcast teams stay fast without losing quality.
 
 ## Post 2 — Discussion Question
 
-At what point in your podcast workflow does quality most often slip — during editing, content extraction, or the final review before publish? The stage where things break is usually where the process needs the most structure.
+Most podcast production failures happen before the recording even ends — in the handoffs, the file naming, and the assumption that a raw transcript is ready to publish. What's the one part of your production process that still runs on memory instead of a system?

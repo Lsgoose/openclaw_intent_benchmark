@@ -1,5 +1,0 @@
-In this episode, we go behind the scenes of podcast production with workflow strategist Maya Chen. Together we unpack why your production pipeline is as important as the conversation itself, especially for small teams trying to ship reliably.
-
-Maya breaks the process into five core stages: capture, post-production, content extraction, review and approval, and distribution. She explains where small shows usually struggle first, from messy handoffs and file naming to over-trusting raw transcripts as publish-ready content.
-
-We dig into the difference between raw and cleaned transcripts, how to design a lightweight but reliable output bundle, and where automation and agents genuinely help versus where human editorial judgment is still essential. You’ll hear practical examples of better title generation, high‑leverage pre‑publish checks, and simple improvements you can make this month to tighten your own pipeline and keep every episode consistent from recording to release.

@@ -1,11 +1,11 @@
-# Episode 14 Launch Posts
+# Launch Posts for Episode 14
 
 ## Post 1: Key Takeaway
 
-Transcripts are rich input, not final truth. Great pipelines separate raw transcripts from cleaned versions. Skip this and automation inherits every filler word and false start. Small teams need cleaner handoffs, not more tools. Episode 14 with Maya Chen is live.
+The most reliable podcast teams aren't the ones with the fanciest tools—they're the ones with consistent naming conventions and a publish checklist that one person owns. New episode with Maya Chen on building a production pipeline that won't break on deadline.
 
 ---
 
 ## Post 2: Discussion Question
 
-What embarrassing error slipped through your podcast workflow—a wrong name, broken link, mismatched metadata? Pipeline improvements start with honest post-mortems. Episode 14 explores how small teams build reliable systems.
+What's the messiest part of your current podcast workflow—file naming, transcript cleanup, or the final review before publish? Reply with your biggest pain point; we're collecting patterns for a future deep-dive.

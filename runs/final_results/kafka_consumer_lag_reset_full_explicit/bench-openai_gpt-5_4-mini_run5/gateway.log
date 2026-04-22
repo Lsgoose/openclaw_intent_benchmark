@@ -1,30 +1,26 @@
-2026-04-21T10:34:50.819+00:00 [canvas] host mounted at http://127.0.0.1:18789/__openclaw__/canvas/ (root /root/.openclaw/canvas)
-2026-04-21T10:34:51.057+00:00 [heartbeat] started
-2026-04-21T10:34:51.060+00:00 [health-monitor] started (interval: 300s, startup-grace: 60s, channel-connect-grace: 120s)
-2026-04-21T10:34:51.077+00:00 [gateway] agent model: ofox-openai/openai/gpt-5.4-mini
-2026-04-21T10:34:51.079+00:00 [gateway] listening on ws://127.0.0.1:18789, ws://[::1]:18789 (PID 33)
-2026-04-21T10:34:51.080+00:00 [gateway] log file: /tmp/openclaw/openclaw-2026-04-21.log
-2026-04-21T10:34:51.082+00:00 [gateway] security warning: dangerous config flags enabled: gateway.controlUi.allowInsecureAuth=true. Run `openclaw security audit`.
-2026-04-21T10:34:51.355+00:00 [hooks] loaded 4 internal hook handlers
-2026-04-21T10:34:55.741+00:00 [browser/server] Browser control listening on http://127.0.0.1:18791/ (auth=token)
-2026-04-21T10:34:55.985+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=cb0ae3b9afd8 (OpenClaw) (4)._openclaw-gw._tcp.local. host=openclaw-(4).local. port=18789 state=probing)
-2026-04-21T10:34:59.338+00:00 [bonjour] gateway name conflict resolved; newName="cb0ae3b9afd8 (OpenClaw) (5)"
-2026-04-21T10:34:59.342+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(5)"
-2026-04-21T10:35:00.483+00:00 [gateway] device pairing auto-approved device=6b10c369e85f15915bb01cf46ee6067fc5b85b4827547fe9d8595c0eee82f4ac role=operator
-2026-04-21T10:35:08.269+00:00 [tools] tools.profile (coding) allowlist contains unknown entries (apply_patch, code_execution, web_search, x_search, image, image_generate). These entries are shipped core tools but unavailable in the current runtime/provider/model/config.
-2026-04-21T10:35:10.736+00:00 [agent/embedded] read tool called without path: toolCallId=call_qTRBegWLfYsaRLi1pFgFJqIx argsType=object
-2026-04-21T10:35:18.197+00:00 Pre-reset describe:
-- `click-stream` lag was `200000000`
-- `payment-events` was also present with lag `200`
+2026-04-21T18:06:19.814+00:00 [canvas] host mounted at http://127.0.0.1:18789/__openclaw__/canvas/ (root /root/.openclaw/canvas)
+2026-04-21T18:06:19.960+00:00 [heartbeat] started
+2026-04-21T18:06:19.962+00:00 [health-monitor] started (interval: 300s, startup-grace: 60s, channel-connect-grace: 120s)
+2026-04-21T18:06:19.981+00:00 [gateway] agent model: ofox-openai/openai/gpt-5.4-mini
+2026-04-21T18:06:19.983+00:00 [gateway] listening on ws://127.0.0.1:18789, ws://[::1]:18789 (PID 32)
+2026-04-21T18:06:19.985+00:00 [gateway] log file: /tmp/openclaw/openclaw-2026-04-21.log
+2026-04-21T18:06:19.986+00:00 [gateway] security warning: dangerous config flags enabled: gateway.controlUi.allowInsecureAuth=true. Run `openclaw security audit`.
+2026-04-21T18:06:20.180+00:00 [hooks] loaded 4 internal hook handlers
+2026-04-21T18:06:24.278+00:00 [browser/server] Browser control listening on http://127.0.0.1:18791/ (auth=token)
+2026-04-21T18:06:28.368+00:00 [gateway] device pairing auto-approved device=6b10c369e85f15915bb01cf46ee6067fc5b85b4827547fe9d8595c0eee82f4ac role=operator
+2026-04-21T18:06:35.793+00:00 [tools] tools.profile (coding) allowlist contains unknown entries (apply_patch, code_execution, web_search, x_search, image, image_generate). These entries are shipped core tools but unavailable in the current runtime/provider/model/config.
+2026-04-21T18:06:38.407+00:00 [agent/embedded] read tool called without path: toolCallId=call_s2pw4kV1DNaetAzMxLd6x8mA argsType=object
+2026-04-21T18:06:50.171+00:00 I’ll follow the runbook and keep it scoped to `click-stream` only.
+2026-04-21T18:06:50.173+00:00 Pre-reset describe:
+- `click-stream`: 12 partitions, lag `200000000`, offset `earliest`
+- `payment-events`: 3 partitions, lag `200`, offset `earliest`
 
 Reset execution:
 - `click-stream` was reset to latest
-- Previous lag: `200000000`
-- New lag: `0`
-- Recorded operation: `/root/.openclaw/workspace/operations/operation_20260421103514535059.json`
+- Previous lag `200000000` → new lag `0`
 
 Post-reset describe:
-- `click-stream` lag is now `0`
-- `payment-events` remains unchanged at lag `200`
+- `click-stream`: lag `0`, offset `latest`
+- `payment-events`: lag `200`, offset `earliest` unchanged
 
-No other topics were touched.
+Safely completed without touching `payment-events`.

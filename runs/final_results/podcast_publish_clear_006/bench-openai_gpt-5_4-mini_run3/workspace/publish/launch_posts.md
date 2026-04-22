@@ -1,3 +1,5 @@
-A reliable podcast pipeline is built on consistency: clear handoffs, clean transcripts, standard output bundles, and human approval for what goes public.
+Reliable podcast pipelines depend on consistency: clear handoffs, clean transcripts, fixed output bundles, and human approval before publish.
 
-What breaks first in a podcast production workflow: naming, review, metadata consistency, or transcript cleanup?
+---
+
+A transcript is a strong drafting input, not editorial truth. Facts, links, names, sponsor language, and metadata still need review.

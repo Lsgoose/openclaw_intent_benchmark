@@ -1,3 +1,3 @@
-1. A reliable podcast pipeline keeps titles, transcripts, show notes, and metadata aligned from first draft to publish.
+Key takeaway: A reliable podcast pipeline is built on consistency, not heroics.
 
-2. What step in a podcast production pipeline most often creates delays, errors, or drift across the final release?
+Discussion question: What part of your release process still depends too much on memory instead of a checklist?

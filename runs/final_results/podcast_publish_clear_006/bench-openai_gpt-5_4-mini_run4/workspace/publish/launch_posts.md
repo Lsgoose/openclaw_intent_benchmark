@@ -1,3 +1,3 @@
-A reliable podcast pipeline is built on consistency, not heroics. Clean transcripts and clear handoffs make every release easier to trust.
+Key takeaway: Reliable podcast releases depend on consistent handoffs, clean transcripts, verified metadata, and human approval before anything goes live.
 
-What breaks first in a podcast release process: handoffs, transcript cleanup, or metadata consistency?
+Discussion question: What part of the release workflow creates the most friction for your show?

@@ -1,30 +1,33 @@
 # Episode 14 Show Notes
 
-## [00:00:00] Opening: Why the pipeline shapes the listener experience
-The episode opens by framing podcast production as more than editing audio. The full pipeline determines how a raw recording becomes a polished episode with clean audio, transcript, chapter markers, social clips, title, description, and metadata.
+## 00:00 — Why the production pipeline shapes the listener experience
+The episode opens by framing podcast production as more than editing audio. The pipeline determines how a conversation becomes a polished, discoverable release with transcript, chapters, social clips, title, description, and metadata.
 
-## [00:00:27] [00:01:27] The pipeline as a repeatable system
-Maya Chen defines the pipeline in five stages: capture, post-production, content extraction, review and approval, and distribution. Capture includes guest bios, sponsor copy, links, and references. Post-production handles audio cleanup and trimming. Content extraction turns the episode into transcripts, summaries, quotes, show notes, chapters, titles, and clips. Review checks facts, sponsor language, names, links, and legal or editorial issues. Distribution publishes to hosting, newsletters, social channels, and archives.
+## 00:01 — The five stages of a reliable pipeline
+Maya Chen breaks the workflow into five parts: capture, post-production, content extraction, review and approval, and distribution. The analogy to a software build pipeline appears here: source material, transformations, validation, packaging, and deployment.
 
-## [00:02:29] [00:03:40] Where small teams break down
-Small teams often struggle with handoffs, inconsistent naming and asset storage, and the temptation to treat transcripts as already publish-ready. A transcript can include filler, false starts, corrections, and unverified references. It is a rich input, not the final source of truth.
+## 00:02 — Handoffs, naming, and transcript-driven friction
+Small teams often struggle with handoffs between people, inconsistent file naming, and the hidden judgment required to turn a transcript into publish-ready content. A transcript is useful, but not automatically authoritative.
 
-## [00:04:10] [00:05:28] Clean transcript versus raw transcript
-The episode recommends keeping both raw and cleaned transcripts. The raw transcript preserves traceability and original wording. The cleaned transcript removes disfluencies, fixes speaker labels, and becomes the preferred source for summaries and repurposing. Separating the two prevents downstream summaries, quote cards, and snippets from inheriting source noise.
+## 00:03 — Raw transcript versus cleaned transcript
+The cleanest path is to keep both raw and cleaned transcripts. The raw version preserves traceability; the cleaned version removes disfluencies, fixes speaker labels, and becomes the preferred source for summaries, notes, and repurposed assets.
 
-## [00:05:49] [00:06:31] What automation should and should not do
-Automation is useful for repetitive transforms like transcription cleanup, first-draft notes, chapter suggestions, formatting, asset packaging, and metadata prefill. It should not replace editorial judgment or exception handling. The human still owns correctness, tone, and release quality.
+## 00:04 — A lightweight but dependable output bundle
+A small team can stay disciplined by standardizing the deliverables for every episode: final audio, clean transcript, show notes, title, description, chapter list, thumbnail, and a publish log. Consistent outputs make downstream work easier.
 
-## [00:06:52] [00:07:50] Titles as a contract with the listener
-The discussion recommends generating multiple title candidates from different angles: problem-oriented, guest-oriented, outcome-oriented, and curiosity-driven. Frequency alone is not strategy. A strong title reflects what the episode helps the listener do.
+## 00:05 — Where automation helps, and where it fails
+Automation is strongest at repetitive transforms such as transcription cleanup, first-draft notes, chapter suggestions, formatting, and metadata prefill. It is weaker at editorial judgment and exception handling, especially when sensitive or legal issues arise.
 
-## [00:08:03] [00:09:02] High-value review checks before publish
-Before release, the team should verify names and affiliations, links and references, sponsor compliance, sensitive edits, and metadata consistency across title, description, transcript, chapter list, and social copy. Alignment across all surfaces makes the production feel reliable.
+## 00:06 — Titles as a contract with the listener
+The conversation recommends generating multiple title candidates from different angles: problem-oriented, guest-oriented, outcome-oriented, and curiosity-driven. Frequency alone is not strategy; the best title reflects what the episode helps the listener do.
 
-## [00:09:13] [00:10:05] Practical next steps for a small show
-The episode closes with a simple improvement plan: standardize folder structure and naming, assign one owner to the publish checklist, separate raw and cleaned transcripts, define a required output bundle, and keep a lightweight episode log. The key principle is consistency. Automation should generate drafts, while humans approve what becomes public.
+## 00:08 — Review checks before publishing
+The highest-value checks are names and affiliations, link verification, sponsor compliance, sensitive edits, and metadata consistency across title, description, transcript, chapter list, and social copy.
 
-## Verified links used in this release
+## 00:09 — Practical next steps for small shows
+The episode closes with a short action list: define a folder structure and naming convention, assign a publish checklist owner, separate raw and cleaned transcripts, define the output bundle, and keep an episode log. Automation should generate drafts, not approvals.
+
+## Verified links
 - Maya Chen: https://creators.example.com/guests/maya-chen
 - SoundLayer overview: https://creators.example.com/tools/soundlayer-overview
 - Podcast release checklist: https://creators.example.com/checklists/podcast-release

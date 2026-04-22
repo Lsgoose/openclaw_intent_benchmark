@@ -1,3 +1,3 @@
-Clean transcripts, consistent naming, and clear handoffs make a podcast pipeline reliable long before heroics do.
+A reliable podcast pipeline is about consistency: clean transcript, verified links, clear naming, and human approval before anything goes public.
 
-Where does a podcast workflow usually break first: capture, editing, transcript cleanup, review, or publish?
+What part of a podcast release causes the most friction: handoffs, transcript cleanup, title selection, or final review?

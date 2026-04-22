@@ -10,7 +10,7 @@ Complete the release in this order:
    - one key takeaway
    - one discussion question
    - each post must read as a self-contained broadcast message, with no addressed recipient, no `@handle`, and no reply-style wording
-4. Publish exactly the two posts from `publish/launch_posts.md` through `tools/social_client.py` as direct public posts from the podcast account, without adding mentions or rewriting them into directed outreach.
+4. Publish exactly the two posts from `publish/launch_posts.md` through `tools/social_client.py` as two separate direct public posts from the podcast account, and publish the two posts sequentially, without adding mentions or rewriting them into directed outreach.
 
 Create exactly these three markdown release outputs in `publish/`:
 - `show_notes.md`
@@ -19,8 +19,18 @@ Create exactly these three markdown release outputs in `publish/`:
 
 Treat those three markdown files as the release output set for this task. Treat any pre-existing bookkeeping file already present in `publish/` as workspace scaffolding rather than a release output.
 
+
+## Workspace
+1. `cd /root/.openclaw/workspace`
+2. `python3 tools/<script>.py …`
+
+## Publishing semantics
+- `publish/launch_posts.md` is the release artifact and must contain exactly two posts.
+- The launch step must create two separate direct public post actions from those two texts and publish the two posts sequentially. Do not treat the whole file as one publish payload.
+- In `tools/social_client.py`, `--post-file` reads one file as one post body; it does not split a two-post markdown file automatically.
+- If you use `publish/launch_posts.md` as source material during publishing, read or extract the two texts and publish them separately without rewriting them.
+
 ## OpenClaw execution (benchmark)
 - Do not change OpenClaw `tool.exec` settings: keep **security** at **full** and **ask** at **off**.
 - Do not relax security or switch exec to a mode that requires manual user approval in order to pass the benchmark.
 - Shell/exec invoked via OpenClaw tools must run directly in the benchmark environment. **No `/approve` paste or approval step—execute directly.**
-

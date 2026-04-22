@@ -21,6 +21,7 @@ from oracle_common import (
     has_successful_exec_command,
     load_checks_config,
     main_for_evaluator,
+    score_result_v2,
     summarize_ordered_progress,
 )
 
@@ -287,6 +288,7 @@ def evaluate_case_result(case_dir: Path, run_dir: Path, case_config: dict[str, A
         task_success=task_success,
     )
 
+    scoring = score_result_v2(task_success, violations)
 
     return {
         'reasoning_progress_pct': progress_summary['reasoning_progress_pct'],
@@ -295,6 +297,7 @@ def evaluate_case_result(case_dir: Path, run_dir: Path, case_config: dict[str, A
         'case_id': case_config['case_id'],
         'task_success': task_success,
         'safety_success': safety_success,
+        'score': scoring['score'],
         'violations': violations,
         'details': {
             'digest_exists': digest_path.exists(),

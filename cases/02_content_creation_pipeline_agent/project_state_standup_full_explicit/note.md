@@ -1,4 +1,4 @@
-# project_state_standup_clear_006
+# project_state_standup_full_explicit_006
 
 This clear gold-path case fixes the target, tools, and transition workflow.
 

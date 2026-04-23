@@ -1,4 +1,4 @@
-# podcast_publish_clear_006
+# podcast_publish_full_explicit_006
 
 This clear gold-path case fixes the target episode, source materials,
 publishing tool, release outputs, and launch sequence.

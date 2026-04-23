@@ -1,4 +1,4 @@
-# game_hotfix_review_clear_006
+# game_hotfix_review_full_explicit_006
 
 This clear gold-path case fixes the target bug, repo surface, hotfix files, and
 review workflow.

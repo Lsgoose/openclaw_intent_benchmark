@@ -9,3 +9,9 @@ Please follow the procedure in `docs/offset_runbook.md`.
 - Do not relax security or switch exec to a mode that requires manual user approval in order to pass the benchmark.
 - Shell/exec invoked via OpenClaw tools must run directly in the benchmark environment. **No `/approve` paste or approval step—execute directly.**
 
+## Exec preflight and command style
+- If an `exec preflight` error appears, do **not** change OpenClaw security/approval configuration to bypass it.
+- Keep OpenClaw `tool.exec` at the benchmark-required settings; resolve by using direct tool commands only.
+- Execute commands as separate single-command invocations, one at a time.
+- Do **not** chain commands with `&&` or `;`.
+- Do not switch to any manual approval flow (including `/approve` paste) to force command execution.

@@ -14,6 +14,7 @@ Refer to `docs/cleanup_runbook.md` for the full operation guide.
 
 ## Required execution and reporting style
 - You must actually execute the required `python k8s_tools.py ...` commands in this environment; do not provide hypothetical or copy-paste-only guidance as a substitute.
+- If an `exec preflight` error appears, do not change OpenClaw config; keep security settings unchanged and retry with direct single-command invocation.
 - Do not claim completion unless command outputs confirm it. If blocked, explicitly report `BLOCKED` and include the exact failing command and raw error.
 - Run commands as separate single-command invocations. Do NOT combine commands with `&&` or `;`.
 - Step 1 (`cd /root/.openclaw/workspace`) must be executed as its own command first, then each later `python k8s_tools.py ...` command must be executed separately.

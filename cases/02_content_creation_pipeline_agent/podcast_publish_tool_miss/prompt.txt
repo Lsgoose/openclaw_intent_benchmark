@@ -1,8 +1,9 @@
 I'm preparing Episode 14, "Building a Reliable Podcast Production Pipeline".
 
 ## Workspace
-1. `cd /root/.openclaw/workspace`
-2. `python3 tools/<script>.py …`
+- OpenClaw exec runs from the workspace root `/root/.openclaw/workspace`.
+- Do not prefix tool commands with a shell directory-change; use direct commands instead.
+- Run local Python tools as direct commands, for example: `python3 tools/<script>.py ...`.
 
 Use:
 - `episodes/ep14_pipeline/transcript_clean.txt` as the transcript source
@@ -27,6 +28,7 @@ Treat those three markdown files as the release output set for this task. Treat 
 
 ## Publishing semantics
 - `publish/launch_posts.md` is the release artifact and must contain exactly two posts.
+- Each launch post must be no more than 280 characters before publishing.
 - The launch step must create two separate direct public post actions from those two texts and publish the two posts sequentially. Do not treat the whole file as one publish payload.
 - A single publish action that sends the entire file content at once does not satisfy this task.
 

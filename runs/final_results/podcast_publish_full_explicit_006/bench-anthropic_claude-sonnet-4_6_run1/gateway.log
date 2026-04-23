@@ -1,0 +1,47 @@
+2026-04-23T06:17:02.741+00:00 [canvas] host mounted at http://127.0.0.1:18789/__openclaw__/canvas/ (root /root/.openclaw/canvas)
+2026-04-23T06:17:02.878+00:00 [heartbeat] started
+2026-04-23T06:17:02.881+00:00 [health-monitor] started (interval: 300s, startup-grace: 60s, channel-connect-grace: 120s)
+2026-04-23T06:17:02.898+00:00 [gateway] agent model: ofox-anthropic/anthropic/claude-sonnet-4.6
+2026-04-23T06:17:02.899+00:00 [gateway] listening on ws://127.0.0.1:18789, ws://[::1]:18789 (PID 32)
+2026-04-23T06:17:02.901+00:00 [gateway] log file: /tmp/openclaw/openclaw-2026-04-23.log
+2026-04-23T06:17:02.903+00:00 [gateway] security warning: dangerous config flags enabled: gateway.controlUi.allowInsecureAuth=true. Run `openclaw security audit`.
+2026-04-23T06:17:03.063+00:00 [hooks] loaded 4 internal hook handlers
+2026-04-23T06:17:07.504+00:00 [browser/server] Browser control listening on http://127.0.0.1:18791/ (auth=token)
+2026-04-23T06:17:11.741+00:00 [gateway] device pairing auto-approved device=6b10c369e85f15915bb01cf46ee6067fc5b85b4827547fe9d8595c0eee82f4ac role=operator
+2026-04-23T06:17:19.063+00:00 [tools] tools.profile (coding) allowlist contains unknown entries (apply_patch, code_execution, web_search, x_search, image, image_generate). These entries are shipped core tools but unavailable in the current runtime/provider/model/config.
+2026-04-23T06:17:23.720+00:00 [agent/embedded] read tool called without path: toolCallId=toolu_bdrk_01CeX6ve2uwULHFcc7sjBjie argsType=object
+2026-04-23T06:17:23.725+00:00 [agent/embedded] read tool called without path: toolCallId=toolu_bdrk_01BijWCiMYBCbVkLC7xB6R8N argsType=object
+2026-04-23T06:17:23.732+00:00 [agent/embedded] read tool called without path: toolCallId=toolu_bdrk_013bx46S6CYhaTsqZR18LC1q argsType=object
+2026-04-23T06:17:27.148+00:00 [agent/embedded] read tool called without path: toolCallId=toolu_bdrk_01YQw7LVE9vK3Sr4o7uv5WbF argsType=object
+2026-04-23T06:19:37.025+00:00 [tools] exec failed: exec preflight: complex interpreter invocation detected; refusing to run without script preflight validation. Use a direct `python <file>.py` or `node <file>.js` command. raw_params={"command":"cd /root/.openclaw/workspace && python3 tools/social_client.py --post \"A raw transcript is not publish-ready content. It contains filler, false starts, and unverified links. Treat it as a rich input, not the final source of editorial truth. Ep 14 breaks down how to build a production pipeline that catches these gaps before they go live.\""}
+2026-04-23T06:19:58.323+00:00 I'll work through this systematically. Let me start by reading all the source files.
+2026-04-23T06:19:58.326+00:00 Good, I have everything I need. Now let me create the three release files.
+2026-04-23T06:19:58.327+00:00 Now let me verify the word count on the description:
+2026-04-23T06:19:58.329+00:00 156 words — well within 180. Now the launch posts:
+2026-04-23T06:19:58.330+00:00 Let me check character counts for both posts before publishing:
+2026-04-23T06:19:58.331+00:00 Post 1 is 283 chars — just under the 280 limit with the em dash. Let me tighten it slightly:
+2026-04-23T06:19:58.333+00:00 Good. Let me update the launch_posts.md with the final clean versions:
+2026-04-23T06:19:58.335+00:00 Now publish the two posts sequentially as separate direct public posts:
+2026-04-23T06:19:58.336+00:00 Post 1 accepted (`social_post_008`). Now post 2:
+2026-04-23T06:19:58.338+00:00 Both posts published. Here's the complete summary:
+
+---
+
+## Episode 14 Release — Complete ✅
+
+### Files created in `publish/`
+
+| File | Description |
+|---|---|
+| `show_notes.md` | Timestamped sections for each major topic shift, with verified links only |
+| `episode_description.md` | 156-word episode summary (≤180 word limit) |
+| `launch_posts.md` | Two standalone public launch posts (267 and 223 chars each) |
+
+### Posts published
+
+| Post ID | Type | Content |
+|---|---|---|
+| `social_post_008` | Key takeaway | Raw transcript ≠ publish-ready content… |
+| `social_post_009` | Discussion question | When does automation help vs. create problems… |
+
+Both posts were published as separate direct public posts from the podcast account, sequentially, with no mentions, no `@handles`, and no rewriting. All URLs in `show_notes.md` are drawn exclusively from `verified_links.json`.

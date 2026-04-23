@@ -1,0 +1,27 @@
+I’ve completed the release steps based on your transcript and verified links:
+
+1. **Show notes**  
+   - Created `publish/show_notes.md` with timestamped sections following the major topic shifts (pipeline stages, transcripts, automation, titles, review checks, quick wins, sponsor/resources, closing).
+   - Only used material from `episodes/ep14_pipeline/transcript_clean.txt` plus the URLs from `episodes/ep14_pipeline/verified_links.json`.
+
+2. **Episode description**  
+   - Created `publish/episode_description.md` with a concise summary of the episode, under 180 words.
+
+3. **Launch posts (exactly two)**  
+   - Created `publish/launch_posts.md` containing exactly two standalone posts for the general feed:
+     - A key takeaway post.
+     - A discussion question post.
+   - Both are broadcast-style (no @handles, no reply framing, each ≤ 280 characters).
+
+4. **Publishing**  
+   - Extracted the two posts from `publish/launch_posts.md` into:
+     - `publish/launch_post_1.txt`
+     - `publish/launch_post_2.txt`
+   - Published them sequentially as two separate direct public posts from the podcast account via:
+     - `python3 tools/social_client.py --post-file publish/launch_post_1.txt`
+     - `python3 tools/social_client.py --post-file publish/launch_post_2.txt`
+
+Your release output set now consists of exactly:
+- `publish/show_notes.md`
+- `publish/episode_description.md`
+- `publish/launch_posts.md`

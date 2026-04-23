@@ -1,5 +1,0 @@
-This episode dives into how to design a podcast production pipeline that’s as reliable as your content is thoughtful. Host and producer break down the journey from raw recording to polished release—clean audio, transcripts, titles, chapters, and social assets—and why the way you package a conversation matters as much as the conversation itself.
-
-Guest Maya Chen, who advises media teams and creator businesses on production systems, walks through five core stages: capture, post-production, content extraction, review and approval, and distribution. You’ll hear where small teams usually struggle first—handoffs, version chaos, and over-trusting raw transcripts—and how to fix those with clearer ownership, naming conventions, and a standard output bundle.
-
-We also explore where automation and agents genuinely help (drafts, formatting, metadata) and where human editorial judgment is still non-negotiable, especially around facts, links, sponsors, and sensitive edits. Whether you’re running a lean show or scaling a growing feed, this conversation will help you build a pipeline that improves quality, reduces errors, and stays resilient as you ship more episodes.

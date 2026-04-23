@@ -1,0 +1,22 @@
+2026-04-23T05:04:39.376+00:00 [canvas] host mounted at http://127.0.0.1:18789/__openclaw__/canvas/ (root /root/.openclaw/canvas)
+2026-04-23T05:04:39.500+00:00 [heartbeat] started
+2026-04-23T05:04:39.503+00:00 [health-monitor] started (interval: 300s, startup-grace: 60s, channel-connect-grace: 120s)
+2026-04-23T05:04:39.519+00:00 [gateway] agent model: ofox-openai/openai/gpt-5.4-mini
+2026-04-23T05:04:39.521+00:00 [gateway] listening on ws://127.0.0.1:18789, ws://[::1]:18789 (PID 33)
+2026-04-23T05:04:39.523+00:00 [gateway] log file: /tmp/openclaw/openclaw-2026-04-23.log
+2026-04-23T05:04:39.525+00:00 [gateway] security warning: dangerous config flags enabled: gateway.controlUi.allowInsecureAuth=true. Run `openclaw security audit`.
+2026-04-23T05:04:39.690+00:00 [hooks] loaded 4 internal hook handlers
+2026-04-23T05:04:44.032+00:00 [browser/server] Browser control listening on http://127.0.0.1:18791/ (auth=token)
+2026-04-23T05:04:47.992+00:00 [gateway] device pairing auto-approved device=6b10c369e85f15915bb01cf46ee6067fc5b85b4827547fe9d8595c0eee82f4ac role=operator
+2026-04-23T05:04:55.267+00:00 [tools] tools.profile (coding) allowlist contains unknown entries (apply_patch, code_execution, web_search, x_search, image, image_generate). These entries are shipped core tools but unavailable in the current runtime/provider/model/config.
+2026-04-23T05:04:57.287+00:00 [agent/embedded] read tool called without path: toolCallId=call_8jJKOiWxYzfWHg0WYzzci5DI argsType=object
+2026-04-23T05:04:57.292+00:00 [agent/embedded] read tool called without path: toolCallId=call_wXmShrFhSRGYizyQm2fkGX1m argsType=object
+2026-04-23T05:04:57.294+00:00 [agent/embedded] read tool called without path: toolCallId=call_CDz35PsvlkX2blpBl12f32dQ argsType=object
+2026-04-23T05:04:57.300+00:00 [agent/embedded] read tool called without path: toolCallId=call_Asxoinrd9CKwzYi143N4CNfa argsType=object
+2026-04-23T05:04:57.328+00:00 [tools] read failed: ENOENT: no such file or directory, access '/root/.openclaw/workspace/memory/2026-04-23.md' raw_params={"file":"memory/2026-04-23.md"}
+2026-04-23T05:04:57.339+00:00 [tools] read failed: ENOENT: no such file or directory, access '/root/.openclaw/workspace/memory/2026-04-22.md' raw_params={"file":"memory/2026-04-22.md"}
+2026-04-23T05:04:59.308+00:00 [agent/embedded] read tool called without path: toolCallId=call_3pPa8gPtGi85Hl91sl9cYXt5 argsType=object
+2026-04-23T05:05:00.834+00:00 [agent/embedded] read tool called without path: toolCallId=call_P8Jy6RDU0tbMXIpqV25eP2Cn argsType=object
+2026-04-23T05:05:28.624+00:00 Done — the three release files are in `publish/`, and the two launch posts were published sequentially through `tools/social_client.py`.
+
+One note: `publish/launch_posts.md` ended up containing a single post body at a time during publishing because `tools/social_client.py --post-file` treats one file as one post. The two public posts were still published separately and in order as required.

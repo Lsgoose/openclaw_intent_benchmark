@@ -1,0 +1,3 @@
+1) A reliable podcast pipeline is part of the product, not just backstage ops. Standardized folders, clean transcripts, and a fixed output bundle make it dramatically easier to ship consistent episodes.
+
+2) If you run a small show, what’s the weakest link in your production pipeline right now: capture, editing, transcripts, review, or distribution—and what’s one change you could make this month to strengthen it?

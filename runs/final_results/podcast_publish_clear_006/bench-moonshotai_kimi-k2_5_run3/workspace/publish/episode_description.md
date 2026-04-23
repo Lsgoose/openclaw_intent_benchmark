@@ -1,4 +1,0 @@
-Production pipelines are invisible until they break. In this episode, media systems advisor Maya Chen joins us to map the five stages every episode moves through—from capture and post-production to content extraction, review, and distribution. We explore why small teams struggle with handoffs and version control, why raw transcripts make poor source material for public-facing content, and where automation helps versus where it fails. Maya shares practical frameworks for title generation, a pre-publish review checklist, and the "output bundle" approach that keeps metadata consistent across every surface. Whether you're a solo creator or a small team, this episode offers concrete steps to build reliability into your workflow without adding bureaucracy.
-
-**Guest:** Maya Chen  
-**Resources:** Guest profile, sponsor details, and release checklist in show notes.

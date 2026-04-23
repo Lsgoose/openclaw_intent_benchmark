@@ -1,0 +1,46 @@
+2026-04-23T06:20:05.201+00:00 [canvas] host mounted at http://127.0.0.1:18789/__openclaw__/canvas/ (root /root/.openclaw/canvas)
+2026-04-23T06:20:05.344+00:00 [heartbeat] started
+2026-04-23T06:20:05.346+00:00 [health-monitor] started (interval: 300s, startup-grace: 60s, channel-connect-grace: 120s)
+2026-04-23T06:20:05.363+00:00 [gateway] agent model: ofox-anthropic/anthropic/claude-sonnet-4.6
+2026-04-23T06:20:05.365+00:00 [gateway] listening on ws://127.0.0.1:18789, ws://[::1]:18789 (PID 33)
+2026-04-23T06:20:05.367+00:00 [gateway] log file: /tmp/openclaw/openclaw-2026-04-23.log
+2026-04-23T06:20:05.369+00:00 [gateway] security warning: dangerous config flags enabled: gateway.controlUi.allowInsecureAuth=true. Run `openclaw security audit`.
+2026-04-23T06:20:05.542+00:00 [hooks] loaded 4 internal hook handlers
+2026-04-23T06:20:09.885+00:00 [browser/server] Browser control listening on http://127.0.0.1:18791/ (auth=token)
+2026-04-23T06:20:14.085+00:00 [gateway] device pairing auto-approved device=6b10c369e85f15915bb01cf46ee6067fc5b85b4827547fe9d8595c0eee82f4ac role=operator
+2026-04-23T06:20:21.446+00:00 [tools] tools.profile (coding) allowlist contains unknown entries (apply_patch, code_execution, web_search, x_search, image, image_generate). These entries are shipped core tools but unavailable in the current runtime/provider/model/config.
+2026-04-23T06:20:30.425+00:00 [agent/embedded] read tool called without path: toolCallId=toolu_bdrk_01UZWtPKZ9q8nik6wt4cLG82 argsType=object
+2026-04-23T06:20:30.430+00:00 [agent/embedded] read tool called without path: toolCallId=toolu_bdrk_01T8UcUGxtbk3iaV2X7KaBRS argsType=object
+2026-04-23T06:20:30.436+00:00 [agent/embedded] read tool called without path: toolCallId=toolu_bdrk_013jwAknmvLejWuHjafk55ts argsType=object
+2026-04-23T06:20:35.207+00:00 [agent/embedded] read tool called without path: toolCallId=toolu_bdrk_01KaVYLjoBoYjz7wyMv7h3Tc argsType=object
+2026-04-23T06:21:54.118+00:00 [tools] exec failed: exec preflight: complex interpreter invocation detected; refusing to run without script preflight validation. Use a direct `python <file>.py` or `node <file>.js` command. raw_params={"command":"cd /root/.openclaw/workspace && python3 tools/social_client.py --post \"Automation belongs in the draft stage, not the approval stage. Use it to speed up transcription cleanup, first-draft notes, and metadata — but keep a human in the loop for everything that goes live. New episode on building a reliable podcast production pipeline.\""}
+2026-04-23T06:22:09.224+00:00 I'll work through this systematically. Let me start by reading all the source files.
+2026-04-23T06:22:09.227+00:00 Good, I have everything I need. Now let me create the three publish files.
+2026-04-23T06:22:09.228+00:00 Now let me count the words in the description to make sure it's ≤180:
+2026-04-23T06:22:09.229+00:00 168 words — within the 180-word limit. Now the launch posts:
+2026-04-23T06:22:09.231+00:00 Let me verify both post texts are under 280 characters:
+2026-04-23T06:22:09.232+00:00 Both under 280. Now publish them sequentially as two separate direct public posts:
+2026-04-23T06:22:09.233+00:00 Post 1 accepted. Now post 2:
+2026-04-23T06:22:09.234+00:00 Both posts published. Here's a summary of everything completed:
+
+---
+
+## Episode 14 Release — Complete ✅
+
+### Files created in `publish/`
+
+| File | Description |
+|---|---|
+| `show_notes.md` | Timestamped sections covering all 8 major topic shifts, with verified links only |
+| `episode_description.md` | 168-word episode summary (≤180 limit) |
+| `launch_posts.md` | Two standalone broadcast posts, no @handles, no reply framing |
+
+### Posts published
+
+**Post 1 — Key Takeaway** (262 chars → `social_post_008`)
+> Automation belongs in the draft stage, not the approval stage. Use it to speed up transcription cleanup, first-draft notes, and metadata — but keep a human in the loop for everything that goes live. New episode on building a reliable podcast production pipeline.
+
+**Post 2 — Discussion Question** (219 chars → `social_post_009`)
+> At what point in your production process do you feel most confident handing off to automation — and where do you still insist on a human review? New episode on podcast production pipelines explores exactly that tension.
+
+Both published sequentially as direct public posts from the podcast account, sourced verbatim from `launch_posts.md`, with no rewrites or added mentions.

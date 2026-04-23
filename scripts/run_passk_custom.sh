@@ -43,7 +43,7 @@ SUMMARY_TAG="${SUMMARY_TAG:-bench}"
 PASSK_OUT_DIR="${PASSK_OUT_DIR:-${REPO_ROOT}/runs/${RUN_DATE}}"
 
 MODELS="${MODELS:-}"
-CASES="${CASES:-kb_article_publish_full_explicit}"
+CASES="${CASES:-podcast_publish_clear_006}"
 
 if [[ -z "${MODELS// }" ]] && [[ -f "$ENV_JSON" ]]; then
   MODELS="$(

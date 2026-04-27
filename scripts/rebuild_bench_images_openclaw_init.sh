@@ -18,6 +18,10 @@ if [[ ! -f "docker/openclaw-init" ]]; then
   echo "[error] docker/openclaw-init 不存在" >&2
   exit 1
 fi
+if [[ ! -f "docker/openclaw-init-proxy" ]]; then
+  echo "[error] docker/openclaw-init-proxy 不存在" >&2
+  exit 1
+fi
 
 # shellcheck disable=SC2206
 BASE_IMAGES=(${BASE_IMAGES:-openclaw-bench:v2.0 openclaw-v2.26-bench:v2.0 openclaw-v3.8-bench:v2.0})
@@ -28,7 +32,8 @@ for BASE_IMAGE in "${BASE_IMAGES[@]}"; do
   docker build -t "${LOCAL_IMAGE}" -f- "${REPO_ROOT}" <<EOF
 FROM ${BASE_IMAGE}
 COPY docker/openclaw-init /usr/local/bin/openclaw-init
-RUN chmod +x /usr/local/bin/openclaw-init
+COPY docker/openclaw-init-proxy /usr/local/bin/openclaw-init-proxy
+RUN chmod +x /usr/local/bin/openclaw-init /usr/local/bin/openclaw-init-proxy
 RUN set -eux; \\
   if command -v python >/dev/null 2>&1; then \\
     exit 0; \\

@@ -33,6 +33,26 @@ CONTAINER_AGENT_SESSION = 'bench-run'
 DEFAULT_CONTAINER_IMAGE = 'openclaw-bench:v1.0'
 
 
+def _use_litellm_proxy_init() -> bool:
+    v = os.environ.get('OPENCLAW_USE_LITELLM_PROXY', '').strip().lower()
+    return v in ('1', 'true', 'yes')
+
+
+def _litellm_proxy_container_env() -> dict[str, str]:
+    """Forward LiteLLM proxy settings from host into the bench container (for openclaw-init-proxy)."""
+    out: dict[str, str] = {}
+    for k in (
+        'LITELLM_PROXY_BASE',
+        'LITELLM_PROXY_ANTHROPIC_BASE',
+        'LITELLM_PROXY_GEMINI_BASE',
+        'OFOX_ANTHROPIC_API',
+    ):
+        v = os.environ.get(k, '').strip()
+        if v:
+            out[k] = v
+    return out
+
+
 # ── Low-level Docker helpers ───────────────────────────────────────────────────
 
 def _docker(*args: str, check: bool = True) -> subprocess.CompletedProcess:
@@ -66,9 +86,18 @@ def container_start(
         '-e', 'no_proxy=',
         '-e', 'NO_PROXY=',
     ]
+    # Linux Docker often has no host.docker.internal unless explicitly mapped; bench containers
+    # that use LITELLM_PROXY_BASE=http://host.docker.internal:... would otherwise get
+    # "LLM request failed: network connection error".
+    extra_run_args: list[str] = []
+    proxy_base = (env_vars.get('LITELLM_PROXY_BASE') or '').strip()
+    if proxy_base and 'host.docker.internal' in proxy_base:
+        extra_run_args.extend(['--add-host=host.docker.internal:host-gateway'])
+
     r = subprocess.run(
         [
             'docker', 'run', '-d', '--name', name,
+            *extra_run_args,
             *no_proxy_args,
             *env_args,
             '-v', f'{workspace_dir}:{CONTAINER_WORKSPACE}',
@@ -190,6 +219,7 @@ def container_run_case(
         env_vars['MOONSHOT_API_KEY'] = model_api_key
         env_vars['OPENROUTER_API_KEY'] = model_api_key
         env_vars['MODEL_API_KEY'] = model_api_key
+    env_vars.update(_litellm_proxy_container_env())
 
     emit_progress(format_progress(case_id, 'container-start', index=run_idx, total=run_total))
     started = time.time()
@@ -222,7 +252,8 @@ def container_run_case(
             v = lp.get(key)
             if v is not None and str(v).strip() != '':
                 init_env += f" {env_name}={shlex.quote(str(v).strip())}"
-        container_exec(task_id, f"{init_env} openclaw-init")
+        init_bin = 'openclaw-init-proxy' if _use_litellm_proxy_init() else 'openclaw-init'
+        container_exec(task_id, f"{init_env} {init_bin}")
 
         # 3. Start the in-container openclaw gateway.
         #    Each container has an isolated network namespace so port conflicts

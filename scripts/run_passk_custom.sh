@@ -6,15 +6,15 @@
 #
 # 用法（在仓库根）:
 #   ./scripts/run_passk_custom.sh
-#     （默认 CASE：community_member_onboarding_full_explicit；MODEL 读 environment.json）
-#   MODELS="moonshotai/kimi-k2.5" CASES="podcast_publish_clear_006" ./scripts/run_passk_custom.sh
+#     （默认 CASE：podcast_publish_full_explicit_006；MODEL 读 environment.json）
+#   MODELS="moonshotai/kimi-k2.5" CASES="podcast_publish_full_explicit_006" ./scripts/run_passk_custom.sh
 #   MODELS="openai/gpt-5.1 anthropic/claude-sonnet-4.6" \
 #     CASES="case_a case_b" \
 #     PARALLEL=8 RUN_DATE=2026-04-21 ./scripts/run_passk_custom.sh
 #
 # 环境变量:
 #   MODELS        默认读 environment.json 的 model；也可用环境变量覆盖（空格分隔多个）
-#   CASES         默认 community_member_onboarding_full_explicit；可用环境变量覆盖
+#   CASES         默认 podcast_publish_full_explicit_006；可用环境变量覆盖
 #   RUN_DATE      默认当天
 #   PARALLEL      默认 14
 #   ROUNDS        默认 1（>1 时对整份 CASES 并行多轮，run-name 后缀 _rN）
@@ -43,7 +43,7 @@ SUMMARY_TAG="${SUMMARY_TAG:-bench}"
 PASSK_OUT_DIR="${PASSK_OUT_DIR:-${REPO_ROOT}/runs/${RUN_DATE}}"
 
 MODELS="${MODELS:-}"
-CASES="${CASES:-podcast_publish_clear_006}"
+CASES="${CASES:-community_campaign_publish_goal_ambiguity}"
 
 if [[ -z "${MODELS// }" ]] && [[ -f "$ENV_JSON" ]]; then
   MODELS="$(

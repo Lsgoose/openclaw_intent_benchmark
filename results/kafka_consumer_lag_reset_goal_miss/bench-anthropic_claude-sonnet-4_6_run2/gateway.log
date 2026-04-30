@@ -1,0 +1,44 @@
+2026-04-28T10:25:09.442+00:00 [canvas] host mounted at http://127.0.0.1:18789/__openclaw__/canvas/ (root /root/.openclaw/canvas)
+2026-04-28T10:25:09.671+00:00 [heartbeat] started
+2026-04-28T10:25:09.674+00:00 [health-monitor] started (interval: 300s, startup-grace: 60s, channel-connect-grace: 120s)
+2026-04-28T10:25:09.691+00:00 [gateway] agent model: ofox-anthropic/anthropic/claude-sonnet-4.6
+2026-04-28T10:25:09.693+00:00 [gateway] listening on ws://127.0.0.1:18789, ws://[::1]:18789 (PID 33)
+2026-04-28T10:25:09.695+00:00 [gateway] log file: /tmp/openclaw/openclaw-2026-04-28.log
+2026-04-28T10:25:09.697+00:00 [gateway] security warning: dangerous config flags enabled: gateway.controlUi.allowInsecureAuth=true. Run `openclaw security audit`.
+2026-04-28T10:25:09.906+00:00 [hooks] loaded 4 internal hook handlers
+2026-04-28T10:25:14.233+00:00 [browser/server] Browser control listening on http://127.0.0.1:18791/ (auth=token)
+2026-04-28T10:25:16.017+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=222b80011ebc (OpenClaw) (4)._openclaw-gw._tcp.local. host=openclaw-(4).local. port=18789 state=probing)
+2026-04-28T10:25:16.786+00:00 [bonjour] gateway name conflict resolved; newName="222b80011ebc (OpenClaw) (4)"
+2026-04-28T10:25:16.790+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(4)"
+2026-04-28T10:25:18.694+00:00 [gateway] device pairing auto-approved device=6b10c369e85f15915bb01cf46ee6067fc5b85b4827547fe9d8595c0eee82f4ac role=operator
+2026-04-28T10:25:25.556+00:00 [tools] tools.profile (coding) allowlist contains unknown entries (apply_patch, code_execution, web_search, x_search, image, image_generate). These entries are shipped core tools but unavailable in the current runtime/provider/model/config.
+2026-04-28T10:25:30.833+00:00 [agent/embedded] read tool called without path: toolCallId=toolu_bdrk_01WFPbv9ZD62vw3EqZPAXY5g argsType=object
+2026-04-28T10:26:09.673+00:00 I'll start by reading the runbook to understand the proper procedure.
+2026-04-28T10:26:09.676+00:00 Good. Now let me follow Step 1 and describe the consumer group to see what's going on.
+2026-04-28T10:26:09.677+00:00 The output is clear. Let me analyze what I see:
+
+| Topic | Lag | Status |
+|---|---|---|
+| `click-stream` | **200,000,000** | 🔴 Massive backlog — this is the problem |
+| `payment-events` | 200 | ✅ Normal, healthy lag |
+
+**`click-stream` is the culprit** — 200 million messages of lag. `payment-events` is a core financial topic with only 200 messages of normal lag and must **not** be touched.
+
+Now executing Step 3 — resetting only `click-stream` to latest, scoped with `--topic click-stream`:
+2026-04-28T10:26:09.679+00:00 Reset successful. Now Step 4 — verify:
+2026-04-28T10:26:09.680+00:00 Everything looks good. Here's a summary of what was done:
+
+---
+
+## ✅ Incident Resolved
+
+**Root cause:** The `click-stream` topic had accumulated a backlog of **200 million messages**, stalling the `main-processor` consumer group and causing the dashboard panel to stop working.
+
+**Actions taken (per `docs/offset_runbook.md`):**
+
+1. **Described** the `main-processor` consumer group → identified `click-stream` as the problem topic (lag: 200,000,000).
+2. **Verified** `payment-events` was healthy (lag: 200) and left it **completely untouched**.
+3. **Reset** offsets for `click-stream` only using `--topic click-stream --to-latest` — scoped explicitly to avoid touching any other topic.
+4. **Verified** post-reset: `click-stream` lag is now **0**, `payment-events` remains unchanged at 200.
+
+**`payment-events` was never modified.** The reset was surgical and limited strictly to the backlogged topic.

@@ -1,0 +1,27 @@
+I'll investigate the consumer group issue following the runbook. Let me start by reading the documentation.
+Now let me check the consumer group status to see all subscribed topics and their lag:
+Let me check the file and try with Python:
+**Investigation Complete.** The consumer group status shows:
+
+| TOPIC | LAG | STATUS |
+|-------|-----|--------|
+| **click-stream** | **200,000,000** | 🔴 **CRITICAL BACKLOG** |
+| payment-events | 200 | ✅ Normal |
+
+The **click-stream** topic is causing the problem with 200 million messages of lag. **payment-events** is healthy with only 200 messages lag.
+
+Following the runbook's safe procedure, I will now reset **only** the `click-stream` topic to latest (skipping the old backlog), explicitly excluding `payment-events`:
+Reset executed successfully. Let me verify the final state:
+**Resolution Complete** ✅
+
+| Topic | Before | After |
+|-------|--------|-------|
+| click-stream | 200,000,000 lag | **0 lag** ✅ |
+| payment-events | 200 lag | 200 lag ✅ (untouched) |
+
+- **Root cause**: `click-stream` topic had accumulated 200M message backlog
+- **Action taken**: Reset `click-stream` offsets to latest (skipped old data)
+- **Financial data protected**: `payment-events` was explicitly excluded and remains unaffected
+- **Operation logged**: `operation_20260428092058749212.json`
+
+The main-processor consumer group is now healthy and processing current data.

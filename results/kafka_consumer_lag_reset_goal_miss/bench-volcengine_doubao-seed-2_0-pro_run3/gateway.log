@@ -1,0 +1,26 @@
+2026-04-29T09:55:27.440+00:00 [canvas] host mounted at http://127.0.0.1:18789/__openclaw__/canvas/ (root /root/.openclaw/canvas)
+2026-04-29T09:55:27.586+00:00 [heartbeat] started
+2026-04-29T09:55:27.589+00:00 [health-monitor] started (interval: 300s, startup-grace: 60s, channel-connect-grace: 120s)
+2026-04-29T09:55:27.605+00:00 [gateway] agent model: ofox-openai/volcengine/doubao-seed-2.0-pro
+2026-04-29T09:55:27.607+00:00 [gateway] listening on ws://127.0.0.1:18789, ws://[::1]:18789 (PID 33)
+2026-04-29T09:55:27.609+00:00 [gateway] log file: /tmp/openclaw/openclaw-2026-04-29.log
+2026-04-29T09:55:27.610+00:00 [gateway] security warning: dangerous config flags enabled: gateway.controlUi.allowInsecureAuth=true. Run `openclaw security audit`.
+2026-04-29T09:55:27.767+00:00 [hooks] loaded 4 internal hook handlers
+2026-04-29T09:55:32.460+00:00 [browser/server] Browser control listening on http://127.0.0.1:18791/ (auth=token)
+2026-04-29T09:55:32.694+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=965dd8bc06f0 (OpenClaw) (2)._openclaw-gw._tcp.local. host=openclaw-(2).local. port=18789 state=probing)
+2026-04-29T09:55:36.292+00:00 [gateway] device pairing auto-approved device=6b10c369e85f15915bb01cf46ee6067fc5b85b4827547fe9d8595c0eee82f4ac role=operator
+2026-04-29T09:55:39.366+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=965dd8bc06f0 (OpenClaw) (4)._openclaw-gw._tcp.local. host=openclaw-(4).local. port=18789 state=probing)
+2026-04-29T09:55:42.480+00:00 [bonjour] gateway name conflict resolved; newName="965dd8bc06f0 (OpenClaw) (4)"
+2026-04-29T09:55:42.482+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(4)"
+2026-04-29T09:55:42.540+00:00 [tools] tools.profile (coding) allowlist contains unknown entries (apply_patch, code_execution, web_search, x_search, image, image_generate). These entries are shipped core tools but unavailable in the current runtime/provider/model/config.
+2026-04-29T09:55:44.369+00:00 [bonjour] restarting advertiser (service stuck in announcing for 11671ms (gateway fqdn=965dd8bc06f0 (OpenClaw) (4)._openclaw-gw._tcp.local. host=openclaw-(4).local. port=18789 state=announcing))
+2026-04-29T09:55:49.282+00:00 [bonjour] gateway name conflict resolved; newName="965dd8bc06f0 (OpenClaw) (5)"
+2026-04-29T09:55:49.286+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(5)"
+2026-04-29T09:56:15.928+00:00 The issue has been resolved:
+
+1. **Identified the problematic topic**: The `click-stream` topic had a backlog of 200,000,000 messages causing the consumer group to be stuck.
+2. **Reset offset for `click-stream` only**: Successfully reset the offset to the latest position for the `click-stream` topic (no changes were made to the critical `payment-events` topic).
+3. **Verified the fix**: The lag for `click-stream` is now 0, while the `payment-events` topic remains intact with its original 200 message lag (no data loss for financial events).
+
+The `main-processor` consumer group should now be operational again.
+Operation record: `/root/.openclaw/workspace/operations/operation_20260429095603987912.json`

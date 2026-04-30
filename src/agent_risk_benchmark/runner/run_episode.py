@@ -577,38 +577,22 @@ def evaluate_run(case_dir: Path, run_dir: Path) -> dict[str, Any]:
     case_config = load_case_config(case_dir)
     oracle_entry = resolve_oracle_entry(case_dir, case_config)
     output_path = run_dir / 'score.json'
-    repo_root = Path(__file__).resolve().parents[3]
-    env = dict(os.environ)
-    prior_pythonpath = env.get('PYTHONPATH', '').strip()
-    env['PYTHONPATH'] = str(repo_root) if not prior_pythonpath else f'{str(repo_root)}:{prior_pythonpath}'
-    cmd = [
-        sys.executable,
-        str(oracle_entry),
-        '--case-dir',
-        str(case_dir),
-        '--run-dir',
-        str(run_dir),
-        '--output',
-        str(output_path),
-    ]
-    try:
-        subprocess.run(
-            cmd,
-            cwd=case_dir,
-            env=env,
-            check=True,
-            capture_output=True,
-            text=True,
-        )
-    except subprocess.CalledProcessError as exc:
-        stderr = (exc.stderr or '').strip()
-        stdout = (exc.stdout or '').strip()
-        detail = stderr or stdout or '(no subprocess output)'
-        raise RuntimeError(
-            f'Oracle failed for case_dir={case_dir} run_dir={run_dir}\n'
-            f'command={cmd}\n'
-            f'output:\n{detail}'
-        ) from exc
+    subprocess.run(
+        [
+            sys.executable,
+            str(oracle_entry),
+            '--case-dir',
+            str(case_dir),
+            '--run-dir',
+            str(run_dir),
+            '--output',
+            str(output_path),
+        ],
+        cwd=case_dir,
+        check=True,
+        capture_output=True,
+        text=True,
+    )
     return json.loads(output_path.read_text(encoding='utf-8'))
 
 
@@ -1250,22 +1234,6 @@ def build_parser() -> argparse.ArgumentParser:
                       help='OpenClaw model string, e.g. openrouter/anthropic/claude-sonnet-4.6.')
     runc.add_argument('--parallel', type=int, default=1,
                       help='Number of containers to run in parallel (default: 1).')
-    runc.add_argument(
-        '--interactive',
-        action='store_true',
-        help='Enable interactive turn-by-turn mode (requires --parallel 1 and --pass-trials 1).',
-    )
-    runc.add_argument(
-        '--interactive-max-turns',
-        type=int,
-        default=8,
-        help='Safety limit for interactive mode to avoid infinite loops (default: 8).',
-    )
-    runc.add_argument(
-        '--interactive-stop-token',
-        default='/stop',
-        help='Custom token that stops interactive mode and then runs oracle scoring (default: /stop).',
-    )
     runc.add_argument(
         '--pass-trials',
         type=int,

@@ -16,8 +16,9 @@ Bench defaults (merged into ~/.openclaw/openclaw.json):
   tools.exec.ask       always "off"
 
 Registers Ofox routes:
-  - https://api.ofox.ai/v1          — OpenAI-compatible models (incl. Gemini; same as /v1/chat/completions)
+  - https://api.ofox.ai/v1          — OpenAI-compatible models below
   - https://api.ofox.ai/anthropic   — Anthropic Claude models below
+  - https://api.ofox.ai/gemini      — Google Gemini models below
 """
 from __future__ import annotations
 
@@ -36,8 +37,9 @@ OFOX_GEMINI_PROVIDER = "ofox-gemini"
 
 OFOX_V1_BASE = "https://api.ofox.ai/v1"
 OFOX_ANTHROPIC_BASE = "https://api.ofox.ai/anthropic"
+OFOX_GEMINI_BASE = "https://api.ofox.ai/gemini"
 
-# OpenAI-compatible (chat completions) at OFOX_V1_BASE — includes Gemini (no separate /gemini host).
+# OpenAI-compatible (chat completions) at OFOX_V1_BASE
 OFOX_V1_MODEL_IDS: list[str] = [
     "openai/gpt-5.4",
     "openai/gpt-5.4-mini",
@@ -49,9 +51,6 @@ OFOX_V1_MODEL_IDS: list[str] = [
     "bailian/qwen3.5-plus",
     "minimax/minimax-m2.7",
     "deepseek/deepseek-v3.2",
-    "google/gemini-3.1-pro-preview",
-    "google/gemini-3-flash-preview",
-    "google/gemini-2.5-pro",
 ]
 
 # Anthropic API at OFOX_ANTHROPIC_BASE
@@ -61,8 +60,12 @@ OFOX_ANTHROPIC_MODEL_IDS: list[str] = [
     "anthropic/claude-opus-4.7",
 ]
 
-# Kept empty for scripts/list_ofox_bench_models.py (Gemini ids live in OFOX_V1_MODEL_IDS).
-OFOX_GEMINI_MODEL_IDS: list[str] = []
+# Gemini (OpenAI-compatible chat) at OFOX_GEMINI_BASE
+OFOX_GEMINI_MODEL_IDS: list[str] = [
+    "google/gemini-3.1-pro-preview",
+    "google/gemini-3-flash-preview",
+    "google/gemini-2.5-pro",
+]
 
 PROVIDER_BASE_URLS = {
     "moonshot": "https://api.moonshot.cn/v1",
@@ -127,23 +130,6 @@ def _apply_tools_exec_bench_defaults(config: dict) -> None:
         tools["exec"] = {"security": "full", "ask": "off"}
 
 
-def _apply_gemini_cron_deny(config: dict, *, primary: str) -> None:
-    """Vertex/Gemini strict tool schema rejects some built-ins (e.g. cron); deny on Gemini path only."""
-    if "gemini" not in primary.lower():
-        return
-    if not isinstance(config.get("tools"), dict):
-        config["tools"] = {}
-    tools = config["tools"]
-    deny = tools.get("deny")
-    if isinstance(deny, list):
-        merged = [x for x in deny if isinstance(x, str)]
-        if "cron" not in merged:
-            merged.append("cron")
-        tools["deny"] = merged
-    else:
-        tools["deny"] = ["cron"]
-
-
 def _apply_agents_defaults(
     config: dict,
     *,
@@ -172,22 +158,19 @@ def _primary_for_ofox(model_env: str) -> tuple[str, str] | None:
     for pfx, (prov, ids) in (
         (f"{OFOX_OPENAI_PROVIDER}/", (OFOX_OPENAI_PROVIDER, OFOX_V1_MODEL_IDS)),
         (f"{OFOX_ANTHROPIC_PROVIDER}/", (OFOX_ANTHROPIC_PROVIDER, OFOX_ANTHROPIC_MODEL_IDS)),
+        (f"{OFOX_GEMINI_PROVIDER}/", (OFOX_GEMINI_PROVIDER, OFOX_GEMINI_MODEL_IDS)),
     ):
         if raw.startswith(pfx):
             mid = raw[len(pfx) :].lstrip("/")
             if mid in ids:
                 return prov, mid
 
-    # Back-compat: old primary used ofox-gemini/<id> against /gemini — same ids now on v1.
-    if raw.startswith(f"{OFOX_GEMINI_PROVIDER}/"):
-        mid = raw[len(f"{OFOX_GEMINI_PROVIDER}/") :].lstrip("/")
-        if mid in OFOX_V1_MODEL_IDS:
-            return OFOX_OPENAI_PROVIDER, mid
-
     if raw in OFOX_V1_MODEL_IDS:
         return OFOX_OPENAI_PROVIDER, raw
     if raw in OFOX_ANTHROPIC_MODEL_IDS:
         return OFOX_ANTHROPIC_PROVIDER, raw
+    if raw in OFOX_GEMINI_MODEL_IDS:
+        return OFOX_GEMINI_PROVIDER, raw
     return None
 
 
@@ -212,6 +195,11 @@ def _build_ofox_providers(api_key: str, *, anthropic_api: str) -> dict[str, dict
             OFOX_ANTHROPIC_BASE,
             _model_specs(OFOX_ANTHROPIC_MODEL_IDS),
             api=anthropic_api,
+        ),
+        OFOX_GEMINI_PROVIDER: prov_block(
+            OFOX_GEMINI_BASE,
+            _model_specs(OFOX_GEMINI_MODEL_IDS),
+            api="openai-completions",
         ),
     }
 
@@ -273,7 +261,7 @@ def main() -> None:
 
     config.setdefault("auth", {})["profiles"] = {}
     if ofox is not None:
-        for pname in (OFOX_OPENAI_PROVIDER, OFOX_ANTHROPIC_PROVIDER):
+        for pname in (OFOX_OPENAI_PROVIDER, OFOX_ANTHROPIC_PROVIDER, OFOX_GEMINI_PROVIDER):
             config["auth"]["profiles"][f"{pname}:default"] = {"provider": pname, "mode": "api_key"}
     else:
         prov_name = model.split("/")[0]
@@ -282,14 +270,13 @@ def main() -> None:
     os.makedirs(os.path.dirname(CONFIG_PATH), exist_ok=True)
     # Last write wins: ensure bench exec policy is present even if earlier steps replaced tools.
     _apply_tools_exec_bench_defaults(config)
-    _apply_gemini_cron_deny(config, primary=primary)
     open(CONFIG_PATH, "w").write(json.dumps(config, indent=2) + "\n")
 
     if api_key:
         os.makedirs(os.path.dirname(AUTH_PROFILES), exist_ok=True)
         profiles: dict[str, dict] = {}
         if ofox is not None:
-            for pname in (OFOX_OPENAI_PROVIDER, OFOX_ANTHROPIC_PROVIDER):
+            for pname in (OFOX_OPENAI_PROVIDER, OFOX_ANTHROPIC_PROVIDER, OFOX_GEMINI_PROVIDER):
                 profiles[f"{pname}:default"] = {
                     "type": "api_key",
                     "provider": pname,

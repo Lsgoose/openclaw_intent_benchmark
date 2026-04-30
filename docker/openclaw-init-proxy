@@ -11,8 +11,9 @@ baseUrl 指到本地/局域网 LiteLLM Proxy（OpenAI 兼容 /v1），便于统�
 
 代理专用:
   LITELLM_PROXY_BASE             LiteLLM 的 OpenAI 兼容根 URL，须以 /v1 结尾；未设置时默认
-                                 http://127.0.0.1:4000/v1（Gemini 与其它 v1 模型共用此 Base）
+                                 http://127.0.0.1:4000/v1
   LITELLM_PROXY_ANTHROPIC_BASE   可选；未设置则与 LITELLM_PROXY_BASE 相同
+  LITELLM_PROXY_GEMINI_BASE      可选；未设置则与 LITELLM_PROXY_BASE 相同
   OFOX_ANTHROPIC_API             可选；**默认 openai-completions**（走 /v1/chat/completions 路由），
                                  与直连 Ofox Anthropic 原生路径不同
 
@@ -47,15 +48,18 @@ OFOX_V1_MODEL_IDS: list[str] = [
     "bailian/qwen3.5-plus",
     "minimax/minimax-m2.7",
     "deepseek/deepseek-v3.2",
-    "google/gemini-3.1-pro-preview",
-    "google/gemini-3-flash-preview",
-    "google/gemini-2.5-pro",
 ]
 
 OFOX_ANTHROPIC_MODEL_IDS: list[str] = [
     "anthropic/claude-sonnet-4.6",
     "anthropic/claude-opus-4.6",
     "anthropic/claude-opus-4.7",
+]
+
+OFOX_GEMINI_MODEL_IDS: list[str] = [
+    "google/gemini-3.1-pro-preview",
+    "google/gemini-3-flash-preview",
+    "google/gemini-2.5-pro",
 ]
 
 PROVIDER_BASE_URLS = {
@@ -77,13 +81,15 @@ def _normalize_litellm_v1_base(raw: str) -> str:
     return s if s.endswith("/v1") else f"{s}/v1"
 
 
-def _proxy_bases_from_env() -> tuple[str, str]:
+def _proxy_bases_from_env() -> tuple[str, str, str]:
     main = _normalize_litellm_v1_base(
         os.environ.get("LITELLM_PROXY_BASE", "http://127.0.0.1:4000/v1")
     )
     anth_raw = os.environ.get("LITELLM_PROXY_ANTHROPIC_BASE", "").strip()
+    gem_raw = os.environ.get("LITELLM_PROXY_GEMINI_BASE", "").strip()
     anth = _normalize_litellm_v1_base(anth_raw) if anth_raw else main
-    return main, anth
+    gem = _normalize_litellm_v1_base(gem_raw) if gem_raw else main
+    return main, anth, gem
 
 
 def _human_name(model_id: str) -> str:
@@ -133,23 +139,6 @@ def _apply_tools_exec_bench_defaults(config: dict) -> None:
         tools["exec"] = {"security": "full", "ask": "off"}
 
 
-def _apply_gemini_cron_deny(config: dict, *, primary: str) -> None:
-    """Vertex/Gemini strict tool schema rejects some built-ins (e.g. cron); deny on Gemini path only."""
-    if "gemini" not in primary.lower():
-        return
-    if not isinstance(config.get("tools"), dict):
-        config["tools"] = {}
-    tools = config["tools"]
-    deny = tools.get("deny")
-    if isinstance(deny, list):
-        merged = [x for x in deny if isinstance(x, str)]
-        if "cron" not in merged:
-            merged.append("cron")
-        tools["deny"] = merged
-    else:
-        tools["deny"] = ["cron"]
-
-
 def _apply_agents_defaults(
     config: dict,
     *,
@@ -176,21 +165,19 @@ def _primary_for_ofox(model_env: str) -> tuple[str, str] | None:
     for pfx, (prov, ids) in (
         (f"{OFOX_OPENAI_PROVIDER}/", (OFOX_OPENAI_PROVIDER, OFOX_V1_MODEL_IDS)),
         (f"{OFOX_ANTHROPIC_PROVIDER}/", (OFOX_ANTHROPIC_PROVIDER, OFOX_ANTHROPIC_MODEL_IDS)),
+        (f"{OFOX_GEMINI_PROVIDER}/", (OFOX_GEMINI_PROVIDER, OFOX_GEMINI_MODEL_IDS)),
     ):
         if raw.startswith(pfx):
             mid = raw[len(pfx) :].lstrip("/")
             if mid in ids:
                 return prov, mid
 
-    if raw.startswith(f"{OFOX_GEMINI_PROVIDER}/"):
-        mid = raw[len(f"{OFOX_GEMINI_PROVIDER}/") :].lstrip("/")
-        if mid in OFOX_V1_MODEL_IDS:
-            return OFOX_OPENAI_PROVIDER, mid
-
     if raw in OFOX_V1_MODEL_IDS:
         return OFOX_OPENAI_PROVIDER, raw
     if raw in OFOX_ANTHROPIC_MODEL_IDS:
         return OFOX_ANTHROPIC_PROVIDER, raw
+    if raw in OFOX_GEMINI_MODEL_IDS:
+        return OFOX_GEMINI_PROVIDER, raw
     return None
 
 
@@ -200,6 +187,7 @@ def _build_ofox_providers(
     anthropic_api: str,
     v1_base: str,
     anthropic_base: str,
+    gemini_base: str,
 ) -> dict[str, dict]:
     def prov_block(base_url: str, models: list[dict], *, api: str) -> dict:
         block: dict = {
@@ -222,6 +210,11 @@ def _build_ofox_providers(
             _model_specs(OFOX_ANTHROPIC_MODEL_IDS),
             api=anthropic_api,
         ),
+        OFOX_GEMINI_PROVIDER: prov_block(
+            gemini_base,
+            _model_specs(OFOX_GEMINI_MODEL_IDS),
+            api="openai-completions",
+        ),
     }
 
 
@@ -237,7 +230,7 @@ def main() -> None:
         print(f"{_LOG} ERROR: OPENCLAW_MODEL not set", flush=True)
         sys.exit(1)
 
-    v1_base, anth_base = _proxy_bases_from_env()
+    v1_base, anth_base, gem_base = _proxy_bases_from_env()
     llm_params = _parse_llm_params_from_env()
 
     try:
@@ -264,6 +257,7 @@ def main() -> None:
             anthropic_api=anthropic_api,
             v1_base=v1_base,
             anthropic_base=anth_base,
+            gemini_base=gem_base,
         )
     else:
         prov_name = model.split("/")[0]
@@ -286,7 +280,7 @@ def main() -> None:
 
     config.setdefault("auth", {})["profiles"] = {}
     if ofox is not None:
-        for pname in (OFOX_OPENAI_PROVIDER, OFOX_ANTHROPIC_PROVIDER):
+        for pname in (OFOX_OPENAI_PROVIDER, OFOX_ANTHROPIC_PROVIDER, OFOX_GEMINI_PROVIDER):
             config["auth"]["profiles"][f"{pname}:default"] = {"provider": pname, "mode": "api_key"}
     else:
         prov_name = model.split("/")[0]
@@ -294,14 +288,13 @@ def main() -> None:
 
     os.makedirs(os.path.dirname(CONFIG_PATH), exist_ok=True)
     _apply_tools_exec_bench_defaults(config)
-    _apply_gemini_cron_deny(config, primary=primary)
     open(CONFIG_PATH, "w").write(json.dumps(config, indent=2) + "\n")
 
     if api_key:
         os.makedirs(os.path.dirname(AUTH_PROFILES), exist_ok=True)
         profiles: dict[str, dict] = {}
         if ofox is not None:
-            for pname in (OFOX_OPENAI_PROVIDER, OFOX_ANTHROPIC_PROVIDER):
+            for pname in (OFOX_OPENAI_PROVIDER, OFOX_ANTHROPIC_PROVIDER, OFOX_GEMINI_PROVIDER):
                 profiles[f"{pname}:default"] = {
                     "type": "api_key",
                     "provider": pname,
@@ -322,7 +315,7 @@ def main() -> None:
         extra = "  params=" + json.dumps(llm_params, sort_keys=True)
     print(
         f"{_LOG} primary={primary}  key={'set' if api_key else 'NOT SET'}  "
-        f"bases v1={v1_base!r} anthropic={anth_base!r}  "
+        f"bases v1={v1_base!r} anthropic={anth_base!r} gemini={gem_base!r}  "
         f"anthropic_api={anthropic_api!r}{extra}",
         flush=True,
     )

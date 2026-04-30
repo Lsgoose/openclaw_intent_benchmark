@@ -32,29 +32,6 @@ CONTAINER_WORKSPACE = '/root/.openclaw/workspace'
 CONTAINER_AGENT_SESSION = 'bench-run'
 DEFAULT_CONTAINER_IMAGE = 'openclaw-bench:v1.0'
 
-# Gemini：在传给 ``openclaw agent --message`` 的文本前加 ``/think:low``，使用较低思考档位。
-# 跑完 Gemini bench 后请改回 ``False``（或设环境变量 ``AGENT_RISK_BENCH_NO_GEMINI_THINK_LOW=1`` 临时关闭）。
-_GEMINI_AGENT_THINK_LOW_PREFIX = True
-
-
-def _agent_message_for_openclaw(model: str | None, raw_message: str) -> str:
-    """Return the user message body for ``openclaw agent --message`` (shell-quoted by caller)."""
-    if not _GEMINI_AGENT_THINK_LOW_PREFIX:
-        return raw_message
-    if os.environ.get('AGENT_RISK_BENCH_NO_GEMINI_THINK_LOW', '').strip().lower() in (
-        '1',
-        'true',
-        'yes',
-    ):
-        return raw_message
-    m = (model or '').lower()
-    if 'gemini' not in m:
-        return raw_message
-    stripped = raw_message.lstrip()
-    if stripped.lower().startswith('/think:'):
-        return raw_message
-    return f'/think:low {raw_message}'
-
 
 def _use_litellm_proxy_init() -> bool:
     v = os.environ.get('OPENCLAW_USE_LITELLM_PROXY', '').strip().lower()
@@ -181,20 +158,6 @@ def container_set_model(name: str, model: str) -> None:
     container_exec(name, f"openclaw models set '{model}'")
 
 
-def _last_nonempty_line(path: Path) -> str:
-    if not path.exists():
-        return ''
-    try:
-        lines = path.read_text(encoding='utf-8', errors='replace').splitlines()
-    except OSError:
-        return ''
-    for line in reversed(lines):
-        s = line.strip()
-        if s:
-            return s
-    return ''
-
-
 # ── High-level per-case lifecycle ─────────────────────────────────────────────
 
 def container_run_case(
@@ -205,9 +168,6 @@ def container_run_case(
     model: str | None,
     model_api_key: str = '',
     llm_params: dict[str, str] | None = None,
-    interactive: bool = False,
-    interactive_max_turns: int = 8,
-    interactive_stop_token: str = '/stop',
     run_idx: int,
     run_total: int,
 ) -> dict[str, Any]:
@@ -315,76 +275,18 @@ def container_run_case(
 
         # 4. Run agent inside container (connects to its own gateway).
         emit_progress(format_progress(case_id, 'container-agent', index=run_idx, total=run_total))
-        agent_log_path = run_dir / 'agent.log'
-        if interactive:
-            turn_msg = _agent_message_for_openclaw(effective_model, prompt)
-            stop_token = interactive_stop_token or '/stop'
-            max_turns = max(1, int(interactive_max_turns or 1))
-            turn = 0
-            while True:
-                turn += 1
-                safe_msg = turn_msg.replace("'", "'\\''")
-                r = container_exec(
-                    task_id,
-                    (
-                        f"openclaw agent --session-id {CONTAINER_AGENT_SESSION} "
-                        f"--timeout {timeout_sec} --message '{safe_msg}'"
-                    ),
-                    check=False,
-                )
-                with agent_log_path.open('a', encoding='utf-8') as f:
-                    if r.stdout:
-                        f.write(r.stdout)
-                        if not r.stdout.endswith('\n'):
-                            f.write('\n')
-                    if r.stderr:
-                        f.write(r.stderr)
-                        if not r.stderr.endswith('\n'):
-                            f.write('\n')
-                if r.returncode != 0:
-                    emit_progress(
-                        format_progress(
-                            case_id,
-                            f'interactive-turn-{turn} nonzero exit={r.returncode}',
-                            index=run_idx,
-                            total=run_total,
-                        )
-                    )
-                last_msg = _last_nonempty_line(agent_log_path) or '(agent.log 为空)'
-                print(f'\n[interactive][{case_id}] turn={turn} assistant_last: {last_msg}\n', flush=True)
-                if turn >= max_turns:
-                    emit_progress(
-                        format_progress(
-                            case_id,
-                            f'interactive max turns reached ({max_turns})',
-                            index=run_idx,
-                            total=run_total,
-                        )
-                    )
-                    break
-                user_msg = input(
-                    f"[interactive][{case_id}] 输入下一条消息，或输入 {stop_token} 停止: "
-                ).strip()
-                if user_msg == stop_token:
-                    emit_progress(format_progress(case_id, 'interactive-stopped-by-user', index=run_idx, total=run_total))
-                    break
-                if not user_msg:
-                    emit_progress(format_progress(case_id, 'interactive-empty-input-stop', index=run_idx, total=run_total))
-                    break
-                turn_msg = _agent_message_for_openclaw(effective_model, user_msg)
-        else:
-            safe_prompt = _agent_message_for_openclaw(effective_model, prompt).replace("'", "'\\''")
-            agent_proc = container_exec_background(
-                task_id,
-                f"openclaw agent --session-id {CONTAINER_AGENT_SESSION} --timeout {timeout_sec} --message '{safe_prompt}'",
-                log_path=agent_log_path,
-            )
-            deadline = time.time() + timeout_sec + 30
-            while agent_proc.poll() is None and time.time() < deadline:
-                time.sleep(0.5)
-            if agent_proc.poll() is None:
-                agent_proc.kill()
-                agent_proc.wait()
+        safe_prompt = prompt.replace("'", "'\\''")
+        agent_proc = container_exec_background(
+            task_id,
+            f"openclaw agent --session-id {CONTAINER_AGENT_SESSION} --timeout {timeout_sec} --message '{safe_prompt}'",
+            log_path=run_dir / 'agent.log',
+        )
+        deadline = time.time() + timeout_sec + 30
+        while agent_proc.poll() is None and time.time() < deadline:
+            time.sleep(0.5)
+        if agent_proc.poll() is None:
+            agent_proc.kill()
+            agent_proc.wait()
 
         elapsed = round(time.time() - started, 3)
 
@@ -778,14 +680,6 @@ def run_container_command(args: Any) -> int:
     batch_started = time.time()
     overall_exit = 0
     pass_trials = max(1, int(getattr(args, 'pass_trials', 1) or 1))
-    interactive = bool(getattr(args, 'interactive', False))
-    interactive_max_turns = max(1, int(getattr(args, 'interactive_max_turns', 8) or 8))
-    interactive_stop_token = str(getattr(args, 'interactive_stop_token', '/stop') or '/stop')
-    if interactive:
-        if pass_trials != 1:
-            raise ValueError('--interactive 模式下仅支持 --pass-trials=1')
-        if int(ctr['parallel']) != 1:
-            raise ValueError('--interactive 模式下仅支持 --parallel=1')
 
     # On Ctrl-C / SIGTERM, clean up any leftover risk-bench-* containers
     def _cleanup_on_exit(signum, frame):  # noqa: ANN001
@@ -818,9 +712,6 @@ def run_container_command(args: Any) -> int:
                     model=ctr['model'],
                     model_api_key=ctr.get('model_api_key', ''),
                     llm_params=ctr.get('llm_params'),
-                    interactive=interactive,
-                    interactive_max_turns=interactive_max_turns,
-                    interactive_stop_token=interactive_stop_token,
                     run_idx=idx,
                     run_total=total,
                 )
@@ -834,9 +725,6 @@ def run_container_command(args: Any) -> int:
                 model=ctr['model'],
                 model_api_key=ctr.get('model_api_key', ''),
                 llm_params=ctr.get('llm_params'),
-                interactive=interactive,
-                interactive_max_turns=interactive_max_turns,
-                interactive_stop_token=interactive_stop_token,
                 run_idx=idx,
                 run_total=total,
             )

@@ -248,6 +248,7 @@ def main() -> None:
     except Exception:
         config = {}
 
+    _prune_incompatible_defaults(config)
     ofox = _primary_for_ofox(model)
     if ofox is not None:
         prov_key, model_id = ofox
@@ -290,9 +291,9 @@ def main() -> None:
     _apply_tools_exec_bench_defaults(config)
     open(CONFIG_PATH, "w").write(json.dumps(config, indent=2) + "\n")
 
+    os.makedirs(os.path.dirname(AUTH_PROFILES), exist_ok=True)
+    profiles: dict[str, dict] = {}
     if api_key:
-        os.makedirs(os.path.dirname(AUTH_PROFILES), exist_ok=True)
-        profiles: dict[str, dict] = {}
         if ofox is not None:
             for pname in (OFOX_OPENAI_PROVIDER, OFOX_ANTHROPIC_PROVIDER, OFOX_GEMINI_PROVIDER):
                 profiles[f"{pname}:default"] = {
@@ -307,8 +308,8 @@ def main() -> None:
                 "provider": prov_name,
                 "key": api_key,
             }
-        auth = {"version": 1, "profiles": profiles}
-        open(AUTH_PROFILES, "w").write(json.dumps(auth, indent=2) + "\n")
+    auth = {"version": 1, "profiles": profiles}
+    open(AUTH_PROFILES, "w").write(json.dumps(auth, indent=2) + "\n")
 
     extra = ""
     if llm_params:

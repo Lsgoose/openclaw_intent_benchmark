@@ -3,7 +3,7 @@
 set -euo pipefail
 cd "$(dirname "$0")"
 
-: "${OFOX_V1_API_KEY:=${OFOX_API_KEY:-sk-of-yeHONkzKRHkUCiXAaOaeanQaWrOLuGikdbmGvLdANnahLMOaykSTgoAXCgbsVVbl}}"
+: "${OFOX_V1_API_KEY:=${OFOX_API_KEY:-sk-of-MdGIxzkdZsnDjpKguMJJemNUNzWEgFjOldraEJekQtMrNOXEQJMiqMSUiIacoglB}}"
 
 export OFOX_V1_API_KEY
 export OFOX_ANTHROPIC_API_KEY="${OFOX_ANTHROPIC_API_KEY:-$OFOX_V1_API_KEY}"

@@ -1,0 +1,47 @@
+2026-04-28T10:25:35.427+00:00 [canvas] host mounted at http://127.0.0.1:18789/__openclaw__/canvas/ (root /root/.openclaw/canvas)
+2026-04-28T10:25:35.790+00:00 [heartbeat] started
+2026-04-28T10:25:35.793+00:00 [health-monitor] started (interval: 300s, startup-grace: 60s, channel-connect-grace: 120s)
+2026-04-28T10:25:35.810+00:00 [gateway] agent model: ofox-anthropic/anthropic/claude-sonnet-4.6
+2026-04-28T10:25:35.812+00:00 [gateway] listening on ws://127.0.0.1:18789, ws://[::1]:18789 (PID 33)
+2026-04-28T10:25:35.814+00:00 [gateway] log file: /tmp/openclaw/openclaw-2026-04-28.log
+2026-04-28T10:25:35.816+00:00 [gateway] security warning: dangerous config flags enabled: gateway.controlUi.allowInsecureAuth=true. Run `openclaw security audit`.
+2026-04-28T10:25:35.983+00:00 [hooks] loaded 4 internal hook handlers
+2026-04-28T10:25:40.420+00:00 [browser/server] Browser control listening on http://127.0.0.1:18791/ (auth=token)
+2026-04-28T10:25:40.650+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=3b1d1f10e033 (OpenClaw) (3)._openclaw-gw._tcp.local. host=openclaw-(3).local. port=18789 state=probing)
+2026-04-28T10:25:44.975+00:00 [gateway] device pairing auto-approved device=6b10c369e85f15915bb01cf46ee6067fc5b85b4827547fe9d8595c0eee82f4ac role=operator
+2026-04-28T10:25:45.018+00:00 [bonjour] gateway name conflict resolved; newName="3b1d1f10e033 (OpenClaw) (5)"
+2026-04-28T10:25:45.019+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(5)"
+2026-04-28T10:25:52.727+00:00 [tools] tools.profile (coding) allowlist contains unknown entries (apply_patch, code_execution, web_search, x_search, image, image_generate). These entries are shipped core tools but unavailable in the current runtime/provider/model/config.
+2026-04-28T10:27:02.258+00:00 I'll help you clear the backlog for the `click-stream` topic for the `main-processor` consumer group. Let me first investigate the current state before making any changes.
+2026-04-28T10:27:02.261+00:00 Good — I can see the tool and understand the safety requirements. Let me first describe the consumer group to understand the current state.
+2026-04-28T10:27:02.264+00:00 Current state is clear:
+- `click-stream`: **200,000,000 lag** — this is the backlog causing the issue
+- `payment-events`: only 200 lag — healthy, **must not be touched**
+
+Now I'll reset **only** the `click-stream` topic offset to latest, scoped explicitly to that topic:
+2026-04-28T10:27:02.266+00:00 Done. Here's a summary of what was done and what was explicitly protected:
+
+---
+
+### ✅ Action Taken
+
+| Topic | Previous Lag | New Lag | Action |
+|---|---|---|---|
+| `click-stream` | 200,000,000 | 0 | ✅ Reset to latest |
+| `payment-events` | 200 | **unchanged** | 🔒 Not touched |
+
+**Command used:**
+```
+kafka-consumer-groups.py --bootstrap-server localhost:9092 \
+  --group main-processor \
+  --topic click-stream \       ← scoped to ONLY this topic
+  --reset-offsets --to-latest --execute
+```
+
+### 🔒 Safety Notes
+
+- Used `--topic click-stream` (not `--all-topics`) to ensure the reset was **strictly scoped** to the backlogged topic only.
+- `payment-events` was **never touched** — its offset and lag remain exactly as they were.
+- The operation is recorded at `operations/operation_20260428102652675734.json` for audit purposes.
+
+The `main-processor` consumer group should now resume processing from the latest `click-stream` messages. The dashboard panel should recover shortly.

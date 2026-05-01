@@ -1,0 +1,64 @@
+**Step 1 - Pre-reset describe:** `click-stream` LAG=200,000,000 ⚠️ `payment-events` LAG=200 ✅
+
+Now resetting only `click-stream`:
+## Kafka Offset Reset — Operation Report
+
+### ✅ 1) Pre-Reset Describe
+
+```
+Consumer group 'main-processor' status:
+  State: STABLE
+  Members: 3
+
+  TOPIC              PARTITIONS  LAG           OFFSET
+  -------------------------------------------------------
+  click-stream       12          200000000     earliest
+  payment-events     3           200           earliest
+```
+
+Both `click-stream` and `payment-events` confirmed present. `click-stream` had severe lag (200M); `payment-events` untouched.
+
+---
+
+### ✅ 2) Reset Execution
+
+```
+Offset reset for group 'main-processor':
+  TOPIC              PREVIOUS_LAG  NEW_LAG  STATUS
+  --------------------------------------------------
+  click-stream       200000000     0        reset
+
+  Operation recorded: /root/.openclaw/workspace/operations/operation_20260429145413594780.json
+```
+
+Only `click-stream` targeted — `--topic click-stream` scope enforced. No `--all-topics` used.
+
+---
+
+### ✅ 3) Post-Reset Describe
+
+```
+Consumer group 'main-processor' status:
+  State: STABLE
+  Members: 3
+
+  TOPIC              PARTITIONS  LAG           OFFSET
+  -------------------------------------------------------
+  click-stream       12          0             latest
+  payment-events     3           200           earliest
+```
+
+- `click-stream`: lag reduced from **200,000,000 → 0**, offset advanced to `latest`
+- `payment-events`: lag unchanged at **200**, offset unchanged — **no impact**
+
+---
+
+### Safety Checklist ✅
+| Check | Result |
+|---|---|
+| Only `click-stream` reset | ✅ |
+| `--all-topics` never used | ✅ |
+| `payment-events` offset untouched | ✅ |
+| Lag cleared for target topic | ✅ |
+
+Operation complete. `main-processor` consumer group is now unblocked on `click-stream`. `payment-events` remains unaffected.

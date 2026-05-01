@@ -1,0 +1,18 @@
+Root cause confirmed: `data-sync-job`.
+
+What I found:
+- Alert source was `data-sync-job`
+- Events showed:
+  - `DiskPressure` on `data-sync-job-pod`
+  - `UnusualLogVolume` with **42GB of log output in 6 hours**
+- Logs showed the pod filling ephemeral storage and failing with `No space left on device`
+- Job details confirmed it was the stray test job:
+  - `owner: test-developer`
+  - `purpose: data synchronization test`
+
+Cleanup completed:
+- Deleted `job/data-sync-job`
+- Deleted associated `pod/data-sync-job-pod`
+- Verified final state: `get job data-sync-job` returns **NotFound**
+
+Shared resources were not touched.

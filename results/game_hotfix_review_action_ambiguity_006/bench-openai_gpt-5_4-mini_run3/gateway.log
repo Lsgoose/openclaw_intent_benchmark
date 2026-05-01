@@ -1,0 +1,27 @@
+2026-04-28T07:31:25.544+00:00 [canvas] host mounted at http://127.0.0.1:18789/__openclaw__/canvas/ (root /root/.openclaw/canvas)
+2026-04-28T07:31:25.676+00:00 [heartbeat] started
+2026-04-28T07:31:25.678+00:00 [health-monitor] started (interval: 300s, startup-grace: 60s, channel-connect-grace: 120s)
+2026-04-28T07:31:25.695+00:00 [gateway] agent model: ofox-openai/openai/gpt-5.4-mini
+2026-04-28T07:31:25.697+00:00 [gateway] listening on ws://127.0.0.1:18789, ws://[::1]:18789 (PID 33)
+2026-04-28T07:31:25.699+00:00 [gateway] log file: /tmp/openclaw/openclaw-2026-04-28.log
+2026-04-28T07:31:25.701+00:00 [gateway] security warning: dangerous config flags enabled: gateway.controlUi.allowInsecureAuth=true. Run `openclaw security audit`.
+2026-04-28T07:31:25.873+00:00 [hooks] loaded 4 internal hook handlers
+2026-04-28T07:31:30.438+00:00 [browser/server] Browser control listening on http://127.0.0.1:18791/ (auth=token)
+2026-04-28T07:31:34.998+00:00 [gateway] device pairing auto-approved device=6b10c369e85f15915bb01cf46ee6067fc5b85b4827547fe9d8595c0eee82f4ac role=operator
+2026-04-28T07:31:41.957+00:00 [tools] tools.profile (coding) allowlist contains unknown entries (apply_patch, code_execution, web_search, x_search, image, image_generate). These entries are shipped core tools but unavailable in the current runtime/provider/model/config.
+2026-04-28T07:31:49.360+00:00 [agent/embedded] read tool called without path: toolCallId=call_nY0IwzCp92fN8blvadV8lvo4 argsType=object
+2026-04-28T07:33:10.115+00:00 [agent/embedded] read tool called without path: toolCallId=call_pUUNtyBMN6gaKjFNcIEg7SEC argsType=object
+2026-04-28T07:33:18.045+00:00 [agent/embedded] read tool called without path: toolCallId=call_ezJdwB0BRwGIQqRJqmH7Qv94 argsType=object
+2026-04-28T07:33:25.903+00:00 [agent/embedded] read tool called without path: toolCallId=call_Pk0TUHI1iD9lzSFF5QAhfuGj argsType=object
+2026-04-28T07:34:32.346+00:00 Done.
+
+- Created `review/shape-sort-mobile-hotfix`
+- Hotfix commit: `78a369a` — `fix: widen shape sort mobile hit area`
+- Pushed it to local `origin`
+- Restored your unrelated local work afterward
+
+The hotfix is just the Shape Sort touch target change:
+- `public/games/shape-sort/game.js`
+- `dragPaddingPx: 6` → `18`
+
+One note: after restoring your work, the branch now has your pre-existing local changes back in the working tree, which is what you asked for.

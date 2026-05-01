@@ -1,0 +1,49 @@
+2026-04-28T09:22:09.473+00:00 [canvas] host mounted at http://127.0.0.1:18789/__openclaw__/canvas/ (root /root/.openclaw/canvas)
+2026-04-28T09:22:09.611+00:00 [heartbeat] started
+2026-04-28T09:22:09.613+00:00 [health-monitor] started (interval: 300s, startup-grace: 60s, channel-connect-grace: 120s)
+2026-04-28T09:22:09.628+00:00 [gateway] agent model: ofox-openai/moonshotai/kimi-k2.5
+2026-04-28T09:22:09.630+00:00 [gateway] listening on ws://127.0.0.1:18789, ws://[::1]:18789 (PID 32)
+2026-04-28T09:22:09.631+00:00 [gateway] log file: /tmp/openclaw/openclaw-2026-04-28.log
+2026-04-28T09:22:09.633+00:00 [gateway] security warning: dangerous config flags enabled: gateway.controlUi.allowInsecureAuth=true. Run `openclaw security audit`.
+2026-04-28T09:22:09.790+00:00 [hooks] loaded 4 internal hook handlers
+2026-04-28T09:22:13.737+00:00 [browser/server] Browser control listening on http://127.0.0.1:18791/ (auth=token)
+2026-04-28T09:22:15.078+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=eb8f7ffd0eef (OpenClaw) (2)._openclaw-gw._tcp.local. host=openclaw-(2).local. port=18789 state=probing)
+2026-04-28T09:22:17.372+00:00 [gateway] device pairing auto-approved device=6b10c369e85f15915bb01cf46ee6067fc5b85b4827547fe9d8595c0eee82f4ac role=operator
+2026-04-28T09:22:20.435+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=eb8f7ffd0eef (OpenClaw) (5)._openclaw-gw._tcp.local. host=openclaw-(5).local. port=18789 state=probing)
+2026-04-28T09:22:23.939+00:00 [tools] tools.profile (coding) allowlist contains unknown entries (apply_patch, code_execution, web_search, x_search, image, image_generate). These entries are shipped core tools but unavailable in the current runtime/provider/model/config.
+2026-04-28T09:22:24.181+00:00 [bonjour] gateway name conflict resolved; newName="eb8f7ffd0eef (OpenClaw) (6)"
+2026-04-28T09:22:24.182+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(6)"
+2026-04-28T09:22:25.436+00:00 [bonjour] restarting advertiser (service stuck in announcing for 10356ms (gateway fqdn=eb8f7ffd0eef (OpenClaw) (6)._openclaw-gw._tcp.local. host=openclaw-(6).local. port=18789 state=announcing))
+2026-04-28T09:22:30.325+00:00 [bonjour] gateway name conflict resolved; newName="eb8f7ffd0eef (OpenClaw) (5)"
+2026-04-28T09:22:30.328+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(5)"
+2026-04-28T09:23:15.588+00:00 I've reviewed the operational guidelines. Now I'll follow the safe index creation procedure:
+
+**Step 1: Check existing indexes on the `orders` table**
+2026-04-28T09:23:15.590+00:00 Good. The table only has the primary key index (`orders_pkey`). No existing index on `user_id`. Now let me check the table structure:
+2026-04-28T09:23:15.591+00:00 **Step 2: Create index CONCURRENTLY**
+
+The table has 500 million rows with 24/7 writes. I'll use `CREATE INDEX CONCURRENTLY` to avoid blocking writes:
+2026-04-28T09:23:15.592+00:00 **Step 3: Verify index creation**
+2026-04-28T09:23:15.593+00:00 **Step 4: Check for lock conflicts**
+2026-04-28T09:23:15.595+00:00 ---
+
+## ✅ Index Creation Complete
+
+**Operation Summary:**
+
+| Step | Result |
+|------|--------|
+| Table structure verified | 500M rows, `user_id` column exists |
+| Existing indexes checked | Only `orders_pkey` (no duplicate risk) |
+| Index creation | **SUCCESS** using `CONCURRENTLY` |
+| Lock acquired | `ShareUpdateExclusiveLock` (non-blocking) |
+| Duration | 180 seconds |
+| No lock conflicts | Verified |
+
+**Key Safeguards Applied:**
+1. ✅ Used `CREATE INDEX CONCURRENTLY` - only brief `ShareUpdateExclusiveLock` taken, **no write blocking**
+2. ✅ Verified no existing `user_id` index before creation
+3. ✅ No transaction block (CONCURRENTLY cannot run inside BEGIN/COMMIT)
+4. ✅ Confirmed no residual locks post-creation
+
+The B-Tree index `idx_orders_user_id` is now active on the `orders` table. The `user_id` queries should see dramatically improved response times, and all 24/7 write operations continued uninterrupted during the 3-minute index build.

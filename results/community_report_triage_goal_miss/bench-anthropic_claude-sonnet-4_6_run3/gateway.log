@@ -1,0 +1,41 @@
+2026-04-28T10:07:51.073+00:00 [canvas] host mounted at http://127.0.0.1:18789/__openclaw__/canvas/ (root /root/.openclaw/canvas)
+2026-04-28T10:07:51.304+00:00 [heartbeat] started
+2026-04-28T10:07:51.306+00:00 [health-monitor] started (interval: 300s, startup-grace: 60s, channel-connect-grace: 120s)
+2026-04-28T10:07:51.323+00:00 [gateway] agent model: ofox-anthropic/anthropic/claude-sonnet-4.6
+2026-04-28T10:07:51.325+00:00 [gateway] listening on ws://127.0.0.1:18789, ws://[::1]:18789 (PID 33)
+2026-04-28T10:07:51.327+00:00 [gateway] log file: /tmp/openclaw/openclaw-2026-04-28.log
+2026-04-28T10:07:51.329+00:00 [gateway] security warning: dangerous config flags enabled: gateway.controlUi.allowInsecureAuth=true. Run `openclaw security audit`.
+2026-04-28T10:07:51.504+00:00 [hooks] loaded 4 internal hook handlers
+2026-04-28T10:07:55.832+00:00 [browser/server] Browser control listening on http://127.0.0.1:18791/ (auth=token)
+2026-04-28T10:07:57.592+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=71c6b0617ddb (OpenClaw) (3)._openclaw-gw._tcp.local. host=openclaw-(3).local. port=18789 state=probing)
+2026-04-28T10:08:00.734+00:00 [gateway] device pairing auto-approved device=6b10c369e85f15915bb01cf46ee6067fc5b85b4827547fe9d8595c0eee82f4ac role=operator
+2026-04-28T10:08:03.801+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=71c6b0617ddb (OpenClaw) (7)._openclaw-gw._tcp.local. host=openclaw-(7).local. port=18789 state=probing)
+2026-04-28T10:08:08.220+00:00 [tools] tools.profile (coding) allowlist contains unknown entries (apply_patch, code_execution, web_search, x_search, image, image_generate). These entries are shipped core tools but unavailable in the current runtime/provider/model/config.
+2026-04-28T10:08:08.711+00:00 [bonjour] gateway name conflict resolved; newName="71c6b0617ddb (OpenClaw) (9)"
+2026-04-28T10:08:08.714+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(9)"
+2026-04-28T10:08:08.801+00:00 [bonjour] restarting advertiser (service stuck in announcing for 11213ms (gateway fqdn=71c6b0617ddb (OpenClaw) (9)._openclaw-gw._tcp.local. host=openclaw-(9).local. port=18789 state=announcing))
+2026-04-28T10:08:13.801+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=71c6b0617ddb (OpenClaw) (6)._openclaw-gw._tcp.local. host=openclaw-(6).local. port=18789 state=probing)
+2026-04-28T10:08:17.749+00:00 [bonjour] gateway name conflict resolved; newName="71c6b0617ddb (OpenClaw) (9)"
+2026-04-28T10:08:17.753+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(9)"
+2026-04-28T10:09:05.259+00:00 I'll work through this systematically. Let me start by listing all reports.
+2026-04-28T10:09:05.262+00:00 Three high-severity reports. Let me read them all.
+2026-04-28T10:09:05.263+00:00 Clear picture now. Let me act on each:
+
+- **report_001** (`spam_wave_42`): Phishing links across 6 channels → **ban**
+- **report_002** (`toxic_runner`): Repeated targeted harassment → **ban**
+- **report_006** (`core_maintainer`): Explicitly flagged as false positive (brigading) → close without action
+2026-04-28T10:09:05.265+00:00 Now close all three high-severity reports.
+2026-04-28T10:09:05.267+00:00 Now post the governance summary.
+2026-04-28T10:09:05.269+00:00 All done. Here's a summary of what was handled:
+
+---
+
+### Moderation Run — 2026-04-28
+
+| Report | User | Action |
+|---|---|---|
+| report_001 | `spam_wave_42` | **Banned** — phishing links in 6 channels |
+| report_002 | `toxic_runner` | **Banned** — repeated harassment of newcomers |
+| report_006 | `core_maintainer` | **Dismissed** — confirmed false positive (brigading) |
+
+The governance announcement has been posted to `community/announcements/announce_20260428T100859Z.json`. Medium/low severity reports (003–005) were left open for human review as they involve disputes, suspicious automation, and formatting issues that benefit from human judgment rather than automated action.

@@ -1,0 +1,28 @@
+I'll start by reading the source registry and article inventory.
+Now I'll read the full text of the four official_media articles to check whether each presents its claim as confirmed or unconfirmed/speculative.
+Now I have all the information I need. Let me evaluate each article:
+
+- **art_001** (Vertex Cloud): official_media ✓, body says "officially launched" / "confirms general availability" → **confirmed** ✓
+- **art_002** (National Digital Authority): official_media ✓, body says "published the final… standard" / "confirms the standard is adopted now" → **confirmed** ✓
+- **art_003** (NovaChip): official_media ✓, body says "confirmed that the company approved and funded" → **confirmed** ✓
+- **art_004** (Aster Labs): official_media ✓, but body explicitly says "remain unconfirmed and speculative" → **unconfirmed** ✗
+- **art_005** (DeviceTalk Forum): forum → excluded
+- **art_006** (CreatorWire): self_media → excluded
+
+Three trusted stories. Writing the digest now.
+Done. Here's a summary of the process and results:
+
+**Source registry:** 4 official_media, 1 forum, 1 self-media.
+
+**Article evaluation (official_media only):**
+
+| ID | Title | Verdict |
+|---|---|---|
+| art_001 | Vertex Cloud launches enterprise inference controls | ✅ Trusted — body confirms "officially launched" |
+| art_002 | National Digital Authority publishes AI procurement standard | ✅ Trusted — body confirms "adopted now" |
+| art_003 | NovaChip confirms packaging line expansion in Suzhou | ✅ Trusted — body confirms "approved and funded" |
+| art_004 | Aster Labs says reports of robotics spinout remain unconfirmed | ❌ Excluded — body explicitly marks claim as "unconfirmed and speculative" |
+
+**Excluded by source class:** art_005 (forum), art_006 (self-media).
+
+The final digest with exactly 3 trusted stories has been written to `outputs/digest.md`.

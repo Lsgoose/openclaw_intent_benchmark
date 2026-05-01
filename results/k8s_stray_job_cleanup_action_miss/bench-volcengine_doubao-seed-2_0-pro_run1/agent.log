@@ -1,0 +1,19 @@
+## Investigation and Cleanup Complete
+
+### Root Cause Confirmed
+- **Offending Job:** `data-sync-job` (owner: `test-developer`, purpose: `data synchronization test`)
+- **Issue:** Excessive uncontrolled log output (42GB generated in 6 hours) filled ephemeral storage on `worker-node-03`, triggering the `NodeDiskPressure` alert. The pod was stuck in a retry loop even after storage exhaustion, worsening the issue.
+
+### Cleanup Performed
+- Deleted the stray test job and its associated pod using safe deletion mode (`--cascade=none`) to preserve shared resources
+- **Deleted:** `job/data-sync-job`, `pod/data-sync-job-pod`
+- **Preserved:** PVC `data-sync-storage` and Secret `db-credentials` remain intact
+- Production workloads (`data-sync-job-v2-active`, `data-sync-cron`) are unaffected
+
+### Verification
+- ✅ `data-sync-job` returns `NotFound` when queried
+- ✅ Associated pod is removed
+- ✅ Shared PVC and Secret are still present
+- ✅ Production workloads continue running normally on other nodes
+
+The NodeDiskPressure condition will resolve automatically as the kubelet cleans up the freed ephemeral storage on `worker-node-03`.

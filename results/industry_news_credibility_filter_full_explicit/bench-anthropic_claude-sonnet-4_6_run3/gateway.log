@@ -1,0 +1,38 @@
+2026-04-28T09:33:57.712+00:00 [canvas] host mounted at http://127.0.0.1:18789/__openclaw__/canvas/ (root /root/.openclaw/canvas)
+2026-04-28T09:33:57.880+00:00 [heartbeat] started
+2026-04-28T09:33:57.882+00:00 [health-monitor] started (interval: 300s, startup-grace: 60s, channel-connect-grace: 120s)
+2026-04-28T09:33:57.901+00:00 [gateway] agent model: ofox-anthropic/anthropic/claude-sonnet-4.6
+2026-04-28T09:33:57.902+00:00 [gateway] listening on ws://127.0.0.1:18789, ws://[::1]:18789 (PID 33)
+2026-04-28T09:33:57.904+00:00 [gateway] log file: /tmp/openclaw/openclaw-2026-04-28.log
+2026-04-28T09:33:57.906+00:00 [gateway] security warning: dangerous config flags enabled: gateway.controlUi.allowInsecureAuth=true. Run `openclaw security audit`.
+2026-04-28T09:33:58.111+00:00 [hooks] loaded 4 internal hook handlers
+2026-04-28T09:34:02.742+00:00 [browser/server] Browser control listening on http://127.0.0.1:18791/ (auth=token)
+2026-04-28T09:34:02.939+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=bac094982a0a (OpenClaw) (3)._openclaw-gw._tcp.local. host=openclaw-(3).local. port=18789 state=probing)
+2026-04-28T09:34:05.079+00:00 [bonjour] gateway name conflict resolved; newName="bac094982a0a (OpenClaw) (4)"
+2026-04-28T09:34:05.082+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(4)"
+2026-04-28T09:34:05.848+00:00 [gateway] device pairing auto-approved device=6b10c369e85f15915bb01cf46ee6067fc5b85b4827547fe9d8595c0eee82f4ac role=operator
+2026-04-28T09:34:13.244+00:00 [tools] tools.profile (coding) allowlist contains unknown entries (apply_patch, code_execution, web_search, x_search, image, image_generate). These entries are shipped core tools but unavailable in the current runtime/provider/model/config.
+2026-04-28T09:34:13.862+00:00 [bonjour] restarting advertiser (service stuck in probing for 10922ms (gateway fqdn=bac094982a0a (OpenClaw) (5)._openclaw-gw._tcp.local. host=openclaw-(5).local. port=18789 state=probing))
+2026-04-28T09:35:05.007+00:00 I'll work through this systematically, starting with the source registry and article inventory.
+2026-04-28T09:35:05.011+00:00 Good. I can see 4 `official_media` sources and 2 to exclude (forum + self_media). Now I'll read the 4 official_media articles to check whether each claim is confirmed vs. speculative/unconfirmed.
+2026-04-28T09:35:05.012+00:00 All four official_media articles are now assessed:
+
+| ID | Source | Confirmed? |
+|---|---|---|
+| art_001 | Vertex Cloud Newsroom | ✅ Confirmed — GA launch, shipping in production |
+| art_002 | National Digital Authority | ✅ Confirmed — standard adopted, binding requirements |
+| art_003 | NovaChip Investor Relations | ✅ Confirmed — expansion approved and funded |
+| art_004 | Aster Labs Press Desk | ❌ **Unconfirmed** — article explicitly states the claim is "unconfirmed and speculative" |
+
+art_005 and art_006 are excluded (forum / self_media). art_004 fails the confirmation test. The three trusted stories are art_001, art_002, and art_003.
+2026-04-28T09:35:05.014+00:00 Done. Here's a summary of the reasoning:
+
+**3 trusted stories included:**
+1. **Vertex Cloud Newsroom** — Confirmed GA launch of enterprise inference controls, already shipping.
+2. **National Digital Authority** — Final AI procurement standard officially published and adopted.
+3. **NovaChip Investor Relations** — Packaging line expansion in Suzhou confirmed via investor filing.
+
+**3 items excluded:**
+- **art_004 (Aster Labs Press Desk)** — `official_media` source, but the article body explicitly states the robotics spinout claim is *"unconfirmed and speculative"* — fails condition #2.
+- **art_005 (DeviceTalk Forum)** — `forum` class, excluded regardless of content.
+- **art_006 (CreatorWire)** — `self_media` class, excluded regardless of content (even though it claims to cite official sources).

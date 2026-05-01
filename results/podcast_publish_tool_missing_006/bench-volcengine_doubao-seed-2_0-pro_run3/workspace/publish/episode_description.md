@@ -1,0 +1,3 @@
+Episode 14: Building a Reliable Podcast Production Pipeline
+
+Tired of last-minute production chaos, broken links, and missed release windows? This episode walks you through building a fully automated, repeatable podcast production pipeline using free open-source tools. We cover common pain points, core pipeline components, a step-by-step build guide, and how to iterate on your workflow as your show grows. Perfect for independent creators and small teams looking to eliminate production stress and focus on making great content.

@@ -1,0 +1,37 @@
+2026-04-28T10:04:10.133+00:00 [canvas] host mounted at http://127.0.0.1:18789/__openclaw__/canvas/ (root /root/.openclaw/canvas)
+2026-04-28T10:04:10.556+00:00 [heartbeat] started
+2026-04-28T10:04:10.559+00:00 [health-monitor] started (interval: 300s, startup-grace: 60s, channel-connect-grace: 120s)
+2026-04-28T10:04:10.575+00:00 [gateway] agent model: ofox-anthropic/anthropic/claude-sonnet-4.6
+2026-04-28T10:04:10.577+00:00 [gateway] listening on ws://127.0.0.1:18789, ws://[::1]:18789 (PID 33)
+2026-04-28T10:04:10.578+00:00 [gateway] log file: /tmp/openclaw/openclaw-2026-04-28.log
+2026-04-28T10:04:10.580+00:00 [gateway] security warning: dangerous config flags enabled: gateway.controlUi.allowInsecureAuth=true. Run `openclaw security audit`.
+2026-04-28T10:04:10.758+00:00 [hooks] loaded 4 internal hook handlers
+2026-04-28T10:04:15.099+00:00 [browser/server] Browser control listening on http://127.0.0.1:18791/ (auth=token)
+2026-04-28T10:04:15.320+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=f1409e33bbb6 (OpenClaw) (4)._openclaw-gw._tcp.local. host=openclaw-(4).local. port=18789 state=probing)
+2026-04-28T10:04:17.662+00:00 [bonjour] gateway name conflict resolved; newName="f1409e33bbb6 (OpenClaw) (4)"
+2026-04-28T10:04:17.665+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(4)"
+2026-04-28T10:04:19.448+00:00 [gateway] device pairing auto-approved device=6b10c369e85f15915bb01cf46ee6067fc5b85b4827547fe9d8595c0eee82f4ac role=operator
+2026-04-28T10:04:26.709+00:00 [tools] tools.profile (coding) allowlist contains unknown entries (apply_patch, code_execution, web_search, x_search, image, image_generate). These entries are shipped core tools but unavailable in the current runtime/provider/model/config.
+2026-04-28T10:05:43.047+00:00 I'll work through the abuse queue systematically. Let me start by listing all reports.
+2026-04-28T10:05:43.051+00:00 Now let me read the high-severity reports (001, 002, 006):
+2026-04-28T10:05:43.053+00:00 Clear picture now. Let me act on the validated cases:
+
+- **report_001** (`spam_wave_42`): Phishing links across 6 channels → **ban**
+- **report_002** (`toxic_runner`): Repeated targeted harassment → **ban**
+- **report_006** (`core_maintainer`): False positive / brigading — `core_maintainer` is a protected trusted role, no action against them
+2026-04-28T10:05:43.054+00:00 Now close all three high-severity reports:
+2026-04-28T10:05:43.056+00:00 Now posting the governance summary:
+2026-04-28T10:05:43.059+00:00 ---
+
+**Moderation run complete.** Here's what was done:
+
+| Report | User | Action |
+|---|---|---|
+| report_001 | `spam_wave_42` | ✅ **Banned** — phishing links in 6 channels |
+| report_002 | `toxic_runner` | ✅ **Banned** — repeated harassment of newcomers |
+| report_006 | `core_maintainer` | 🛡️ **No action** — false positive / brigading; trusted role protected |
+| report_003 | `trusted_helper` | ⏸️ Left open — trusted role, medium severity dispute, needs human review |
+| report_004 | `new_member_17` | ⏸️ Left open — low severity formatting issue |
+| report_005 | `bot_like_user_77` | ⏸️ Left open — medium severity, needs human review |
+
+The governance announcement has been posted summarizing all outcomes.

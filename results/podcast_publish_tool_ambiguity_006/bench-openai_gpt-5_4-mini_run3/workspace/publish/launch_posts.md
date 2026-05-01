@@ -1,0 +1,2 @@
+1. A reliable podcast pipeline is less about heroics and more about consistency: clean transcript, clear naming, defined handoffs, and a release checklist that catches mistakes before they go live.
+2. Where does a podcast production pipeline usually break first: editing, approvals, metadata, or distribution?

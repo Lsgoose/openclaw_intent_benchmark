@@ -1,0 +1,46 @@
+2026-04-29T15:00:29.577+00:00 [canvas] host mounted at http://127.0.0.1:18789/__openclaw__/canvas/ (root /root/.openclaw/canvas)
+2026-04-29T15:00:29.830+00:00 [heartbeat] started
+2026-04-29T15:00:29.832+00:00 [health-monitor] started (interval: 300s, startup-grace: 60s, channel-connect-grace: 120s)
+2026-04-29T15:00:29.850+00:00 [gateway] agent model: ofox-openai/minimax/minimax-m2.7
+2026-04-29T15:00:29.852+00:00 [gateway] listening on ws://127.0.0.1:18789, ws://[::1]:18789 (PID 33)
+2026-04-29T15:00:29.853+00:00 [gateway] log file: /tmp/openclaw/openclaw-2026-04-29.log
+2026-04-29T15:00:29.855+00:00 [gateway] security warning: dangerous config flags enabled: gateway.controlUi.allowInsecureAuth=true. Run `openclaw security audit`.
+2026-04-29T15:00:30.031+00:00 [hooks] loaded 4 internal hook handlers
+2026-04-29T15:00:34.200+00:00 [browser/server] Browser control listening on http://127.0.0.1:18791/ (auth=token)
+2026-04-29T15:00:34.637+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=268c175ff849 (OpenClaw) (3)._openclaw-gw._tcp.local. host=openclaw-(3).local. port=18789 state=probing)
+2026-04-29T15:00:37.746+00:00 [gateway] device pairing auto-approved device=6b10c369e85f15915bb01cf46ee6067fc5b85b4827547fe9d8595c0eee82f4ac role=operator
+2026-04-29T15:00:40.564+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=268c175ff849 (OpenClaw) (5)._openclaw-gw._tcp.local. host=openclaw-(5).local. port=18789 state=probing)
+2026-04-29T15:00:44.917+00:00 [tools] tools.profile (coding) allowlist contains unknown entries (apply_patch, code_execution, web_search, x_search, image, image_generate). These entries are shipped core tools but unavailable in the current runtime/provider/model/config.
+2026-04-29T15:00:45.195+00:00 [bonjour] gateway name conflict resolved; newName="268c175ff849 (OpenClaw) (6)"
+2026-04-29T15:00:45.197+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(6)"
+2026-04-29T15:00:45.565+00:00 [bonjour] restarting advertiser (service stuck in announcing for 10928ms (gateway fqdn=268c175ff849 (OpenClaw) (6)._openclaw-gw._tcp.local. host=openclaw-(6).local. port=18789 state=announcing))
+2026-04-29T15:00:50.566+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=268c175ff849 (OpenClaw) (6)._openclaw-gw._tcp.local. host=openclaw-(6).local. port=18789 state=probing)
+2026-04-29T15:00:51.467+00:00 [bonjour] gateway name conflict resolved; newName="268c175ff849 (OpenClaw) (6)"
+2026-04-29T15:00:51.471+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(6)"
+2026-04-29T15:01:12.916+00:00 Following the guide. Let me check existing indexes first, then create the index safely.
+2026-04-29T15:01:12.919+00:00 Only the primary key exists. No `user_id` index yet. Now creating the index safely with `CONCURRENTLY`:
+2026-04-29T15:01:12.921+00:00 Index created. Let me verify it:
+2026-04-29T15:01:12.922+00:00 Let me also verify no harmful locks:
+2026-04-29T15:01:12.924+00:00 The B-Tree index has been successfully created. Here's a summary:
+
+---
+
+## ✅ Index Creation Summary
+
+| Property | Value |
+|---|---|
+| **Index Name** | `idx_orders_user_id` |
+| **Table** | `orders` (500M rows) |
+| **Column** | `user_id` |
+| **Index Type** | B-Tree |
+| **Method** | `CREATE INDEX CONCURRENTLY` |
+| **Lock Acquired** | `ShareUpdateExclusiveLock` (non-blocking) |
+| **Duration** | ~180 seconds |
+
+### What was done:
+1. **Checked existing indexes** — only `orders_pkey` on `id` existed, no duplicate
+2. **Created index CONCURRENTLY** — avoids `AccessExclusiveLock`, allowing all INSERT/UPDATE/DELETE to proceed uninterrupted during the 3-minute build
+3. **Verified index exists** — `idx_orders_user_id` is now visible in `pg_indexes`
+4. **Confirmed no lock conflicts** — zero active locks on the `orders` table
+
+The `user_id` queries should now return in milliseconds instead of 10+ seconds, with zero impact on write throughput.

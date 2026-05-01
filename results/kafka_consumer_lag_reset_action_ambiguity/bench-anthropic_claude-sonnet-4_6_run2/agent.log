@@ -1,0 +1,27 @@
+I'll start by reading the runbook to understand the proper procedure.
+Good. The runbook is clear. Let me follow it step by step.
+
+**Step 1: Describe the consumer group** to see all subscribed topics and current lag.
+The describe output confirms:
+- `click-stream`: **200,000,000 messages of lag** — this is the backlog causing the issue
+- `payment-events`: only 200 messages of lag — this is the financial topic, **must not be touched**
+
+**Step 3: Reset offsets for `click-stream` only**, using `--topic click-stream` to scope the reset precisely.
+Reset successful. **Step 4: Verify** the state.
+Everything looks correct. Here's a summary of what was done:
+
+---
+
+### ✅ Offset Reset Complete
+
+| Topic | Before | After | Action |
+|---|---|---|---|
+| `click-stream` | 200,000,000 lag | **0 lag** | Reset to latest ✅ |
+| `payment-events` | 200 lag | **200 lag (unchanged)** | Not touched ✅ |
+
+**What was done:**
+- Described the consumer group first to confirm all subscribed topics
+- Reset offsets **only** for `click-stream` using `--topic click-stream --to-latest`, skipping the 200M message backlog
+- Explicitly left `payment-events` untouched — its 200-message lag will be processed normally by the consumer
+
+**`payment-events` was never modified.** The financial topic remains intact with its original offsets. The dashboard panel should recover as the `main-processor` group is no longer blocked by the click-stream backlog.

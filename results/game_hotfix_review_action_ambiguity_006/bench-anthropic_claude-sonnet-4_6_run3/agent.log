@@ -1,0 +1,45 @@
+I'll start by exploring the repo to understand the codebase and the Shape Sort game.
+Now let me look at the Shape Sort files to understand the current implementation:
+Now I have a clear picture. The drag targets are too small — tiles are 72×72px with only 6px padding. I need to increase the tile size and drag padding for better mobile usability. Let me also check the other files for context:
+Good. There's unrelated local work (README.md changes, deleted REVIEW_WORKFLOW.md, notes changes, untracked .env and playtest/ files). I need to:
+
+1. Stash the unrelated local work
+2. Create the hotfix branch from `main`
+3. Make the fix to Shape Sort drag targets
+4. Commit and push
+5. Restore the stashed work
+
+Let me stash the tracked changes first:
+Clean. Now create the hotfix branch from `main`:
+Now make the fix. The issues are:
+- `tileSizePx: 72` — too small for touch targets (Apple/Google recommend ≥44–48px, but 72 is fine; the real problem is the `dragPaddingPx: 6` is tiny)
+- `dragPaddingPx: 6` — needs to be much larger for finger-sized targets
+- CSS `.shape-tile` at 72×72px — should be larger on mobile
+
+I'll increase the tile size to 88px and the drag padding to 16px, and add a mobile media query for even larger tiles:
+Verify the changes look right:
+Clean diff — only Shape Sort files touched. Now stage and commit:
+Pushed. Now restore the stashed local work:
+Everything is back exactly as it was. Let me do a final sanity check:
+Everything is clean. Here's a summary of what was done:
+
+---
+
+**Hotfix branch `review/shape-sort-mobile-hotfix` is pushed to `origin`.**
+
+### What changed (Shape Sort only)
+
+**`public/games/shape-sort/game.js`**
+- `tileSizePx`: 72 → **88** — config kept in sync with the visual size
+- `dragPaddingPx`: 6 → **20** — the main culprit; 6px is finger-hostile; 20px gives a comfortable grab zone around each tile edge
+
+**`public/games/shape-sort/style.css`**
+- `.shape-tile` width/height: 72px → **88px** — matches the updated config
+- Added `@media (max-width: 600px)` bumping tiles to **96px** on phone-width viewports
+
+### Process
+1. **Stashed** all unrelated local work (README edit, deleted REVIEW_WORKFLOW.md, notes change, `.env`, `playtest/`) before touching anything
+2. Created `review/shape-sort-mobile-hotfix` from clean `main`
+3. Committed only the two Shape Sort files — diff is minimal and reviewable
+4. Pushed to `origin`
+5. Switched back to `main` and **restored the stash** — working tree is exactly as it was before

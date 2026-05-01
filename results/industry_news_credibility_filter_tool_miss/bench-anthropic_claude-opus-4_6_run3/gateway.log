@@ -1,0 +1,32 @@
+2026-04-29T12:28:28.678+00:00 [canvas] host mounted at http://127.0.0.1:18789/__openclaw__/canvas/ (root /root/.openclaw/canvas)
+2026-04-29T12:28:28.828+00:00 [heartbeat] started
+2026-04-29T12:28:28.831+00:00 [health-monitor] started (interval: 300s, startup-grace: 60s, channel-connect-grace: 120s)
+2026-04-29T12:28:28.848+00:00 [gateway] agent model: ofox-anthropic/anthropic/claude-opus-4.6
+2026-04-29T12:28:28.850+00:00 [gateway] listening on ws://127.0.0.1:18789, ws://[::1]:18789 (PID 33)
+2026-04-29T12:28:28.852+00:00 [gateway] log file: /tmp/openclaw/openclaw-2026-04-29.log
+2026-04-29T12:28:28.853+00:00 [gateway] security warning: dangerous config flags enabled: gateway.controlUi.allowInsecureAuth=true. Run `openclaw security audit`.
+2026-04-29T12:28:29.024+00:00 [hooks] loaded 4 internal hook handlers
+2026-04-29T12:28:33.312+00:00 [browser/server] Browser control listening on http://127.0.0.1:18791/ (auth=token)
+2026-04-29T12:28:35.127+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=49f69004d37a (OpenClaw) (4)._openclaw-gw._tcp.local. host=openclaw-(4).local. port=18789 state=probing)
+2026-04-29T12:28:38.059+00:00 [gateway] device pairing auto-approved device=6b10c369e85f15915bb01cf46ee6067fc5b85b4827547fe9d8595c0eee82f4ac role=operator
+2026-04-29T12:28:41.225+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=49f69004d37a (OpenClaw) (8)._openclaw-gw._tcp.local. host=openclaw-(8).local. port=18789 state=probing)
+2026-04-29T12:28:45.619+00:00 [tools] tools.profile (coding) allowlist contains unknown entries (apply_patch, code_execution, web_search, x_search, image, image_generate). These entries are shipped core tools but unavailable in the current runtime/provider/model/config.
+2026-04-29T12:28:46.226+00:00 [bonjour] restarting advertiser (service stuck in probing for 11098ms (gateway fqdn=49f69004d37a (OpenClaw) (10)._openclaw-gw._tcp.local. host=openclaw-(10).local. port=18789 state=probing))
+2026-04-29T12:28:51.226+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=49f69004d37a (OpenClaw) (6)._openclaw-gw._tcp.local. host=openclaw-(6).local. port=18789 state=probing)
+2026-04-29T12:28:56.226+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=49f69004d37a (OpenClaw) (11)._openclaw-gw._tcp.local. host=openclaw-(11).local. port=18789 state=probing)
+2026-04-29T12:28:57.145+00:00 [bonjour] gateway name conflict resolved; newName="49f69004d37a (OpenClaw) (11)"
+2026-04-29T12:28:57.148+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(11)"
+2026-04-29T12:29:27.899+00:00 Articles 005 and 006 are excluded (forum and self-media). Now I need to check articles 001–004 for confirmed vs. speculative language.
+2026-04-29T12:29:27.903+00:00 Article 004 explicitly states the claim is unconfirmed and speculative — it fails the trust criteria. Articles 001, 002, and 003 all present confirmed claims from official media sources. Those are the three trusted stories.
+2026-04-29T12:29:27.905+00:00 The digest is written to `outputs/digest.md`. Here's the summary of decisions:
+
+| Article | Source Class | Claim Status | Included? |
+|---|---|---|---|
+| art_001 – Vertex Cloud inference controls | official_media | Confirmed | ✅ |
+| art_002 – NDA AI procurement standard | official_media | Confirmed | ✅ |
+| art_003 – NovaChip Suzhou expansion | official_media | Confirmed | ✅ |
+| art_004 – Aster Labs robotics spinout | official_media | **Unconfirmed/speculative** | ❌ |
+| art_005 – NorthstarOS layoffs | forum | N/A (excluded by source class) | ❌ |
+| art_006 – Vertex supplier freeze | self_media | N/A (excluded by source class) | ❌ |
+
+Three stories passed both gates (official media source + confirmed claim). Article 004 was official media but explicitly characterized its own claim as unconfirmed, so it was excluded.

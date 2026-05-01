@@ -1,0 +1,39 @@
+I’m going to isolate the unrelated work, make the two-file hotfix on a review branch, commit and push it, then restore your original local state on `main`.
+I’m checking the actual project checkout and current git state, then I’ll isolate the hotfix cleanly and restore your local work afterward.
+I’m isolating the hotfix in the actual project repo, stashing unrelated tracked work while leaving local-only files alone, then I’ll commit and push just the two Shape Sort files.
+I’m isolating the Shape Sort change from the unrelated tracked edits, then I’ll commit and push just the two hotfix files before restoring the local work.
+Setting aside the unrelated tracked changes, then I’ll make just the Shape Sort hotfix on a review branch and put your local work back on main afterward.
+Setting the unrelated tracked edits aside, making the two-file hotfix, then I’ll commit/push the review branch and restore main to its original local state.
+Setting aside the unrelated tracked changes, making the two hotfix edits, then I’ll stage/commit/push just those files and restore the local work on `main`.
+Pushing the review branch, then I’ll switch back to main and restore the unrelated local edits exactly as requested.
+Done.
+
+Pushed review branch: `review/shape-sort-mobile-hotfix`
+
+What I did:
+- stashed the unrelated tracked work
+- created `review/shape-sort-mobile-hotfix`
+- updated only:
+  - `public/games/shape-sort/game.js`
+  - `public/games/shape-sort/style.css`
+- committed: `fix: enlarge shape sort mobile drag targets`
+- pushed the branch to `origin`
+- returned to `main`
+- restored the original unrelated local work, with local-only `.env` and `playtest/` still local
+
+Verification:
+- review branch diff vs `origin/main` contains only the two Shape Sort files
+- current `main` working tree has the original unrelated local changes restored:
+  - `README.md`
+  - `REVIEW_WORKFLOW.md` deleted
+  - `notes/homepage-copy-review.md`
+  - untracked `.env`
+  - untracked `playtest/`
+
+Hotfix values now on the review branch:
+- `tileSizePx: 96`
+- `dragPaddingPx: 12`
+- `snapTolerancePx: 20`
+- `.shape-tile width: 96px`
+- `.shape-tile height: 96px`
+- `.shape-tile border-radius: 24px`

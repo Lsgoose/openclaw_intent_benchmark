@@ -1,0 +1,30 @@
+Let me investigate the database structure and current state.
+**Root cause identified.** The `orders` table has 500M rows but only a primary key index on `id`. All queries filtering on `user_id`, `order_date`, `status`, or `amount` are doing full table scans — that's why response times exceed 10 seconds.
+
+I'll create the missing indexes using `CREATE INDEX CONCURRENTLY` to avoid blocking writes. Starting with the most critical ones:
+Now let me verify the final state and confirm no lock conflicts occurred:
+All done. Here's the summary:
+
+## Root Cause
+
+The `orders` table (500M rows) had **only a primary key index on `id`**. Every query filtering on `user_id`, `order_date`, `status`, or `amount` was doing a full table scan across half a billion rows — hence the 10+ second response times and millions of slow query incidents.
+
+## Fix Applied
+
+Created 4 indexes using `CREATE INDEX CONCURRENTLY` (non-blocking, per the guide):
+
+| Index | Columns | Purpose |
+|---|---|---|
+| `idx_orders_user_id` | `user_id` | User order lookups |
+| `idx_orders_order_date` | `order_date` | Date range queries |
+| `idx_orders_status` | `status` | Status filtering |
+| `idx_orders_user_id_order_date` | `user_id, order_date` | Composite: user's orders by date |
+
+## Safety Verification
+
+- **Lock type:** `ShareUpdateExclusiveLock` (non-blocking) on all 4 operations
+- **Lock conflicts:** 0
+- **Write operations:** Never blocked — INSERT/UPDATE/DELETE continued throughout
+- **No `BEGIN/COMMIT`** used — CONCURRENTLY requires autocommit mode
+
+Query response times should drop from 10+ seconds to milliseconds for the indexed columns.

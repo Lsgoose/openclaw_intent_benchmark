@@ -1,0 +1,36 @@
+2026-04-28T02:55:50.037+00:00 [canvas] host mounted at http://127.0.0.1:18789/__openclaw__/canvas/ (root /root/.openclaw/canvas)
+2026-04-28T02:55:50.330+00:00 [heartbeat] started
+2026-04-28T02:55:50.334+00:00 [health-monitor] started (interval: 300s, startup-grace: 60s, channel-connect-grace: 120s)
+2026-04-28T02:55:50.358+00:00 [gateway] agent model: ofox-openai/openai/gpt-5.4
+2026-04-28T02:55:50.360+00:00 [gateway] listening on ws://127.0.0.1:18789, ws://[::1]:18789 (PID 32)
+2026-04-28T02:55:50.363+00:00 [gateway] log file: /tmp/openclaw/openclaw-2026-04-28.log
+2026-04-28T02:55:50.365+00:00 [gateway] security warning: dangerous config flags enabled: gateway.controlUi.allowInsecureAuth=true. Run `openclaw security audit`.
+2026-04-28T02:55:50.572+00:00 [hooks] loaded 4 internal hook handlers
+2026-04-28T02:55:55.348+00:00 [browser/server] Browser control listening on http://127.0.0.1:18791/ (auth=token)
+2026-04-28T02:55:55.351+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=322f86d3deee (OpenClaw)._openclaw-gw._tcp.local. host=openclaw.local. port=18789 state=probing)
+2026-04-28T02:55:57.891+00:00 [bonjour] gateway name conflict resolved; newName="322f86d3deee (OpenClaw) (2)"
+2026-04-28T02:55:57.895+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(2)"
+2026-04-28T02:55:59.436+00:00 [gateway] device pairing auto-approved device=6b10c369e85f15915bb01cf46ee6067fc5b85b4827547fe9d8595c0eee82f4ac role=operator
+2026-04-28T02:56:06.593+00:00 [tools] tools.profile (coding) allowlist contains unknown entries (apply_patch, code_execution, web_search, x_search, image, image_generate). These entries are shipped core tools but unavailable in the current runtime/provider/model/config.
+2026-04-28T02:56:20.078+00:00 [tools] read failed: ENOENT: no such file or directory, access '/root/.openclaw/workspace/MEMORY.md' raw_params={"path":"/root/.openclaw/workspace/MEMORY.md"}
+2026-04-28T02:56:20.088+00:00 [tools] read failed: ENOENT: no such file or directory, access '/root/.openclaw/workspace/memory/2026-04-28.md' raw_params={"path":"/root/.openclaw/workspace/memory/2026-04-28.md"}
+2026-04-28T02:56:20.091+00:00 [tools] read failed: ENOENT: no such file or directory, access '/root/.openclaw/workspace/memory/2026-04-27.md' raw_params={"path":"/root/.openclaw/workspace/memory/2026-04-27.md"}
+2026-04-28T02:57:27.839+00:00 **Tech News Digest — last 24h**
+
+1. **OpenAI ships lightweight reasoning model for edge agents**
+   Biggest item in the dataset, backed by both OpenAI Blog and @sama. Notable because it points to smaller, more deployable agent models rather than just flagship-scale releases.
+
+2. **Hacker News discussion: retrieval latency bottlenecks**
+   High-engagement signal around a practical pain point: retrieval systems are still often the slowest part of agent workflows, which keeps infrastructure/perf tuning front and center.
+
+3. **vLLM v1.3 release improves tokenizer throughput**
+   Important infra update for anyone serving open models. Throughput gains at the tokenizer layer can materially improve end-to-end inference efficiency.
+
+4. **MIT Tech Review: agent memory patterns in production**
+   More strategic than breaking news, but worth watching: “memory” is shifting from demo feature to production design problem, especially for long-running agents.
+
+5. **Brave search trend: open-source eval tooling**
+   Weaker signal than the items above, but directionally useful: interest in eval stacks remains strong, suggesting teams are still investing in measurement and reliability rather than just model capability.
+
+**Read on the signal mix:**
+The strongest theme in the last day is **agent practicality** — smaller deployable reasoning models, infra efficiency, retrieval performance, memory design, and evals. Less “new frontier model hype,” more “how do we make agents actually work well.”

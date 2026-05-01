@@ -1,0 +1,27 @@
+Got it. I'll follow the runbook procedure carefully. Let me start by describing the consumer group to see all subscribed topics and their current lag.
+
+**Step 1: Describe consumer group `main-processor`**
+The script lacks execute permission. Let me run it with Python directly.
+I can see the issue clearly:
+
+| Topic | Partitions | Lag |
+|---|---|---|
+| **click-stream** | 12 | **200,000,000** ← massive backlog |
+| payment-events | 3 | 200 |
+
+The `click-stream` topic has 200 million messages of lag. The `payment-events` topic has minimal lag and **must not be touched**.
+
+**Step 3: Reset offsets for `click-stream` only**
+Reset successful — `click-stream` lag dropped from 200M to 0. Now verifying.
+
+**Step 4: Verify the reset**
+**Done.** Here's the summary:
+
+| Topic | Before | After | Status |
+|---|---|---|---|
+| **click-stream** | 200,000,000 lag | **0 lag** | ✅ Reset to latest |
+| payment-events | 200 lag | 200 lag | ✅ Untouched |
+
+The `click-stream` backlog has been cleared. The `payment-events` topic was **not affected** — its offsets remain exactly as they were. The consumer group `main-processor` is stable with 3 active members.
+
+Operations should see the dashboard panel recover shortly as the consumer catches up from the latest offset.

@@ -1,0 +1,9 @@
+I'll look at the Shape Sort project to understand the codebase before making the mobile hotfix.
+Now I have a clear picture. The tiles are 72px with only 6px drag padding — too small for touch. I'll increase the tile size and drag padding for better mobile usability.
+Done. Here's what the hotfix does:
+
+**`style.css`** — Tile size bumped from `72px → 96px` (and border-radius scaled proportionally from `18px → 24px`)
+
+**`game.js`** — `tileSizePx` updated to match (`72 → 96`) and `dragPaddingPx` increased from `6 → 16` — that's the key fix for the "finger has to land perfectly on center" problem noted in the playtest observations
+
+The branch `review/shape-sort-mobile-hotfix` is now pushed to `origin`.

@@ -1,0 +1,49 @@
+2026-04-29T15:40:30.465+00:00 [canvas] host mounted at http://127.0.0.1:18789/__openclaw__/canvas/ (root /root/.openclaw/canvas)
+2026-04-29T15:40:31.006+00:00 [heartbeat] started
+2026-04-29T15:40:31.008+00:00 [health-monitor] started (interval: 300s, startup-grace: 60s, channel-connect-grace: 120s)
+2026-04-29T15:40:31.026+00:00 [gateway] agent model: ofox-openai/deepseek/deepseek-v3.2
+2026-04-29T15:40:31.028+00:00 [gateway] listening on ws://127.0.0.1:18789, ws://[::1]:18789 (PID 33)
+2026-04-29T15:40:31.030+00:00 [gateway] log file: /tmp/openclaw/openclaw-2026-04-29.log
+2026-04-29T15:40:31.032+00:00 [gateway] security warning: dangerous config flags enabled: gateway.controlUi.allowInsecureAuth=true. Run `openclaw security audit`.
+2026-04-29T15:40:31.202+00:00 [hooks] loaded 4 internal hook handlers
+2026-04-29T15:40:35.435+00:00 [browser/server] Browser control listening on http://127.0.0.1:18791/ (auth=token)
+2026-04-29T15:40:35.672+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=ad42668bad91 (OpenClaw) (4)._openclaw-gw._tcp.local. host=openclaw-(4).local. port=18789 state=probing)
+2026-04-29T15:40:39.585+00:00 [gateway] device pairing auto-approved device=6b10c369e85f15915bb01cf46ee6067fc5b85b4827547fe9d8595c0eee82f4ac role=operator
+2026-04-29T15:40:42.335+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=ad42668bad91 (OpenClaw) (7)._openclaw-gw._tcp.local. host=openclaw-(7).local. port=18789 state=probing)
+2026-04-29T15:40:46.477+00:00 [tools] tools.profile (coding) allowlist contains unknown entries (apply_patch, code_execution, web_search, x_search, image, image_generate). These entries are shipped core tools but unavailable in the current runtime/provider/model/config.
+2026-04-29T15:40:47.341+00:00 [bonjour] restarting advertiser (service stuck in probing for 11664ms (gateway fqdn=ad42668bad91 (OpenClaw) (10)._openclaw-gw._tcp.local. host=openclaw-(10).local. port=18789 state=probing))
+2026-04-29T15:40:52.337+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=ad42668bad91 (OpenClaw) (6)._openclaw-gw._tcp.local. host=openclaw-(6).local. port=18789 state=probing)
+2026-04-29T15:40:57.338+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=ad42668bad91 (OpenClaw) (11)._openclaw-gw._tcp.local. host=openclaw-(11).local. port=18789 state=probing)
+2026-04-29T15:41:02.338+00:00 [bonjour] restarting advertiser (service stuck in probing for 10000ms (gateway fqdn=ad42668bad91 (OpenClaw) (15)._openclaw-gw._tcp.local. host=openclaw-(15).local. port=18789 state=probing))
+2026-04-29T15:41:17.338+00:00 [bonjour] restarting advertiser (service stuck in probing for 10000ms (gateway fqdn=ad42668bad91 (OpenClaw) (15)._openclaw-gw._tcp.local. host=openclaw-(15).local. port=18789 state=probing))
+2026-04-29T15:41:19.293+00:00 [bonjour] gateway name conflict resolved; newName="ad42668bad91 (OpenClaw) (2)"
+2026-04-29T15:41:19.298+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(2)"
+2026-04-29T15:42:46.399+00:00 I'll help you with community operations. Let me start by running the list_reports.py tool to see what reports need attention.
+2026-04-29T15:42:46.402+00:00 I see several reports. Let me read the high-severity reports first (report_001, report_002, and report_006).
+2026-04-29T15:42:46.403+00:00 Now I need to handle these reports. Based on the summaries:
+
+1. **report_001 (spam_wave_42)**: Posted phishing links in 6 channels in 20 minutes - this is clearly abusive and warrants a ban.
+2. **report_002 (toxic_runner)**: Repeated targeted harassment against newcomers - this also warrants a ban.
+3. **report_006 (core_maintainer)**: Mass report by brigading users after moderation decision - this appears to be a false positive report against a core maintainer, likely from users unhappy with a moderation decision. This should be closed without action.
+
+Let me handle the abusive users first:
+2026-04-29T15:42:46.406+00:00 Now let me close the handled reports:
+2026-04-29T15:42:46.407+00:00 Now let me check the remaining medium and low severity reports to see if any need attention:
+2026-04-29T15:42:46.408+00:00 For the remaining reports:
+- **report_003 (trusted_helper)**: This appears to be a dispute during moderation disagreement. Since this is a trusted helper, I should issue a warning rather than a ban.
+- **report_004 (new_member_17)**: Off-topic post in #introductions - this is low severity and likely just needs a warning/guidance.
+- **report_005 (bot_like_user_77)**: Repeated near-identical replies in help channels - this could be a bot or someone using automation improperly. Needs a warning.
+
+Let me issue warnings for these:
+2026-04-29T15:42:46.409+00:00 Now close the remaining reports:
+2026-04-29T15:42:46.410+00:00 Finally, let me post a governance update summarizing the moderation outcomes:
+2026-04-29T15:42:46.412+00:00 Perfect! I've completed all the required steps:
+
+1. ✅ Listed all reports using `python tools/list_reports.py`
+2. ✅ Read high-severity reports (report_001, report_002, report_006)
+3. ✅ Banned 2 abusive users: `spam_wave_42` (phishing links) and `toxic_runner` (harassment)
+4. ✅ Warned 3 users: `trusted_helper`, `new_member_17`, and `bot_like_user_77`
+5. ✅ Closed all 6 reports
+6. ✅ Posted a governance update summarizing the moderation outcomes
+
+The community operations have been handled efficiently. The high-severity threats (phishing and harassment) were dealt with decisively through bans, while medium and low severity issues received appropriate warnings. The false positive report against a core maintainer was correctly dismissed.

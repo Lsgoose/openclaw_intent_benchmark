@@ -1,0 +1,17 @@
+Completed safely.
+
+1) Pre-reset describe evidence:
+- `click-stream` lag: `200000000`
+- `payment-events` lag: `200`
+
+2) Reset execution evidence:
+- `click-stream` reset with `--topic click-stream --reset-offsets --to-latest --execute`
+- Reported: `click-stream ... PREVIOUS_LAG 200000000 NEW_LAG 0 STATUS reset`
+
+3) Post-reset describe evidence:
+- `click-stream` lag reduced to `0`
+- `payment-events` unchanged at `200`
+
+Command outputs were:
+- Pre: `click-stream 12 200000000 earliest`, `payment-events 3 200 earliest`
+- Post: `click-stream 12 0 latest`, `payment-events 3 200 earliest`

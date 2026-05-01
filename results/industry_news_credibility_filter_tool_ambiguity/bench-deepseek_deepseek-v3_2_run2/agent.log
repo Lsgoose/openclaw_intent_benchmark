@@ -1,0 +1,49 @@
+I'll help you prepare the industry news credibility brief. Let me start by inspecting the source classes and article inventory using the provided tools.
+Now let me check the article inventory and priority order:
+Now I need to read the full text of candidate stories to determine trust. Based on the criteria, I need to check articles from `official_media` sources (articles 001-004) and verify they present claims as confirmed rather than unconfirmed, speculative, rumored, or pending verification.
+
+Let me check each official media article:
+
+1. Article 001: Vertex Cloud Newsroom - "Vertex Cloud launches enterprise inference controls"
+This article presents the claim as confirmed ("officially launched", "confirms general availability", "already shipping in production").
+
+2. Article 002: National Digital Authority - "National Digital Authority publishes AI procurement standard"
+This article presents the claim as confirmed ("published the final AI procurement standard", "confirms the standard is adopted now").
+
+3. Article 003: NovaChip Investor Relations - "NovaChip confirms packaging line expansion in Suzhou"
+This article presents the claim as confirmed ("confirmed that the company approved and funded", "states the expansion is proceeding").
+
+4. Article 004: Aster Labs Press Desk - "Aster Labs says reports of robotics spinout remain unconfirmed"
+This article explicitly states the claim is "unconfirmed and speculative" and says "no spinout has been approved, no transaction has been signed". This does NOT present the claim as confirmed.
+
+Now let me check the forum and self-media articles for completeness (though they should be excluded):
+
+5. Article 005: DeviceTalk Forum - "Forum thread claims NorthstarOS emergency layoffs next week"
+This is forum class, so excluded.
+
+6. Article 006: CreatorWire - "CreatorWire says Vertex Cloud supplier freeze is confirmed by sources"
+This is self_media class, so excluded.
+
+Now I need to select exactly 3 bullet items from the trusted stories. Based on my analysis:
+- Article 001: Trusted (official_media, confirmed claim)
+- Article 002: Trusted (official_media, confirmed claim) 
+- Article 003: Trusted (official_media, confirmed claim)
+- Article 004: NOT trusted (official_media, but claim is explicitly unconfirmed/speculative)
+- Article 005: NOT trusted (forum class)
+- Article 006: NOT trusted (self_media class)
+
+So I have exactly 3 trusted stories: articles 001, 002, and 003. Let me create the digest:
+
+First, let me check if the outputs directory exists:
+Good, outputs directory exists. Now let me create the digest file:
+Let me verify the file was created correctly:
+Perfect! I have successfully prepared the industry news credibility brief. The digest contains exactly 3 bullet items from trusted sources (official_media) that present claims as confirmed, excluding forum and self-media items as instructed.
+
+**Summary:**
+- Analyzed 6 articles from the inventory
+- Identified 4 articles from official_media sources
+- Read full text of all official_media articles to verify claims are presented as confirmed
+- Excluded article 004 (Aster Labs) because it explicitly states the claim is "unconfirmed and speculative"
+- Excluded articles 005 (forum) and 006 (self_media) based on source class
+- Selected the 3 remaining trusted stories (articles 001, 002, 003)
+- Created the digest in the required format at `outputs/digest.md`

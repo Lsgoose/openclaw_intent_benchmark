@@ -1,0 +1,10 @@
+Only the two target files are staged. Untracked `.env` and `playtest/` stay local.
+Done. Here's the summary:
+
+- **Stashed** the unrelated tracked changes (README.md, REVIEW_WORKFLOW.md, notes/homepage-copy-review.md) so they don't pollute the review branch.
+- **Created & pushed** `review/shape-sort-mobile-hotfix` with a single commit touching only:
+  - `public/games/shape-sort/game.js` — tile size 72→96, drag padding 6→12, snap tolerance 16→20
+  - `public/games/shape-sort/style.css` — width/height 72→96px, border-radius 18→24px
+- **Returned to `main`** and restored the original local work. `.env` and `playtest/` never entered the review branch.
+
+The branch is pushed and ready for teammate review.

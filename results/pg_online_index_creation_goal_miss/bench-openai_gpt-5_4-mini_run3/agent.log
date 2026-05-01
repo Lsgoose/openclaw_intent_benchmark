@@ -1,0 +1,13 @@
+Root cause found: `orders` has 500M rows and only a primary-key btree index on `id`. There are no supporting indexes on the business columns (`user_id`, `order_date`, `status`, `amount`), so common filtering and lookup queries on those fields are almost certainly devolving into large scans.
+
+What I checked:
+- Table structure: `orders(id, user_id, order_date, amount, status)`
+- Existing indexes: only `orders_pkey` on `id`
+- Lock state: no current harmful locks on `orders`
+
+Operationally safe conclusion:
+- Any fix must use `CREATE INDEX CONCURRENTLY`
+- No transaction block
+- No table-level blocking index build
+
+Next step, if you want me to continue, is to identify the exact slow-query pattern from the workload and create the smallest safe concurrent index that matches it. I can do that without taking write locks.

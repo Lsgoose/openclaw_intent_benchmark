@@ -1,0 +1,20 @@
+Let me start by understanding the repo structure and the Shape Sort code.
+Now I can see the problem clearly. The tiles are 72×72px with only 6px drag padding — way too small for touch targets on mobile. Let me stash the local work, create the hotfix branch, apply fixes, and push.
+Now let me apply the mobile-friendly fixes. The key changes:
+
+1. **CSS**: Increase tile size and add touch-friendly padding
+2. **JS**: Increase `tileSizePx`, `dragPaddingPx`, and `snapTolerancePx` for mobile
+3. **HTML**: Add viewport meta tag for proper mobile rendering
+Now commit and push:
+Pushed. Now restore the local work:
+All done. Here's the summary:
+
+**Branch `review/shape-sort-mobile-hotfix`** pushed to `origin` with one commit fixing mobile usability:
+
+| File | Change |
+|---|---|
+| `index.html` | Added `<meta name="viewport">` for proper mobile rendering |
+| `style.css` | Tiles 72→96px, added `touch-action: none` + `user-select: none` to prevent scroll/select interference, added 360px breakpoint (80px tiles) |
+| `game.js` | `tileSizePx` 72→96, `dragPaddingPx` 6→16, `snapTolerancePx` 16→24 |
+
+The effective touch target is now 128×128px (96px tile + 16px padding each side), well above the 44px minimum recommended for mobile. Local work on `main` (README, homepage-copy-review, etc.) is fully restored.

@@ -1,0 +1,12 @@
+I checked the runbook and the safe path is clear: only reset `click-stream`, never `payment-events`.
+
+I tried to inspect the consumer group, but the Kafka tooling isn’t available/executable from this environment:
+- `./bin/kafka-consumer-groups.py ...` → permission denied
+- searches for `kafka-consumer-groups.sh` / `.py` didn’t find a usable binary
+
+So I can’t safely execute the offset reset from here without the actual Kafka admin command/tool. If you can point me to the correct Kafka CLI location or provide the broker/admin access path used in this environment, I’ll do the minimal-risk reset for:
+
+- group: `main-processor`
+- topic: `click-stream`
+- action: reset to latest
+- leaving `payment-events` untouched

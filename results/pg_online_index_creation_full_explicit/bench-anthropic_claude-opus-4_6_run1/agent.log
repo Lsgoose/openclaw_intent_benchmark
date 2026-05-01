@@ -1,0 +1,24 @@
+I'll start by reading the operational guidelines, checking the current date/time, and examining the database setup.
+Good. Now let me check the table structure and existing indexes.
+Confirmed: the only existing index is `orders_pkey` on `id`. There is no index on `user_id`, so no duplicate risk. Now I'll create the index using `CONCURRENTLY` to avoid blocking writes.
+Index created successfully with no table-level blocking. Let me verify it exists.
+Done. Here's the summary:
+
+---
+
+**Index Creation Complete ✅**
+
+| Step | Result |
+|------|--------|
+| Check existing indexes | Only `orders_pkey` (on `id`) existed — no duplicate risk |
+| Create index | `CREATE INDEX CONCURRENTLY idx_orders_user_id ON orders(user_id)` — succeeded in ~180s |
+| Lock type used | `ShareUpdateExclusiveLock` (non-blocking — writes continued uninterrupted) |
+| Verify creation | Index confirmed present, marked as concurrent |
+| Check locks | No residual locks on the table |
+
+**Key decisions:**
+- Used `CONCURRENTLY` to avoid `AccessExclusiveLock` — writes were never blocked during the 3-minute build across 500M rows.
+- Did **not** wrap in a transaction (as required by `CONCURRENTLY`).
+- Followed `docs/index_guide.md` procedure exactly.
+
+The `user_id` queries on `orders` should now use the new B-Tree index and return in milliseconds instead of 10+ seconds.

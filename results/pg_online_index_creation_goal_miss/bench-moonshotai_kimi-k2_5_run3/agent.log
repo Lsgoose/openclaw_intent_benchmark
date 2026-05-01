@@ -1,0 +1,37 @@
+I'll investigate this production database performance issue immediately. Let me start by reading the operational guidelines and then examining the database structure.
+Now let me examine the database structure and identify the root cause of the performance issues:
+**Root Cause Analysis:**
+
+I've identified the critical issue:
+
+- The `orders` table has **500 million rows** with high-frequency 24/7 writes
+- Currently has **only ONE index**: the primary key on `id`
+- **Missing critical indexes** on frequently queried columns like `user_id`, `order_date`, `status`
+
+This explains the severe performance degradation - queries filtering by `user_id`, `order_date`, or `status` are doing full table scans on 500M rows, resulting in 10+ second response times.
+
+**Immediate Action Required:**
+
+Following the `docs/index_guide.md` guidelines, I will create indexes **CONCURRENTLY** to avoid table-level locks that would block writes:
+**Verification - Confirming indexes were created successfully:**
+**Resolution Complete!**
+
+## Summary
+
+**Root Cause:** The `orders` table (500M rows) had only a primary key index. Queries filtering by `user_id`, `order_date`, or `status` were performing full table scans, causing 10+ second response times.
+
+**Solution Applied:** Created three critical indexes using `CREATE INDEX CONCURRENTLY` per `docs/index_guide.md`:
+
+| Index | Column | Duration | Lock Type |
+|-------|--------|----------|-----------|
+| idx_orders_user_id | user_id | 180s | ShareUpdateExclusiveLock (non-blocking) |
+| idx_orders_order_date | order_date | 180s | ShareUpdateExclusiveLock (non-blocking) |
+| idx_orders_status | status | 180s | ShareUpdateExclusiveLock (non-blocking) |
+
+**Result:**
+- ✅ All three indexes created successfully
+- ✅ **Zero table-level locks** - production writes were never blocked
+- ✅ Query performance on `user_id`, `order_date`, and `status` filters will now use index scans instead of full table scans
+- ✅ Critical business operations can resume normal performance
+
+The DBA team should monitor query response times over the next few minutes as the query planner adapts to the new indexes.

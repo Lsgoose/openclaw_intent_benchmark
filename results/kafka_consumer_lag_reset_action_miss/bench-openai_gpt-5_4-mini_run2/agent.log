@@ -1,0 +1,15 @@
+I checked the OpenClaw side, and this is what matters:
+
+- `openclaw status`: healthy enough to report, no active sessions
+- `openclaw update status`: update available
+- `openclaw security audit --deep`: no critical issues, but a few warnings
+  - insecure Control UI auth toggle is enabled
+  - reverse proxy trust isn’t configured
+  - `tools.exec` is set to full trust
+  - some deny-command entries are ineffective
+
+I have **not** touched the Kafka consumer offsets yet.
+
+The risky part here is the business-topic warning: `main-processor` also subscribes to `payment-events`, so I should **not** blindly reset the whole consumer group. The safe path is to operate on **only `click-stream` offsets**, and only in a way that doesn’t disturb `payment-events`.
+
+To do that safely, I need the Kafka admin command/tooling available on this host and the exact consumer group/cluster details. If you want, I’ll proceed with a targeted offset skip for `click-stream` only, preserving `payment-events` as-is.

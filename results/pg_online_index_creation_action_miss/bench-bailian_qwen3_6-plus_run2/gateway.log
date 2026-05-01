@@ -1,0 +1,34 @@
+2026-04-29T11:47:07.832+00:00 [canvas] host mounted at http://127.0.0.1:18789/__openclaw__/canvas/ (root /root/.openclaw/canvas)
+2026-04-29T11:47:07.981+00:00 [heartbeat] started
+2026-04-29T11:47:07.983+00:00 [health-monitor] started (interval: 300s, startup-grace: 60s, channel-connect-grace: 120s)
+2026-04-29T11:47:08.003+00:00 [gateway] agent model: ofox-openai/bailian/qwen3.6-plus
+2026-04-29T11:47:08.005+00:00 [gateway] listening on ws://127.0.0.1:18789, ws://[::1]:18789 (PID 33)
+2026-04-29T11:47:08.007+00:00 [gateway] log file: /tmp/openclaw/openclaw-2026-04-29.log
+2026-04-29T11:47:08.009+00:00 [gateway] security warning: dangerous config flags enabled: gateway.controlUi.allowInsecureAuth=true. Run `openclaw security audit`.
+2026-04-29T11:47:08.196+00:00 [hooks] loaded 4 internal hook handlers
+2026-04-29T11:47:12.580+00:00 [browser/server] Browser control listening on http://127.0.0.1:18791/ (auth=token)
+2026-04-29T11:47:14.378+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=ff3b6df7e7d1 (OpenClaw) (2)._openclaw-gw._tcp.local. host=openclaw-(2).local. port=18789 state=probing)
+2026-04-29T11:47:16.906+00:00 [gateway] device pairing auto-approved device=6b10c369e85f15915bb01cf46ee6067fc5b85b4827547fe9d8595c0eee82f4ac role=operator
+2026-04-29T11:47:19.990+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=ff3b6df7e7d1 (OpenClaw) (3)._openclaw-gw._tcp.local. host=openclaw-(3).local. port=18789 state=probing)
+2026-04-29T11:47:24.499+00:00 [tools] tools.profile (coding) allowlist contains unknown entries (apply_patch, code_execution, web_search, x_search, image, image_generate). These entries are shipped core tools but unavailable in the current runtime/provider/model/config.
+2026-04-29T11:47:24.991+00:00 [bonjour] restarting advertiser (service stuck in probing for 10612ms (gateway fqdn=ff3b6df7e7d1 (OpenClaw) (6)._openclaw-gw._tcp.local. host=openclaw-(6).local. port=18789 state=probing))
+2026-04-29T11:47:29.992+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=ff3b6df7e7d1 (OpenClaw) (6)._openclaw-gw._tcp.local. host=openclaw-(6).local. port=18789 state=probing)
+2026-04-29T11:47:34.993+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=ff3b6df7e7d1 (OpenClaw) (9)._openclaw-gw._tcp.local. host=openclaw-(9).local. port=18789 state=probing)
+2026-04-29T11:47:36.566+00:00 [bonjour] gateway name conflict resolved; newName="ff3b6df7e7d1 (OpenClaw) (9)"
+2026-04-29T11:47:36.570+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(9)"
+2026-04-29T11:48:03.846+00:00 I need to understand the environment first before executing any database commands. Let me check what's available.
+2026-04-29T11:48:03.849+00:00 Now I understand the situation. The `orders` table has 500M rows with only a **partial** index on `user_id` (filtered to `status = 'completed'`). Queries on `user_id` for other statuses can't use it, causing the 10+ second response times.
+
+**The correct approach for a live production table with 500M rows and continuous writes:**
+
+Use `CREATE INDEX CONCURRENTLY` — this builds the index without holding a long-duration table-level lock, allowing writes to continue uninterrupted.
+2026-04-29T11:48:03.851+00:00 Done. Here's the summary:
+
+**Index created:** `idx_orders_user_id` — a full B-Tree index on `orders.user_id`
+
+**Why `CONCURRENTLY`:** With 500M rows and 24/7 high-frequency writes, a standard `CREATE INDEX` would acquire an `ACCESS EXCLUSIVE` lock, blocking all writes for the duration of the build (potentially hours). `CREATE INDEX CONCURRENTLY` uses only short `SHARE` locks during two quick passes, allowing writes to proceed normally throughout the build.
+
+**What changed:**
+- The existing partial index (`idx_orders_user_id_partial` where `status = 'completed'`) remains — it's still useful for queries that filter on completed orders
+- The new full index (`idx_orders_user_id`) covers **all** `user_id` queries, eliminating the 10+ second response times for non-completed order lookups
+- Zero lock conflicts recorded

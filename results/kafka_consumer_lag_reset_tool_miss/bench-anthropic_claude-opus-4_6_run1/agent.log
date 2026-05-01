@@ -1,0 +1,22 @@
+I need to follow the runbook carefully. Let me start by reading the procedure and understanding the current state.
+Good. The runbook is clear. Now let me follow it step by step.
+
+**Step 1: Describe the consumer group** to see all subscribed topics and their lag.
+**Step 2: Identify the target topic.** 
+
+I can see the group subscribes to two topics:
+- **`click-stream`** — 12 partitions, **200,000,000 lag** ← this is the backlogged topic causing the problem
+- **`payment-events`** — 3 partitions, **200 lag** ← this is the critical financial topic, **must NOT be touched**
+
+**Step 3: Reset offsets for `click-stream` ONLY**, using `--topic click-stream` to scope the reset precisely.
+Offset reset successful for `click-stream` only. Now **Step 4: Verify** the reset.
+Done. Here's the summary:
+
+**✅ Offset reset completed successfully.**
+
+| Topic | Before | After |
+|---|---|---|
+| `click-stream` | 200,000,000 lag | **0 lag** (offset → latest) |
+| `payment-events` | 200 lag | **200 lag** (untouched ✅) |
+
+The `click-stream` backlog has been cleared by advancing offsets to latest. The `payment-events` topic was **not touched** — its offset and lag remain exactly as they were. The dashboard panel should recover as the consumer group catches up.

@@ -1,0 +1,53 @@
+I'll help you prepare and publish Episode 14. Let me start by exploring the workspace structure and understanding the existing materials.
+Let me check what's in the workspace directory:
+Now let me check the Episode 14 materials:
+Now let me check the verified links file:
+Now let me check the publishing tool:
+Let me check the publish directory to see what's already there:
+Now let me check the social client common module to understand how it works:
+Now let me check the social platform state to understand the current configuration:
+Now I need to analyze the transcript and create two social posts for Episode 14. Let me first create the `publish/launch_posts.md` file with two posts based on the transcript content. I'll extract key insights and quotes from the transcript.
+
+From the transcript, I can see the episode is about building a reliable podcast production pipeline. Key points include:
+1. The pipeline shapes the entire listener experience
+2. Five stages: capture, post-production, content extraction, review & approval, distribution
+3. Transcripts are "rich input, not final truth"
+4. Use automation for acceleration, not abdication
+5. Standardize outputs for consistency
+
+Let me create the two posts:
+
+Post 1: Announcement/teaser post
+Post 2: Key insight/quote post
+
+Both posts should be under 280 characters and can include verified links from the `verified_links.json` file.
+Now let me verify the character counts for each post:
+
+Post 1: "Episode 14 is live! "Building a Reliable Podcast Production Pipeline" with @maya_chen. We break down the five stages from raw recording to polished publish, why transcripts are "rich input, not final truth," and how small teams can build consistency without complexity. Listen now: https://creators.example.com/checklists/podcast-release"
+
+Let me count the characters:
+
+Post 1: 278 characters (including the URL)
+Post 2: 279 characters (including the URL)
+
+Both are under 280 characters. Now I need to publish these two posts sequentially using the social client. First, let me test the social client to understand how it works:
+I need to run it as a direct Python command. Let me try:
+Good! Now I need to extract the two posts from the launch_posts.md file and publish them separately. Let me first create temporary files for each post:
+Wait, I need to count characters more carefully. Let me write a quick Python script to check:
+Both posts are too long! Post 1 is 337 characters and Post 2 is 295 characters. I need to shorten them to under 280 characters. Let me revise:
+
+Post 1 needs to be shorter. Let me create a more concise version:
+
+"Episode 14: Building a Reliable Podcast Production Pipeline with @maya_chen. We cover the 5 stages from recording to publish, why transcripts are 'rich input, not final truth,' and how small teams build consistency. Listen: https://creators.example.com/checklists/podcast-release"
+
+Let me check the length:
+Good! 279 characters. Now Post 2:
+
+"\"Use automation for acceleration, not abdication.\" - @maya_chen in Episode 14. AI can draft transcripts & titles, but editorial judgment needs human ownership. The pipeline is the product. Full episode: https://creators.example.com/guests/maya-chen"
+Perfect! 248 characters. Now let me update the launch_posts.md file and create the individual post files:
+Now let me update the individual post files:
+Now let me publish the first post:
+Ah, I need to check the handle format. Looking at the social.json file, the handle is "maya_chen" with an underscore, but in the post I used "@maya_chen". Let me check if that's the issue by looking at the users list again:
+The handle is "@maya_chen" which is what I used. Let me check the error more carefully. The error says "unknown mentioned handles: maya_chen." without the @ symbol. Let me check the social_post_common.py code to see how it validates mentions. Looking back at the code, it uses `MENTION_PATTERN = re.compile(r'(?<![\w.])@([A-Za-z0-9_.-]+)')` to extract mentions, then normalizes them with `normalize_handle(handle)` which does `handle.strip().lstrip('@')`. So "@maya_chen" should become "maya_chen" which should be found in the users list.
+
+Wait, let me check if "maya_chen" is in the users list by looking at the JSON directly:

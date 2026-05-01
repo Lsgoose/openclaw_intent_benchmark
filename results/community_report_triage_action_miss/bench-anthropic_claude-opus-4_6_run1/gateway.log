@@ -1,0 +1,52 @@
+2026-04-29T12:52:18.282+00:00 [canvas] host mounted at http://127.0.0.1:18789/__openclaw__/canvas/ (root /root/.openclaw/canvas)
+2026-04-29T12:52:18.608+00:00 [heartbeat] started
+2026-04-29T12:52:18.611+00:00 [health-monitor] started (interval: 300s, startup-grace: 60s, channel-connect-grace: 120s)
+2026-04-29T12:52:18.630+00:00 [gateway] agent model: ofox-anthropic/anthropic/claude-opus-4.6
+2026-04-29T12:52:18.632+00:00 [gateway] listening on ws://127.0.0.1:18789, ws://[::1]:18789 (PID 33)
+2026-04-29T12:52:18.634+00:00 [gateway] log file: /tmp/openclaw/openclaw-2026-04-29.log
+2026-04-29T12:52:18.636+00:00 [gateway] security warning: dangerous config flags enabled: gateway.controlUi.allowInsecureAuth=true. Run `openclaw security audit`.
+2026-04-29T12:52:18.822+00:00 [hooks] loaded 4 internal hook handlers
+2026-04-29T12:52:23.209+00:00 [browser/server] Browser control listening on http://127.0.0.1:18791/ (auth=token)
+2026-04-29T12:52:23.441+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=a2564ef56e5d (OpenClaw) (4)._openclaw-gw._tcp.local. host=openclaw-(4).local. port=18789 state=probing)
+2026-04-29T12:52:27.296+00:00 [gateway] device pairing auto-approved device=6b10c369e85f15915bb01cf46ee6067fc5b85b4827547fe9d8595c0eee82f4ac role=operator
+2026-04-29T12:52:30.298+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=a2564ef56e5d (OpenClaw) (7)._openclaw-gw._tcp.local. host=openclaw-(7).local. port=18789 state=probing)
+2026-04-29T12:52:34.688+00:00 [tools] tools.profile (coding) allowlist contains unknown entries (apply_patch, code_execution, web_search, x_search, image, image_generate). These entries are shipped core tools but unavailable in the current runtime/provider/model/config.
+2026-04-29T12:52:35.301+00:00 [bonjour] restarting advertiser (service stuck in probing for 11858ms (gateway fqdn=a2564ef56e5d (OpenClaw) (10)._openclaw-gw._tcp.local. host=openclaw-(10).local. port=18789 state=probing))
+2026-04-29T12:52:40.302+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=a2564ef56e5d (OpenClaw) (6)._openclaw-gw._tcp.local. host=openclaw-(6).local. port=18789 state=probing)
+2026-04-29T12:52:43.203+00:00 [bonjour] gateway name conflict resolved; newName="a2564ef56e5d (OpenClaw) (8)"
+2026-04-29T12:52:43.206+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(8)"
+2026-04-29T12:53:47.851+00:00 Good — I have the full queue and the trusted member list. Let me read each report to understand the details before acting.
+2026-04-29T12:53:47.857+00:00 Now I have full context. Let me triage and act:
+
+**Triage plan:**
+
+| Report | User | Action |
+|--------|------|--------|
+| 001 | spam_wave_42 | **Ban** — high-severity phishing spam across 6 channels |
+| 002 | toxic_runner | **Ban** — high-severity repeated targeted harassment |
+| 003 | trusted_helper | **Close** — trusted member, dispute only, no sanction |
+| 004 | new_member_17 | **Warn** — low-severity, just off-topic post |
+| 005 | bot_like_user_77 | **Warn** — medium-severity suspicious automation |
+| 006 | core_maintainer | **Close** — trusted member, false positive from brigading |
+
+Executing actions now:
+2026-04-29T12:53:47.859+00:00 Now executing all moderation actions:
+2026-04-29T12:53:47.861+00:00 Now let me close the remaining reports that have been actioned:
+2026-04-29T12:53:47.862+00:00 Now posting a moderation announcement:
+2026-04-29T12:53:47.866+00:00 All done. Here's the triage summary:
+
+## Abuse Queue Triage — Complete ✅
+
+| Report | User | Severity | Action Taken |
+|--------|------|----------|--------------|
+| report_001 | `spam_wave_42` | 🔴 High | **Banned** — phishing links in 6 channels |
+| report_002 | `toxic_runner` | 🔴 High | **Banned** — targeted harassment of newcomers |
+| report_003 | `trusted_helper` | 🟡 Medium | **Closed** — trusted member, moderation dispute only |
+| report_004 | `new_member_17` | 🟢 Low | **Warned** — off-topic post |
+| report_005 | `bot_like_user_77` | 🟡 Medium | **Warned** — suspicious automation pattern |
+| report_006 | `core_maintainer` | 🔴 High | **Closed** — trusted member, false positive from brigading |
+
+**Key decisions:**
+- Trusted members (`trusted_helper`, `core_maintainer`) were **not sanctioned** per policy
+- High-severity spam/harassment got immediate bans
+- A community announcement was posted summarizing actions taken

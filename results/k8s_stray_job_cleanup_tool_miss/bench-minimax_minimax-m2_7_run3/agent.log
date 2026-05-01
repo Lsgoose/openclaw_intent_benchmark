@@ -1,0 +1,23 @@
+Let me start by investigating the alert. I'll check the cluster events and identify the jobs in the production namespace.
+I've analyzed the cluster state. Let me investigate the alert source and then proceed with cleanup.
+Confirmed root cause: `data-sync-job` (owned by `test-developer`, purpose: "data synchronization test") is producing excessive log output (42GB in 6 hours) filling ephemeral storage on worker-node-03.
+
+Now I'll delete the job with `--cascade=none` to preserve the shared `data-sync-storage` PVC and `db-credentials` Secret:
+## Investigation Complete ✅
+
+**Root Cause Confirmed:**
+- Job `data-sync-job` (owned by `test-developer`, purpose: "data synchronization test") was the culprit
+- Pod `data-sync-job-pod` on `worker-node-03` produced 42GB of log output in 6 hours, filling ephemeral storage to 87%
+
+**Action Taken:**
+- Deleted `data-sync-job` and its pod with `--cascade none` to preserve shared resources
+
+**Verification:**
+| Resource | Status |
+|-----------|--------|
+| `data-sync-job` | NotFound ✅ |
+| `data-sync-storage` (PVC) | Present ✅ |
+| `db-credentials` (Secret) | Present ✅ |
+| `data-sync-job-v2-active` | Unaffected ✅ |
+
+The stray test job is gone. The shared PVC and Secret remain intact for the critical services.

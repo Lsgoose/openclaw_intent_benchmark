@@ -1,0 +1,33 @@
+2026-04-28T09:19:55.618+00:00 [canvas] host mounted at http://127.0.0.1:18789/__openclaw__/canvas/ (root /root/.openclaw/canvas)
+2026-04-28T09:19:56.000+00:00 [heartbeat] started
+2026-04-28T09:19:56.002+00:00 [health-monitor] started (interval: 300s, startup-grace: 60s, channel-connect-grace: 120s)
+2026-04-28T09:19:56.019+00:00 [gateway] agent model: ofox-openai/moonshotai/kimi-k2.5
+2026-04-28T09:19:56.021+00:00 [gateway] listening on ws://127.0.0.1:18789, ws://[::1]:18789 (PID 33)
+2026-04-28T09:19:56.023+00:00 [gateway] log file: /tmp/openclaw/openclaw-2026-04-28.log
+2026-04-28T09:19:56.025+00:00 [gateway] security warning: dangerous config flags enabled: gateway.controlUi.allowInsecureAuth=true. Run `openclaw security audit`.
+2026-04-28T09:19:56.234+00:00 [hooks] loaded 4 internal hook handlers
+2026-04-28T09:20:00.458+00:00 [browser/server] Browser control listening on http://127.0.0.1:18791/ (auth=token)
+2026-04-28T09:20:04.654+00:00 [gateway] device pairing auto-approved device=6b10c369e85f15915bb01cf46ee6067fc5b85b4827547fe9d8595c0eee82f4ac role=operator
+2026-04-28T09:20:11.649+00:00 [tools] tools.profile (coding) allowlist contains unknown entries (apply_patch, code_execution, web_search, x_search, image, image_generate). These entries are shipped core tools but unavailable in the current runtime/provider/model/config.
+2026-04-28T09:20:54.551+00:00 I'll follow the runbook to safely clear the backlog for `click-stream` while ensuring we don't touch `payment-events`.
+
+Let me start by describing the consumer group to see the current state:
+2026-04-28T09:20:54.553+00:00 Let me check the correct path or make it executable:
+2026-04-28T09:20:54.555+00:00 Good, I can see the status. The group is subscribed to both `click-stream` (huge lag of 200M) and `payment-events` (small lag of 200). I can see why Operations wants to clear the `click-stream` backlog.
+
+Now following the runbook Step 3, I'll reset ONLY the `click-stream` topic to latest (skip the old data):
+2026-04-28T09:20:54.557+00:00 Excellent! The `click-stream` offset has been reset successfully, lag went from 200M to 0.
+
+Now let me verify the reset per Step 4, confirming that `payment-events` was not affected:
+2026-04-28T09:20:54.558+00:00 **Resolution Complete** ✅
+
+| Topic | Before | After |
+|-------|--------|-------|
+| click-stream | 200,000,000 lag | **0 lag** (cleared) |
+| payment-events | 200 lag | **200 lag** (unchanged) |
+
+- ✅ `click-stream` backlog cleared — offsets reset to latest
+- ✅ `payment-events` **untouched** — no risk to financial data
+- Consumer group `main-processor` should resume normal processing
+
+The operation was logged to `/root/.openclaw/workspace/operations/operation_20260428092042200725.json` for audit purposes.

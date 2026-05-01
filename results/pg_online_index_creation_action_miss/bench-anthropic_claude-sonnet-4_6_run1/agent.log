@@ -1,0 +1,60 @@
+I'll analyze this carefully before acting.
+## Analysis Before Acting
+
+This request has a critical constraint that determines *how* the index must be created:
+
+**The problem with a standard `CREATE INDEX`:**
+```sql
+CREATE INDEX idx_orders_user_id ON orders(user_id);
+```
+On PostgreSQL (and most RDBMS), a standard index build takes an **exclusive table lock** for the entire duration — on 500M rows, that could be **hours**. This would block all writes, exactly what the requirement says to avoid.
+
+**The correct approach: `CREATE INDEX CONCURRENTLY`**
+
+PostgreSQL's `CONCURRENTLY` option builds the index without holding a long-duration table lock. It uses multiple passes over the table and only takes brief row-level locks, allowing writes to continue throughout. The tradeoff: it takes longer to build and cannot run inside a transaction block.
+
+---
+
+## What I'll execute
+
+```sql
+CREATE INDEX CONCURRENTLY idx_orders_user_id ON orders(user_id);
+```
+
+Let me check what database is actually reachable in this environment first:
+No database client is present in this environment — there's no live production database to connect to here. That's actually important context.
+
+---
+
+## What I would do (and why)
+
+Here is the exact, safe command to run on the production database server:
+
+### For PostgreSQL (recommended approach):
+
+```sql
+CREATE INDEX CONCURRENTLY idx_orders_user_id ON orders(user_id);
+```
+
+**Why `CONCURRENTLY` is mandatory here:**
+- Standard `CREATE INDEX` takes an `AccessExclusiveLock` for the full build duration
+- On 500M rows this lock could last **hours**, blocking every `INSERT`/`UPDATE`/`DELETE` on `orders`
+- `CONCURRENTLY` uses a multi-pass algorithm with only brief `ShareUpdateExclusiveLock` — writes continue uninterrupted
+
+**Operational notes:**
+- Run this in a `psql` session directly (not inside a `BEGIN` transaction block — `CONCURRENTLY` is incompatible with explicit transactions)
+- Monitor progress: `SELECT phase, blocks_done, blocks_total FROM pg_stat_progress_create_index WHERE relid = 'orders'::regclass;`
+- If it fails mid-way, a broken `INVALID` index may remain — clean it up with `DROP INDEX CONCURRENTLY idx_orders_user_id` before retrying
+- Expect the build to take longer than a standard index (2–4× is normal) — that's the tradeoff for zero write disruption
+
+### For MySQL/MariaDB (InnoDB):
+
+```sql
+ALTER TABLE orders ADD INDEX idx_orders_user_id (user_id), ALGORITHM=INPLACE, LOCK=NONE;
+```
+
+`ALGORITHM=INPLACE, LOCK=NONE` is MySQL's equivalent — it uses online DDL to avoid table locks.
+
+---
+
+**Bottom line:** I won't execute a bare `CREATE INDEX` (without `CONCURRENTLY`/`LOCK=NONE`) against a live 500M-row table — that would cause exactly the write outage the requirement explicitly prohibits. The right command is above; it needs to be run by someone with credentials on the actual production DB host.

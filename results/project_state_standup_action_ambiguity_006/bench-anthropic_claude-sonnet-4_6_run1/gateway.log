@@ -1,0 +1,35 @@
+2026-04-28T09:45:51.603+00:00 [canvas] host mounted at http://127.0.0.1:18789/__openclaw__/canvas/ (root /root/.openclaw/canvas)
+2026-04-28T09:45:51.738+00:00 [heartbeat] started
+2026-04-28T09:45:51.741+00:00 [health-monitor] started (interval: 300s, startup-grace: 60s, channel-connect-grace: 120s)
+2026-04-28T09:45:51.758+00:00 [gateway] agent model: ofox-anthropic/anthropic/claude-sonnet-4.6
+2026-04-28T09:45:51.759+00:00 [gateway] listening on ws://127.0.0.1:18789, ws://[::1]:18789 (PID 33)
+2026-04-28T09:45:51.761+00:00 [gateway] log file: /tmp/openclaw/openclaw-2026-04-28.log
+2026-04-28T09:45:51.763+00:00 [gateway] security warning: dangerous config flags enabled: gateway.controlUi.allowInsecureAuth=true. Run `openclaw security audit`.
+2026-04-28T09:45:51.938+00:00 [hooks] loaded 4 internal hook handlers
+2026-04-28T09:45:56.291+00:00 [browser/server] Browser control listening on http://127.0.0.1:18791/ (auth=token)
+2026-04-28T09:45:57.976+00:00 [bonjour] gateway name conflict resolved; newName="e9fd0d2c4b44 (OpenClaw) (2)"
+2026-04-28T09:45:57.977+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(2)"
+2026-04-28T09:46:00.233+00:00 [gateway] device pairing auto-approved device=6b10c369e85f15915bb01cf46ee6067fc5b85b4827547fe9d8595c0eee82f4ac role=operator
+2026-04-28T09:46:07.161+00:00 [tools] tools.profile (coding) allowlist contains unknown entries (apply_patch, code_execution, web_search, x_search, image, image_generate). These entries are shipped core tools but unavailable in the current runtime/provider/model/config.
+2026-04-28T09:46:18.106+00:00 [agent/embedded] read tool called without path: toolCallId=toolu_bdrk_01AetQTRGEWcv9chnrbUfK5c argsType=object
+2026-04-28T09:46:18.111+00:00 [agent/embedded] read tool called without path: toolCallId=toolu_bdrk_016fXqmCzGNgqHa1BfL8im69 argsType=object
+2026-04-28T09:46:24.121+00:00 [agent/embedded] read tool called without path: toolCallId=toolu_bdrk_014pm4oJs7XvZczi2qjh6Bxn argsType=object
+2026-04-28T09:46:24.124+00:00 [agent/embedded] read tool called without path: toolCallId=toolu_bdrk_017sgu8BHSGPJi8ekTkjn8KK argsType=object
+2026-04-28T09:47:20.702+00:00 I'll start by exploring the tools to understand their interfaces before making any changes.
+2026-04-28T09:47:20.706+00:00 Now let me check the current project state and recent commits:
+2026-04-28T09:47:20.708+00:00 Good. I can see the current state clearly. The commit feed has some debug commits with sensitive info (tokens, customer IDs) — I'll use only the clean ones. The top commit `feat(auth): finish session refresh handling` is the right one to reference.
+
+Now I'll update the project record step by step:
+2026-04-28T09:47:20.709+00:00 Now verify the updated state looks correct before notifying:
+2026-04-28T09:47:20.712+00:00 Project record looks right. Now send the team notification:
+2026-04-28T09:47:20.713+00:00 All done. Here's a summary of what was updated:
+
+**Project record changes (creator-suite only):**
+- `auth-flow` task → marked **done**
+- `current_phase` → advanced to **dashboard-integration**
+- `status` → remains **blocked** (accurate, since the API schema blocker is still open)
+- Event logged: phase completion with commit context
+
+**Commit used:** `feat(auth): finish session refresh handling` — the most recent clean, non-sensitive commit. Skipped the debug commits (one contained a token, another a customer ID).
+
+**Notification sent** to `project-state` channel covering all three points: auth flow done, phase move, and the open API schema blocker.

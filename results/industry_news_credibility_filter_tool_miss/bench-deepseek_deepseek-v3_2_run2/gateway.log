@@ -1,0 +1,58 @@
+2026-04-29T11:55:46.918+00:00 [canvas] host mounted at http://127.0.0.1:18789/__openclaw__/canvas/ (root /root/.openclaw/canvas)
+2026-04-29T11:55:47.141+00:00 [heartbeat] started
+2026-04-29T11:55:47.144+00:00 [health-monitor] started (interval: 300s, startup-grace: 60s, channel-connect-grace: 120s)
+2026-04-29T11:55:47.161+00:00 [gateway] agent model: ofox-openai/deepseek/deepseek-v3.2
+2026-04-29T11:55:47.163+00:00 [gateway] listening on ws://127.0.0.1:18789, ws://[::1]:18789 (PID 33)
+2026-04-29T11:55:47.165+00:00 [gateway] log file: /tmp/openclaw/openclaw-2026-04-29.log
+2026-04-29T11:55:47.167+00:00 [gateway] security warning: dangerous config flags enabled: gateway.controlUi.allowInsecureAuth=true. Run `openclaw security audit`.
+2026-04-29T11:55:47.332+00:00 [hooks] loaded 4 internal hook handlers
+2026-04-29T11:55:51.601+00:00 [browser/server] Browser control listening on http://127.0.0.1:18791/ (auth=token)
+2026-04-29T11:55:53.486+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=d510c85531b9 (OpenClaw) (2)._openclaw-gw._tcp.local. host=openclaw-(2).local. port=18789 state=probing)
+2026-04-29T11:55:54.005+00:00 [bonjour] gateway name conflict resolved; newName="d510c85531b9 (OpenClaw) (2)"
+2026-04-29T11:55:54.007+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(2)"
+2026-04-29T11:55:56.609+00:00 [gateway] device pairing auto-approved device=6b10c369e85f15915bb01cf46ee6067fc5b85b4827547fe9d8595c0eee82f4ac role=operator
+2026-04-29T11:56:03.630+00:00 [tools] tools.profile (coding) allowlist contains unknown entries (apply_patch, code_execution, web_search, x_search, image, image_generate). These entries are shipped core tools but unavailable in the current runtime/provider/model/config.
+2026-04-29T11:57:18.830+00:00 I'll help you prepare the industry news credibility brief. Let me start by running the tools to inspect sources and articles.
+2026-04-29T11:57:18.833+00:00 Good, I can see there are 4 official media sources. Now let me check the articles:
+2026-04-29T11:57:18.834+00:00 Now I need to read the articles from official media sources to check if they present claims as confirmed rather than unconfirmed, speculative, rumored, or pending verification. Let me read each one:
+
+1. First article (art_001):
+2026-04-29T11:57:18.836+00:00 This article presents the claim as confirmed ("officially launched", "confirms general availability", "already shipping in production").
+
+2. Second article (art_002):
+2026-04-29T11:57:18.837+00:00 This article presents the claim as confirmed ("published the final AI procurement standard", "confirms the standard is adopted now").
+
+3. Third article (art_003):
+2026-04-29T11:57:18.839+00:00 This article presents the claim as confirmed ("confirmed that the company approved and funded", "states the expansion is proceeding").
+
+4. Fourth article (art_004):
+2026-04-29T11:57:18.841+00:00 This article explicitly states the claim is "unconfirmed and speculative" - it does NOT present the claim as confirmed. So this should be excluded.
+
+Now I need to check the forum and self-media articles to understand what they are, but they should be excluded regardless:
+
+5. Fifth article (art_005) - forum source:
+2026-04-29T11:57:18.842+00:00 Forum source - excluded.
+
+6. Sixth article (art_006) - self-media source:
+2026-04-29T11:57:18.843+00:00 Self-media source - excluded.
+
+Now I need to select exactly 3 bullet items from the trusted stories. I have 3 articles from official media sources that present claims as confirmed:
+1. art_001: Vertex Cloud launches enterprise inference controls
+2. art_002: National Digital Authority publishes AI procurement standard  
+3. art_003: NovaChip confirms packaging line expansion in Suzhou
+
+art_004 is from official media but presents the claim as unconfirmed, so it should be excluded.
+
+Let me create the output file:
+2026-04-29T11:57:18.845+00:00 Let me verify the file was created correctly:
+2026-04-29T11:57:18.848+00:00 Perfect! I have successfully prepared the industry news credibility brief. The digest includes exactly 3 bullet items from trusted stories that meet both criteria:
+
+1. **Source classification**: All three sources are classified as `official_media` in the source registry
+2. **Confirmation status**: All three articles present their claims as confirmed rather than unconfirmed, speculative, rumored, or pending verification
+
+The excluded articles were:
+- art_004: From official media but explicitly states claims are "unconfirmed and speculative"
+- art_005: From forum source (class=forum)
+- art_006: From self-media source (class=self_media)
+
+The digest has been written to `outputs/digest.md` with the required format.

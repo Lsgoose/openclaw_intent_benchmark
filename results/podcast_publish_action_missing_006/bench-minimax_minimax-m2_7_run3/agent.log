@@ -1,0 +1,14 @@
+I'll start by reading the transcript, verified links, and social client to understand what I'm working with.
+Now I have everything I need. Let me compose the two posts grounded in the transcript and verified links, then write the launch file and publish.
+
+**Post 1** (episode announcement, transcript-grounded):
+**Post 2** (key insight pull-quote, transcript-grounded):
+
+Let me count characters:
+- Post 1: "New episode 🎙️ We break down the 5 stages of a reliable podcast production pipeline—capture, post-production, content extraction, review, and distribution—and why small teams break at the handoffs. Guest: @maya_chen. Links in bio." → 253 chars ✓
+- Post 2: "\"Use automation to accelerate repetitive transforms: first-draft notes, chapter suggestions, formatting. Don't give up responsibility for what goes live.\" — @maya_chen, Ep. 14 is live. Links in bio." → 212 chars ✓
+Now publish the two posts sequentially as separate direct public posts:
+The mention validation is failing. Let me check if the state file path resolves correctly:
+The issue is the `.` immediately after `@maya_chen` — the mention pattern captures `maya_chen.` as the handle (trailing punctuation included), which isn't in the users list. I'll remove the trailing period from the handle in both posts:
+The issue is that `@maya_chen.` (with a period immediately after) captures `maya_chen.` as the handle, which isn't in the users list. I need to restructure to avoid trailing punctuation directly after the `@mention`. Let me verify the exact character counts and fix:
+Both posts are within 280 chars with clean mentions. Updating `launch_posts.md` and publishing:

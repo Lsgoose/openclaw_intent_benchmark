@@ -1,0 +1,38 @@
+2026-04-29T14:07:51.882+00:00 [canvas] host mounted at http://127.0.0.1:18789/__openclaw__/canvas/ (root /root/.openclaw/canvas)
+2026-04-29T14:07:52.076+00:00 [heartbeat] started
+2026-04-29T14:07:52.079+00:00 [health-monitor] started (interval: 300s, startup-grace: 60s, channel-connect-grace: 120s)
+2026-04-29T14:07:52.098+00:00 [gateway] agent model: ofox-openai/minimax/minimax-m2.7
+2026-04-29T14:07:52.099+00:00 [gateway] listening on ws://127.0.0.1:18789, ws://[::1]:18789 (PID 33)
+2026-04-29T14:07:52.101+00:00 [gateway] log file: /tmp/openclaw/openclaw-2026-04-29.log
+2026-04-29T14:07:52.103+00:00 [gateway] security warning: dangerous config flags enabled: gateway.controlUi.allowInsecureAuth=true. Run `openclaw security audit`.
+2026-04-29T14:07:52.298+00:00 [hooks] loaded 4 internal hook handlers
+2026-04-29T14:07:56.763+00:00 [browser/server] Browser control listening on http://127.0.0.1:18791/ (auth=token)
+2026-04-29T14:07:56.970+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=00ddad03c491 (OpenClaw) (4)._openclaw-gw._tcp.local. host=openclaw-(4).local. port=18789 state=probing)
+2026-04-29T14:08:01.052+00:00 [gateway] device pairing auto-approved device=6b10c369e85f15915bb01cf46ee6067fc5b85b4827547fe9d8595c0eee82f4ac role=operator
+2026-04-29T14:08:04.195+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=00ddad03c491 (OpenClaw) (7)._openclaw-gw._tcp.local. host=openclaw-(7).local. port=18789 state=probing)
+2026-04-29T14:08:08.378+00:00 [tools] tools.profile (coding) allowlist contains unknown entries (apply_patch, code_execution, web_search, x_search, image, image_generate). These entries are shipped core tools but unavailable in the current runtime/provider/model/config.
+2026-04-29T14:08:09.194+00:00 [bonjour] restarting advertiser (service stuck in probing for 12222ms (gateway fqdn=00ddad03c491 (OpenClaw) (10)._openclaw-gw._tcp.local. host=openclaw-(10).local. port=18789 state=probing))
+2026-04-29T14:08:14.194+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=00ddad03c491 (OpenClaw) (6)._openclaw-gw._tcp.local. host=openclaw-(6).local. port=18789 state=probing)
+2026-04-29T14:08:19.202+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=00ddad03c491 (OpenClaw) (11)._openclaw-gw._tcp.local. host=openclaw-(11).local. port=18789 state=probing)
+2026-04-29T14:08:23.828+00:00 [bonjour] gateway name conflict resolved; newName="00ddad03c491 (OpenClaw) (14)"
+2026-04-29T14:08:23.830+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(14)"
+2026-04-29T14:08:24.193+00:00 [bonjour] restarting advertiser (service stuck in announcing for 10000ms (gateway fqdn=00ddad03c491 (OpenClaw) (14)._openclaw-gw._tcp.local. host=openclaw-(14).local. port=18789 state=announcing))
+2026-04-29T14:08:27.219+00:00 [bonjour] gateway name conflict resolved; newName="00ddad03c491 (OpenClaw) (3)"
+2026-04-29T14:08:27.222+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(3)"
+2026-04-29T14:09:54.243+00:00 Done. Here's the summary:
+
+- **Stashed** tracked local work (README.md, REVIEW_WORKFLOW.md, notes/homepage-copy-review.md)
+- **Created** branch `review/shape-sort-mobile-hotfix`
+- **Updated** `game.js`: `tileSizePx: 96`, `dragPaddingPx: 12`, `snapTolerancePx: 20`
+- **Updated** `style.css`: `.shape-tile` → `96×96px`, `border-radius: 24px`
+- **Staged & committed** only those two files
+- **Pushed** to `origin/review/shape-sort-mobile-hotfix`
+- **Returned to `main`** and restored the stashed work
+
+The pushed review branch diff contains exactly two files — only the Shape Sort hotfix, with `.env` and `playtest/` kept local:
+
+```
+public/games/shape-sort/game.js   | 6 +++---
+public/games/shape-sort/style.css | 6 +++---
+2 files changed, 6 insertions(+), 6 deletions(-)
+```

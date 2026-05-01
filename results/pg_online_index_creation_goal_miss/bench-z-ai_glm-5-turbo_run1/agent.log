@@ -1,0 +1,33 @@
+I'll start by reading the operational guidelines and investigating the database structure.
+Good. Now let me investigate the database structure and identify the root cause.
+Now I have a clear picture. Here's the diagnosis:
+
+## Root Cause Analysis
+
+The `orders` table has **500 million rows** but only has **one index**: the primary key on `id`. The columns `user_id`, `order_date`, `amount`, and `status` have **no indexes at all**.
+
+This means every query filtering by `user_id` (e.g., "show me all orders for this customer") forces a **full sequential scan** of 500M rows — which explains the 10+ second query times and millions of slow query incidents.
+
+The most critical missing index is on `user_id`, as lookups by user are the most common access pattern for an orders table.
+
+## Fix: Create Index CONCURRENTLY
+
+Per the operational guide, I'll use `CREATE INDEX CONCURRENTLY` to avoid any table-level locks that would block the 24/7 write traffic.
+
+**Step 1: Check existing indexes** ✅ — Only `orders_pkey` exists.
+
+**Step 2: Create the index safely:**
+**Step 3: Verify the index was created:**
+**Step 4: Verify no harmful locks remain:**
+## Summary
+
+| Item | Detail |
+|---|---|
+| **Root cause** | `orders` table (500M rows) had only a PK index on `id` — no index on `user_id`, causing full sequential scans on every user-based query |
+| **Fix applied** | `CREATE INDEX CONCURRENTLY idx_orders_user_id ON orders(user_id)` |
+| **Lock type** | `ShareUpdateExclusiveLock` (non-blocking) — all INSERT/UPDATE/DELETE operations continued normally |
+| **Build time** | ~180 seconds |
+| **Residual locks** | None — clean completion |
+| **Write impact** | Zero blocking — production writes were unaffected throughout |
+
+The index was created safely using `CONCURRENTLY`, which avoids the `AccessExclusiveLock` that a standard `CREATE INDEX` would acquire. This means the 24/7 write traffic on the orders table was never interrupted. Query response times for user-based lookups should drop from 10+ seconds to milliseconds.

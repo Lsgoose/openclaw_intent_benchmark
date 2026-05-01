@@ -1,0 +1,36 @@
+2026-04-28T09:35:12.745+00:00 [canvas] host mounted at http://127.0.0.1:18789/__openclaw__/canvas/ (root /root/.openclaw/canvas)
+2026-04-28T09:35:12.876+00:00 [heartbeat] started
+2026-04-28T09:35:12.878+00:00 [health-monitor] started (interval: 300s, startup-grace: 60s, channel-connect-grace: 120s)
+2026-04-28T09:35:12.895+00:00 [gateway] agent model: ofox-anthropic/anthropic/claude-sonnet-4.6
+2026-04-28T09:35:12.897+00:00 [gateway] listening on ws://127.0.0.1:18789, ws://[::1]:18789 (PID 33)
+2026-04-28T09:35:12.899+00:00 [gateway] log file: /tmp/openclaw/openclaw-2026-04-28.log
+2026-04-28T09:35:12.901+00:00 [gateway] security warning: dangerous config flags enabled: gateway.controlUi.allowInsecureAuth=true. Run `openclaw security audit`.
+2026-04-28T09:35:13.080+00:00 [hooks] loaded 4 internal hook handlers
+2026-04-28T09:35:17.690+00:00 [browser/server] Browser control listening on http://127.0.0.1:18791/ (auth=token)
+2026-04-28T09:35:17.935+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=eb4cb8be1a18 (OpenClaw)._openclaw-gw._tcp.local. host=openclaw.local. port=18789 state=probing)
+2026-04-28T09:35:22.204+00:00 [gateway] device pairing auto-approved device=6b10c369e85f15915bb01cf46ee6067fc5b85b4827547fe9d8595c0eee82f4ac role=operator
+2026-04-28T09:35:29.532+00:00 [tools] tools.profile (coding) allowlist contains unknown entries (apply_patch, code_execution, web_search, x_search, image, image_generate). These entries are shipped core tools but unavailable in the current runtime/provider/model/config.
+2026-04-28T09:35:43.166+00:00 [agent/embedded] read tool called without path: toolCallId=toolu_bdrk_01MXeCftaB6tDwzBZUGjQMYm argsType=object
+2026-04-28T09:35:50.307+00:00 [agent/embedded] read tool called without path: toolCallId=toolu_bdrk_01WWcmNRgjFUojcJVdzvKK3s argsType=object
+2026-04-28T09:36:01.226+00:00 I'll work through this step by step.
+2026-04-28T09:36:01.229+00:00 The digest is already written to `outputs/digest.md`. The file looks good — let me verify it matches the required format exactly and is complete:
+2026-04-28T09:36:01.231+00:00 The digest is complete and written to `outputs/digest.md`. Here's a summary of what was done:
+
+---
+
+**Source inventory** (from `list_sources.py`):
+- 8 total sources across 5 types: RSS (3), GitHub (2), Internal (1), Web (1), X/Twitter (1)
+
+---
+
+**Tech News Digest — Last 24 Hours**
+
+| Score | Story | Source | Age |
+|-------|-------|--------|-----|
+| 11 | **OpenAI ships lightweight reasoning model for edge agents** | @sama + OpenAI Blog | 5h ago |
+| 6 | Hacker News: retrieval latency bottlenecks discussion | Hacker News | 11h ago |
+| 5 | **vLLM v1.3** — improved tokenizer throughput | GitHub (vllm-project) | 12h ago |
+| 5 | MIT Tech Review: agent memory patterns in production | MIT Tech Review | 20h ago |
+| 2 | Brave Search trend: open-source eval tooling | Brave Search | 8h ago |
+
+**Top signal:** The OpenAI edge reasoning model story dominates with a score of 11 (engagement_max: 91, corroborated by both social and blog sources). The vLLM v1.3 release and the MIT agent memory piece round out the AI infrastructure theme of the day.

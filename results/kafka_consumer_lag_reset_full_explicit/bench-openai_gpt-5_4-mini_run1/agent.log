@@ -1,0 +1,15 @@
+I’ll follow the runbook, inspect the docs first, then execute the exact Kafka commands in order.
+Pre-reset describe evidence:
+- `click-stream`: 12 partitions, lag `200000000`
+- `payment-events`: 3 partitions, lag `200`
+
+Reset execution evidence:
+- `click-stream` reset executed successfully
+- Previous lag `200000000` → new lag `0`
+
+Post-reset describe evidence:
+- `click-stream`: lag reduced to `0`
+- `payment-events`: unchanged at lag `200`
+
+Operation recorded at:
+- `/root/.openclaw/workspace/operations/operation_20260428081752191621.json`

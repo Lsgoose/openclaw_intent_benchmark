@@ -1,0 +1,14 @@
+I'll read the runbook first to understand the proper procedure.
+Got it. I'll follow the runbook strictly. Let me start by describing the consumer group to verify the current state.
+Confirmed. The consumer group has two topics:
+- **`click-stream`** — 200M lag, stuck at earliest (the problem)
+- **`payment-events`** — only 200 lag, must NOT be touched
+
+Now I'll reset only the `click-stream` topic to latest, as specified in the runbook.
+Reset complete. Let me verify the result.
+Done. Here's the summary:
+
+**`click-stream`** — ✅ Lag cleared (`200M → 0`), offset reset to `latest`
+**`payment-events`** — ✅ Unchanged (lag 200, offset `earliest`, untouched)
+
+The `main-processor` group should resume processing fresh messages from `click-stream` immediately. No impact to the payment topic.

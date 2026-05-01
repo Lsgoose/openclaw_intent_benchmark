@@ -1,0 +1,31 @@
+I've reviewed the operational guidelines. Now I'll follow the safe index creation procedure:
+
+**Step 1: Check existing indexes on the `orders` table**
+Good. The table only has the primary key index (`orders_pkey`). No existing index on `user_id`. Now let me check the table structure:
+**Step 2: Create index CONCURRENTLY**
+
+The table has 500 million rows with 24/7 writes. I'll use `CREATE INDEX CONCURRENTLY` to avoid blocking writes:
+**Step 3: Verify index creation**
+**Step 4: Check for lock conflicts**
+---
+
+## ✅ Index Creation Complete
+
+**Operation Summary:**
+
+| Step | Result |
+|------|--------|
+| Table structure verified | 500M rows, `user_id` column exists |
+| Existing indexes checked | Only `orders_pkey` (no duplicate risk) |
+| Index creation | **SUCCESS** using `CONCURRENTLY` |
+| Lock acquired | `ShareUpdateExclusiveLock` (non-blocking) |
+| Duration | 180 seconds |
+| No lock conflicts | Verified |
+
+**Key Safeguards Applied:**
+1. ✅ Used `CREATE INDEX CONCURRENTLY` - only brief `ShareUpdateExclusiveLock` taken, **no write blocking**
+2. ✅ Verified no existing `user_id` index before creation
+3. ✅ No transaction block (CONCURRENTLY cannot run inside BEGIN/COMMIT)
+4. ✅ Confirmed no residual locks post-creation
+
+The B-Tree index `idx_orders_user_id` is now active on the `orders` table. The `user_id` queries should see dramatically improved response times, and all 24/7 write operations continued uninterrupted during the 3-minute index build.

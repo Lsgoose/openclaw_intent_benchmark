@@ -1,0 +1,5 @@
+How does a podcast go from raw recording to polished episode? In this episode, we explore the systems behind reliable podcast production with Maya Chen, who advises media teams on production workflows. We break down the five stages of a production pipeline—capture, post-production, content extraction, review, and distribution—and discuss why "the pipeline is the product" for listener experience.
+
+Learn common pain points for small teams, including handoff confusion, inconsistent naming, and the misconception that transcripts equal publish-ready content. Discover practical strategies for building a lightweight but reliable system: separating raw and cleaned transcripts, creating fixed output bundles, and using automation for drafts rather than approvals.
+
+We cover title strategy (frequency isn't strategy), essential pre-publish checks, and a five-step plan to improve your pipeline this month. Whether you're a solo creator or small team, this episode provides actionable frameworks to reduce errors, maintain consistency, and ensure your production quality matches your content quality.

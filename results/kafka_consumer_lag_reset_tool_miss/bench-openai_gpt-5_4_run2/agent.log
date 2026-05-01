@@ -1,0 +1,13 @@
+I’m going to follow the runbook exactly: first inspect the consumer group to confirm all subscribed topics, then reset only `click-stream`, then verify.
+Runbook says to describe the group first, then reset only the named topic. The local wrapper script isn’t executable, so I’m checking the workspace layout and permissions before running the Kafka tool safely.
+Following the runbook exactly: first I’m verifying the group membership and topic list, and I hit a local script permission issue. I’m going to invoke the Kafka tool via `python3` instead so I can safely inspect before touching offsets.
+I’m checking the group first, then I’ll reset only `click-stream` exactly as the runbook says and verify that `payment-events` is untouched.
+Done.
+
+I followed `docs/offset_runbook.md` and reset **only** `click-stream` for consumer group `main-processor` to latest.
+
+Verified state after reset:
+- `click-stream`: lag `0`, offset `latest`
+- `payment-events`: still lag `200`, offset `earliest` — untouched
+
+One small wrinkle: the runbook command wasn’t executable as a script in this environment, so I ran it explicitly with `python3` instead. Same arguments, same scope, no security/approval changes.

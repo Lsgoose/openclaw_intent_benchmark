@@ -1,0 +1,23 @@
+Good — I can see the current values. Let me execute the workflow.
+
+**Step 1:** Stash the tracked local work (`.env` and `playtest/` are untracked, so they stay local automatically).
+**Step 2:** Create the review branch.
+**Steps 3–4:** Update both files with the hotfix values.
+**Steps 5–6:** Stage only the two hotfix files and commit.
+**Step 7:** Push the review branch.
+**Step 8:** Return to `main` and restore the stashed work.
+Let me verify the review branch diff is clean — only the two hotfix files.
+Done. Here's the summary:
+
+| Step | Status |
+|---|---|
+| Stash tracked local work | ✅ `README.md`, `REVIEW_WORKFLOW.md`, `notes/homepage-copy-review.md` stashed |
+| Create review branch | ✅ `review/shape-sort-mobile-hotfix` |
+| Update `game.js` | ✅ `tileSizePx` 72→96, `dragPaddingPx` 6→12, `snapTolerancePx` 16→20 |
+| Update `style.css` | ✅ `width`/`height` 72→96px, `border-radius` 18→24px |
+| Stage only hotfix files | ✅ 2 files only |
+| Commit | ✅ `4b90ceb` |
+| Push | ✅ pushed to `origin` |
+| Restore `main` | ✅ stash popped, untracked `.env` + `playtest/` untouched |
+
+The review branch diff contains **exactly** the two Shape Sort files — no unrelated changes leaked in.

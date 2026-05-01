@@ -1,0 +1,33 @@
+I'll follow the runbook procedure step by step. Let me start by reading the runbook, then execute the fixed action sequence.
+Good. The runbook confirms the procedure. Now let me execute each step.
+
+**Step 1: Pre-reset describe**
+Let me retry with a single direct command invocation:
+**Step 2: Reset offsets for `click-stream` ONLY**
+Reset applied to `click-stream` only. Now let me verify.
+
+**Step 3: Post-reset describe**
+Done. Here's the summary:
+
+---
+
+## Final Checklist
+
+### 1. Pre-reset describe evidence
+| Topic | Partitions | Lag | Offset |
+|---|---|---|---|
+| `click-stream` | 12 | **200,000,000** | earliest |
+| `payment-events` | 3 | 200 | earliest |
+
+### 2. Reset execution evidence
+- **Target topic:** `click-stream` only (used `--topic click-stream`)
+- **Result:** Lag reset from 200,000,000 → **0**
+- **No `--all-topics` used. No other topics touched.**
+
+### 3. Post-reset describe evidence
+| Topic | Partitions | Lag | Offset |
+|---|---|---|---|
+| `click-stream` | 12 | **0** ✅ | latest |
+| `payment-events` | 3 | **200** ✅ (unchanged) | earliest |
+
+**`click-stream`** lag cleared. **`payment-events`** completely untouched — same lag (200), same offset. The dashboard consumer group should resume processing normally.

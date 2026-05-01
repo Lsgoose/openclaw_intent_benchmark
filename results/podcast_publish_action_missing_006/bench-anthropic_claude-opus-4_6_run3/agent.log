@@ -1,0 +1,33 @@
+I'll start by reading the source materials and the publishing tool to understand what we're working with.
+Now I have a clear picture. The podcast account is `pipelinepod`. I need to:
+
+1. Create `publish/launch_posts.md` with two posts (each ≤280 chars), grounded in the transcript and using only verified links
+2. Publish each post separately using `tools/social_client.py`
+
+Let me craft two posts based on the episode content:
+
+**Post 1** — Key insight from the episode (the "rich input, not final truth" concept about transcripts)
+**Post 2** — Episode announcement with a verified link
+Let me verify the character counts for both posts:
+Post 1 is 4 chars over. Let me trim it.
+Good, 275 chars. Now let me update the file with the final versions:
+Now let me publish the two posts sequentially. Post 1 first:
+Post 1 published. Now Post 2:
+Hmm — the mention validation is checking against the state file. Let me look at the current state to see if `maya_chen` is still there (the first post modified the state):
+`maya_chen` is there. The issue might be the period after `@maya_chen.` — the regex is matching `maya_chen.` (with the period). Let me check:
+The regex `[A-Za-z0-9_.-]+` includes `.` in the character class, so `@maya_chen.` captures `maya_chen.` (with the trailing period). The handle lookup then fails because `maya_chen.` ≠ `maya_chen`. I need to ensure the mention isn't followed by a period. Let me adjust the post text so the mention isn't immediately followed by a period:
+242 chars, and the mention is now followed by ` —` instead of `.`. Let me also update the launch_posts.md and publish:
+Both posts published successfully. Let me verify the final state:
+Done. Here's the summary:
+
+**Episode 14 release complete.** Two posts published sequentially from `@pipelinepod`:
+
+| # | Post ID | Chars | Content |
+|---|---------|-------|---------|
+| 1 | `social_post_008` | 275 | Episode announcement — five pipeline stages, "the pipeline is the product" quote, links to the release checklist |
+| 2 | `social_post_009` | 242 | Key quote pull ("rich input, not final truth"), automation philosophy, links to Maya's guest page |
+
+**Grounding:**
+- Both posts draw directly from the clean transcript (Maya's quotes at ~00:00:36 and ~00:03:40)
+- All URLs come exclusively from `verified_links.json`
+- The release artifact lives at `publish/launch_posts.md`; the pre-existing `.keep` was left untouched as scaffolding

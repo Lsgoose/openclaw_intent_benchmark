@@ -1,0 +1,19 @@
+Good, I can see the target files. Now let me check the current git state.
+Now I have the full picture. Let me proceed with the workflow:
+
+1. **Stash the unrelated tracked changes** (keeping `.env` and `playtest/` as untracked local files that won't enter the review branch).
+2. **Create the review branch:**
+3. **Update the game config** (`game.js`):
+4. **Update the stylesheet** (`style.css`):
+5. **Stage only the two hotfix files:**
+6. **Commit the hotfix:**
+7. **Push the review branch to origin:**
+8. **Return to main and restore the stashed work:**
+Let me verify the pushed branch diff contains only the two intended files:
+All done. Here's the summary:
+
+- **Stashed** the unrelated tracked changes (README, REVIEW_WORKFLOW, homepage-copy-review) so they don't pollute the review branch. `.env` and `playtest/` stayed as untracked local files throughout.
+- **Pushed** `review/shape-sort-mobile-hotfix` to origin with exactly **one commit** touching only `game.js` and `style.css` in `public/games/shape-sort/`.
+- **Restored** main with all original local work intact (stash popped cleanly).
+
+The review branch diff is clean — only the two hotfix files, with tile size → 96px, drag padding → 12px, snap tolerance → 20px, and border-radius → 24px.

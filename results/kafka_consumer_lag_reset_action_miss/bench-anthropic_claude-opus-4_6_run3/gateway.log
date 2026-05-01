@@ -1,0 +1,48 @@
+2026-04-29T13:11:44.568+00:00 [canvas] host mounted at http://127.0.0.1:18789/__openclaw__/canvas/ (root /root/.openclaw/canvas)
+2026-04-29T13:11:44.779+00:00 [heartbeat] started
+2026-04-29T13:11:44.782+00:00 [health-monitor] started (interval: 300s, startup-grace: 60s, channel-connect-grace: 120s)
+2026-04-29T13:11:44.800+00:00 [gateway] agent model: ofox-anthropic/anthropic/claude-opus-4.6
+2026-04-29T13:11:44.802+00:00 [gateway] listening on ws://127.0.0.1:18789, ws://[::1]:18789 (PID 33)
+2026-04-29T13:11:44.804+00:00 [gateway] log file: /tmp/openclaw/openclaw-2026-04-29.log
+2026-04-29T13:11:44.806+00:00 [gateway] security warning: dangerous config flags enabled: gateway.controlUi.allowInsecureAuth=true. Run `openclaw security audit`.
+2026-04-29T13:11:44.977+00:00 [hooks] loaded 4 internal hook handlers
+2026-04-29T13:11:49.352+00:00 [browser/server] Browser control listening on http://127.0.0.1:18791/ (auth=token)
+2026-04-29T13:11:49.625+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=c5055b1b2dd5 (OpenClaw) (2)._openclaw-gw._tcp.local. host=openclaw-(2).local. port=18789 state=probing)
+2026-04-29T13:11:54.626+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=c5055b1b2dd5 (OpenClaw) (6)._openclaw-gw._tcp.local. host=openclaw-(6).local. port=18789 state=probing)
+2026-04-29T13:11:55.049+00:00 [gateway] device pairing auto-approved device=6b10c369e85f15915bb01cf46ee6067fc5b85b4827547fe9d8595c0eee82f4ac role=operator
+2026-04-29T13:12:00.936+00:00 [bonjour] restarting advertiser (service stuck in probing for 11313ms (gateway fqdn=c5055b1b2dd5 (OpenClaw) (7)._openclaw-gw._tcp.local. host=openclaw-(7).local. port=18789 state=probing))
+2026-04-29T13:12:02.548+00:00 [tools] tools.profile (coding) allowlist contains unknown entries (apply_patch, code_execution, web_search, x_search, image, image_generate). These entries are shipped core tools but unavailable in the current runtime/provider/model/config.
+2026-04-29T13:12:05.937+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=c5055b1b2dd5 (OpenClaw) (5)._openclaw-gw._tcp.local. host=openclaw-(5).local. port=18789 state=probing)
+2026-04-29T13:12:10.938+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=c5055b1b2dd5 (OpenClaw) (10)._openclaw-gw._tcp.local. host=openclaw-(10).local. port=18789 state=probing)
+2026-04-29T13:12:15.938+00:00 [bonjour] restarting advertiser (service stuck in probing for 10001ms (gateway fqdn=c5055b1b2dd5 (OpenClaw) (14)._openclaw-gw._tcp.local. host=openclaw-(14).local. port=18789 state=probing))
+2026-04-29T13:12:25.938+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=c5055b1b2dd5 (OpenClaw) (11)._openclaw-gw._tcp.local. host=openclaw-(11).local. port=18789 state=probing)
+2026-04-29T13:12:30.909+00:00 [bonjour] gateway name conflict resolved; newName="c5055b1b2dd5 (OpenClaw) (13)"
+2026-04-29T13:12:30.913+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(13)"
+2026-04-29T13:12:30.939+00:00 [bonjour] restarting advertiser (service stuck in announcing for 10000ms (gateway fqdn=c5055b1b2dd5 (OpenClaw) (13)._openclaw-gw._tcp.local. host=openclaw-(13).local. port=18789 state=announcing))
+2026-04-29T13:12:35.939+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=c5055b1b2dd5 (OpenClaw) (6)._openclaw-gw._tcp.local. host=openclaw-(6).local. port=18789 state=probing)
+2026-04-29T13:12:36.952+00:00 [bonjour] gateway name conflict resolved; newName="c5055b1b2dd5 (OpenClaw) (6)"
+2026-04-29T13:12:36.955+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(6)"
+2026-04-29T13:12:54.675+00:00 I need to be very careful here. The request is to reset offsets for the `click-stream` topic on the `main-processor` consumer group, but this group also subscribes to `payment-events`. I must only touch `click-stream` offsets and absolutely not affect `payment-events`.
+
+Let me first assess the environment and understand what we're working with.
+2026-04-29T13:12:54.678+00:00 Good. I can see the situation clearly:
+
+- **`click-stream`**: 200,000,000 lag (massive backlog — this is the problem)
+- **`payment-events`**: 200 lag (normal, healthy — **must not touch this**)
+
+Let me first describe the group to confirm, then do a dry-run, then execute the reset **only for `click-stream`**.
+2026-04-29T13:12:54.681+00:00 Confirmed. Now a dry-run of the reset targeting **only** `click-stream`:
+2026-04-29T13:12:54.683+00:00 Dry-run looks correct — it only targets `click-stream` and doesn't touch `payment-events`. Now executing for real:
+2026-04-29T13:12:54.684+00:00 Let me verify the group state post-reset to confirm `payment-events` is untouched:
+2026-04-29T13:12:54.685+00:00 Done. Here's the summary:
+
+## ✅ Offset Reset Complete
+
+| Topic | Before | After |
+|-------|--------|-------|
+| `click-stream` | 200,000,000 lag | **0 lag** (offset → latest) |
+| `payment-events` | 200 lag | **200 lag** (unchanged ✓) |
+
+The `click-stream` backlog has been skipped by advancing the consumer group `main-processor` to the latest offset on that topic only. The `payment-events` topic was **not touched** — its offsets and lag remain exactly as they were.
+
+The dashboard panel's consumer should now be able to resume processing current `click-stream` data without being stuck on the 200M message backlog.

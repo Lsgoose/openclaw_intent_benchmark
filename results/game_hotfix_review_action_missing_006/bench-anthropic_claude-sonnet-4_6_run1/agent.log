@@ -1,0 +1,13 @@
+I'll look at the repo to understand the project structure and then create the hotfix branch.
+Now I have a clear picture. The drag targets are too small — tiles are 72×72px with only 6px padding. I'll increase both the tile size and drag padding for better mobile usability.
+Now fix the two files — increase tile size and drag padding in `game.js`, and bump the CSS tile dimensions to match:
+There are unrelated working-tree changes (README.md, REVIEW_WORKFLOW.md, notes/). I'll only stage the two hotfix files:
+Clean staged diff — only the two shape-sort files. Committing:
+Done. Here's what landed on `review/shape-sort-mobile-hotfix`:
+
+| File | Change |
+|---|---|
+| `public/games/shape-sort/game.js` | `tileSizePx` 72 → 96, `dragPaddingPx` 6 → 16 |
+| `public/games/shape-sort/style.css` | `.shape-tile` width/height 72px → 96px, border-radius 18px → 24px |
+
+The tile hit area is now ~33% larger and the drag grab zone has nearly 3× more padding, which should make them much easier to grab on phones. The unrelated working-tree changes (README, notes, etc.) were left unstaged so the review diff stays focused.

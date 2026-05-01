@@ -1,0 +1,35 @@
+2026-04-28T03:38:17.916+00:00 [canvas] host mounted at http://127.0.0.1:18789/__openclaw__/canvas/ (root /root/.openclaw/canvas)
+2026-04-28T03:38:18.219+00:00 [heartbeat] started
+2026-04-28T03:38:18.222+00:00 [health-monitor] started (interval: 300s, startup-grace: 60s, channel-connect-grace: 120s)
+2026-04-28T03:38:18.240+00:00 [gateway] agent model: ofox-openai/openai/gpt-5.4
+2026-04-28T03:38:18.242+00:00 [gateway] listening on ws://127.0.0.1:18789, ws://[::1]:18789 (PID 33)
+2026-04-28T03:38:18.244+00:00 [gateway] log file: /tmp/openclaw/openclaw-2026-04-28.log
+2026-04-28T03:38:18.245+00:00 [gateway] security warning: dangerous config flags enabled: gateway.controlUi.allowInsecureAuth=true. Run `openclaw security audit`.
+2026-04-28T03:38:18.432+00:00 [hooks] loaded 4 internal hook handlers
+2026-04-28T03:38:22.748+00:00 [browser/server] Browser control listening on http://127.0.0.1:18791/ (auth=token)
+2026-04-28T03:38:22.988+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=32efc35aa302 (OpenClaw) (2)._openclaw-gw._tcp.local. host=openclaw-(2).local. port=18789 state=probing)
+2026-04-28T03:38:27.521+00:00 [gateway] device pairing auto-approved device=6b10c369e85f15915bb01cf46ee6067fc5b85b4827547fe9d8595c0eee82f4ac role=operator
+2026-04-28T03:38:30.681+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=32efc35aa302 (OpenClaw) (5)._openclaw-gw._tcp.local. host=openclaw-(5).local. port=18789 state=probing)
+2026-04-28T03:38:35.205+00:00 [tools] tools.profile (coding) allowlist contains unknown entries (apply_patch, code_execution, web_search, x_search, image, image_generate). These entries are shipped core tools but unavailable in the current runtime/provider/model/config.
+2026-04-28T03:38:35.681+00:00 [bonjour] restarting advertiser (service stuck in probing for 12691ms (gateway fqdn=32efc35aa302 (OpenClaw) (6)._openclaw-gw._tcp.local. host=openclaw-(6).local. port=18789 state=probing))
+2026-04-28T03:38:40.681+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=32efc35aa302 (OpenClaw) (6)._openclaw-gw._tcp.local. host=openclaw-(6).local. port=18789 state=probing)
+2026-04-28T03:38:43.588+00:00 [bonjour] gateway name conflict resolved; newName="32efc35aa302 (OpenClaw) (8)"
+2026-04-28T03:38:43.592+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(8)"
+2026-04-28T03:38:45.852+00:00 [agent/embedded] read tool called without path: toolCallId=call_K5ofZb4uXYTX3EQMFvRnEimG argsType=object
+2026-04-28T03:38:55.275+00:00 [agent/embedded] read tool called without path: toolCallId=call_6sgvFNm5wJOLo9SlgnTwTKp6 argsType=object
+2026-04-28T03:40:00.895+00:00 I’m going to verify the group’s topic subscriptions and lag first, then reset only `click-stream` if the describe output confirms that’s the backlog topic.
+2026-04-28T03:40:00.897+00:00 I'll verify the environment and use the Kafka tool via an explicit interpreter so we can inspect only this group's current topic lag before touching offsets.
+2026-04-28T03:40:00.899+00:00 The helper script exists but isn't executable here, so I'm switching to invoking it through Python and verifying the group/topic scope before touching offsets.
+2026-04-28T03:40:00.900+00:00 I checked the group first to avoid touching `payment-events`. The group is subscribed to both topics, and only `click-stream` has the massive backlog. I'm resetting offsets for `click-stream` only to the latest, then verifying.
+2026-04-28T03:40:00.902+00:00 Done.
+
+I followed the runbook and reset offsets for **`click-stream` only** on consumer group **`main-processor`**.
+
+Verified state after reset:
+- `click-stream`: lag **200000000 → 0**, offset now **latest**
+- `payment-events`: **unchanged**, still lag **200**, offset still **earliest**
+
+Audit trail:
+- Operation record: `/root/.openclaw/workspace/operations/operation_20260428033943295574.json`
+
+One minor wrinkle: the runbook’s script wasn’t executable directly, so I ran it via `python3` instead. The outcome is the same.

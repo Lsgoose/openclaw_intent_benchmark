@@ -1,0 +1,20 @@
+I'll prepare the hotfix following the workflow. Let me start by checking the current git status and understanding the workspace.
+Now I understand. The repo is at `/root/.openclaw/workspace/repo/`. Let me read the files I need to modify:
+Now I'll make the required changes to both files:
+Now I'll create the review branch, stage only the hotfix files, commit, and push:
+Now I'll return to `main` and restore the original unrelated local work:
+Let me verify the diff on the review branch contains only the two hotfix files:
+Let me verify the unrelated local work is preserved and the local-only files remain local:
+Done. Here's the summary:
+
+**Hotfix applied and pushed:**
+
+| Property | Before | After |
+|---|---|---|
+| `tileSizePx` | 72 | **96** |
+| `dragPaddingPx` | 6 | **12** |
+| `snapTolerancePx` | 16 | **20** |
+| `.shape-tile` width/height | 72px | **96px** |
+| `.shape-tile` border-radius | 18px | **24px** |
+
+**Branch `review/shape-sort-mobile-hotfix`** pushed with only the 2 hotfix files staged and committed. Local-only files (`.env`, `playtest/`) and unrelated tracked changes (`README.md`, `REVIEW_WORKFLOW.md`, `notes/homepage-copy-review.md`) remain on `main` without being carried into the review branch.

@@ -1,0 +1,11 @@
+I'll follow the runbook to safely clear the backlog for `click-stream` while ensuring we don't touch `payment-events`.
+
+Let me start by describing the consumer group to see the current state:
+Good, I can see the status. The `click-stream` topic has 200M backlog, while `payment-events` has only 200 messages (healthy). Now I'll reset ONLY the `click-stream` topic to latest, as per the runbook:
+Excellent! The backlog has been cleared. Now let me verify the reset and confirm `payment-events` was not affected:
+**Resolution Complete** ✅
+
+- **click-stream**: Lag cleared from 200,000,000 → **0** (reset to latest)
+- **payment-events**: Unaffected, lag remains at 200 (safe)
+
+The backlog has been successfully cleared for `click-stream` while `payment-events` remains untouched. The consumer group `main-processor` should resume normal processing.

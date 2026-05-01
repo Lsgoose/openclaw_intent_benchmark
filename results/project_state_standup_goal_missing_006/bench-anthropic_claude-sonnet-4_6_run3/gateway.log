@@ -1,0 +1,22 @@
+2026-04-28T09:55:32.394+00:00 [canvas] host mounted at http://127.0.0.1:18789/__openclaw__/canvas/ (root /root/.openclaw/canvas)
+2026-04-28T09:55:33.017+00:00 [heartbeat] started
+2026-04-28T09:55:33.020+00:00 [health-monitor] started (interval: 300s, startup-grace: 60s, channel-connect-grace: 120s)
+2026-04-28T09:55:33.040+00:00 [gateway] agent model: ofox-anthropic/anthropic/claude-sonnet-4.6
+2026-04-28T09:55:33.042+00:00 [gateway] listening on ws://127.0.0.1:18789, ws://[::1]:18789 (PID 33)
+2026-04-28T09:55:33.044+00:00 [gateway] log file: /tmp/openclaw/openclaw-2026-04-28.log
+2026-04-28T09:55:33.046+00:00 [gateway] security warning: dangerous config flags enabled: gateway.controlUi.allowInsecureAuth=true. Run `openclaw security audit`.
+2026-04-28T09:55:33.241+00:00 [hooks] loaded 4 internal hook handlers
+2026-04-28T09:55:37.608+00:00 [browser/server] Browser control listening on http://127.0.0.1:18791/ (auth=token)
+2026-04-28T09:55:37.612+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=2d4f14da0d4d (OpenClaw)._openclaw-gw._tcp.local. host=openclaw.local. port=18789 state=probing)
+2026-04-28T09:55:41.681+00:00 [gateway] device pairing auto-approved device=6b10c369e85f15915bb01cf46ee6067fc5b85b4827547fe9d8595c0eee82f4ac role=operator
+2026-04-28T09:55:44.804+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=2d4f14da0d4d (OpenClaw) (2)._openclaw-gw._tcp.local. host=openclaw-(2).local. port=18789 state=probing)
+2026-04-28T09:55:48.795+00:00 [tools] tools.profile (coding) allowlist contains unknown entries (apply_patch, code_execution, web_search, x_search, image, image_generate). These entries are shipped core tools but unavailable in the current runtime/provider/model/config.
+2026-04-28T09:55:49.806+00:00 [bonjour] restarting advertiser (service stuck in probing for 12193ms (gateway fqdn=2d4f14da0d4d (OpenClaw) (4)._openclaw-gw._tcp.local. host=openclaw-(4).local. port=18789 state=probing))
+2026-04-28T09:55:54.805+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=2d4f14da0d4d (OpenClaw) (3)._openclaw-gw._tcp.local. host=openclaw-(3).local. port=18789 state=probing)
+2026-04-28T09:55:57.073+00:00 [bonjour] gateway name conflict resolved; newName="2d4f14da0d4d (OpenClaw) (4)"
+2026-04-28T09:55:57.077+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(4)"
+2026-04-28T09:56:14.041+00:00 [agent/embedded] read tool called without path: toolCallId=toolu_bdrk_01VTDaV1imBvPMnReLTDRhuM argsType=object
+2026-04-28T09:57:14.074+00:00 [agent/embedded] Profile ofox-anthropic:default timed out. Trying next account...
+2026-04-28T09:57:14.077+00:00 [agent/embedded] embedded run failover decision: runId=1895541f-b787-45e3-af93-6ceb76b4ba30 stage=assistant decision=surface_error reason=timeout provider=ofox-anthropic/anthropic/claude-sonnet-4.6 profile=sha256:5db5850dcb96
+2026-04-28T09:57:14.089+00:00 [agent] run 1895541f-b787-45e3-af93-6ceb76b4ba30 ended with stopReason=toolUse
+2026-04-28T09:57:14.094+00:00 I'll work through this step by step. Let me start by exploring the tools to understand their interfaces.

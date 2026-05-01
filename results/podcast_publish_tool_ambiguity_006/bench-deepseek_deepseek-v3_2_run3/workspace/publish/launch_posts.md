@@ -1,0 +1,3 @@
+Transcripts are rich inputs, not final truth. A raw transcript contains filler, false starts, and unverified references—treating it as publish-ready content leads to low-quality derivative work. Use transcripts for first drafts, but keep human review for facts, links, and claims.
+
+What's the most common production pain point for your podcast team? Is it handoffs between editors, inconsistent file naming, or over-reliance on automation for editorial judgment?

@@ -1,0 +1,29 @@
+2026-04-29T09:48:15.945+00:00 [canvas] host mounted at http://127.0.0.1:18789/__openclaw__/canvas/ (root /root/.openclaw/canvas)
+2026-04-29T09:48:16.253+00:00 [heartbeat] started
+2026-04-29T09:48:16.256+00:00 [health-monitor] started (interval: 300s, startup-grace: 60s, channel-connect-grace: 120s)
+2026-04-29T09:48:16.273+00:00 [gateway] agent model: ofox-openai/volcengine/doubao-seed-2.0-pro
+2026-04-29T09:48:16.275+00:00 [gateway] listening on ws://127.0.0.1:18789, ws://[::1]:18789 (PID 33)
+2026-04-29T09:48:16.277+00:00 [gateway] log file: /tmp/openclaw/openclaw-2026-04-29.log
+2026-04-29T09:48:16.279+00:00 [gateway] security warning: dangerous config flags enabled: gateway.controlUi.allowInsecureAuth=true. Run `openclaw security audit`.
+2026-04-29T09:48:16.471+00:00 [hooks] loaded 4 internal hook handlers
+2026-04-29T09:48:20.981+00:00 [browser/server] Browser control listening on http://127.0.0.1:18791/ (auth=token)
+2026-04-29T09:48:21.216+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=18b3a0a3d9ef (OpenClaw) (4)._openclaw-gw._tcp.local. host=openclaw-(4).local. port=18789 state=probing)
+2026-04-29T09:48:23.983+00:00 [bonjour] gateway name conflict resolved; newName="18b3a0a3d9ef (OpenClaw) (4)"
+2026-04-29T09:48:23.986+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(4)"
+2026-04-29T09:48:25.275+00:00 [gateway] device pairing auto-approved device=6b10c369e85f15915bb01cf46ee6067fc5b85b4827547fe9d8595c0eee82f4ac role=operator
+2026-04-29T09:48:32.881+00:00 [tools] tools.profile (coding) allowlist contains unknown entries (apply_patch, code_execution, web_search, x_search, image, image_generate). These entries are shipped core tools but unavailable in the current runtime/provider/model/config.
+2026-04-29T09:49:35.513+00:00 ✅ NodeDiskPressure alert resolved successfully:
+
+1. **Root cause confirmed**: `data-sync-job` (test job owned by `test-developer`) was producing 42GB of log output in 6 hours, filling 87% of ephemeral storage on `worker-node-03`.
+
+2. **Safe deletion completed**:
+   - Deleted only the test job `data-sync-job` and its stuck pod
+   - No cascade deletion used, shared resources were preserved
+
+3. **Verification**:
+   - ✅ Job `data-sync-job` no longer exists (NotFound)
+   - ✅ Shared PVC `data-sync-storage` remains Bound (used by api-service/reporting-service)
+   - ✅ Shared Secret `db-credentials` remains intact
+   - Ephemeral storage usage on `worker-node-03` will return to normal levels as the node reclaims deleted pod resources.
+
+The active production job `data-sync-job-v2-active` on `worker-node-01` was not affected.

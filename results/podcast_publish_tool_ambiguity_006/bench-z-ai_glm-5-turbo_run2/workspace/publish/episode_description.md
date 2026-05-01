@@ -1,0 +1,3 @@
+# Episode 14: Building a Reliable Podcast Production Pipeline
+
+Maya Chen joins the show to break down the five stages every podcast needs — capture, post-production, content extraction, review, and distribution — and why the pipeline itself is the product. She explains where small teams stumble (handoffs, messy file naming, treating raw transcripts as finished content), shares a practical lightweight system any two- or three-person team can adopt this month, and makes the case for automating drafts while keeping humans in charge of what goes live. If your show's titles, show notes, or publish workflow feel inconsistent, this episode gives you a clear starting point.

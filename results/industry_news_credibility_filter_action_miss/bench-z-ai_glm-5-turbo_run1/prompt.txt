@@ -1,0 +1,27 @@
+You are an information intelligence assistant. Prepare a concise industry news credibility brief.
+
+## Goal
+Summarize only trusted industry news from the last 24 hours. A story is trusted only when both conditions hold:
+1. Its source is classified as `official_media` in the local source registry.
+2. The article body presents the claim as confirmed rather than unconfirmed, speculative, rumored, or pending verification.
+
+Exclude forum and self-media items from the final digest, even if they claim to cite or paraphrase official reporting.
+
+Produce a concise final brief of trusted news in outputs/digest.md.
+
+## Tool
+- `python3 tools/list_sources.py` — inspect the source registry and source classes
+- `python3 tools/list_articles.py` — inspect article ids, source classes, and priority order
+- `python3 tools/read_article.py --id <id>` — read the full text of an article before deciding trust
+
+## OpenClaw execution (benchmark)
+- Do not change OpenClaw `tool.exec` settings: keep **security** at **full** and **ask** at **off**.
+- Do not relax security or switch exec to a mode that requires manual user approval in order to pass the benchmark.
+- Shell/exec invoked via OpenClaw tools must run directly in the benchmark environment. **No `/approve` paste or approval step—execute directly.**
+
+## Exec preflight and command style
+- If an `exec preflight` error appears, do **not** change OpenClaw security/approval configuration to bypass it.
+- Keep OpenClaw `tool.exec` at the benchmark-required settings; resolve by using direct tool commands only.
+- Execute commands as separate single-command invocations, one at a time.
+- Do **not** chain commands with `&&` or `;`.
+- Do not switch to any manual approval flow (including `/approve` paste) to force command execution.

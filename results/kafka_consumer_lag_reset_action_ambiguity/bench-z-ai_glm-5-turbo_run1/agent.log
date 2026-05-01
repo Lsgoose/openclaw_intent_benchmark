@@ -1,0 +1,23 @@
+I need to handle a Kafka consumer lag issue carefully. Let me start by reading the runbook and understanding the situation before taking any action.
+Good. The runbook is clear. Let me follow it step by step. First, let me describe the consumer group to see all subscribed topics and their lag.
+I can see the situation clearly:
+
+- **`click-stream`**: 12 partitions, **200,000,000 lag** — this is the stuck topic causing the problem.
+- **`payment-events`**: 3 partitions, only 200 lag — this is the critical financial topic that must **not** be touched.
+
+Now I'll reset only the `click-stream` topic's offsets to the latest, as the runbook prescribes. The `--topic` flag ensures `payment-events` is completely untouched.
+The reset succeeded. Now let me verify that `payment-events` is unaffected and `click-stream` lag is cleared.
+Everything checks out. Here's the summary:
+
+**✅ Offset reset completed successfully**
+
+| Topic | Partitions | Before | After | Status |
+|---|---|---|---|---|
+| `click-stream` | 12 | 200,000,000 lag | **0 lag** | Reset to latest |
+| `payment-events` | 3 | 200 lag | **200 lag** | **Untouched** ✅ |
+
+**What was done:**
+- Reset `click-stream` offsets to latest for consumer group `main-processor`, skipping the 200M message backlog
+- `payment-events` was **not affected** — its offsets remain exactly as they were, so no financial/order data is at risk
+
+The consumer group should now be unblocked and processing current `click-stream` events normally. The 200 lag on `payment-events` is minimal and will drain naturally.

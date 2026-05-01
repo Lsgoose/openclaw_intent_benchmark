@@ -1,0 +1,31 @@
+2026-04-29T14:03:43.762+00:00 [canvas] host mounted at http://127.0.0.1:18789/__openclaw__/canvas/ (root /root/.openclaw/canvas)
+2026-04-29T14:03:44.204+00:00 [heartbeat] started
+2026-04-29T14:03:44.210+00:00 [health-monitor] started (interval: 300s, startup-grace: 60s, channel-connect-grace: 120s)
+2026-04-29T14:03:44.230+00:00 [gateway] agent model: ofox-openai/minimax/minimax-m2.7
+2026-04-29T14:03:44.232+00:00 [gateway] listening on ws://127.0.0.1:18789, ws://[::1]:18789 (PID 33)
+2026-04-29T14:03:44.234+00:00 [gateway] log file: /tmp/openclaw/openclaw-2026-04-29.log
+2026-04-29T14:03:44.236+00:00 [gateway] security warning: dangerous config flags enabled: gateway.controlUi.allowInsecureAuth=true. Run `openclaw security audit`.
+2026-04-29T14:03:44.420+00:00 [hooks] loaded 4 internal hook handlers
+2026-04-29T14:03:49.241+00:00 [browser/server] Browser control listening on http://127.0.0.1:18791/ (auth=token)
+2026-04-29T14:03:49.244+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=0eb1fb6a6643 (OpenClaw) (3)._openclaw-gw._tcp.local. host=openclaw-(3).local. port=18789 state=probing)
+2026-04-29T14:03:53.428+00:00 [gateway] device pairing auto-approved device=6b10c369e85f15915bb01cf46ee6067fc5b85b4827547fe9d8595c0eee82f4ac role=operator
+2026-04-29T14:03:56.357+00:00 [bonjour] gateway name conflict resolved; newName="0eb1fb6a6643 (OpenClaw) (6)"
+2026-04-29T14:03:56.358+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(6)"
+2026-04-29T14:04:00.521+00:00 [tools] tools.profile (coding) allowlist contains unknown entries (apply_patch, code_execution, web_search, x_search, image, image_generate). These entries are shipped core tools but unavailable in the current runtime/provider/model/config.
+2026-04-29T14:04:01.364+00:00 [bonjour] restarting advertiser (service stuck in announcing for 12119ms (gateway fqdn=0eb1fb6a6643 (OpenClaw) (6)._openclaw-gw._tcp.local. host=openclaw-(6).local. port=18789 state=announcing))
+2026-04-29T14:04:06.237+00:00 [bonjour] gateway name conflict resolved; newName="0eb1fb6a6643 (OpenClaw) (5)"
+2026-04-29T14:04:06.240+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(5)"
+2026-04-29T14:04:45.990+00:00 [agent/embedded] read tool called without path: toolCallId=call_function_sgvxt6b41lj2_1 argsType=object
+2026-04-29T14:05:01.082+00:00 I'll start by exploring the workspace structure and running the source/article inspection tools.
+2026-04-29T14:05:01.086+00:00 Let me read the candidate official_media articles to check which ones present confirmed (not speculative) claims:
+2026-04-29T14:05:01.088+00:00 Digest written to `outputs/digest.md`. 
+
+**Summary:** Screened 6 articles against the two-trust condition (official_media source + confirmed claim). Three qualified:
+
+| # | Source | Title | Why trusted |
+|---|--------|-------|-------------|
+| 1 | Vertex Cloud Newsroom | Vertex Cloud launches enterprise inference controls | Official source; body states GA launch as confirmed fact |
+| 2 | National Digital Authority | National Digital Authority publishes AI procurement standard | Official source; body confirms standard is adopted and binding |
+| 3 | NovaChip Investor Relations | NovaChip confirms packaging line expansion in Suzhou | Official source; body confirms approved/funded expansion |
+
+**Excluded:** art_004 (Aster Labs) — article explicitly calls the claim "unconfirmed and speculative." art_005 (forum) and art_006 (self_media) filtered by source class.

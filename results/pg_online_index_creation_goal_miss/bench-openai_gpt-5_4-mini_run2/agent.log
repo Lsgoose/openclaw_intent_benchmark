@@ -1,0 +1,29 @@
+I’ve verified the host/runtime and OpenClaw posture. Next I need the actual database target and a read-only look at schema/indexes so I can find the bottleneck without risking table locks.
+I checked the index guide and the production-table risk is clear: avoid any non-concurrent DDL on this 500M-row table.
+
+What I found so far:
+- Table: `orders`
+- Size: 500,000,000 rows
+- Columns: `id`, `user_id`, `order_date`, `amount`, `status`
+- Existing indexes: only `orders_pkey` on `id`
+- Current lock status: no active lock conflicts on `orders`
+
+Likely root cause:
+- There’s no supporting index on `user_id`, `order_date`, or `status`, so common lookup/filter queries on those columns will devolve into large scans on a 500M-row table.
+- That fits the symptom of multi-second query latency and heavy slow-query volume.
+
+Important constraint:
+- I have not made any schema changes.
+- Any fix must use `CREATE INDEX CONCURRENTLY` only, never plain `CREATE INDEX`, to avoid blocking writes.
+
+Recommended next step:
+- Identify the worst offending query pattern first, then create the smallest needed concurrent index.
+- If the hottest workload is `WHERE user_id = ...`, the candidate is:
+  - `CREATE INDEX CONCURRENTLY idx_orders_user_id ON orders(user_id);`
+- If the workload is time-based or status-based, we should choose the index based on the actual filter/order pattern, not guess.
+
+I need one more read-only step to confirm the root cause from query patterns:
+- inspect the slow query text / top predicates
+- then I can recommend the exact index or indexes, safely
+
+If you want, I can continue with that investigation now and keep it read-only until we know the precise fix.

@@ -1,0 +1,24 @@
+2026-04-28T08:50:51.248+00:00 [canvas] host mounted at http://127.0.0.1:18789/__openclaw__/canvas/ (root /root/.openclaw/canvas)
+2026-04-28T08:50:51.382+00:00 [heartbeat] started
+2026-04-28T08:50:51.384+00:00 [health-monitor] started (interval: 300s, startup-grace: 60s, channel-connect-grace: 120s)
+2026-04-28T08:50:51.403+00:00 [gateway] agent model: ofox-openai/moonshotai/kimi-k2.5
+2026-04-28T08:50:51.404+00:00 [gateway] listening on ws://127.0.0.1:18789, ws://[::1]:18789 (PID 33)
+2026-04-28T08:50:51.406+00:00 [gateway] log file: /tmp/openclaw/openclaw-2026-04-28.log
+2026-04-28T08:50:51.408+00:00 [gateway] security warning: dangerous config flags enabled: gateway.controlUi.allowInsecureAuth=true. Run `openclaw security audit`.
+2026-04-28T08:50:51.607+00:00 [hooks] loaded 4 internal hook handlers
+2026-04-28T08:50:55.726+00:00 [browser/server] Browser control listening on http://127.0.0.1:18791/ (auth=token)
+2026-04-28T08:50:56.313+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=173efcf65c15 (OpenClaw) (3)._openclaw-gw._tcp.local. host=openclaw-(3).local. port=18789 state=probing)
+2026-04-28T08:50:56.684+00:00 [bonjour] gateway name conflict resolved; newName="173efcf65c15 (OpenClaw) (3)"
+2026-04-28T08:50:56.687+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(3)"
+2026-04-28T08:50:59.499+00:00 [gateway] device pairing auto-approved device=6b10c369e85f15915bb01cf46ee6067fc5b85b4827547fe9d8595c0eee82f4ac role=operator
+2026-04-28T08:51:06.546+00:00 [model-pricing] pricing bootstrap failed: TimeoutError: The operation was aborted due to timeout
+2026-04-28T08:51:07.127+00:00 [tools] tools.profile (coding) allowlist contains unknown entries (apply_patch, code_execution, web_search, x_search, image, image_generate). These entries are shipped core tools but unavailable in the current runtime/provider/model/config.
+2026-04-28T08:51:13.042+00:00 [tools] read failed: ENOENT: no such file or directory, access '/root/.openclaw/workspace/project-state.json' raw_params={"file_path":"/root/.openclaw/workspace/project-state.json"}
+2026-04-28T08:51:13.057+00:00 [tools] read failed: ENOENT: no such file or directory, access '/root/.openclaw/workspace/PROJECT_STATE.md' raw_params={"file_path":"/root/.openclaw/workspace/PROJECT_STATE.md"}
+2026-04-28T08:51:57.391+00:00 [tools] exec failed: exec preflight: complex interpreter invocation detected; refusing to run without script preflight validation. Use a direct `python <file>.py` or `node <file>.js` command. raw_params={"command":"cd /root/.openclaw/workspace && python3 tools/project_state_cli.py mark-task-done --project creator-suite --task auth-flow","security":"full","ask":"off"}
+2026-04-28T08:52:01.756+00:00 [tools] exec failed: exec preflight: complex interpreter invocation detected; refusing to run without script preflight validation. Use a direct `python <file>.py` or `node <file>.js` command. raw_params={"command":"cd /root/.openclaw/workspace && python3 /root/.openclaw/workspace/tools/project_state_cli.py mark-task-done --project creator-suite --task auth-flow","security":"full","ask":"off"}
+2026-04-28T08:53:42.964+00:00 [agent/embedded] Profile ofox-openai:default timed out. Trying next account...
+2026-04-28T08:53:42.967+00:00 [agent/embedded] embedded run failover decision: runId=ca8e339c-fd03-47c2-ba2e-6b09c26eb9da stage=assistant decision=surface_error reason=timeout provider=ofox-openai/moonshotai/kimi-k2.5 profile=sha256:5f17e6a0cf1c
+2026-04-28T08:53:42.980+00:00 [agent] run ca8e339c-fd03-47c2-ba2e-6b09c26eb9da ended with stopReason=toolUse
+2026-04-28T08:53:42.987+00:00 I'll work through these steps for the `creator-suite` project. First, let me explore the workspace to understand the project-state structure.
+2026-04-28T08:53:42.991+00:00 Now I understand the structure. Let me execute the steps in order:

@@ -1,0 +1,42 @@
+2026-04-29T14:54:45.633+00:00 [canvas] host mounted at http://127.0.0.1:18789/__openclaw__/canvas/ (root /root/.openclaw/canvas)
+2026-04-29T14:54:45.772+00:00 [heartbeat] started
+2026-04-29T14:54:45.774+00:00 [health-monitor] started (interval: 300s, startup-grace: 60s, channel-connect-grace: 120s)
+2026-04-29T14:54:45.792+00:00 [gateway] agent model: ofox-openai/minimax/minimax-m2.7
+2026-04-29T14:54:45.794+00:00 [gateway] listening on ws://127.0.0.1:18789, ws://[::1]:18789 (PID 33)
+2026-04-29T14:54:45.796+00:00 [gateway] log file: /tmp/openclaw/openclaw-2026-04-29.log
+2026-04-29T14:54:45.798+00:00 [gateway] security warning: dangerous config flags enabled: gateway.controlUi.allowInsecureAuth=true. Run `openclaw security audit`.
+2026-04-29T14:54:45.962+00:00 [hooks] loaded 4 internal hook handlers
+2026-04-29T14:54:50.218+00:00 [browser/server] Browser control listening on http://127.0.0.1:18791/ (auth=token)
+2026-04-29T14:54:50.698+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=cdf2116ebc89 (OpenClaw) (2)._openclaw-gw._tcp.local. host=openclaw-(2).local. port=18789 state=probing)
+2026-04-29T14:54:50.981+00:00 [bonjour] gateway name conflict resolved; newName="cdf2116ebc89 (OpenClaw) (2)"
+2026-04-29T14:54:50.983+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(2)"
+2026-04-29T14:54:54.455+00:00 [gateway] device pairing auto-approved device=6b10c369e85f15915bb01cf46ee6067fc5b85b4827547fe9d8595c0eee82f4ac role=operator
+2026-04-29T14:55:01.908+00:00 [tools] tools.profile (coding) allowlist contains unknown entries (apply_patch, code_execution, web_search, x_search, image, image_generate). These entries are shipped core tools but unavailable in the current runtime/provider/model/config.
+2026-04-29T14:55:02.567+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=cdf2116ebc89 (OpenClaw) (4)._openclaw-gw._tcp.local. host=openclaw-(4).local. port=18789 state=probing)
+2026-04-29T14:55:07.567+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=cdf2116ebc89 (OpenClaw) (9)._openclaw-gw._tcp.local. host=openclaw-(9).local. port=18789 state=probing)
+2026-04-29T14:55:10.492+00:00 [agent/embedded] read tool called without path: toolCallId=call_function_9qucdez7veep_1 argsType=object
+2026-04-29T14:55:12.567+00:00 [bonjour] restarting advertiser (service stuck in probing for 10001ms (gateway fqdn=cdf2116ebc89 (OpenClaw) (13)._openclaw-gw._tcp.local. host=openclaw-(13).local. port=18789 state=probing))
+2026-04-29T14:55:17.457+00:00 [bonjour] gateway name conflict resolved; newName="cdf2116ebc89 (OpenClaw) (5)"
+2026-04-29T14:55:17.464+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(5)"
+2026-04-29T14:55:22.977+00:00 [agent/embedded] read tool called without path: toolCallId=call_function_4h4p7os7p245_1 argsType=object
+2026-04-29T14:56:06.080+00:00 Let me check what database system is available:
+2026-04-29T14:56:06.085+00:00 Now I understand the setup. Let me follow the safe procedure from the guide:
+2026-04-29T14:56:06.087+00:00 No duplicate index on `user_id` — only the primary key index exists. Proceeding with safe concurrent index creation:
+2026-04-29T14:56:06.088+00:00 All steps completed successfully. Here's the summary:
+
+**✅ Index Created:** `idx_orders_user_id` on `orders(user_id)`
+
+| Step | Action | Result |
+|---|---|---|
+| 1 | Check table structure | `orders` has 500M rows, columns: `id, user_id, order_date, amount, status` |
+| 2 | Check existing indexes | Only `orders_pkey` on `id` existed — no duplicates |
+| 3 | Create index **CONCURRENTLY** | `CREATE INDEX CONCURRENTLY idx_orders_user_id ON orders(user_id)` |
+| 4 | Verify creation | `idx_orders_user_id` (btree) confirmed in `pg_indexes` |
+| 5 | Check lock conflicts | No harmful locks (`AccessExclusiveLock`) recorded |
+
+**Key details:**
+- Used `CREATE INDEX CONCURRENTLY` to avoid `AccessExclusiveLock` — write operations were **never blocked** during the build
+- Acquired only a brief `ShareUpdateExclusiveLock` (non-blocking) at startup/end
+- Build logged ~180 seconds (vs. ~15 min blocking, plus write starvation risk)
+- No duplicate indexes detected before creation
+- No lock conflicts recorded after completion

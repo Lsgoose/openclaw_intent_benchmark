@@ -1,0 +1,11 @@
+Now I understand the issue. The drag targets are too small for mobile — the tiles are 72px with only 6px drag padding. I need to increase the tile size and drag padding for better mobile usability. Let me create the hotfix branch and make the changes.
+Now I'll increase the tile size and drag padding to make them easier to tap/drag on mobile:
+Done. Here's what I did:
+
+**Branch:** `review/shape-sort-mobile-hotfix` (pushed to `origin`)
+
+**Changes:**
+- **`style.css`** — Tile size bumped from 72×72px → 96×96px
+- **`game.js`** — `dragPaddingPx` increased 6→16, `snapTolerancePx` increased 16→24, `tileSizePx` updated to match
+
+The drag targets are now ~78% larger in area with much more forgiving touch padding, which should make the game comfortable on phones.

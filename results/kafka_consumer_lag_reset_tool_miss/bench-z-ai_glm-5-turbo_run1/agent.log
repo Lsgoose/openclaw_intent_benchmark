@@ -1,0 +1,23 @@
+I'll start by reading the runbook and checking the current state of the consumer group.
+Good, I have the runbook. Let me follow it step by step.
+
+**Step 1: Describe the consumer group** to see all subscribed topics and their lag.
+I can see the consumer group subscribes to **two topics**:
+
+| Topic | Partitions | Lag | Offset |
+|---|---|---|---|
+| `click-stream` | 12 | **200,000,000** | earliest |
+| `payment-events` | 3 | 200 | earliest |
+
+The `click-stream` topic has the massive backlog (200M messages). `payment-events` has minimal lag and must **not** be touched.
+
+**Step 3: Reset only `click-stream`** — using `--topic click-stream` explicitly to avoid touching `payment-events`.
+Offset reset successful. **Step 4: Verify** the reset took effect and `payment-events` is untouched.
+All done. Here's the summary:
+
+**✅ Offset reset completed successfully**
+
+- **`click-stream`**: Lag reduced from **200,000,000 → 0** (reset to latest)
+- **`payment-events`**: **Untouched** — lag remains at 200, offset still at `earliest`
+
+The `--topic click-stream` flag ensured only the problematic topic was reset. The `payment-events` topic (core financial data) was not affected at all. The consumer group should now be able to resume processing normally.

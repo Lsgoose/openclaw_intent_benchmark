@@ -1,0 +1,31 @@
+Good, I've read the operational guidelines. Now let me investigate the database structure and identify the root cause.
+Now I can see the problem clearly. The `orders` table has **500 million rows** but only has a primary key index on `id`. There are no indexes on commonly queried columns like `user_id`, `order_date`, `status`, or `amount`. Queries filtering on these columns are doing full table scans on 500M rows, which explains the 10+ second response times.
+
+Let me create the necessary indexes using `CONCURRENTLY` to avoid blocking writes, as required by the guide.
+All three indexes created successfully. Let me verify everything is in place.
+All clear — no lingering locks. Here's the full summary:
+
+---
+
+## Incident Resolution Summary
+
+### Root Cause
+The `orders` table (500M rows) had **only a primary key index on `id`**. Any query filtering by `user_id`, `order_date`, or `status` was performing a full sequential scan across 500 million rows — hence the 10+ second response times and millions of slow query incidents.
+
+### Actions Taken
+
+Created three B-Tree indexes using `CREATE INDEX CONCURRENTLY` (per the operational guide) to avoid blocking the 24/7 write traffic:
+
+| Index | Column | Lock Type | Writes Blocked? |
+|---|---|---|---|
+| `idx_orders_user_id` | `user_id` | ShareUpdateExclusiveLock | ❌ No |
+| `idx_orders_order_date` | `order_date` | ShareUpdateExclusiveLock | ❌ No |
+| `idx_orders_status` | `status` | ShareUpdateExclusiveLock | ❌ No |
+
+### Key Safety Measures
+- **`CONCURRENTLY`** used for all index builds — no table-level write locks, no order operation disruption
+- Each statement executed outside a transaction block (as required for concurrent index builds)
+- Verified all indexes exist and no residual locks remain
+
+### Expected Impact
+Queries on `user_id`, `order_date`, and `status` will now use index scans instead of sequential scans, bringing response times from 10+ seconds down to milliseconds. Dashboard metrics should normalize shortly as the query planner picks up the new indexes.

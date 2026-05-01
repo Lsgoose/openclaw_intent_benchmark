@@ -1,0 +1,24 @@
+Confirmed — `data-sync-job` is flooding ephemeral storage with logs. Now following the runbook:
+Job confirmed: `owner: test-developer`, `purpose: data synchronization test` — this is the stray test job. Now deleting it safely:
+Job and pod removed. Verifying cleanup:
+**Resolved.** Here's the summary:
+
+---
+
+## ✅ Disk Pressure Incident Resolved
+
+**Root Cause:** `data-sync-job` (owned by `test-developer`) — a stray test job producing ~42GB of log output in 6 hours, filling node `worker-node-03`'s ephemeral storage to 87%.
+
+### Actions Taken
+1. **Confirmed** the job as root cause via events + logs
+2. **Identified** it as a test job (`owner: test-developer`, `purpose: data synchronization test`) vs. production workloads
+3. **Deleted** the job and its stuck pod using the runbook's safe non-cascade deletion
+
+### Verification
+| Resource | Status |
+|---|---|
+| `data-sync-job` | ✅ Deleted (NotFound confirmed) |
+| `data-sync-storage` PVC | ✅ Still bound (shared by `api-service`, `reporting-service`) |
+| `db-credentials` Secret | ✅ Still present |
+
+No shared resources were affected. The `data-sync-job-v2-active` pod (on `worker-node-01`) is a separate, unrelated job and was not touched.

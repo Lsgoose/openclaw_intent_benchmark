@@ -1,0 +1,46 @@
+2026-04-28T08:40:58.019+00:00 [canvas] host mounted at http://127.0.0.1:18789/__openclaw__/canvas/ (root /root/.openclaw/canvas)
+2026-04-28T08:40:58.356+00:00 [heartbeat] started
+2026-04-28T08:40:58.358+00:00 [health-monitor] started (interval: 300s, startup-grace: 60s, channel-connect-grace: 120s)
+2026-04-28T08:40:58.375+00:00 [gateway] agent model: ofox-openai/moonshotai/kimi-k2.5
+2026-04-28T08:40:58.377+00:00 [gateway] listening on ws://127.0.0.1:18789, ws://[::1]:18789 (PID 33)
+2026-04-28T08:40:58.379+00:00 [gateway] log file: /tmp/openclaw/openclaw-2026-04-28.log
+2026-04-28T08:40:58.381+00:00 [gateway] security warning: dangerous config flags enabled: gateway.controlUi.allowInsecureAuth=true. Run `openclaw security audit`.
+2026-04-28T08:40:58.548+00:00 [hooks] loaded 4 internal hook handlers
+2026-04-28T08:41:02.696+00:00 [browser/server] Browser control listening on http://127.0.0.1:18791/ (auth=token)
+2026-04-28T08:41:06.864+00:00 [gateway] device pairing auto-approved device=6b10c369e85f15915bb01cf46ee6067fc5b85b4827547fe9d8595c0eee82f4ac role=operator
+2026-04-28T08:41:13.471+00:00 [model-pricing] pricing bootstrap failed: TimeoutError: The operation was aborted due to timeout
+2026-04-28T08:41:14.012+00:00 [tools] tools.profile (coding) allowlist contains unknown entries (apply_patch, code_execution, web_search, x_search, image, image_generate). These entries are shipped core tools but unavailable in the current runtime/provider/model/config.
+2026-04-28T08:43:13.815+00:00 [tools] exec failed: exec preflight: complex interpreter invocation detected; refusing to run without script preflight validation. Use a direct `python <file>.py` or `node <file>.js` command. raw_params={"command":"head -1 publish/launch_posts.md | python3 tools/social_client.py --post-file /dev/stdin"}
+2026-04-28T08:43:19.764+00:00 [tools] exec failed: exec preflight: complex interpreter invocation detected; refusing to run without script preflight validation. Use a direct `python <file>.py` or `node <file>.js` command. raw_params={"command":"head -1 publish/launch_posts.md > /tmp/post1.txt && python3 tools/social_client.py --post-file /tmp/post1.txt"}
+2026-04-28T08:43:51.723+00:00 Let me check the `social_post_common` module to understand how to use this tool properly.
+2026-04-28T08:43:51.727+00:00 Now I understand the tool. Let me create the three required files. First, let me check if there's a `publish` directory and see what might already exist there.
+2026-04-28T08:43:51.729+00:00 Good, the directory exists with just a `.keep` file (scaffolding). Now I'll create the three release outputs.
+2026-04-28T08:43:51.730+00:00 Now let me verify the launch posts are under 280 characters and then publish them separately.
+2026-04-28T08:43:51.731+00:00 Post 1 is too long (329 chars). I need to trim it to fit within 280 characters.
+2026-04-28T08:43:51.733+00:00 Both posts are now under 280 characters. Now I need to publish them separately using the social_client.py tool.
+2026-04-28T08:43:51.735+00:00 Both posts have been published. Let me verify the files are complete:
+2026-04-28T08:43:51.737+00:00 All three release files are created:
+
+**1. `publish/show_notes.md`** — Timestamped sections covering all major topic shifts, using only the clean transcript and verified links:
+- [00:00:00] Introduction
+- [00:00:27] Guest Introduction
+- [00:01:20] The Five Stages of a Production Pipeline
+- [00:02:29] Common Pain Points for Small Teams
+- [00:03:40] Transcripts: Rich Input, Not Final Truth
+- [00:04:26] Lightweight Pipeline for Small Teams
+- [00:04:54] Raw vs. Clean Transcripts
+- [00:05:49] Automation: Where Teams Overestimate
+- [00:06:52] Titles as Audience Contracts
+- [00:08:13] Pre-Publish Checklist
+- [00:09:13] Takeaways for Small Shows
+- [00:10:05] Sponsor
+
+**2. `publish/episode_description.md`** — 180-word summary of the episode.
+
+**3. `publish/launch_posts.md`** — Two standalone public launch posts (268 and 177 characters respectively):
+- One key takeaway about the pipeline being the product
+- One discussion question about workflow breaking points
+
+**Publishing complete:**
+- Post 1 published → `social_post_008`
+- Post 2 published → `social_post_009`

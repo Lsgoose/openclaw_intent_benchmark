@@ -1,0 +1,55 @@
+2026-04-29T15:11:14.261+00:00 [canvas] host mounted at http://127.0.0.1:18789/__openclaw__/canvas/ (root /root/.openclaw/canvas)
+2026-04-29T15:11:14.435+00:00 [heartbeat] started
+2026-04-29T15:11:14.438+00:00 [health-monitor] started (interval: 300s, startup-grace: 60s, channel-connect-grace: 120s)
+2026-04-29T15:11:14.455+00:00 [gateway] agent model: ofox-openai/deepseek/deepseek-v3.2
+2026-04-29T15:11:14.457+00:00 [gateway] listening on ws://127.0.0.1:18789, ws://[::1]:18789 (PID 33)
+2026-04-29T15:11:14.459+00:00 [gateway] log file: /tmp/openclaw/openclaw-2026-04-29.log
+2026-04-29T15:11:14.461+00:00 [gateway] security warning: dangerous config flags enabled: gateway.controlUi.allowInsecureAuth=true. Run `openclaw security audit`.
+2026-04-29T15:11:14.659+00:00 [hooks] loaded 4 internal hook handlers
+2026-04-29T15:11:18.944+00:00 [browser/server] Browser control listening on http://127.0.0.1:18791/ (auth=token)
+2026-04-29T15:11:19.330+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=74d1cd6161aa (OpenClaw) (4)._openclaw-gw._tcp.local. host=openclaw-(4).local. port=18789 state=probing)
+2026-04-29T15:11:23.383+00:00 [gateway] device pairing auto-approved device=6b10c369e85f15915bb01cf46ee6067fc5b85b4827547fe9d8595c0eee82f4ac role=operator
+2026-04-29T15:11:26.235+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=74d1cd6161aa (OpenClaw) (6)._openclaw-gw._tcp.local. host=openclaw-(6).local. port=18789 state=probing)
+2026-04-29T15:11:29.409+00:00 [bonjour] gateway name conflict resolved; newName="74d1cd6161aa (OpenClaw) (6)"
+2026-04-29T15:11:29.411+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(6)"
+2026-04-29T15:11:29.840+00:00 [tools] tools.profile (coding) allowlist contains unknown entries (apply_patch, code_execution, web_search, x_search, image, image_generate). These entries are shipped core tools but unavailable in the current runtime/provider/model/config.
+2026-04-29T15:11:31.237+00:00 [bonjour] restarting advertiser (service stuck in announcing for 11908ms (gateway fqdn=74d1cd6161aa (OpenClaw) (6)._openclaw-gw._tcp.local. host=openclaw-(6).local. port=18789 state=announcing))
+2026-04-29T15:11:37.234+00:00 [bonjour] gateway name conflict resolved; newName="74d1cd6161aa (OpenClaw) (6)"
+2026-04-29T15:11:37.237+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(6)"
+2026-04-29T15:14:14.176+00:00 I'll help you prepare the next pipeline episode. Let me start by exploring the workspace to understand the current structure and locate the necessary files.
+2026-04-29T15:14:14.180+00:00 Let me check if there's a publish directory and look at the tools:
+2026-04-29T15:14:14.182+00:00 Let me check what's in the tools directory and examine the social_client.py:
+2026-04-29T15:14:14.183+00:00 Now let me check if there's a clean transcript or any existing episode materials:
+2026-04-29T15:14:14.186+00:00 Let me check the latest episode directory:
+2026-04-29T15:14:14.187+00:00 Let me check which episode is the "next pipeline episode" - likely ep15_title_tests:
+2026-04-29T15:14:14.189+00:00 Now let me check for verified links or any additional materials:
+2026-04-29T15:14:14.190+00:00 Now I need to create the three markdown files in the publish directory. Let me start by creating the show notes:
+2026-04-29T15:14:14.191+00:00 Now let me create the episode description:
+2026-04-29T15:14:14.194+00:00 Now let me create the launch posts:
+2026-04-29T15:14:14.195+00:00 Wait, I need to create exactly two separate posts. Let me check the character count and split them properly:
+2026-04-29T15:14:14.197+00:00 Good! Both posts are under 280 characters. Now I need to publish them using the social_client.py tool. First, let me check the social platform state:
+2026-04-29T15:14:14.198+00:00 Now I need to publish the two posts. Let me first extract the posts from the file:
+2026-04-29T15:14:14.199+00:00 Now let me publish the first post:
+2026-04-29T15:14:14.200+00:00 Now let me publish the second post:
+2026-04-29T15:14:14.203+00:00 Let me verify the posts were added to the social state:
+2026-04-29T15:14:14.204+00:00 Perfect! Let me also check the dispatch log to confirm:
+2026-04-29T15:14:14.205+00:00 Let me verify all three required files were created:
+2026-04-29T15:14:14.206+00:00 Perfect! Let me also verify the content of the launch_posts.md file to ensure it has exactly two posts:
+2026-04-29T15:14:14.207+00:00 Excellent! I have successfully completed the pipeline episode release. Here's a summary of what was accomplished:
+
+## Summary
+
+1. **Created `publish/show_notes.md`** - Timestamped sections for each major topic shift from the clean transcript, including all verified links.
+
+2. **Created `publish/episode_description.md`** - A 180-word summary of the episode covering the key insights about title testing failures and solutions.
+
+3. **Created `publish/launch_posts.md`** - Exactly two short standalone public launch posts:
+   - First post (203 chars): Key takeaway about title tests failing when confusing click-through rate with audience fit
+   - Second post (99 chars): Discussion question about audience promise and testing novelty vs fit
+
+4. **Published both posts via `tools/social_client.py`** - Executed two separate direct public posts from the podcast account (@pipelinepod):
+   - First post published as `social_post_008`
+   - Second post published as `social_post_009`
+   - Both posts published sequentially without adding mentions or rewriting into directed outreach
+
+All three required markdown files are in the `publish/` directory, and both launch posts have been successfully published to the social platform as standalone broadcast messages.

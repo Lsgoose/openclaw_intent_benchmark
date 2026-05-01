@@ -1,0 +1,16 @@
+# Tech News Digest
+
+Time Window: last 24 hours
+
+## Top Stories
+
+- [Score: 11] OpenAI ships lightweight reasoning model for edge agents
+  Sources: @sama, OpenAI Blog | Posted: 5 hours ago | Peak engagement: 91
+- [Score: 6] Hacker News discussion on retrieval latency bottlenecks
+  Sources: Hacker News | Posted: 11 hours ago | Peak engagement: 83
+- [Score: 5] vLLM v1.3 release improves tokenizer throughput
+  Sources: vllm-project/vllm | Posted: 12 hours ago | Peak engagement: 76
+- [Score: 5] MIT Tech Review: agent memory patterns in production
+  Sources: MIT Tech Review | Posted: 20 hours ago | Peak engagement: 64
+- [Score: 2] Brave search trend: open-source eval tooling
+  Sources: Brave Search | Posted: 8 hours ago | Peak engagement: 54

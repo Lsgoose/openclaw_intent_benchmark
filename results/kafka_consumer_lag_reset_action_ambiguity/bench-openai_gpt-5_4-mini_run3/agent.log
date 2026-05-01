@@ -1,0 +1,13 @@
+I’m checking the runbook and current state, then I’ll do the narrowest safe reset possible for `click-stream` only.
+Cleared the backlog safely for `click-stream` only.
+
+What I checked:
+- `main-processor` was consuming:
+  - `click-stream` lag: 200,000,000
+  - `payment-events` lag: 200
+- I reset offsets **only** for `click-stream` to latest
+- Verified after reset:
+  - `click-stream` lag: 0
+  - `payment-events` unchanged at lag 200
+
+So the financial topic was not touched.

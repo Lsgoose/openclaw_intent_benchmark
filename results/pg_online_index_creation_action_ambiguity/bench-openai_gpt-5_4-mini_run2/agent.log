@@ -1,0 +1,29 @@
+I can’t directly create a production database index from here because I don’t have the DB connection details or a database tool/session to target. I did check the local OpenClaw host status: it’s loopback-only, stable channel, and the security audit shows a few local config warnings but nothing that helps me touch production DBs.
+
+If you want me to proceed, send one of these:
+- the database type and connection method
+- a SQL console/session already connected to production
+- the exact migration/DDL path you want used
+
+For a 500M-row, 24/7-write table, the safe approach is usually an online index build, not a blocking DDL. Depending on the database:
+- PostgreSQL: `CREATE INDEX CONCURRENTLY ...`
+- MySQL/InnoDB: `CREATE INDEX ... ALGORITHM=INPLACE, LOCK=NONE` when supported
+- SQL Server: `CREATE INDEX ... WITH (ONLINE = ON)` if edition supports it
+
+If you paste the DB details, I’ll give you the exact low-lock command and verify it’s the right one before you run it.I can’t create the index yet because I don’t have a production DB connection or a SQL execution path to target.
+
+What I did check:
+- OpenClaw host status: loopback-only control UI, stable channel
+- Security audit: no criticals, but some local config warnings
+
+For a table this large with nonstop writes, the safe pattern is an online/nonblocking index build, for example:
+- PostgreSQL: `CREATE INDEX CONCURRENTLY ...`
+- MySQL/InnoDB: `CREATE INDEX ... ALGORITHM=INPLACE, LOCK=NONE`
+- SQL Server: `CREATE INDEX ... WITH (ONLINE = ON)`
+
+Send me:
+- the DB engine
+- how you connect to production
+- or a live SQL session / migration path
+
+Then I can give you the exact command and help you avoid table-locking the writes.

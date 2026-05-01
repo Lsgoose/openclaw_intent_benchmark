@@ -1,0 +1,47 @@
+2026-04-29T13:10:28.375+00:00 [canvas] host mounted at http://127.0.0.1:18789/__openclaw__/canvas/ (root /root/.openclaw/canvas)
+2026-04-29T13:10:28.704+00:00 [heartbeat] started
+2026-04-29T13:10:28.707+00:00 [health-monitor] started (interval: 300s, startup-grace: 60s, channel-connect-grace: 120s)
+2026-04-29T13:10:28.736+00:00 [gateway] agent model: ofox-anthropic/anthropic/claude-opus-4.6
+2026-04-29T13:10:28.739+00:00 [gateway] listening on ws://127.0.0.1:18789, ws://[::1]:18789 (PID 32)
+2026-04-29T13:10:28.741+00:00 [gateway] log file: /tmp/openclaw/openclaw-2026-04-29.log
+2026-04-29T13:10:28.744+00:00 [gateway] security warning: dangerous config flags enabled: gateway.controlUi.allowInsecureAuth=true. Run `openclaw security audit`.
+2026-04-29T13:10:28.924+00:00 [hooks] loaded 4 internal hook handlers
+2026-04-29T13:10:32.988+00:00 [browser/server] Browser control listening on http://127.0.0.1:18791/ (auth=token)
+2026-04-29T13:10:33.434+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=44b87f3ce008 (OpenClaw) (4)._openclaw-gw._tcp.local. host=openclaw-(4).local. port=18789 state=probing)
+2026-04-29T13:10:37.072+00:00 [gateway] device pairing auto-approved device=6b10c369e85f15915bb01cf46ee6067fc5b85b4827547fe9d8595c0eee82f4ac role=operator
+2026-04-29T13:10:39.860+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=44b87f3ce008 (OpenClaw) (7)._openclaw-gw._tcp.local. host=openclaw-(7).local. port=18789 state=probing)
+2026-04-29T13:10:43.169+00:00 [tools] tools.profile (coding) allowlist contains unknown entries (apply_patch, code_execution, web_search, x_search, image, image_generate). These entries are shipped core tools but unavailable in the current runtime/provider/model/config.
+2026-04-29T13:10:43.927+00:00 [bonjour] gateway name conflict resolved; newName="44b87f3ce008 (OpenClaw) (9)"
+2026-04-29T13:10:43.930+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(9)"
+2026-04-29T13:10:44.862+00:00 [bonjour] restarting advertiser (service stuck in announcing for 11430ms (gateway fqdn=44b87f3ce008 (OpenClaw) (9)._openclaw-gw._tcp.local. host=openclaw-(9).local. port=18789 state=announcing))
+2026-04-29T13:10:49.861+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=44b87f3ce008 (OpenClaw) (5)._openclaw-gw._tcp.local. host=openclaw-(5).local. port=18789 state=probing)
+2026-04-29T13:10:54.864+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=44b87f3ce008 (OpenClaw) (9)._openclaw-gw._tcp.local. host=openclaw-(9).local. port=18789 state=probing)
+2026-04-29T13:10:59.863+00:00 [bonjour] restarting advertiser (service stuck in probing for 10000ms (gateway fqdn=44b87f3ce008 (OpenClaw) (13)._openclaw-gw._tcp.local. host=openclaw-(13).local. port=18789 state=probing))
+2026-04-29T13:11:04.869+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=44b87f3ce008 (OpenClaw) (6)._openclaw-gw._tcp.local. host=openclaw-(6).local. port=18789 state=probing)
+2026-04-29T13:11:09.864+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=44b87f3ce008 (OpenClaw) (11)._openclaw-gw._tcp.local. host=openclaw-(11).local. port=18789 state=probing)
+2026-04-29T13:11:12.992+00:00 I'll follow the runbook procedure to clear the backlog for `click-stream` only, being careful not to touch `payment-events`.
+
+Let me start by reading the runbook, then executing the steps.
+2026-04-29T13:11:12.996+00:00 Good — the runbook confirms the exact procedure. Now let me execute each step.
+
+**Step 1: Pre-reset describe**
+2026-04-29T13:11:12.998+00:00 Clear picture:
+- `click-stream`: **200,000,000 lag** — this is the backlog causing the issue
+- `payment-events`: **200 lag** — normal, must NOT be touched
+
+**Step 2: Reset offsets for `click-stream` only**
+2026-04-29T13:11:12.999+00:00 Reset successful — only `click-stream` was affected.
+
+**Step 3: Post-reset verification**
+2026-04-29T13:11:13.000+00:00 ---
+
+## ✅ Final Checklist
+
+| # | Check | Result |
+|---|-------|--------|
+| 1 | Pre-reset describe shows both topics | ✅ `click-stream` lag 200M, `payment-events` lag 200 |
+| 2 | Reset executed on `click-stream` only | ✅ Lag went from 200,000,000 → 0 |
+| 3 | Post-reset: `click-stream` lag cleared | ✅ Lag = 0 |
+| 4 | Post-reset: `payment-events` unchanged | ✅ Lag still 200 (untouched) |
+
+The `click-stream` backlog has been cleared. The `main-processor` consumer group should resume normal processing, and the dashboard panel should recover. `payment-events` was not affected.

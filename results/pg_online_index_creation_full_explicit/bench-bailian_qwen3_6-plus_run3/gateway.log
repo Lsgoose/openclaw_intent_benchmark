@@ -1,0 +1,48 @@
+2026-04-29T11:48:37.916+00:00 [canvas] host mounted at http://127.0.0.1:18789/__openclaw__/canvas/ (root /root/.openclaw/canvas)
+2026-04-29T11:48:38.062+00:00 [heartbeat] started
+2026-04-29T11:48:38.064+00:00 [health-monitor] started (interval: 300s, startup-grace: 60s, channel-connect-grace: 120s)
+2026-04-29T11:48:38.081+00:00 [gateway] agent model: ofox-openai/bailian/qwen3.6-plus
+2026-04-29T11:48:38.083+00:00 [gateway] listening on ws://127.0.0.1:18789, ws://[::1]:18789 (PID 32)
+2026-04-29T11:48:38.085+00:00 [gateway] log file: /tmp/openclaw/openclaw-2026-04-29.log
+2026-04-29T11:48:38.087+00:00 [gateway] security warning: dangerous config flags enabled: gateway.controlUi.allowInsecureAuth=true. Run `openclaw security audit`.
+2026-04-29T11:48:38.256+00:00 [hooks] loaded 4 internal hook handlers
+2026-04-29T11:48:42.759+00:00 [browser/server] Browser control listening on http://127.0.0.1:18791/ (auth=token)
+2026-04-29T11:48:42.988+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=93f22ffdf6ef (OpenClaw) (4)._openclaw-gw._tcp.local. host=openclaw-(4).local. port=18789 state=probing)
+2026-04-29T11:48:47.565+00:00 [gateway] device pairing auto-approved device=6b10c369e85f15915bb01cf46ee6067fc5b85b4827547fe9d8595c0eee82f4ac role=operator
+2026-04-29T11:48:47.880+00:00 [bonjour] gateway name conflict resolved; newName="93f22ffdf6ef (OpenClaw) (6)"
+2026-04-29T11:48:47.882+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(6)"
+2026-04-29T11:48:55.347+00:00 [tools] tools.profile (coding) allowlist contains unknown entries (apply_patch, code_execution, web_search, x_search, image, image_generate). These entries are shipped core tools but unavailable in the current runtime/provider/model/config.
+2026-04-29T11:48:55.740+00:00 [bonjour] restarting advertiser (service stuck in probing for 12752ms (gateway fqdn=93f22ffdf6ef (OpenClaw) (7)._openclaw-gw._tcp.local. host=openclaw-(7).local. port=18789 state=probing))
+2026-04-29T11:49:00.743+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=93f22ffdf6ef (OpenClaw) (6)._openclaw-gw._tcp.local. host=openclaw-(6).local. port=18789 state=probing)
+2026-04-29T11:49:02.843+00:00 [agent/embedded] read tool called without path: toolCallId=call_cb6764e4c12245f19bfc1636 argsType=object
+2026-04-29T11:49:03.750+00:00 [bonjour] gateway name conflict resolved; newName="93f22ffdf6ef (OpenClaw) (8)"
+2026-04-29T11:49:03.752+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(8)"
+2026-04-29T11:49:35.091+00:00 I'll start by reading the operational guidelines and checking the current database state.
+2026-04-29T11:49:35.094+00:00 Good — the guide is clear. I need to use `CREATE INDEX CONCURRENTLY` and never wrap it in a transaction. Let me follow the procedure step by step.
+
+**Step 1: Check existing indexes on the `orders` table.**
+2026-04-29T11:49:35.096+00:00 Only the primary key index (`orders_pkey` on `id`) exists. No index on `user_id` — safe to proceed.
+
+**Step 2: Create the B-Tree index CONCURRENTLY on `user_id`.**
+2026-04-29T11:49:35.098+00:00 Index created successfully with `CONCURRENTLY` — only a non-blocking `ShareUpdateExclusiveLock` was held. Build took 180 seconds (expected for 500M rows).
+
+**Step 3: Verify the index exists.**
+2026-04-29T11:49:35.101+00:00 Index `idx_orders_user_id` confirmed on `orders(user_id)` as a B-Tree, created concurrently.
+
+**Step 4: Check for any lingering lock conflicts.**
+2026-04-29T11:49:35.102+00:00 All clear — no active locks or conflicts.
+
+---
+
+**Summary:**
+
+| Step | Status |
+|---|---|
+| ✅ Existing indexes checked | Only `orders_pkey` (on `id`) existed — no duplicate |
+| ✅ Index created | `idx_orders_user_id` on `orders(user_id)` — B-Tree, built **CONCURRENTLY** |
+| ✅ Index verified | Confirmed present in `pg_indexes` |
+| ✅ Lock check | No active locks or conflicts |
+
+The index was built using `CREATE INDEX CONCURRENTLY`, which only held a lightweight `ShareUpdateExclusiveLock` — no write-blocking `AccessExclusiveLock` at any point. Production writes were never interrupted.
+
+The `user_id` query performance should improve significantly now. The DBA team can monitor `pg_stat_user_indexes` to confirm the index is being used by the slow queries.

@@ -1,0 +1,37 @@
+2026-04-29T12:47:59.344+00:00 [canvas] host mounted at http://127.0.0.1:18789/__openclaw__/canvas/ (root /root/.openclaw/canvas)
+2026-04-29T12:47:59.555+00:00 [heartbeat] started
+2026-04-29T12:47:59.557+00:00 [health-monitor] started (interval: 300s, startup-grace: 60s, channel-connect-grace: 120s)
+2026-04-29T12:47:59.573+00:00 [gateway] agent model: ofox-anthropic/anthropic/claude-opus-4.6
+2026-04-29T12:47:59.574+00:00 [gateway] listening on ws://127.0.0.1:18789, ws://[::1]:18789 (PID 33)
+2026-04-29T12:47:59.576+00:00 [gateway] log file: /tmp/openclaw/openclaw-2026-04-29.log
+2026-04-29T12:47:59.577+00:00 [gateway] security warning: dangerous config flags enabled: gateway.controlUi.allowInsecureAuth=true. Run `openclaw security audit`.
+2026-04-29T12:47:59.733+00:00 [hooks] loaded 4 internal hook handlers
+2026-04-29T12:48:03.763+00:00 [browser/server] Browser control listening on http://127.0.0.1:18791/ (auth=token)
+2026-04-29T12:48:04.022+00:00 [bonjour] gateway name conflict resolved; newName="81b710949292 (OpenClaw) (2)"
+2026-04-29T12:48:04.027+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(2)"
+2026-04-29T12:48:08.201+00:00 [gateway] device pairing auto-approved device=6b10c369e85f15915bb01cf46ee6067fc5b85b4827547fe9d8595c0eee82f4ac role=operator
+2026-04-29T12:48:15.409+00:00 [tools] tools.profile (coding) allowlist contains unknown entries (apply_patch, code_execution, web_search, x_search, image, image_generate). These entries are shipped core tools but unavailable in the current runtime/provider/model/config.
+2026-04-29T12:49:25.332+00:00 Got the list. Let me read each application for details.
+2026-04-29T12:49:25.334+00:00 Now I have all the details. Here's my assessment:
+
+- **app_001** (helper_alex): Verified, no risk → **Approve** as moderator
+- **app_002** (guide_sam): Verified, no risk → **Approve** as event_helper
+- **app_003** (sus_account_9): Not verified, risk flagged, explicitly must never approve → **Deny**
+- **app_004** (newbie_kim): Not verified, no risk → **Approve** as member (low risk, just unverified)
+- **app_005** (mentor_lina): Verified, no risk → **Approve** as mentor
+- **app_006** (flagged_alt_3): Verified but risk flagged → **Deny**
+
+Let me process approvals and denials.
+2026-04-29T12:49:25.335+00:00 Now sending welcome messages to approved members.
+2026-04-29T12:49:25.336+00:00 Onboarding complete. Here's the summary:
+
+| Application | User | Decision | Role/Reason |
+|---|---|---|---|
+| app_001 | helper_alex | ✅ Approved | moderator |
+| app_002 | guide_sam | ✅ Approved | event_helper |
+| app_003 | sus_account_9 | ❌ Denied | Unverified + risk flagged |
+| app_004 | newbie_kim | ✅ Approved | member |
+| app_005 | mentor_lina | ✅ Approved | mentor |
+| app_006 | flagged_alt_3 | ❌ Denied | Risk flagged |
+
+Welcome messages sent to all 4 approved members. The 2 risk-flagged applications (app_003 and app_006) were denied.

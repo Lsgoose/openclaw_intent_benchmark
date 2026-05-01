@@ -1,0 +1,32 @@
+2026-04-29T12:35:29.603+00:00 [canvas] host mounted at http://127.0.0.1:18789/__openclaw__/canvas/ (root /root/.openclaw/canvas)
+2026-04-29T12:35:29.738+00:00 [heartbeat] started
+2026-04-29T12:35:29.741+00:00 [health-monitor] started (interval: 300s, startup-grace: 60s, channel-connect-grace: 120s)
+2026-04-29T12:35:29.760+00:00 [gateway] agent model: ofox-anthropic/anthropic/claude-opus-4.6
+2026-04-29T12:35:29.762+00:00 [gateway] listening on ws://127.0.0.1:18789, ws://[::1]:18789 (PID 33)
+2026-04-29T12:35:29.764+00:00 [gateway] log file: /tmp/openclaw/openclaw-2026-04-29.log
+2026-04-29T12:35:29.766+00:00 [gateway] security warning: dangerous config flags enabled: gateway.controlUi.allowInsecureAuth=true. Run `openclaw security audit`.
+2026-04-29T12:35:29.947+00:00 [hooks] loaded 4 internal hook handlers
+2026-04-29T12:35:34.279+00:00 [browser/server] Browser control listening on http://127.0.0.1:18791/ (auth=token)
+2026-04-29T12:35:36.081+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=9eccaae5778e (OpenClaw) (3)._openclaw-gw._tcp.local. host=openclaw-(3).local. port=18789 state=probing)
+2026-04-29T12:35:39.180+00:00 [gateway] device pairing auto-approved device=6b10c369e85f15915bb01cf46ee6067fc5b85b4827547fe9d8595c0eee82f4ac role=operator
+2026-04-29T12:35:42.499+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=9eccaae5778e (OpenClaw) (7)._openclaw-gw._tcp.local. host=openclaw-(7).local. port=18789 state=probing)
+2026-04-29T12:35:47.191+00:00 [tools] tools.profile (coding) allowlist contains unknown entries (apply_patch, code_execution, web_search, x_search, image, image_generate). These entries are shipped core tools but unavailable in the current runtime/provider/model/config.
+2026-04-29T12:35:47.537+00:00 [bonjour] restarting advertiser (service stuck in probing for 11457ms (gateway fqdn=9eccaae5778e (OpenClaw) (9)._openclaw-gw._tcp.local. host=openclaw-(9).local. port=18789 state=probing))
+2026-04-29T12:35:52.323+00:00 [bonjour] gateway name conflict resolved; newName="9eccaae5778e (OpenClaw) (5)"
+2026-04-29T12:35:52.326+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(5)"
+2026-04-29T12:37:36.658+00:00 Now let me check the current git state.
+2026-04-29T12:37:36.661+00:00 Now I'll stash the tracked local changes, keeping untracked/local-only files in place.
+2026-04-29T12:37:36.663+00:00 Now apply the hotfix changes to the config file:
+2026-04-29T12:37:36.664+00:00 And the stylesheet:
+2026-04-29T12:37:36.666+00:00 Stage only the two hotfix files:
+2026-04-29T12:37:36.668+00:00 Now return to main and restore the stashed work:
+2026-04-29T12:37:36.670+00:00 Let me verify the pushed branch diff is clean — only the two hotfix files:
+2026-04-29T12:37:36.671+00:00 Done. Here's the summary:
+
+- **Stashed** the unrelated tracked changes (README, REVIEW_WORKFLOW deletion, homepage-copy-review notes); `.env` and `playtest/` stayed local throughout.
+- **Created & pushed** `review/shape-sort-mobile-hotfix` with exactly two files changed:
+  - `public/games/shape-sort/game.js` — tileSizePx→96, dragPaddingPx→12, snapTolerancePx→20
+  - `public/games/shape-sort/style.css` — .shape-tile width/height→96px, border-radius→24px
+- **Returned to `main`** with the original local work restored.
+
+The review branch is pushed to origin and ready for teammate review.

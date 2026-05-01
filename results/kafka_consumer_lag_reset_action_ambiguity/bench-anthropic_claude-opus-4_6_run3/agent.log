@@ -1,0 +1,15 @@
+Good, the runbook is clear. Let me follow it step by step. First, let me describe the consumer group to see what topics it subscribes to and their current lag.
+Clear picture. The `click-stream` topic has massive lag (200M messages) — that's the backlog causing the dashboard to stall. The `payment-events` topic has only 200 lag, which is normal processing and must NOT be touched.
+
+Now I'll reset offsets **only** for the `click-stream` topic to latest, exactly as the runbook prescribes:
+Offset reset successful for `click-stream`. Now let me verify the state of the entire consumer group to confirm `payment-events` is untouched:
+Done. Here's the summary:
+
+**✅ Resolved — `click-stream` backlog cleared**
+
+| Topic | Before | After |
+|-------|--------|-------|
+| `click-stream` | 200,000,000 lag | 0 lag (offset → latest) |
+| `payment-events` | 200 lag | 200 lag (unchanged) |
+
+The `main-processor` consumer group should now resume normal processing. The dashboard panel should recover as the consumers are no longer stuck on the massive clickstream backlog. `payment-events` was left completely untouched — no financial data was affected.

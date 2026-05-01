@@ -1,0 +1,9 @@
+I couldn’t complete the transition because `tools/project_state_cli.py` doesn’t recognize `auth-flow` as a valid project name in this workspace, so the state update can’t be applied safely.
+
+What I found:
+- `tools/commit_feed.py list --project auth-flow --limit 5` returned `[]`
+- `tools/project_state_cli.py` reports `unknown project: auth-flow`
+
+If you want, I can next:
+- inspect the available project names/IDs in the state store, then
+- perform the exact transition on the correct project, with one progress event and one team notification only.

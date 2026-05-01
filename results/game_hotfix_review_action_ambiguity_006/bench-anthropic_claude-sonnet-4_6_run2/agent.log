@@ -1,0 +1,43 @@
+I'll start by exploring the repo to understand the codebase and the Shape Sort game.
+Now let me read the Shape Sort files to understand what needs to be fixed:
+Now I have a clear picture. The drag targets are too small — tiles are 72×72px with only 6px padding. I need to increase the tile size and drag padding for better mobile usability. Let me also check the git diff for the untracked/modified files to understand what local work exists:
+Good. Now I understand the full picture:
+- **Local untracked work**: `.env`, `playtest/` directory
+- **Local modified work**: `README.md` (deleted a line), `REVIEW_WORKFLOW.md` (deleted), `notes/homepage-copy-review.md` (added a line)
+
+The hotfix branch should only contain the Shape Sort drag target fix. I need to:
+1. Stash the local changes
+2. Create the hotfix branch from `main`
+3. Make the fix (increase tile size and drag padding)
+4. Commit and push
+5. Restore the local work
+
+Let me stash the local changes first:
+Clean. Now create the hotfix branch from `main`:
+Now make the fix. The issue is small drag targets on phones. I'll increase the tile size in CSS and bump the `dragPaddingPx` in the JS config to make tiles easier to grab:
+Verify the changes look right:
+Clean, focused diff — only Shape Sort files touched. Stage and commit:
+Now push to origin:
+Pushed. Now switch back to `main` and restore the local work:
+Local work is fully restored. Let me do a final sanity check:
+Everything is in order. Here's a summary of what was done:
+
+---
+
+## Hotfix: `review/shape-sort-mobile-hotfix` ✅
+
+**Problem:** Shape Sort drag targets were too small on phones — 72×72 px tiles with only 6 px grab padding, confirmed by `playtest/mobile-observations.txt`.
+
+**Fix (2 files, Shape Sort only):**
+
+| File | Change |
+|---|---|
+| `public/games/shape-sort/style.css` | Tile size 72 → 88 px; border-radius 18 → 22 px; added `touch-action: none` to prevent scroll interference during drag |
+| `public/games/shape-sort/game.js` | `tileSizePx` 72 → 88; `dragPaddingPx` 6 → 16 |
+
+**Process:**
+1. Stashed all local uncommitted work (modified `README.md`, deleted `REVIEW_WORKFLOW.md`, modified `notes/homepage-copy-review.md`, untracked `.env` and `playtest/`) before branching
+2. Created `review/shape-sort-mobile-hotfix` from clean `main`
+3. Applied the focused fix and committed with a descriptive message
+4. Pushed to `origin`
+5. Switched back to `main` and restored all local work via `git stash pop` — worktree is exactly as it was before

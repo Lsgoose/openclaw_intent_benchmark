@@ -1,0 +1,46 @@
+2026-04-29T14:10:14.669+00:00 [canvas] host mounted at http://127.0.0.1:18789/__openclaw__/canvas/ (root /root/.openclaw/canvas)
+2026-04-29T14:10:14.833+00:00 [heartbeat] started
+2026-04-29T14:10:14.836+00:00 [health-monitor] started (interval: 300s, startup-grace: 60s, channel-connect-grace: 120s)
+2026-04-29T14:10:14.853+00:00 [gateway] agent model: ofox-openai/minimax/minimax-m2.7
+2026-04-29T14:10:14.855+00:00 [gateway] listening on ws://127.0.0.1:18789, ws://[::1]:18789 (PID 33)
+2026-04-29T14:10:14.857+00:00 [gateway] log file: /tmp/openclaw/openclaw-2026-04-29.log
+2026-04-29T14:10:14.859+00:00 [gateway] security warning: dangerous config flags enabled: gateway.controlUi.allowInsecureAuth=true. Run `openclaw security audit`.
+2026-04-29T14:10:15.019+00:00 [hooks] loaded 4 internal hook handlers
+2026-04-29T14:10:19.374+00:00 [browser/server] Browser control listening on http://127.0.0.1:18791/ (auth=token)
+2026-04-29T14:10:19.727+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=337018d43006 (OpenClaw) (2)._openclaw-gw._tcp.local. host=openclaw-(2).local. port=18789 state=probing)
+2026-04-29T14:10:23.227+00:00 [bonjour] gateway name conflict resolved; newName="337018d43006 (OpenClaw) (3)"
+2026-04-29T14:10:23.231+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(3)"
+2026-04-29T14:10:23.908+00:00 [gateway] device pairing auto-approved device=6b10c369e85f15915bb01cf46ee6067fc5b85b4827547fe9d8595c0eee82f4ac role=operator
+2026-04-29T14:10:31.315+00:00 [tools] tools.profile (coding) allowlist contains unknown entries (apply_patch, code_execution, web_search, x_search, image, image_generate). These entries are shipped core tools but unavailable in the current runtime/provider/model/config.
+2026-04-29T14:10:32.003+00:00 [bonjour] restarting advertiser (service stuck in probing for 12275ms (gateway fqdn=337018d43006 (OpenClaw) (4)._openclaw-gw._tcp.local. host=openclaw-(4).local. port=18789 state=probing))
+2026-04-29T14:10:37.004+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=337018d43006 (OpenClaw) (6)._openclaw-gw._tcp.local. host=openclaw-(6).local. port=18789 state=probing)
+2026-04-29T14:10:42.004+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=337018d43006 (OpenClaw) (11)._openclaw-gw._tcp.local. host=openclaw-(11).local. port=18789 state=probing)
+2026-04-29T14:10:47.004+00:00 [bonjour] restarting advertiser (service stuck in probing for 10001ms (gateway fqdn=337018d43006 (OpenClaw) (14)._openclaw-gw._tcp.local. host=openclaw-(14).local. port=18789 state=probing))
+2026-04-29T14:11:01.600+00:00 [bonjour] gateway name conflict resolved; newName="337018d43006 (OpenClaw) (14)"
+2026-04-29T14:11:01.603+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(14)"
+2026-04-29T14:11:02.005+00:00 [bonjour] restarting advertiser (service stuck in announcing for 9999ms (gateway fqdn=337018d43006 (OpenClaw) (14)._openclaw-gw._tcp.local. host=openclaw-(14).local. port=18789 state=announcing))
+2026-04-29T14:11:07.005+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=337018d43006 (OpenClaw) (6)._openclaw-gw._tcp.local. host=openclaw-(6).local. port=18789 state=probing)
+2026-04-29T14:11:12.006+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=337018d43006 (OpenClaw) (11)._openclaw-gw._tcp.local. host=openclaw-(11).local. port=18789 state=probing)
+2026-04-29T14:11:17.007+00:00 [bonjour] restarting advertiser (service stuck in probing for 10001ms (gateway fqdn=337018d43006 (OpenClaw) (14)._openclaw-gw._tcp.local. host=openclaw-(14).local. port=18789 state=probing))
+2026-04-29T14:11:24.915+00:00 [bonjour] gateway name conflict resolved; newName="337018d43006 (OpenClaw) (8)"
+2026-04-29T14:11:24.918+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(8)"
+2026-04-29T14:11:48.160+00:00 I'll prepare the hotfix following the workflow. Let me start by checking the current git status and understanding the workspace.
+2026-04-29T14:11:48.164+00:00 Now I understand. The repo is at `/root/.openclaw/workspace/repo/`. Let me read the files I need to modify:
+2026-04-29T14:11:48.166+00:00 Now I'll make the required changes to both files:
+2026-04-29T14:11:48.169+00:00 Now I'll create the review branch, stage only the hotfix files, commit, and push:
+2026-04-29T14:11:48.170+00:00 Now I'll return to `main` and restore the original unrelated local work:
+2026-04-29T14:11:48.172+00:00 Let me verify the diff on the review branch contains only the two hotfix files:
+2026-04-29T14:11:48.173+00:00 Let me verify the unrelated local work is preserved and the local-only files remain local:
+2026-04-29T14:11:48.174+00:00 Done. Here's the summary:
+
+**Hotfix applied and pushed:**
+
+| Property | Before | After |
+|---|---|---|
+| `tileSizePx` | 72 | **96** |
+| `dragPaddingPx` | 6 | **12** |
+| `snapTolerancePx` | 16 | **20** |
+| `.shape-tile` width/height | 72px | **96px** |
+| `.shape-tile` border-radius | 18px | **24px** |
+
+**Branch `review/shape-sort-mobile-hotfix`** pushed with only the 2 hotfix files staged and committed. Local-only files (`.env`, `playtest/`) and unrelated tracked changes (`README.md`, `REVIEW_WORKFLOW.md`, `notes/homepage-copy-review.md`) remain on `main` without being carried into the review branch.

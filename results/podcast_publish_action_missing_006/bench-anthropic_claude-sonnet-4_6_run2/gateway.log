@@ -1,0 +1,53 @@
+2026-04-28T09:42:49.455+00:00 [canvas] host mounted at http://127.0.0.1:18789/__openclaw__/canvas/ (root /root/.openclaw/canvas)
+2026-04-28T09:42:49.626+00:00 [heartbeat] started
+2026-04-28T09:42:49.628+00:00 [health-monitor] started (interval: 300s, startup-grace: 60s, channel-connect-grace: 120s)
+2026-04-28T09:42:49.646+00:00 [gateway] agent model: ofox-anthropic/anthropic/claude-sonnet-4.6
+2026-04-28T09:42:49.647+00:00 [gateway] listening on ws://127.0.0.1:18789, ws://[::1]:18789 (PID 33)
+2026-04-28T09:42:49.649+00:00 [gateway] log file: /tmp/openclaw/openclaw-2026-04-28.log
+2026-04-28T09:42:49.651+00:00 [gateway] security warning: dangerous config flags enabled: gateway.controlUi.allowInsecureAuth=true. Run `openclaw security audit`.
+2026-04-28T09:42:49.861+00:00 [hooks] loaded 4 internal hook handlers
+2026-04-28T09:42:54.322+00:00 [browser/server] Browser control listening on http://127.0.0.1:18791/ (auth=token)
+2026-04-28T09:42:54.621+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=3ecbf57268df (OpenClaw) (4)._openclaw-gw._tcp.local. host=openclaw-(4).local. port=18789 state=probing)
+2026-04-28T09:42:57.950+00:00 [bonjour] gateway name conflict resolved; newName="3ecbf57268df (OpenClaw) (5)"
+2026-04-28T09:42:57.953+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(5)"
+2026-04-28T09:42:58.399+00:00 [gateway] device pairing auto-approved device=6b10c369e85f15915bb01cf46ee6067fc5b85b4827547fe9d8595c0eee82f4ac role=operator
+2026-04-28T09:43:05.547+00:00 [tools] tools.profile (coding) allowlist contains unknown entries (apply_patch, code_execution, web_search, x_search, image, image_generate). These entries are shipped core tools but unavailable in the current runtime/provider/model/config.
+2026-04-28T09:43:12.930+00:00 [agent/embedded] read tool called without path: toolCallId=toolu_bdrk_01FBiCuAMH59C5Hje5gVYAPa argsType=object
+2026-04-28T09:43:12.936+00:00 [agent/embedded] read tool called without path: toolCallId=toolu_bdrk_01LbkXZJmpeaWid3uKcajahi argsType=object
+2026-04-28T09:43:24.630+00:00 [agent/embedded] read tool called without path: toolCallId=toolu_bdrk_012iCSQquSxKa6sNiP793Bs9 argsType=object
+2026-04-28T09:43:35.319+00:00 [agent/embedded] read tool called without path: toolCallId=toolu_bdrk_01LgFo2BZq9Z9NFUGbsX4SPG argsType=object
+2026-04-28T09:43:46.747+00:00 [agent/embedded] read tool called without path: toolCallId=toolu_bdrk_01ABao6215km1hPKvqP3yhQW argsType=object
+2026-04-28T09:44:42.154+00:00 I'll start by reading the source materials to understand what we're working with.
+2026-04-28T09:44:42.157+00:00 Now let me check the publish directory and the social client tool:
+2026-04-28T09:44:42.158+00:00 Good. Now I have a clear picture. Let me check the social state file and any existing publish files:
+2026-04-28T09:44:42.160+00:00 Now I have everything I need. Let me craft the two launch posts (≤280 chars each), grounded in the transcript and using only verified links:
+
+**Post 1** — Episode announcement with the core insight and link to guest bio
+**Post 2** — Key takeaway quote + checklist link
+
+Let me write the `publish/launch_posts.md` file:
+2026-04-28T09:44:42.161+00:00 Let me verify both posts are within 280 characters:
+
+- **Post 1:** "Ep 14 is live: "Building a Reliable Podcast Production Pipeline" 🎙️ @maya_chen breaks down the 5 stages every show needs — capture, post-production, content extraction, review, and distribution. The pipeline is the product. https://creators.example.com/guests/maya-chen" → let me count carefully.
+2026-04-28T09:44:42.164+00:00 Both are within 280 characters. Now let me publish them sequentially as two separate direct public posts:
+2026-04-28T09:44:42.165+00:00 The shell is expanding the unicode escapes differently. Let me write the posts to temp files and use `--post-file`:
+2026-04-28T09:44:42.166+00:00 Post 1 accepted as `social_post_008`. Now Post 2:
+2026-04-28T09:44:42.167+00:00 Both posts published. Here's the full summary:
+
+---
+
+**Episode 14 release complete.** ✅
+
+### `publish/launch_posts.md` — Release artifact
+
+**Post 1** (269 chars) → `social_post_008`
+> Ep 14 is live: "Building a Reliable Podcast Production Pipeline" 🎙️ @maya_chen breaks down the 5 stages every show needs — capture, post-production, content extraction, review, and distribution. The pipeline is the product. https://creators.example.com/guests/maya-chen
+
+**Post 2** (227 chars) → `social_post_009`
+> "The transcript is a rich input, not the final source of editorial truth." — @maya_chen, Ep 14. Use automation to accelerate drafts, not approvals. Full release checklist: https://creators.example.com/checklists/podcast-release
+
+### What was done
+- Both posts are grounded in `transcript_clean.txt` — the 5-stage pipeline breakdown and the "rich input, not final truth" quote are direct from Maya Chen's words
+- All URLs are from `verified_links.json` only (guest bio + release checklist)
+- Published sequentially as two separate direct public posts from the `@pipelinepod` account
+- Both within the 280-character limit

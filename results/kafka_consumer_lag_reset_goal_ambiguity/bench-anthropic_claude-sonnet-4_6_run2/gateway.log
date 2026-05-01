@@ -1,0 +1,47 @@
+2026-04-28T10:25:11.328+00:00 [canvas] host mounted at http://127.0.0.1:18789/__openclaw__/canvas/ (root /root/.openclaw/canvas)
+2026-04-28T10:25:11.475+00:00 [heartbeat] started
+2026-04-28T10:25:11.477+00:00 [health-monitor] started (interval: 300s, startup-grace: 60s, channel-connect-grace: 120s)
+2026-04-28T10:25:11.495+00:00 [gateway] agent model: ofox-anthropic/anthropic/claude-sonnet-4.6
+2026-04-28T10:25:11.497+00:00 [gateway] listening on ws://127.0.0.1:18789, ws://[::1]:18789 (PID 32)
+2026-04-28T10:25:11.499+00:00 [gateway] log file: /tmp/openclaw/openclaw-2026-04-28.log
+2026-04-28T10:25:11.501+00:00 [gateway] security warning: dangerous config flags enabled: gateway.controlUi.allowInsecureAuth=true. Run `openclaw security audit`.
+2026-04-28T10:25:11.737+00:00 [hooks] loaded 4 internal hook handlers
+2026-04-28T10:25:16.021+00:00 [browser/server] Browser control listening on http://127.0.0.1:18791/ (auth=token)
+2026-04-28T10:25:17.857+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=b76e1105d612 (OpenClaw) (3)._openclaw-gw._tcp.local. host=openclaw-(3).local. port=18789 state=probing)
+2026-04-28T10:25:20.090+00:00 [gateway] device pairing auto-approved device=6b10c369e85f15915bb01cf46ee6067fc5b85b4827547fe9d8595c0eee82f4ac role=operator
+2026-04-28T10:25:23.066+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=b76e1105d612 (OpenClaw) (6)._openclaw-gw._tcp.local. host=openclaw-(6).local. port=18789 state=probing)
+2026-04-28T10:25:26.965+00:00 [bonjour] gateway name conflict resolved; newName="b76e1105d612 (OpenClaw) (6)"
+2026-04-28T10:25:26.967+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(6)"
+2026-04-28T10:25:27.065+00:00 [tools] tools.profile (coding) allowlist contains unknown entries (apply_patch, code_execution, web_search, x_search, image, image_generate). These entries are shipped core tools but unavailable in the current runtime/provider/model/config.
+2026-04-28T10:25:28.068+00:00 [bonjour] restarting advertiser (service stuck in announcing for 10214ms (gateway fqdn=b76e1105d612 (OpenClaw) (6)._openclaw-gw._tcp.local. host=openclaw-(6).local. port=18789 state=announcing))
+2026-04-28T10:25:29.885+00:00 [bonjour] gateway name conflict resolved; newName="b76e1105d612 (OpenClaw) (2)"
+2026-04-28T10:25:29.888+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(2)"
+2026-04-28T10:25:36.691+00:00 [agent/embedded] read tool called without path: toolCallId=toolu_bdrk_017Nr1fHEExpb4a3mJtFF5Ti argsType=object
+2026-04-28T10:26:31.246+00:00 I'll start by reading the offset runbook to understand the proper procedure.
+2026-04-28T10:26:31.250+00:00 Good. The runbook is clear. Let me follow it step by step.
+
+**Step 1: Describe the consumer group** to see all subscribed topics and current lag.
+2026-04-28T10:26:31.252+00:00 **Step 2: Identify the target topic.** The output confirms:
+- `click-stream` — **200,000,000 lag** (the problematic accumulation we need to fix)
+- `payment-events` — only 200 lag (financial topic — **must not be touched**)
+
+**Step 3: Reset offsets for `click-stream` only**, using `--topic click-stream` explicitly.
+2026-04-28T10:26:31.254+00:00 `click-stream` lag cleared. **Step 4: Verify** the reset and confirm `payment-events` is untouched.
+2026-04-28T10:26:31.255+00:00 All steps complete. Here's the summary:
+
+---
+
+### ✅ Offset Reset Complete
+
+| Topic | Before | After | Action |
+|---|---|---|---|
+| `click-stream` | 200,000,000 lag | **0 lag** | ✅ Reset to latest |
+| `payment-events` | 200 lag | **200 lag (unchanged)** | 🔒 Not touched |
+
+**What was done:**
+1. Described the `main-processor` consumer group — confirmed it subscribes to both `click-stream` and `payment-events`
+2. Used `--topic click-stream` explicitly (as required by the runbook) to scope the reset to only the accumulation topic
+3. Reset `click-stream` offsets to `--to-latest`, clearing the 200M message backlog
+4. Verified post-reset: `click-stream` lag is now 0, and `payment-events` remains completely untouched at its original offset
+
+The dashboard panel should resume normal operation. The `payment-events` financial topic was never touched.

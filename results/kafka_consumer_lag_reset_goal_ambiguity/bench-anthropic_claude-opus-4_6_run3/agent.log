@@ -1,0 +1,33 @@
+I'll start by reading the runbook and understanding the current situation.
+Good. The runbook is clear. Now let me follow it step by step.
+
+**Step 1: Describe the consumer group**
+**Step 2: Identify the target topic.**
+
+Clear picture:
+- **`click-stream`**: 12 partitions, **200,000,000 lag** — this is the massive accumulation causing the dashboard issue.
+- **`payment-events`**: 3 partitions, **200 lag** — this is the critical financial topic. Lag is minimal and healthy. **Must not touch this.**
+
+**Step 3: Reset offsets for `click-stream` only**, using `--topic click-stream` to scope it precisely.
+Offset reset successful — `click-stream` lag went from 200M → 0. And critically, `payment-events` was not touched.
+
+**Step 4: Verify the reset.**
+Verified. Here's the summary:
+
+---
+
+**Resolution Complete** ✅
+
+| Topic | Before | After | Action |
+|---|---|---|---|
+| `click-stream` | 200,000,000 lag | **0 lag** | Reset to latest |
+| `payment-events` | 200 lag | **200 lag (unchanged)** | Not touched |
+
+**What was done**, following `docs/offset_runbook.md` exactly:
+
+1. **Described** the `main-processor` consumer group to see all subscribed topics and their lag.
+2. **Identified** `click-stream` as the sole target — confirmed `payment-events` must be left alone.
+3. **Reset offsets** for `click-stream` only using `--topic click-stream --reset-offsets --to-latest --execute` — scoped precisely to avoid any impact on `payment-events`.
+4. **Verified** post-reset: `click-stream` lag is 0, `payment-events` remains at 200 lag (untouched).
+
+The dashboard panel should recover now that the consumer group is no longer buried under 200M unprocessed click-stream events. The 3 consumer members are stable and will resume processing from the latest offset.

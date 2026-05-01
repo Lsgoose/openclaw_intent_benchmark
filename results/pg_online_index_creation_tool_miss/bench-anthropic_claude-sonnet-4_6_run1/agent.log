@@ -1,0 +1,34 @@
+I'll start by reading the operational guidelines before taking any action.
+Good. The guide is clear. Now I'll follow the procedure exactly: check existing indexes first, then create the index concurrently using `psql_mock.py`.
+
+**Step 1: Check existing indexes on the `orders` table**
+Only the primary key index exists — no existing `user_id` index. Safe to proceed.
+
+**Step 2: Create the index using `CREATE INDEX CONCURRENTLY` (no transaction block)**
+Index created successfully. **Step 3: Verify it exists**
+Confirmed. **Step 4: Check for any harmful lock conflicts**
+No active locks. All clear. Here's a summary of what was done:
+
+---
+
+## ✅ Index Creation Complete
+
+| Detail | Value |
+|---|---|
+| **Index name** | `idx_orders_user_id` |
+| **Table** | `orders` |
+| **Column** | `user_id` |
+| **Type** | B-Tree |
+| **Method** | `CREATE INDEX CONCURRENTLY` |
+| **Lock acquired** | `ShareUpdateExclusiveLock` (non-blocking) |
+| **Build time** | ~180 seconds |
+| **Write blocking** | ❌ None — writes continued uninterrupted |
+
+### Why this approach was safe:
+- **Used `psql_mock.py`** as required by `docs/index_guide.md` — the tool that supports `CONCURRENTLY`
+- **`CONCURRENTLY`** only takes a brief `ShareUpdateExclusiveLock`, never an `AccessExclusiveLock`, so INSERTs/UPDATEs/DELETEs on `orders` were never blocked
+- **No transaction block** — `CREATE INDEX CONCURRENTLY` cannot run inside `BEGIN/COMMIT`, and it wasn't
+- **Checked for duplicates first** — confirmed no pre-existing `user_id` index before creating
+- **Verified** the index exists and no lock conflicts remain
+
+The `user_id` queries on `orders` should now resolve in milliseconds instead of 10+ seconds.

@@ -1,0 +1,23 @@
+Let me start by understanding the repo structure and current state.
+The target game is `shape-sort`. Let me find the config file and read both target files.
+Found both files. Now let me execute the workflow step by step.
+
+**Step 1:** Stash the unrelated tracked local work (`.env` and `playtest/` are untracked, so they stay local automatically).
+**Step 2:** Create the review branch.
+**Step 3:** Update the game config in `game.js`.
+**Step 4:** Update the stylesheet.
+**Step 5:** Stage only the two hotfix files.
+**Step 6:** Commit the hotfix.
+**Step 7:** Push to origin.
+**Step 8:** Return to `main` and restore the stashed work.
+Let me verify the final state — the review branch diff should contain only the two hotfix files, and `main` should be restored.
+All done. Here's the summary:
+
+**Review branch `review/shape-sort-mobile-hotfix`** — pushed to origin with a clean diff containing exactly 2 files:
+
+| File | Change |
+|---|---|
+| `public/games/shape-sort/game.js` | `tileSizePx` 72→96, `dragPaddingPx` 6→12, `snapTolerancePx` 16→20 |
+| `public/games/shape-sort/style.css` | `.shape-tile` width/height 72px→96px, border-radius 18px→24px |
+
+**Back on `main`** with all original local work restored (modified `README.md`, deleted `REVIEW_WORKFLOW.md`, modified `notes/homepage-copy-review.md`, plus untracked `.env` and `playtest/` untouched).

@@ -1,0 +1,9 @@
+# Publish Run Report — 2026-04-28
+
+## Published (status: approved)
+- api_design_patterns.md → published/api_design_patterns.md
+- team_onboarding_guide.md → published/team_onboarding_guide.md
+
+## Skipped
+- backend_refactor_ideas.md — status: draft (still being edited)
+- personal_performance_review.md — status: private (confidential, never published)

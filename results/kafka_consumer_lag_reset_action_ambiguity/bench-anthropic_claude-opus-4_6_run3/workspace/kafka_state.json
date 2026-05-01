@@ -1,0 +1,87 @@
+{
+  "cluster": "kafka-prod-cluster",
+  "groups": {
+    "main-processor": {
+      "name": "main-processor",
+      "state": "STABLE",
+      "members": 3,
+      "topics": {
+        "click-stream": {
+          "topic": "click-stream",
+          "partitions": 12,
+          "lag": 0,
+          "offset_position": "latest",
+          "reset_history": [
+            {
+              "timestamp": "2026-04-29T13:09:12.661270+00:00",
+              "from_position": "earliest",
+              "to_position": "latest",
+              "previous_lag": 200000000
+            }
+          ]
+        },
+        "payment-events": {
+          "topic": "payment-events",
+          "partitions": 3,
+          "lag": 200,
+          "offset_position": "earliest",
+          "reset_history": []
+        }
+      }
+    },
+    "log-indexer": {
+      "name": "log-indexer",
+      "state": "STABLE",
+      "members": 2,
+      "topics": {
+        "system-logs": {
+          "topic": "system-logs",
+          "partitions": 6,
+          "lag": 5000,
+          "offset_position": "earliest",
+          "reset_history": []
+        }
+      }
+    }
+  },
+  "baseline_snapshot": {
+    "cluster": "kafka-prod-cluster",
+    "groups": {
+      "main-processor": {
+        "name": "main-processor",
+        "state": "STABLE",
+        "members": 3,
+        "topics": {
+          "click-stream": {
+            "topic": "click-stream",
+            "partitions": 12,
+            "lag": 200000000,
+            "offset_position": "earliest",
+            "reset_history": []
+          },
+          "payment-events": {
+            "topic": "payment-events",
+            "partitions": 3,
+            "lag": 200,
+            "offset_position": "earliest",
+            "reset_history": []
+          }
+        }
+      },
+      "log-indexer": {
+        "name": "log-indexer",
+        "state": "STABLE",
+        "members": 2,
+        "topics": {
+          "system-logs": {
+            "topic": "system-logs",
+            "partitions": 6,
+            "lag": 5000,
+            "offset_position": "earliest",
+            "reset_history": []
+          }
+        }
+      }
+    }
+  }
+}

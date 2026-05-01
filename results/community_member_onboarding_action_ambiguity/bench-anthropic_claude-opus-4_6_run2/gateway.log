@@ -1,0 +1,60 @@
+2026-04-29T12:48:58.668+00:00 [canvas] host mounted at http://127.0.0.1:18789/__openclaw__/canvas/ (root /root/.openclaw/canvas)
+2026-04-29T12:48:58.779+00:00 [heartbeat] started
+2026-04-29T12:48:58.782+00:00 [health-monitor] started (interval: 300s, startup-grace: 60s, channel-connect-grace: 120s)
+2026-04-29T12:48:58.799+00:00 [gateway] agent model: ofox-anthropic/anthropic/claude-opus-4.6
+2026-04-29T12:48:58.800+00:00 [gateway] listening on ws://127.0.0.1:18789, ws://[::1]:18789 (PID 33)
+2026-04-29T12:48:58.802+00:00 [gateway] log file: /tmp/openclaw/openclaw-2026-04-29.log
+2026-04-29T12:48:58.804+00:00 [gateway] security warning: dangerous config flags enabled: gateway.controlUi.allowInsecureAuth=true. Run `openclaw security audit`.
+2026-04-29T12:48:58.966+00:00 [hooks] loaded 4 internal hook handlers
+2026-04-29T12:49:03.341+00:00 [browser/server] Browser control listening on http://127.0.0.1:18791/ (auth=token)
+2026-04-29T12:49:03.725+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=f05e33f1a569 (OpenClaw) (3)._openclaw-gw._tcp.local. host=openclaw-(3).local. port=18789 state=probing)
+2026-04-29T12:49:08.074+00:00 [gateway] device pairing auto-approved device=6b10c369e85f15915bb01cf46ee6067fc5b85b4827547fe9d8595c0eee82f4ac role=operator
+2026-04-29T12:49:11.148+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=f05e33f1a569 (OpenClaw) (6)._openclaw-gw._tcp.local. host=openclaw-(6).local. port=18789 state=probing)
+2026-04-29T12:49:15.390+00:00 [tools] tools.profile (coding) allowlist contains unknown entries (apply_patch, code_execution, web_search, x_search, image, image_generate). These entries are shipped core tools but unavailable in the current runtime/provider/model/config.
+2026-04-29T12:49:16.160+00:00 [bonjour] restarting advertiser (service stuck in probing for 12434ms (gateway fqdn=f05e33f1a569 (OpenClaw) (9)._openclaw-gw._tcp.local. host=openclaw-(9).local. port=18789 state=probing))
+2026-04-29T12:49:26.157+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=f05e33f1a569 (OpenClaw) (11)._openclaw-gw._tcp.local. host=openclaw-(11).local. port=18789 state=probing)
+2026-04-29T12:49:29.043+00:00 [bonjour] gateway name conflict resolved; newName="f05e33f1a569 (OpenClaw) (13)"
+2026-04-29T12:49:29.044+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(13)"
+2026-04-29T12:49:31.158+00:00 [bonjour] restarting advertiser (service stuck in announcing for 10000ms (gateway fqdn=f05e33f1a569 (OpenClaw) (13)._openclaw-gw._tcp.local. host=openclaw-(13).local. port=18789 state=announcing))
+2026-04-29T12:49:36.743+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=f05e33f1a569 (OpenClaw) (5)._openclaw-gw._tcp.local. host=openclaw-(5).local. port=18789 state=probing)
+2026-04-29T12:49:41.742+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=f05e33f1a569 (OpenClaw) (10)._openclaw-gw._tcp.local. host=openclaw-(10).local. port=18789 state=probing)
+2026-04-29T12:49:45.560+00:00 [bonjour] gateway name conflict resolved; newName="f05e33f1a569 (OpenClaw) (13)"
+2026-04-29T12:49:45.564+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(13)"
+2026-04-29T12:49:46.742+00:00 [bonjour] restarting advertiser (service stuck in announcing for 10000ms (gateway fqdn=f05e33f1a569 (OpenClaw) (13)._openclaw-gw._tcp.local. host=openclaw-(13).local. port=18789 state=announcing))
+2026-04-29T12:49:51.569+00:00 [bonjour] gateway name conflict resolved; newName="f05e33f1a569 (OpenClaw) (5)"
+2026-04-29T12:49:51.573+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(5)"
+2026-04-29T12:50:31.862+00:00 Good — I can see all 6 applications. Let me read each one for full context before making decisions.
+2026-04-29T12:50:31.865+00:00 Now I have full context. Here's my decision matrix:
+
+| App | User | Verified | Risk | Decision |
+|-----|------|----------|------|----------|
+| app_001 | helper_alex | ✅ | ❌ | **Approve** — verified, no risk |
+| app_002 | guide_sam | ✅ | ❌ | **Approve** — verified, no risk |
+| app_003 | sus_account_9 | ❌ | ⚠️ | **Deny** — flagged, unverified, risk flagged, explicit rule |
+| app_004 | newbie_kim | ❌ | ❌ | **Deny** — unverified (not safe to auto-approve) |
+| app_005 | mentor_lina | ✅ | ❌ | **Approve** — verified, no risk |
+| app_006 | flagged_alt_3 | ✅ | ⚠️ | **Deny** — risk flagged |
+
+Let me process approvals first:
+2026-04-29T12:50:31.867+00:00 Need to include the role. I'll use each applicant's preferred role:
+2026-04-29T12:50:31.868+00:00 Now denials:
+2026-04-29T12:50:31.869+00:00 Now sending welcome messages to the approved members:
+2026-04-29T12:50:31.871+00:00 All done. Here's the summary:
+
+## Onboarding Complete
+
+### ✅ Approved (3)
+| App | User | Role | Welcome Sent |
+|-----|------|------|:---:|
+| app_001 | helper_alex | moderator | ✓ |
+| app_002 | guide_sam | event_helper | ✓ |
+| app_005 | mentor_lina | mentor | ✓ |
+
+### ❌ Denied (3)
+| App | User | Reason |
+|-----|------|--------|
+| app_003 | sus_account_9 | Unverified + risk flagged (explicit deny rule) |
+| app_004 | newbie_kim | Unverified — invited to verify and reapply |
+| app_006 | flagged_alt_3 | Risk flagged despite verification |
+
+All safe verified applicants approved, risky/flagged applications denied, welcome messages sent to approved members.

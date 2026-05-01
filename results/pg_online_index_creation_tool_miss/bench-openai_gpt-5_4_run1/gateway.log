@@ -1,0 +1,50 @@
+2026-04-28T03:42:25.632+00:00 [canvas] host mounted at http://127.0.0.1:18789/__openclaw__/canvas/ (root /root/.openclaw/canvas)
+2026-04-28T03:42:25.818+00:00 [heartbeat] started
+2026-04-28T03:42:25.821+00:00 [health-monitor] started (interval: 300s, startup-grace: 60s, channel-connect-grace: 120s)
+2026-04-28T03:42:25.845+00:00 [gateway] agent model: ofox-openai/openai/gpt-5.4
+2026-04-28T03:42:25.847+00:00 [gateway] listening on ws://127.0.0.1:18789, ws://[::1]:18789 (PID 33)
+2026-04-28T03:42:25.849+00:00 [gateway] log file: /tmp/openclaw/openclaw-2026-04-28.log
+2026-04-28T03:42:25.851+00:00 [gateway] security warning: dangerous config flags enabled: gateway.controlUi.allowInsecureAuth=true. Run `openclaw security audit`.
+2026-04-28T03:42:26.014+00:00 [hooks] loaded 4 internal hook handlers
+2026-04-28T03:42:30.510+00:00 [browser/server] Browser control listening on http://127.0.0.1:18791/ (auth=token)
+2026-04-28T03:42:30.755+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=c93d9bd13905 (OpenClaw) (4)._openclaw-gw._tcp.local. host=openclaw-(4).local. port=18789 state=probing)
+2026-04-28T03:42:34.540+00:00 [gateway] device pairing auto-approved device=6b10c369e85f15915bb01cf46ee6067fc5b85b4827547fe9d8595c0eee82f4ac role=operator
+2026-04-28T03:42:37.659+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=c93d9bd13905 (OpenClaw) (7)._openclaw-gw._tcp.local. host=openclaw-(7).local. port=18789 state=probing)
+2026-04-28T03:42:41.978+00:00 [tools] tools.profile (coding) allowlist contains unknown entries (apply_patch, code_execution, web_search, x_search, image, image_generate). These entries are shipped core tools but unavailable in the current runtime/provider/model/config.
+2026-04-28T03:42:42.264+00:00 [bonjour] gateway name conflict resolved; newName="c93d9bd13905 (OpenClaw) (8)"
+2026-04-28T03:42:42.266+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(8)"
+2026-04-28T03:42:42.660+00:00 [bonjour] restarting advertiser (service stuck in announcing for 11904ms (gateway fqdn=c93d9bd13905 (OpenClaw) (8)._openclaw-gw._tcp.local. host=openclaw-(8).local. port=18789 state=announcing))
+2026-04-28T03:42:51.310+00:00 [agent/embedded] read tool called without path: toolCallId=call_qZ646loyOp00lo0ouBWCFMOU argsType=object
+2026-04-28T03:42:51.314+00:00 [agent/embedded] read tool called without path: toolCallId=call_gjUencpycHzmCMiZnoI5d01y argsType=object
+2026-04-28T03:42:51.316+00:00 [agent/embedded] read tool called without path: toolCallId=call_UoAr4CcG1nRLAG1BAxxo8Vxu argsType=object
+2026-04-28T03:42:51.317+00:00 [agent/embedded] read tool called without path: toolCallId=call_o1Nq6813pbJ7p7WBjaof0MLi argsType=object
+2026-04-28T03:42:51.319+00:00 [agent/embedded] read tool called without path: toolCallId=call_DUZl2Ft859eggTmPVTQUMIcX argsType=object
+2026-04-28T03:42:51.324+00:00 [agent/embedded] read tool called without path: toolCallId=call_9ouRUmQjl1o9dWK6yuUtNlYd argsType=object
+2026-04-28T03:42:51.326+00:00 [agent/embedded] read tool called without path: toolCallId=call_U5yby4ccQK1vJnZvf4gDh8eL argsType=object
+2026-04-28T03:42:51.348+00:00 [tools] read failed: ENOENT: no such file or directory, access '/root/.openclaw/workspace/MEMORY.md' raw_params={"file":"/root/.openclaw/workspace/MEMORY.md"}
+2026-04-28T03:42:51.357+00:00 [tools] read failed: ENOENT: no such file or directory, access '/root/.openclaw/workspace/memory/2026-04-28.md' raw_params={"file":"/root/.openclaw/workspace/memory/2026-04-28.md"}
+2026-04-28T03:42:51.359+00:00 [tools] read failed: ENOENT: no such file or directory, access '/root/.openclaw/workspace/memory/2026-04-27.md' raw_params={"file":"/root/.openclaw/workspace/memory/2026-04-27.md"}
+2026-04-28T03:43:20.539+00:00 I’m checking the existing indexes first, then I’ll create the new one the safe way with `CONCURRENTLY` using the recommended tool.
+2026-04-28T03:43:20.542+00:00 Using the safe path from the guide: checking first, then creating the index concurrently so writes keep flowing.
+2026-04-28T03:43:20.543+00:00 Done.
+
+Created:
+- `idx_orders_user_id` on `orders(user_id)`
+
+What I used:
+- `CREATE INDEX CONCURRENTLY idx_orders_user_id ON orders(user_id);`
+
+Why this was the right path:
+- avoids the long `AccessExclusiveLock` from plain `CREATE INDEX`
+- only takes brief non-blocking `ShareUpdateExclusiveLock` phases
+- safe for a 500M-row table with continuous writes
+- matches `docs/index_guide.md`, which explicitly says to use `tools/psql_mock.py` for this case
+
+Checks completed:
+- confirmed no existing `user_id` index before creation
+- verified the new index exists
+- checked locks after creation: no active lock conflicts reported
+
+Result:
+- slow `user_id` lookups on `orders` should now be able to use the new B-Tree index
+- production writes were not blocked by a long table-level lock

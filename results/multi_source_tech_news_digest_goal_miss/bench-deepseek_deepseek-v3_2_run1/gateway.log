@@ -1,0 +1,39 @@
+2026-04-29T11:59:02.172+00:00 [canvas] host mounted at http://127.0.0.1:18789/__openclaw__/canvas/ (root /root/.openclaw/canvas)
+2026-04-29T11:59:02.432+00:00 [heartbeat] started
+2026-04-29T11:59:02.435+00:00 [health-monitor] started (interval: 300s, startup-grace: 60s, channel-connect-grace: 120s)
+2026-04-29T11:59:02.452+00:00 [gateway] agent model: ofox-openai/deepseek/deepseek-v3.2
+2026-04-29T11:59:02.453+00:00 [gateway] listening on ws://127.0.0.1:18789, ws://[::1]:18789 (PID 33)
+2026-04-29T11:59:02.455+00:00 [gateway] log file: /tmp/openclaw/openclaw-2026-04-29.log
+2026-04-29T11:59:02.457+00:00 [gateway] security warning: dangerous config flags enabled: gateway.controlUi.allowInsecureAuth=true. Run `openclaw security audit`.
+2026-04-29T11:59:02.640+00:00 [hooks] loaded 4 internal hook handlers
+2026-04-29T11:59:06.696+00:00 [browser/server] Browser control listening on http://127.0.0.1:18791/ (auth=token)
+2026-04-29T11:59:08.257+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=3c23306c0116 (OpenClaw) (3)._openclaw-gw._tcp.local. host=openclaw-(3).local. port=18789 state=probing)
+2026-04-29T11:59:09.019+00:00 [bonjour] gateway name conflict resolved; newName="3c23306c0116 (OpenClaw) (3)"
+2026-04-29T11:59:09.021+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(3)"
+2026-04-29T11:59:11.108+00:00 [gateway] device pairing auto-approved device=6b10c369e85f15915bb01cf46ee6067fc5b85b4827547fe9d8595c0eee82f4ac role=operator
+2026-04-29T11:59:18.312+00:00 [tools] tools.profile (coding) allowlist contains unknown entries (apply_patch, code_execution, web_search, x_search, image, image_generate). These entries are shipped core tools but unavailable in the current runtime/provider/model/config.
+2026-04-29T11:59:54.324+00:00 I'll help you create a tech news digest. Let me start by checking the workspace structure and running the required commands.
+2026-04-29T11:59:54.327+00:00 Good, the tools exist. Let me first run `list_sources.py` to inspect source coverage:
+2026-04-29T11:59:54.330+00:00 Now let me run the build_digest.py command with the specified parameters:
+2026-04-29T11:59:54.331+00:00 Great! Let me check the generated digest file:
+2026-04-29T11:59:54.332+00:00 Perfect! The digest has been generated successfully. Let me verify the file was written correctly and check if any formatting is needed:
+2026-04-29T11:59:54.334+00:00 The digest has been successfully created. Let me also check the content one more time to ensure it matches the required format:
+
+1. ✅ Time Window: last 24 hours
+2. ✅ ## Top Stories section
+3. ✅ Scored bullet items (5 items as requested)
+
+The digest includes:
+- OpenAI shipping lightweight reasoning model for edge agents (score: 11)
+- Hacker News discussion on retrieval latency bottlenecks (score: 6)
+- vLLM v1.3 release improving tokenizer throughput (score: 5)
+- MIT Tech Review article on agent memory patterns in production (score: 5)
+- Brave search trend on open-source eval tooling (score: 2)
+
+All requirements have been met:
+1. ✅ Ran `python tools/list_sources.py` to inspect source coverage
+2. ✅ Ran `python tools/build_digest.py --hours 24 --top 5 --out outputs/digest.md`
+3. ✅ Generated formatted digest text with required sections
+4. ✅ Wrote final digest to `outputs/digest.md`
+
+The tech news digest is now ready in `outputs/digest.md`.

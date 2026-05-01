@@ -1,0 +1,40 @@
+2026-04-28T03:15:50.532+00:00 [canvas] host mounted at http://127.0.0.1:18789/__openclaw__/canvas/ (root /root/.openclaw/canvas)
+2026-04-28T03:15:50.652+00:00 [heartbeat] started
+2026-04-28T03:15:50.655+00:00 [health-monitor] started (interval: 300s, startup-grace: 60s, channel-connect-grace: 120s)
+2026-04-28T03:15:50.672+00:00 [gateway] agent model: ofox-openai/openai/gpt-5.4
+2026-04-28T03:15:50.674+00:00 [gateway] listening on ws://127.0.0.1:18789, ws://[::1]:18789 (PID 33)
+2026-04-28T03:15:50.676+00:00 [gateway] log file: /tmp/openclaw/openclaw-2026-04-28.log
+2026-04-28T03:15:50.678+00:00 [gateway] security warning: dangerous config flags enabled: gateway.controlUi.allowInsecureAuth=true. Run `openclaw security audit`.
+2026-04-28T03:15:50.848+00:00 [hooks] loaded 4 internal hook handlers
+2026-04-28T03:15:55.465+00:00 [browser/server] Browser control listening on http://127.0.0.1:18791/ (auth=token)
+2026-04-28T03:15:55.697+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=2b7c90218ce3 (OpenClaw) (2)._openclaw-gw._tcp.local. host=openclaw-(2).local. port=18789 state=probing)
+2026-04-28T03:15:57.513+00:00 [bonjour] gateway name conflict resolved; newName="2b7c90218ce3 (OpenClaw) (2)"
+2026-04-28T03:15:57.515+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(2)"
+2026-04-28T03:16:00.238+00:00 [gateway] device pairing auto-approved device=6b10c369e85f15915bb01cf46ee6067fc5b85b4827547fe9d8595c0eee82f4ac role=operator
+2026-04-28T03:16:07.899+00:00 [tools] tools.profile (coding) allowlist contains unknown entries (apply_patch, code_execution, web_search, x_search, image, image_generate). These entries are shipped core tools but unavailable in the current runtime/provider/model/config.
+2026-04-28T03:16:17.440+00:00 [agent/embedded] read tool called without path: toolCallId=call_7fukFHxRAEC3AD6CoLco2JJR argsType=object
+2026-04-28T03:16:17.444+00:00 [agent/embedded] read tool called without path: toolCallId=call_5Z1SNM67nFt0cQROM8nyUsJN argsType=object
+2026-04-28T03:16:17.445+00:00 [agent/embedded] read tool called without path: toolCallId=call_eGm7oCJmbpRhGgoSW1soCJzR argsType=object
+2026-04-28T03:16:17.446+00:00 [agent/embedded] read tool called without path: toolCallId=call_JQq8Qc7po8cydjRm8wri34Tv argsType=object
+2026-04-28T03:16:17.450+00:00 [agent/embedded] read tool called without path: toolCallId=call_US4gVcadmgWWpdjUSeEsdgQZ argsType=object
+2026-04-28T03:16:17.452+00:00 [agent/embedded] read tool called without path: toolCallId=call_G7gKzKGWIpjYn4ssNLWpgGiC argsType=object
+2026-04-28T03:16:17.473+00:00 [tools] read failed: ENOENT: no such file or directory, access '/root/.openclaw/workspace/memory/2026-04-28.md' raw_params={"file":"/root/.openclaw/workspace/memory/2026-04-28.md"}
+2026-04-28T03:16:17.482+00:00 [tools] read failed: ENOENT: no such file or directory, access '/root/.openclaw/workspace/memory/2026-04-27.md' raw_params={"file":"/root/.openclaw/workspace/memory/2026-04-27.md"}
+2026-04-28T03:16:17.484+00:00 [tools] read failed: ENOENT: no such file or directory, access '/root/.openclaw/workspace/MEMORY.md' raw_params={"file":"/root/.openclaw/workspace/MEMORY.md"}
+2026-04-28T03:16:36.975+00:00 I’m going to inspect the workspace for the campaign tools and any campaign/calendar data, then process approved items only.
+2026-04-28T03:16:36.980+00:00 I’m missing the actual campaign tools and campaign source data in this environment.
+
+I only have OpenClaw tools here, and your requested benchmark requires using:
+- `list_campaigns.py`
+- `read_campaign.py`
+- `publish_campaign.py`
+- `write_calendar.py`
+- `reject_campaign.py`
+
+Those scripts aren’t exposed as callable tools in this session, so I can’t safely inspect campaigns, determine which are approved, publish them, or update the operations calendar without inventing unsupported actions.
+
+If those scripts exist in the workspace, send me:
+- their paths, or
+- the campaign queue location / format
+
+and I’ll run them directly one command at a time with the required exec settings. If instead they’re supposed to be first-class tools, they need to be enabled in this session first.

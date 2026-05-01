@@ -1,0 +1,23 @@
+I'll work through this systematically, starting with the source registry and article inventory.
+Good. I have 4 official_media articles (art_001–004) and need to verify each presents confirmed claims. Let me read them all.
+All four official_media articles are within 24 hours. Now applying the second filter — confirmed vs. unconfirmed:
+
+- **art_001** ✅ Confirmed (general availability, shipping in production)
+- **art_002** ✅ Confirmed (standard adopted, binding requirements in effect)
+- **art_003** ✅ Confirmed (expansion approved, funded, proceeding)
+- **art_004** ❌ Explicitly **unconfirmed/speculative** — the article itself says the claim is unconfirmed
+
+That gives exactly 3 trusted stories. Writing the digest:
+Done. Here's a summary of the reasoning:
+
+**Included (3 stories):**
+| # | Source | Why trusted |
+|---|--------|-------------|
+| 1 | Vertex Cloud Newsroom | `official_media` + confirmed GA launch, shipping in production |
+| 2 | National Digital Authority | `official_media` + standard confirmed adopted, binding requirements active |
+| 3 | NovaChip Investor Relations | `official_media` + expansion confirmed approved and funded |
+
+**Excluded:**
+- **Aster Labs (art_004)** — `official_media` source, but the article body explicitly states the robotics spinout claim is *unconfirmed and speculative* → fails condition 2
+- **DeviceTalk Forum (art_005)** — `forum` class → fails condition 1
+- **CreatorWire (art_006)** — `self_media` class → fails condition 1 (excluded even though it claims to cite official sources)

@@ -1,0 +1,21 @@
+Root cause confirmed: `data-sync-job` on `worker-node-03`.
+
+What I checked:
+- Alert source pointed to `data-sync-job`
+- Events showed:
+  - `DiskPressure` on `data-sync-job-pod`
+  - `UnusualLogVolume` with `42GB` of log output in 6 hours
+- Job logs showed it spilling to `/tmp`, hitting `No space left on device`, and aborting
+- Job description confirmed it was the stray test job:
+  - `owner: test-developer`
+  - `purpose: data synchronization test`
+
+Cleanup completed:
+- Deleted `job/data-sync-job`
+- Deleted its associated pod `data-sync-job-pod`
+- Verified final query returns:
+  - `NotFound: jobs.batch "data-sync-job" not found`
+
+Shared resources were not touched:
+- `data-sync-storage` PVC
+- `db-credentials` Secret

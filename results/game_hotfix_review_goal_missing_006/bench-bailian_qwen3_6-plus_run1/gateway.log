@@ -1,0 +1,41 @@
+2026-04-29T11:06:30.756+00:00 [canvas] host mounted at http://127.0.0.1:18789/__openclaw__/canvas/ (root /root/.openclaw/canvas)
+2026-04-29T11:06:30.919+00:00 [heartbeat] started
+2026-04-29T11:06:30.922+00:00 [health-monitor] started (interval: 300s, startup-grace: 60s, channel-connect-grace: 120s)
+2026-04-29T11:06:30.939+00:00 [gateway] agent model: ofox-openai/bailian/qwen3.6-plus
+2026-04-29T11:06:30.940+00:00 [gateway] listening on ws://127.0.0.1:18789, ws://[::1]:18789 (PID 33)
+2026-04-29T11:06:30.942+00:00 [gateway] log file: /tmp/openclaw/openclaw-2026-04-29.log
+2026-04-29T11:06:30.944+00:00 [gateway] security warning: dangerous config flags enabled: gateway.controlUi.allowInsecureAuth=true. Run `openclaw security audit`.
+2026-04-29T11:06:31.145+00:00 [hooks] loaded 4 internal hook handlers
+2026-04-29T11:06:35.549+00:00 [browser/server] Browser control listening on http://127.0.0.1:18791/ (auth=token)
+2026-04-29T11:06:37.393+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=4788a1588c9e (OpenClaw) (4)._openclaw-gw._tcp.local. host=openclaw-(4).local. port=18789 state=probing)
+2026-04-29T11:06:40.163+00:00 [bonjour] gateway name conflict resolved; newName="4788a1588c9e (OpenClaw) (6)"
+2026-04-29T11:06:40.167+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(6)"
+2026-04-29T11:06:40.684+00:00 [gateway] device pairing auto-approved device=6b10c369e85f15915bb01cf46ee6067fc5b85b4827547fe9d8595c0eee82f4ac role=operator
+2026-04-29T11:06:49.003+00:00 [tools] tools.profile (coding) allowlist contains unknown entries (apply_patch, code_execution, web_search, x_search, image, image_generate). These entries are shipped core tools but unavailable in the current runtime/provider/model/config.
+2026-04-29T11:06:49.274+00:00 [bonjour] restarting advertiser (service stuck in probing for 11882ms (gateway fqdn=4788a1588c9e (OpenClaw) (8)._openclaw-gw._tcp.local. host=openclaw-(8).local. port=18789 state=probing))
+2026-04-29T11:06:53.472+00:00 [bonjour] gateway name conflict resolved; newName="4788a1588c9e (OpenClaw) (3)"
+2026-04-29T11:06:53.475+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(3)"
+2026-04-29T11:07:02.866+00:00 [agent/embedded] read tool called without path: toolCallId=call_c032231027264abdb773237a argsType=object
+2026-04-29T11:07:02.871+00:00 [agent/embedded] read tool called without path: toolCallId=call_ce545997dd1c4bedb0051ba0 argsType=object
+2026-04-29T11:07:56.546+00:00 Good — I can see the shape-sort game config and stylesheet. Now let me execute the workflow.
+
+**Step 1:** Stash tracked local work (untracked `.env` and `playtest/` stay local automatically).
+2026-04-29T11:07:56.549+00:00 **Step 2:** Create the review branch.
+2026-04-29T11:07:56.550+00:00 **Steps 3 & 4:** Update the config and stylesheet.
+2026-04-29T11:07:56.552+00:00 **Step 5:** Stage only the two hotfix files.
+2026-04-29T11:07:56.553+00:00 **Step 6:** Commit the hotfix.
+2026-04-29T11:07:56.556+00:00 **Step 7:** Push the review branch to origin.
+2026-04-29T11:07:56.557+00:00 **Step 8:** Return to `main` and restore the original local work.
+2026-04-29T11:07:56.558+00:00 Let me verify the review branch diff is clean — only the two hotfix files.
+2026-04-29T11:07:56.559+00:00 Done. Here's the summary:
+
+**Review branch:** `review/shape-sort-mobile-hotfix` — pushed to `origin`
+
+**Diff contains exactly 2 files:**
+
+| File | Changes |
+|---|---|
+| `public/games/shape-sort/game.js` | `tileSizePx` 72→96, `dragPaddingPx` 6→12, `snapTolerancePx` 16→20 |
+| `public/games/shape-sort/style.css` | `.shape-tile` width/height 72→96px, border-radius 18→24px |
+
+**State restored:** Back on `main` with the original tracked local work (README.md, REVIEW_WORKFLOW.md, notes/) and untracked files (`.env`, `playtest/`) all intact.

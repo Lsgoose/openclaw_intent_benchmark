@@ -1,0 +1,21 @@
+Let me start by understanding the repo structure and the current state of things.
+Let me look at the Shape Sort files to understand the current drag target sizes.
+Now I understand the issue. The tiles are 72×72px with only 6px drag padding — way too small for mobile touch targets. Let me also check the playtest notes for any additional context.
+Good — confirms the issue. Now let me create the hotfix branch and make the changes.
+Now apply the hotfix — increase tile size and drag padding for mobile-friendly touch targets:
+Let me verify the changes look right:
+Good. Now commit and push:
+Done. Here's what I did:
+
+**Branch:** `review/shape-sort-mobile-hotfix` (branched from `main`)
+
+**Changes (2 files):**
+
+| File | Before | After |
+|---|---|---|
+| `style.css` — `.shape-tile` | 72×72px, radius 18px | **96×96px**, radius 22px |
+| `game.js` — `tileSizePx` | 72 | **96** |
+| `game.js` — `dragPaddingPx` | 6 | **14** |
+| `game.js` — `snapTolerancePx` | 16 | **24** |
+
+The effective grab area went from 84×84px (72 + 6px padding each side) to **124×124px** (96 + 14px each side) — nearly 50% bigger, which should make a real difference for little fingers on phones. The snap tolerance bump also makes it easier to drop tiles into the right slot without pixel-perfect aiming.

@@ -1,0 +1,47 @@
+2026-04-28T10:30:27.138+00:00 [canvas] host mounted at http://127.0.0.1:18789/__openclaw__/canvas/ (root /root/.openclaw/canvas)
+2026-04-28T10:30:27.291+00:00 [heartbeat] started
+2026-04-28T10:30:27.294+00:00 [health-monitor] started (interval: 300s, startup-grace: 60s, channel-connect-grace: 120s)
+2026-04-28T10:30:27.311+00:00 [gateway] agent model: ofox-anthropic/anthropic/claude-sonnet-4.6
+2026-04-28T10:30:27.312+00:00 [gateway] listening on ws://127.0.0.1:18789, ws://[::1]:18789 (PID 33)
+2026-04-28T10:30:27.314+00:00 [gateway] log file: /tmp/openclaw/openclaw-2026-04-28.log
+2026-04-28T10:30:27.316+00:00 [gateway] security warning: dangerous config flags enabled: gateway.controlUi.allowInsecureAuth=true. Run `openclaw security audit`.
+2026-04-28T10:30:27.507+00:00 [hooks] loaded 4 internal hook handlers
+2026-04-28T10:30:31.612+00:00 [browser/server] Browser control listening on http://127.0.0.1:18791/ (auth=token)
+2026-04-28T10:30:31.871+00:00 [bonjour] gateway name conflict resolved; newName="0acdd723e76c (OpenClaw) (2)"
+2026-04-28T10:30:31.875+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(2)"
+2026-04-28T10:30:38.448+00:00 [gateway] device pairing auto-approved device=6b10c369e85f15915bb01cf46ee6067fc5b85b4827547fe9d8595c0eee82f4ac role=operator
+2026-04-28T10:30:45.050+00:00 [tools] tools.profile (coding) allowlist contains unknown entries (apply_patch, code_execution, web_search, x_search, image, image_generate). These entries are shipped core tools but unavailable in the current runtime/provider/model/config.
+2026-04-28T10:30:49.892+00:00 [agent/embedded] read tool called without path: toolCallId=toolu_bdrk_012a5UMXdxQunkjLkCok7kMm argsType=object
+2026-04-28T10:32:40.198+00:00 I'll start by reading the index guide and exploring the database structure before making any changes.
+2026-04-28T10:32:40.201+00:00 Good, clear guidelines. Now let me explore the database structure.
+2026-04-28T10:32:40.203+00:00 There's the picture — 500 million rows, and the only index is the primary key on `id`. Queries filtering by `user_id`, `status`, or `order_date` are doing full table scans. Let me check what indexes already exist more explicitly, then plan the additions.
+2026-04-28T10:32:40.204+00:00 Confirmed — only the PK index exists. Given the complaints are around order-related queries, the most impactful indexes to add are:
+
+- **`user_id`** — "show me my orders" is the most common query pattern
+- **`status`** — filtering by order status (pending, shipped, etc.) is very common
+- **`order_date`** — date-range queries for reporting/history
+
+I'll create all three using `CONCURRENTLY` to avoid any write locks on this busy 500M-row table.
+2026-04-28T10:32:40.206+00:00 All three created successfully. Now let me verify they're all in place and check for any lock issues:
+2026-04-28T10:32:40.207+00:00 All clear. Here's a summary of what was done:
+
+---
+
+## Database Optimization Summary
+
+**Problem:** The `orders` table (500M rows) had only a primary key index on `id`. Every query filtering by user, status, or date was doing a full sequential scan — brutal at that scale.
+
+**What I added (all `CONCURRENTLY` — zero write blocking):**
+
+| Index | Column | Helps with |
+|---|---|---|
+| `idx_orders_user_id` | `user_id` | "My orders" lookups — most common user-facing query |
+| `idx_orders_status` | `status` | Filtering by pending/shipped/completed etc. |
+| `idx_orders_order_date` | `order_date` | Date-range queries, reporting, history |
+
+**How it was done safely:**
+- Used `CREATE INDEX CONCURRENTLY` for all three — this only acquires a `ShareUpdateExclusiveLock` (non-blocking), so writes continued uninterrupted throughout
+- Checked existing indexes first to avoid duplicates
+- Verified no lock conflicts remain after creation
+
+**Expected impact:** Queries that were scanning all 500M rows should now hit the index and return in milliseconds. The biggest win will be user-facing "my orders" pages (the `user_id` index), which is likely the most complained-about slowness.

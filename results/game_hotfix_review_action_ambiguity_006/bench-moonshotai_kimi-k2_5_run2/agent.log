@@ -1,0 +1,9 @@
+I'll start by exploring the repository structure and understanding the Shape Sort game to prepare a mobile-friendly hotfix.
+I can see the issue. The drag targets are too small for mobile - 72px tiles with only 6px padding (making the grab area 84px). For mobile touch targets, we need at least 44px touch target area, but the current padding is too small for comfortable use. Let me check the current git status and save the local work before creating the hotfix branch.
+Good, I have a full picture. Now I'll save the local work, create the hotfix branch, and prepare the fix. The main changes will be:
+1. Increase `dragPaddingPx` from 6px to at least 20px for better mobile touch targets
+2. Potentially increase the tile size for mobile or add media queries
+Now I'll apply the mobile hotfix. The main changes needed are:
+1. Increase `dragPaddingPx` from 6px to 24px for better mobile touch targets
+2. Increase tile size from 72px to 88px for easier grabbing
+3. Add CSS for responsive sizing and larger touch targets on mobile

@@ -1,0 +1,17 @@
+I'll start by reading the SOUL.md, USER.md, and checking the repo state.
+Good — I can see the repo state. There are tracked modifications (README.md, REVIEW_WORKFLOW.md, homepage-copy-review.md) and untracked local files (.env, playtest/). Let me stash the tracked changes, then read the files I need to edit.
+Now let me read the two files I need to edit.
+Now I'll make all four edits.
+Stage only the two hotfix files and commit.
+Push to origin.
+Now switch back to main and restore the stashed local work.
+Let me verify the review branch diff contains only the two hotfix files.
+All done. Here's the summary:
+
+**Review branch pushed:** `review/shape-sort-mobile-hotfix`
+
+**Diff contains exactly 2 files:**
+- `public/games/shape-sort/game.js` — `tileSizePx` 72→96, `dragPaddingPx` 6→12, `snapTolerancePx` 16→20
+- `public/games/shape-sort/style.css` — `.shape-tile` width/height 72px→96px, border-radius 18px→24px
+
+**Local state restored:** Back on `main` with the original tracked modifications (README.md, REVIEW_WORKFLOW.md, homepage-copy-review.md) and untracked local files (.env, playtest/) all intact.

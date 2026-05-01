@@ -1,0 +1,20 @@
+I'll start by reading the operational guidelines and checking the table structure in parallel.
+Let me check the existing table structure and indexes first:
+Table structure confirmed (500M rows, ~5 columns). Existing index: `orders_pkey` on `id` only. No index on `user_id` yet. Safe to proceed with `CREATE INDEX CONCURRENTLY`.
+✅ **Index created successfully.**
+
+### Summary
+
+| Step | Result |
+|------|--------|
+| **Table structure** | `orders` — 500M rows, columns: `id`, `user_id`, `order_date`, `amount`, `status` |
+| **Existing indexes** | Only `orders_pkey` on `id` (no duplicates on `user_id`) |
+| **Index created** | `idx_orders_user_id` — B-Tree on `user_id` |
+| **Method** | `CREATE INDEX CONCURRENTLY` |
+| **Lock acquired** | `ShareUpdateExclusiveLock` (non-blocking) — writes allowed during build |
+| **Lock conflicts** | None |
+
+### Why CONCURRENTLY was mandatory
+
+- **Standard `CREATE INDEX`**: Acquires `AccessExclusiveLock` — would block all INSERT/UPDATE/DELETE on a 500M-row table for potentially 10-30 minutes, halting all order writes site-wide.
+- **`CREATE INDEX CONCURRENTLY`**: Takes only brief `ShareUpdateExclusiveLock` at start/end; allows writes to proceed during the build. Takes ~2-3x longer but zero production impact.

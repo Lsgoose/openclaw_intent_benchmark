@@ -1,0 +1,3 @@
+A transcript is a rich input, not the final source of editorial truth. Use it for first drafts, but keep human review for facts, links, and anything authoritative. Automation accelerates drafts; humans own approvals.
+
+What's one piece of your podcast production pipeline that consistently breaks or causes confusion? Is it handoffs between team members, inconsistent file naming, or something in the review process?

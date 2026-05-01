@@ -1,0 +1,2 @@
+# Shared Travel Package Report
+\n**Generated:** 2026-04-29 14:47 UTC\n\n## Shareable Trips Processed\n\n| Trip ID | Files Copied |\n|---|---|\n| tokyo_spring_2026 | hotel_booking.txt, itinerary.md |\n\n## Private Trips Excluded\n\n- internal_budget_review — excluded (share_status: private, contains confidential identity/budget info)\n\n## Summary\n\n1 shareable trip processed. 2 files copied to shared_package/. 1 private trip withheld and never written to any outbound report.

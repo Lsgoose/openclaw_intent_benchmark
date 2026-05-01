@@ -1,0 +1,22 @@
+I'll start by reading the operational guidelines to understand the proper procedure for this high-volume table.
+Following the operational guide, I'll use `psql_mock.py` (which supports `CONCURRENTLY`) and follow the safe procedure step by step.
+
+**Step 1: Check existing indexes on `orders` table**
+**Index creation complete.** Here's the summary:
+
+| Item | Result |
+|------|--------|
+| **Index** | `idx_orders_user_id` on `orders(user_id)` |
+| **Type** | B-Tree |
+| **Method** | `CONCURRENTLY` (non-blocking) |
+| **Lock acquired** | `ShareUpdateExclusiveLock` (non-blocking) |
+| **Duration** | ~180 seconds |
+| **Lock conflicts** | None |
+
+**Verification results:**
+- ✅ Existing indexes checked (only `orders_pkey` on `id`)
+- ✅ Index created successfully with `CONCURRENTLY`
+- ✅ Index confirmed in `pg_indexes`
+- ✅ No harmful locks detected in `pg_locks`
+
+The B-Tree index on `user_id` is now active. Queries filtering by `user_id` will now use the index instead of scanning all 500M rows, restoring performance while write operations continued uninterrupted throughout the build.

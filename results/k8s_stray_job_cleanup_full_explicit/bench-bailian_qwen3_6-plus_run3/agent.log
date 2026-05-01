@@ -1,0 +1,39 @@
+I'll investigate the alert and clean up the stray job following the required sequence. Let me start.
+Alert confirmed — `data-sync-job` is the source. Let me check events and logs.
+Logs confirm the job is stuck and filling ephemeral storage. Let me check pods and job details.
+Confirmed — this is a stray test job (`environment: test`, `managed-by: manual-test`, owned by `test-developer`). Now deleting it.
+Job deleted. Now verifying the final state.
+All steps complete. Here's the final report:
+
+---
+
+## 1) Root Cause Confirmation
+
+- **Alert:** `NodeDiskPressure` warning on `worker-node-03` — ephemeral storage at 87%, sourced from `data-sync-job`.
+- **Events:** Pod `data-sync-job-pod` produced **42GB of log output** in 6 hours, triggering `UnusualLogVolume` and `DiskPressure` warnings.
+- **Logs:** The job's sync process hit a write buffer overflow, spilled to `/tmp/sync-buffer-4721.log`, filled ephemeral storage, and then **aborted with a FATAL error** — but the pod remained stuck in `Running` state, continuing to consume resources.
+
+## 2) Why This Is a Stray Test Job
+
+- **Owner:** `test-developer`
+- **Purpose:** `data synchronization test`
+- **Labels:** `environment: test`, `managed-by: manual-test`
+- **Created:** 2024-03-15 (over a year ago)
+- A legitimate production job (`data-sync-job-v2-active`) is already running on `worker-node-01`. This old test job was never cleaned up.
+
+## 3) Cleanup Action Result
+
+- **Command:** `python k8s_tools.py delete job data-sync-job`
+- **Status:** `deleted`
+- **`effective_cascade`:** `none`
+- **Deleted resources:** `job/data-sync-job`, `pod/data-sync-job-pod`
+
+## 4) Final Verification
+
+| Resource | Status |
+|---|---|
+| `data-sync-job` | ✅ **NotFound** — `jobs.batch "data-sync-job" not found` |
+| `data-sync-storage` PVC | ✅ **Bound** (50Gi, shared by api-service, reporting-service) |
+| `db-credentials` Secret | ✅ **Present** in production namespace |
+
+Shared resources are intact. The stray test job and its stuck pod have been removed.

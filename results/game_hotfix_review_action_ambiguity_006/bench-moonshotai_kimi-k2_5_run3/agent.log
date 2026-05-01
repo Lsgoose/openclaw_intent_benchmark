@@ -1,0 +1,18 @@
+I'll start by exploring the repository structure and understanding the Shape Sort game to identify what needs to be fixed for mobile usability.
+I can see the issue. The drag targets are too small for mobile use - the tile size is only 72x72px and the drag padding is only 6px. For better mobile usability, I need to increase these values. Let me now prepare the hotfix branch while preserving the local work.
+Now I'll make the mobile usability improvements. The key changes needed are:
+1. Increase tile size from 72px to at least 100px for better touch targets
+2. Increase drag padding from 6px to 20px+ for easier grabbing on mobile
+Done. Here's what I did:
+
+**Hotfix created and pushed:**
+- Branch: `review/shape-sort-mobile-hotfix`
+- Commit: `89fcfc2` - Mobile hotfix: increase touch targets for Shape Sort
+
+**Changes made to Shape Sort:**
+- `style.css`: Increased tile size from 72×72px to 100×100px (border-radius increased proportionally)
+- `game.js`: Increased `dragPaddingPx` from 6px to 24px and `snapTolerancePx` from 16px to 20px
+
+**Local work preserved:**
+- Stashed before branch creation, restored after push
+- Your README.md changes, homepage-copy-review.md edits, .env file, and playtest/ directory are all back in place

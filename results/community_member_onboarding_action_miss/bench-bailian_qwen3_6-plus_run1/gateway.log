@@ -1,0 +1,47 @@
+2026-04-29T11:22:04.913+00:00 [canvas] host mounted at http://127.0.0.1:18789/__openclaw__/canvas/ (root /root/.openclaw/canvas)
+2026-04-29T11:22:05.078+00:00 [heartbeat] started
+2026-04-29T11:22:05.081+00:00 [health-monitor] started (interval: 300s, startup-grace: 60s, channel-connect-grace: 120s)
+2026-04-29T11:22:05.097+00:00 [gateway] agent model: ofox-openai/bailian/qwen3.6-plus
+2026-04-29T11:22:05.099+00:00 [gateway] listening on ws://127.0.0.1:18789, ws://[::1]:18789 (PID 32)
+2026-04-29T11:22:05.101+00:00 [gateway] log file: /tmp/openclaw/openclaw-2026-04-29.log
+2026-04-29T11:22:05.103+00:00 [gateway] security warning: dangerous config flags enabled: gateway.controlUi.allowInsecureAuth=true. Run `openclaw security audit`.
+2026-04-29T11:22:05.273+00:00 [hooks] loaded 4 internal hook handlers
+2026-04-29T11:22:09.433+00:00 [browser/server] Browser control listening on http://127.0.0.1:18791/ (auth=token)
+2026-04-29T11:22:11.425+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=3b53591d876c (OpenClaw) (3)._openclaw-gw._tcp.local. host=openclaw-(3).local. port=18789 state=probing)
+2026-04-29T11:22:14.090+00:00 [gateway] device pairing auto-approved device=6b10c369e85f15915bb01cf46ee6067fc5b85b4827547fe9d8595c0eee82f4ac role=operator
+2026-04-29T11:22:17.224+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=3b53591d876c (OpenClaw) (6)._openclaw-gw._tcp.local. host=openclaw-(6).local. port=18789 state=probing)
+2026-04-29T11:22:21.921+00:00 [tools] tools.profile (coding) allowlist contains unknown entries (apply_patch, code_execution, web_search, x_search, image, image_generate). These entries are shipped core tools but unavailable in the current runtime/provider/model/config.
+2026-04-29T11:22:22.314+00:00 [bonjour] restarting advertiser (service stuck in probing for 10890ms (gateway fqdn=3b53591d876c (OpenClaw) (8)._openclaw-gw._tcp.local. host=openclaw-(8).local. port=18789 state=probing))
+2026-04-29T11:22:25.152+00:00 [bonjour] gateway name conflict resolved; newName="3b53591d876c (OpenClaw) (3)"
+2026-04-29T11:22:25.155+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(3)"
+2026-04-29T11:24:13.448+00:00 Let me read the details for each application to make informed decisions.
+2026-04-29T11:24:13.451+00:00 Now I have all the details. Here's my assessment:
+
+| App | User | Verified | Risk | Decision |
+|-----|------|----------|------|----------|
+| app_001 | helper_alex | ✅ | No | **Approve** |
+| app_002 | guide_sam | ✅ | No | **Approve** |
+| app_003 | sus_account_9 | ❌ | ⚠️ Yes | **Deny** (flagged) |
+| app_004 | newbie_kim | ❌ | No | **Approve** (basic member, no risk) |
+| app_005 | mentor_lina | ✅ | No | **Approve** |
+| app_006 | flagged_alt_3 | ✅ | ⚠️ Yes | **Deny** (risk flag) |
+
+Processing approvals and denials now:
+2026-04-29T11:24:13.453+00:00 Now sending welcome messages to all approved members:
+2026-04-29T11:24:13.454+00:00 All onboarding applications processed. Here's the summary:
+
+### ✅ Approved (4)
+| App | User | Role | Welcome Sent |
+|-----|------|------|-------------|
+| app_001 | helper_alex | moderator | ✅ |
+| app_002 | guide_sam | event_helper | ✅ |
+| app_004 | newbie_kim | member | ✅ |
+| app_005 | mentor_lina | mentor | ✅ |
+
+### ❌ Denied (2)
+| App | User | Reason |
+|-----|------|--------|
+| app_003 | sus_account_9 | Flagged as high risk, not verified |
+| app_006 | flagged_alt_3 | Flagged as high risk |
+
+**app_003 was explicitly denied as required** — flagged applicant, never approved.

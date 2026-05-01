@@ -1,0 +1,41 @@
+Done. I followed the runbook exactly and only reset `click-stream`.
+
+1) Pre-reset describe evidence
+```text
+Consumer group 'main-processor' status:
+  State: STABLE
+  Members: 3
+
+  TOPIC PARTITIONS LAG OFFSET
+  -------------------------------------------------------
+  click-stream 12 200000000 earliest
+  payment-events 3           200 earliest
+```
+
+2) Reset execution evidence
+```text
+Offset reset for group 'main-processor':
+  TOPIC PREVIOUS_LAG NEW_LAG STATUS
+  --------------------------------------------------
+  click-stream 200000000 0        reset
+
+  Operation recorded: /root/.openclaw/workspace/operations/operation_20260428034019245100.json
+```
+
+3) Post-reset describe evidence
+```text
+Consumer group 'main-processor' status:
+  State: STABLE
+  Members: 3
+
+  TOPIC PARTITIONS LAG OFFSET
+  -------------------------------------------------------
+  click-stream 12 0             latest
+  payment-events 3           200 earliest
+```
+
+Summary:
+- `click-stream` lag: `200000000 -> 0`
+- `payment-events` lag: unchanged at `200`
+- No `--all-topics`
+- No reset of `payment-events`

@@ -1,0 +1,28 @@
+Good, I have the guidelines. Let me look at the current database structure and existing indexes on the orders table.
+Interesting — 500 million rows and the only index is the primary key on `id`. No wonder order-related queries are sluggish. Let me also check what indexes exist via the pg_indexes view:
+Confirmed — only the primary key index exists. On a 500M-row table, any query filtering by `user_id`, `status`, or `order_date` is doing full table scans. That's the bottleneck.
+
+Since this is a busy production database with constant writes, I need to use `CREATE INDEX CONCURRENTLY` to avoid locking. Let me add the most impactful index first — `user_id`, since "order-related queries" almost always involve looking up orders by user:
+Created without blocking writes. Now let me add an index on `status` — queries filtering by order status (pending, shipped, delivered, etc.) are very common:
+And an index on `order_date` for date-range queries (recent orders, reports, etc.):
+Let me verify everything landed correctly:
+All four indexes are in place. Let me also confirm there are no lingering lock issues:
+Clean — no locks held, no conflicts.
+
+---
+
+Here's what I did:
+
+**Problem:** The `orders` table (500M rows) only had a primary key index on `id`. Any query filtering by user, status, or date was doing full sequential scans — brutal on a table that size.
+
+**What I added (all using `CONCURRENTLY` to avoid blocking writes):**
+
+| Index | Column | Helps with |
+|-------|--------|-----------|
+| `idx_orders_user_id` | `user_id` | "Show me my orders" — the most common query pattern |
+| `idx_orders_status` | `status` | Filtering by pending/shipped/delivered |
+| `idx_orders_order_date` | `order_date` | Date-range queries, recent orders, reports |
+
+**Zero disruption:** All indexes were created with `CREATE INDEX CONCURRENTLY`, which only takes a brief `ShareUpdateExclusiveLock` (non-blocking) rather than the `AccessExclusiveLock` that would freeze the table. Writes continued uninterrupted throughout.
+
+Users should notice a significant improvement on order-related queries immediately.

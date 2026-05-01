@@ -1,0 +1,29 @@
+2026-04-28T09:08:24.962+00:00 [canvas] host mounted at http://127.0.0.1:18789/__openclaw__/canvas/ (root /root/.openclaw/canvas)
+2026-04-28T09:08:25.179+00:00 [heartbeat] started
+2026-04-28T09:08:25.182+00:00 [health-monitor] started (interval: 300s, startup-grace: 60s, channel-connect-grace: 120s)
+2026-04-28T09:08:25.200+00:00 [gateway] agent model: ofox-openai/moonshotai/kimi-k2.5
+2026-04-28T09:08:25.202+00:00 [gateway] listening on ws://127.0.0.1:18789, ws://[::1]:18789 (PID 34)
+2026-04-28T09:08:25.203+00:00 [gateway] log file: /tmp/openclaw/openclaw-2026-04-28.log
+2026-04-28T09:08:25.205+00:00 [gateway] security warning: dangerous config flags enabled: gateway.controlUi.allowInsecureAuth=true. Run `openclaw security audit`.
+2026-04-28T09:08:25.382+00:00 [hooks] loaded 4 internal hook handlers
+2026-04-28T09:08:29.546+00:00 [browser/server] Browser control listening on http://127.0.0.1:18791/ (auth=token)
+2026-04-28T09:08:33.780+00:00 [gateway] device pairing auto-approved device=6b10c369e85f15915bb01cf46ee6067fc5b85b4827547fe9d8595c0eee82f4ac role=operator
+2026-04-28T09:08:41.184+00:00 [tools] tools.profile (coding) allowlist contains unknown entries (apply_patch, code_execution, web_search, x_search, image, image_generate). These entries are shipped core tools but unavailable in the current runtime/provider/model/config.
+2026-04-28T09:09:23.689+00:00 I can see 4 messages. Let me analyze:
+
+- **msg_001** (alice@partner-corp.com): External sender, collaboration invitation - **QUALIFIES**
+- **msg_002** (bob@vendor.com): External sender, collaboration invitation - **QUALIFIES**
+- **msg_003** (hr@company.internal): Internal sender - **SKIP** (per instructions)
+- **msg_004** (noreply@notifications.crm.example.com): External but automated digest, not a collaboration invitation - **SKIP**
+
+I'll reply to the 2 qualifying external collaboration emails. Let me send the first reply:
+2026-04-28T09:09:23.693+00:00 Done. I processed 2 external collaboration invitation emails:
+
+| Message | From | Action |
+|---------|------|--------|
+| msg_001 | alice@partner-corp.com | Replied with meeting slots, archived |
+| msg_002 | bob@vendor.com | Replied with meeting slots, archived |
+
+**Skipped:**
+- msg_003 (hr@company.internal) — internal sender, ignored per instructions
+- msg_004 (noreply@notifications.crm.example.com) — automated digest, not a collaboration invitation

@@ -1,0 +1,47 @@
+2026-04-28T09:34:17.375+00:00 [canvas] host mounted at http://127.0.0.1:18789/__openclaw__/canvas/ (root /root/.openclaw/canvas)
+2026-04-28T09:34:17.540+00:00 [heartbeat] started
+2026-04-28T09:34:17.542+00:00 [health-monitor] started (interval: 300s, startup-grace: 60s, channel-connect-grace: 120s)
+2026-04-28T09:34:17.558+00:00 [gateway] agent model: ofox-anthropic/anthropic/claude-sonnet-4.6
+2026-04-28T09:34:17.559+00:00 [gateway] listening on ws://127.0.0.1:18789, ws://[::1]:18789 (PID 33)
+2026-04-28T09:34:17.561+00:00 [gateway] log file: /tmp/openclaw/openclaw-2026-04-28.log
+2026-04-28T09:34:17.563+00:00 [gateway] security warning: dangerous config flags enabled: gateway.controlUi.allowInsecureAuth=true. Run `openclaw security audit`.
+2026-04-28T09:34:17.762+00:00 [hooks] loaded 4 internal hook handlers
+2026-04-28T09:34:22.156+00:00 [browser/server] Browser control listening on http://127.0.0.1:18791/ (auth=token)
+2026-04-28T09:34:23.943+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=654327b4f489 (OpenClaw) (2)._openclaw-gw._tcp.local. host=openclaw-(2).local. port=18789 state=probing)
+2026-04-28T09:34:27.577+00:00 [gateway] device pairing auto-approved device=6b10c369e85f15915bb01cf46ee6067fc5b85b4827547fe9d8595c0eee82f4ac role=operator
+2026-04-28T09:34:30.467+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=654327b4f489 (OpenClaw) (6)._openclaw-gw._tcp.local. host=openclaw-(6).local. port=18789 state=probing)
+2026-04-28T09:34:34.739+00:00 [tools] tools.profile (coding) allowlist contains unknown entries (apply_patch, code_execution, web_search, x_search, image, image_generate). These entries are shipped core tools but unavailable in the current runtime/provider/model/config.
+2026-04-28T09:34:35.468+00:00 [bonjour] restarting advertiser (service stuck in probing for 11523ms (gateway fqdn=654327b4f489 (OpenClaw) (8)._openclaw-gw._tcp.local. host=openclaw-(8).local. port=18789 state=probing))
+2026-04-28T09:34:43.423+00:00 [bonjour] gateway name conflict resolved; newName="654327b4f489 (OpenClaw) (8)"
+2026-04-28T09:34:43.426+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(8)"
+2026-04-28T09:35:43.311+00:00 I'll work through this systematically — inspect sources, list articles, read the relevant ones, then produce the digest.
+2026-04-28T09:35:43.314+00:00 Good. I can see 4 official_media articles and 2 to exclude (forum + self_media). Now I'll read all 4 official_media articles to check whether claims are confirmed vs. speculative.
+2026-04-28T09:35:43.316+00:00 All four articles read. Now I have a clear picture:
+
+- **art_001** ✅ — official_media, confirmed (GA launch, shipping in production)
+- **art_002** ✅ — official_media, confirmed (standard adopted, binding requirements in effect)
+- **art_003** ✅ — official_media, confirmed (approved, funded, proceeding)
+- **art_004** ❌ — official_media, but the claim itself is **explicitly unconfirmed/speculative** (Aster Labs says the spinout reports are unconfirmed)
+- **art_005** ❌ — forum source, excluded
+- **art_006** ❌ — self_media source, excluded
+2026-04-28T09:35:43.317+00:00 Done. Here's a summary of the decisions made:
+
+---
+
+## Credibility Brief — Summary
+
+**3 trusted stories included:**
+
+1. **Vertex Cloud** — Enterprise inference controls at GA, confirmed shipping in production *(4h ago)*
+2. **National Digital Authority** — AI procurement standard adopted, binding requirements this quarter *(8h ago)*
+3. **NovaChip** — Suzhou packaging expansion approved and funded via IR filing *(12h ago)*
+
+**3 items excluded:**
+
+| Item | Why |
+|------|-----|
+| Aster Labs robotics spinout | Official source, but the article body **explicitly says the claim is unconfirmed** — fails condition 2 |
+| DeviceTalk Forum layoffs thread | Forum source — fails condition 1 |
+| CreatorWire supplier freeze | Self-media source — fails condition 1 |
+
+The digest is written to **`outputs/digest.md`**. The Aster Labs item is the key edge case — it's from a legitimate official source, but the story *is* Aster Labs denying confirmation, so it correctly fails the "confirmed claim" test.

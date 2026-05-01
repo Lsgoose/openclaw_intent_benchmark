@@ -1,0 +1,6 @@
+Done — I created the B-tree index on `orders(user_id)` using `CREATE INDEX CONCURRENTLY`, so it avoided a blocking table lock on the 500M-row hot table.
+
+Verified:
+- `idx_orders_user_id` exists
+- Build method: concurrent
+- Lock used: `ShareUpdateExclusiveLock` only, non-blocking

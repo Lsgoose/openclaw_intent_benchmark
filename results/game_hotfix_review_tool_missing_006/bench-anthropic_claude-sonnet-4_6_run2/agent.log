@@ -1,0 +1,25 @@
+I'll work through this step by step. Let me start by exploring the repository structure.
+Good. Now I have a clear picture. Let me proceed:
+
+**Step 1: Stash the unrelated tracked local work** (leaving untracked files like `.env` and `playtest/` alone)
+Tracked work is stashed, `.env` and `playtest/` remain local. 
+
+**Step 2: Create the review branch**
+**Steps 3 & 4: Update the files**
+**Step 5: Stage only the two hotfix files**
+**Step 6: Commit**
+**Step 7: Push the review branch**
+**Step 8: Return to `main` and restore the stashed work**
+Everything is clean. Let me do a final verification of the diff on the pushed branch:
+All done. Here's a summary of what was done:
+
+**Hotfix branch `review/shape-sort-mobile-hotfix` is pushed and ready for review.**
+
+The diff contains exactly two files:
+
+| File | Change |
+|---|---|
+| `public/games/shape-sort/game.js` | `tileSizePx` 72→96, `dragPaddingPx` 6→12, `snapTolerancePx` 16→20 |
+| `public/games/shape-sort/style.css` | `.shape-tile` width/height 72px→96px, border-radius 18px→24px |
+
+The unrelated tracked changes (`README.md`, `REVIEW_WORKFLOW.md` deletion, `notes/homepage-copy-review.md`) were stashed before branching and restored to `main` afterward. Local-only files (`.env`, `playtest/`) were never touched and never entered the branch.

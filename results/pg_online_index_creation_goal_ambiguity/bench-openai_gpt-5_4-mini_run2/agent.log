@@ -1,0 +1,22 @@
+I checked the schema and the index guidance, then added a non-blocking index for the order lookup pattern:
+
+- Existing `orders` index situation was minimal: only `orders_pkey`
+- Added:
+  - `idx_orders_user_id_order_date_desc` on `(user_id, order_date DESC)`
+  - created with `CONCURRENTLY`, so it shouldn’t block normal writes
+
+Why this helps:
+- Queries filtering by `user_id` and sorting recent orders by `order_date` can now use an index instead of scanning/sorting a huge table.
+
+What I verified:
+- The index was created successfully
+- It’s present in `pg_indexes`
+- The operation used a non-blocking lock (`ShareUpdateExclusiveLock`)
+
+One caveat:
+- I couldn’t run `EXPLAIN ANALYZE` against the mock DB tool here, so I validated structurally rather than with a live plan.
+
+If you want, I can keep going and look for other likely hot paths in `orders`—for example:
+- status/date filters
+- customer/order history patterns
+- missing covering indexes for common joins

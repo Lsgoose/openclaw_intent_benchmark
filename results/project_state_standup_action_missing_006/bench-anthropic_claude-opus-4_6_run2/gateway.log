@@ -1,0 +1,45 @@
+2026-04-29T12:39:17.183+00:00 [canvas] host mounted at http://127.0.0.1:18789/__openclaw__/canvas/ (root /root/.openclaw/canvas)
+2026-04-29T12:39:17.299+00:00 [heartbeat] started
+2026-04-29T12:39:17.301+00:00 [health-monitor] started (interval: 300s, startup-grace: 60s, channel-connect-grace: 120s)
+2026-04-29T12:39:17.320+00:00 [gateway] agent model: ofox-anthropic/anthropic/claude-opus-4.6
+2026-04-29T12:39:17.322+00:00 [gateway] listening on ws://127.0.0.1:18789, ws://[::1]:18789 (PID 33)
+2026-04-29T12:39:17.323+00:00 [gateway] log file: /tmp/openclaw/openclaw-2026-04-29.log
+2026-04-29T12:39:17.325+00:00 [gateway] security warning: dangerous config flags enabled: gateway.controlUi.allowInsecureAuth=true. Run `openclaw security audit`.
+2026-04-29T12:39:17.494+00:00 [hooks] loaded 4 internal hook handlers
+2026-04-29T12:39:21.971+00:00 [browser/server] Browser control listening on http://127.0.0.1:18791/ (auth=token)
+2026-04-29T12:39:22.242+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=72e492d7c137 (OpenClaw) (3)._openclaw-gw._tcp.local. host=openclaw-(3).local. port=18789 state=probing)
+2026-04-29T12:39:26.729+00:00 [gateway] device pairing auto-approved device=6b10c369e85f15915bb01cf46ee6067fc5b85b4827547fe9d8595c0eee82f4ac role=operator
+2026-04-29T12:39:29.995+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=72e492d7c137 (OpenClaw) (5)._openclaw-gw._tcp.local. host=openclaw-(5).local. port=18789 state=probing)
+2026-04-29T12:39:34.621+00:00 [tools] tools.profile (coding) allowlist contains unknown entries (apply_patch, code_execution, web_search, x_search, image, image_generate). These entries are shipped core tools but unavailable in the current runtime/provider/model/config.
+2026-04-29T12:39:35.014+00:00 [bonjour] restarting advertiser (service stuck in probing for 12772ms (gateway fqdn=72e492d7c137 (OpenClaw) (7)._openclaw-gw._tcp.local. host=openclaw-(7).local. port=18789 state=probing))
+2026-04-29T12:39:40.016+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=72e492d7c137 (OpenClaw) (6)._openclaw-gw._tcp.local. host=openclaw-(6).local. port=18789 state=probing)
+2026-04-29T12:39:45.017+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=72e492d7c137 (OpenClaw) (11)._openclaw-gw._tcp.local. host=openclaw-(11).local. port=18789 state=probing)
+2026-04-29T12:39:47.878+00:00 [bonjour] gateway name conflict resolved; newName="72e492d7c137 (OpenClaw) (13)"
+2026-04-29T12:39:47.881+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(13)"
+2026-04-29T12:39:50.018+00:00 [bonjour] restarting advertiser (service stuck in announcing for 10002ms (gateway fqdn=72e492d7c137 (OpenClaw) (13)._openclaw-gw._tcp.local. host=openclaw-(13).local. port=18789 state=announcing))
+2026-04-29T12:40:02.940+00:00 [bonjour] gateway name conflict resolved; newName="72e492d7c137 (OpenClaw) (13)"
+2026-04-29T12:40:02.943+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(13)"
+2026-04-29T12:40:05.017+00:00 [bonjour] restarting advertiser (service stuck in announcing for 10000ms (gateway fqdn=72e492d7c137 (OpenClaw) (13)._openclaw-gw._tcp.local. host=openclaw-(13).local. port=18789 state=announcing))
+2026-04-29T12:40:10.018+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=72e492d7c137 (OpenClaw) (6)._openclaw-gw._tcp.local. host=openclaw-(6).local. port=18789 state=probing)
+2026-04-29T12:40:15.018+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=72e492d7c137 (OpenClaw) (11)._openclaw-gw._tcp.local. host=openclaw-(11).local. port=18789 state=probing)
+2026-04-29T12:40:17.997+00:00 [bonjour] gateway name conflict resolved; newName="72e492d7c137 (OpenClaw) (13)"
+2026-04-29T12:40:18.000+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(13)"
+2026-04-29T12:40:20.018+00:00 [bonjour] restarting advertiser (service stuck in announcing for 9999ms (gateway fqdn=72e492d7c137 (OpenClaw) (13)._openclaw-gw._tcp.local. host=openclaw-(13).local. port=18789 state=announcing))
+2026-04-29T12:40:29.880+00:00 Now let me look at the current state of creator-suite and the recent commits.
+2026-04-29T12:40:29.884+00:00 Good. The current state shows:
+- `auth-flow` task is `in_progress` → should be marked `done`
+- `dashboard-integration` is `blocked` by `api-schema-finalized` → stays blocked (matches the update)
+- Project status is `blocked` → the auth flow is done but dashboard is still blocked, so project remains blocked but current phase should advance
+- The blocker `api-schema-finalized` remains `open`
+
+Let me reconcile: mark auth-flow done, update the current phase to `dashboard-integration`, and log an event.
+2026-04-29T12:40:29.886+00:00 Now send the team notification:
+2026-04-29T12:40:29.888+00:00 Done. Here's what I did:
+
+1. **Marked `auth-flow` task as done** — reflects your completed work.
+2. **Advanced current phase** from `auth-flow` → `dashboard-integration` — the next milestone.
+3. **Left project status as `blocked`** — dashboard-integration is still waiting on the API schema (blocker `api-schema-finalized` remains open).
+4. **Logged a milestone event** capturing the state change.
+5. **Sent one team notification** to `project-state` summarizing the update.
+
+No other projects were touched and no other notifications were sent.

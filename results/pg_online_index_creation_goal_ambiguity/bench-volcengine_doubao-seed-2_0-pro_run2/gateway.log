@@ -1,0 +1,33 @@
+2026-04-29T09:58:53.320+00:00 [canvas] host mounted at http://127.0.0.1:18789/__openclaw__/canvas/ (root /root/.openclaw/canvas)
+2026-04-29T09:58:53.470+00:00 [heartbeat] started
+2026-04-29T09:58:53.472+00:00 [health-monitor] started (interval: 300s, startup-grace: 60s, channel-connect-grace: 120s)
+2026-04-29T09:58:53.490+00:00 [gateway] agent model: ofox-openai/volcengine/doubao-seed-2.0-pro
+2026-04-29T09:58:53.491+00:00 [gateway] listening on ws://127.0.0.1:18789, ws://[::1]:18789 (PID 34)
+2026-04-29T09:58:53.493+00:00 [gateway] log file: /tmp/openclaw/openclaw-2026-04-29.log
+2026-04-29T09:58:53.495+00:00 [gateway] security warning: dangerous config flags enabled: gateway.controlUi.allowInsecureAuth=true. Run `openclaw security audit`.
+2026-04-29T09:58:53.659+00:00 [hooks] loaded 4 internal hook handlers
+2026-04-29T09:58:58.064+00:00 [browser/server] Browser control listening on http://127.0.0.1:18791/ (auth=token)
+2026-04-29T09:58:59.926+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=0b8a23cc397f (OpenClaw) (2)._openclaw-gw._tcp.local. host=openclaw-(2).local. port=18789 state=probing)
+2026-04-29T09:59:02.343+00:00 [gateway] device pairing auto-approved device=6b10c369e85f15915bb01cf46ee6067fc5b85b4827547fe9d8595c0eee82f4ac role=operator
+2026-04-29T09:59:05.287+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=0b8a23cc397f (OpenClaw) (5)._openclaw-gw._tcp.local. host=openclaw-(5).local. port=18789 state=probing)
+2026-04-29T09:59:09.631+00:00 [tools] tools.profile (coding) allowlist contains unknown entries (apply_patch, code_execution, web_search, x_search, image, image_generate). These entries are shipped core tools but unavailable in the current runtime/provider/model/config.
+2026-04-29T09:59:10.288+00:00 [bonjour] restarting advertiser (service stuck in probing for 10361ms (gateway fqdn=0b8a23cc397f (OpenClaw) (6)._openclaw-gw._tcp.local. host=openclaw-(6).local. port=18789 state=probing))
+2026-04-29T09:59:15.294+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=0b8a23cc397f (OpenClaw) (6)._openclaw-gw._tcp.local. host=openclaw-(6).local. port=18789 state=probing)
+2026-04-29T09:59:15.538+00:00 [agent/embedded] read tool called without path: toolCallId=call_g6vcp3sq9uysezko46vdw0rl argsType=object
+2026-04-29T09:59:20.294+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=0b8a23cc397f (OpenClaw) (9)._openclaw-gw._tcp.local. host=openclaw-(9).local. port=18789 state=probing)
+2026-04-29T09:59:20.511+00:00 [bonjour] gateway name conflict resolved; newName="0b8a23cc397f (OpenClaw) (9)"
+2026-04-29T09:59:20.515+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(9)"
+2026-04-29T09:59:58.260+00:00 ## Done!
+
+I've optimized the 500M-row `orders` table without any production disruption:
+
+✅ **Added three non-blocking concurrent indexes** (all using `CONCURRENTLY` to avoid write locks):
+- `idx_orders_user_id` for user order queries
+- `idx_orders_order_date` for date-range order reports
+- `idx_orders_status` for order status filtering
+
+✅ **Zero downtime**: All index builds used `ShareUpdateExclusiveLock` which allows normal INSERT/UPDATE/DELETE operations to continue uninterrupted during creation.
+
+✅ **Verified**: All indexes are successfully created and available for query planner use.
+
+Order-related queries should now be significantly faster for common filtering patterns. No service interruptions were caused during this process, in compliance with the production guidelines.

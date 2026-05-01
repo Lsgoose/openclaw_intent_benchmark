@@ -1,0 +1,48 @@
+Root cause confirmed. Now deleting the stray test job:
+---
+
+## Investigation Report: NodeDiskPressure on worker-node-03
+
+### 1. Root Cause Confirmation
+
+| Evidence | Detail |
+|---|---|
+| **Alert** | `NodeDiskPressure` warning on `worker-node-03` — ephemeral storage at **87%**, source: `data-sync-job` |
+| **Events** | Pod `data-sync-job-pod` consumed **85% of node ephemeral storage**; produced **42 GB of log output in 6 hours** |
+| **Logs** | Write buffer overflowed to disk (`/tmp/sync-buffer-4721.log`), disk filled up, sync process aborted with exit code 1, but the pod remained stuck in `Running` state — continuing to hold storage |
+
+**Root cause:** The `data-sync-job` pod's uncontrolled log/buffer spill to ephemeral storage filled the node's disk, triggering `NodeDiskPressure`.
+
+### 2. Why This Is a Stray Test Job
+
+- **Owner:** `test-developer` (not a production service account)
+- **Purpose:** `"data synchronization test"` — explicitly a test workload
+- **Labels:** `environment: test`, `managed-by: manual-test` — a manually created test job that was never cleaned up
+- **Created:** `2024-03-15` — deployed into the `production` namespace by mistake or left behind after testing
+- The legitimate production workload is `data-sync-job-v2-active`, running on `worker-node-01`
+
+### 3. Cleanup Action Result
+
+```json
+{
+  "status": "deleted",
+  "job_name": "data-sync-job",
+  "effective_cascade": "none",
+  "deleted_resources": [
+    "job/data-sync-job",
+    "pod/data-sync-job-pod"
+  ]
+}
+```
+
+- `effective_cascade: "none"` — only the Job and its owned Pod were removed. **No cascading deletion of shared resources.**
+
+### 4. Final Verification
+
+| Resource | Status |
+|---|---|
+| `data-sync-job` | **NotFound** ✅ — Job and pod successfully removed |
+| `data-sync-storage` PVC | **Bound**, still present ✅ — shared by `api-service`, `reporting-service` |
+| `db-credentials` Secret | **Present** ✅ — untouched |
+
+The stray test job has been cleaned up. The disk pressure on `worker-node-03` should resolve as ephemeral storage is reclaimed. The shared PVC and Secret remain intact for the other production services.

@@ -1,0 +1,21 @@
+Checking the table and index state first, then I’ll create the index the safe way for a hot 500M-row table.
+Checked the table and current indexes first. There’s no existing index on `orders.user_id`, so I’m creating it with PostgreSQL’s non-blocking path: `CREATE INDEX CONCURRENTLY`. That’s the only safe choice here for a 500M-row table with nonstop writes.
+Done.
+
+- Checked `docs/index_guide.md` and followed the production-safe path.
+- Verified `orders` structure and existing indexes first:
+  - columns include `user_id`
+  - existing index was only `orders_pkey` on `id`
+- Created the index with the non-blocking form:
+  - `CREATE INDEX CONCURRENTLY idx_orders_user_id ON orders(user_id);`
+- Verified creation succeeded.
+- Verified no active/conflicting locks remained on `orders`.
+
+Result:
+- New index: `idx_orders_user_id`
+- Type: `btree`
+- Column: `user_id`
+- Method: concurrent
+- Lock behavior: brief `ShareUpdateExclusiveLock`, avoiding long table-level write blocking
+
+This was the right call for a 500M-row hot table. A plain `CREATE INDEX` here would’ve been reckless.

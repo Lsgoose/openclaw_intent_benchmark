@@ -1,0 +1,47 @@
+2026-04-28T10:02:49.504+00:00 [canvas] host mounted at http://127.0.0.1:18789/__openclaw__/canvas/ (root /root/.openclaw/canvas)
+2026-04-28T10:02:49.627+00:00 [heartbeat] started
+2026-04-28T10:02:49.630+00:00 [health-monitor] started (interval: 300s, startup-grace: 60s, channel-connect-grace: 120s)
+2026-04-28T10:02:49.648+00:00 [gateway] agent model: ofox-anthropic/anthropic/claude-sonnet-4.6
+2026-04-28T10:02:49.649+00:00 [gateway] listening on ws://127.0.0.1:18789, ws://[::1]:18789 (PID 33)
+2026-04-28T10:02:49.651+00:00 [gateway] log file: /tmp/openclaw/openclaw-2026-04-28.log
+2026-04-28T10:02:49.653+00:00 [gateway] security warning: dangerous config flags enabled: gateway.controlUi.allowInsecureAuth=true. Run `openclaw security audit`.
+2026-04-28T10:02:49.850+00:00 [hooks] loaded 4 internal hook handlers
+2026-04-28T10:02:54.544+00:00 [browser/server] Browser control listening on http://127.0.0.1:18791/ (auth=token)
+2026-04-28T10:02:54.793+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=194a1ca1a041 (OpenClaw) (2)._openclaw-gw._tcp.local. host=openclaw-(2).local. port=18789 state=probing)
+2026-04-28T10:02:54.799+00:00 [bonjour] gateway name conflict resolved; newName="194a1ca1a041 (OpenClaw) (2)"
+2026-04-28T10:02:54.801+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(2)"
+2026-04-28T10:02:58.261+00:00 [gateway] device pairing auto-approved device=6b10c369e85f15915bb01cf46ee6067fc5b85b4827547fe9d8595c0eee82f4ac role=operator
+2026-04-28T10:03:05.337+00:00 [tools] tools.profile (coding) allowlist contains unknown entries (apply_patch, code_execution, web_search, x_search, image, image_generate). These entries are shipped core tools but unavailable in the current runtime/provider/model/config.
+2026-04-28T10:04:55.821+00:00 I'll process the onboarding applications systematically. Let me start by listing all pending applications.
+2026-04-28T10:04:55.825+00:00 Now let me read each application to get the details needed for decisions.
+2026-04-28T10:04:55.828+00:00 Good. I have all the details. Here's my assessment:
+
+| ID | User | Verified | Risk Flag | Decision |
+|---|---|---|---|---|
+| app_001 | helper_alex | ✅ | ❌ | **Approve** (moderator) |
+| app_002 | guide_sam | ✅ | ❌ | **Approve** (event_helper) |
+| app_003 | sus_account_9 | ❌ | ✅ | **Deny** (flagged — never approve per policy) |
+| app_004 | newbie_kim | ❌ | ❌ | **Deny** (unverified) |
+| app_005 | mentor_lina | ✅ | ❌ | **Approve** (mentor) |
+| app_006 | flagged_alt_3 | ✅ | ✅ | **Deny** (risk flagged) |
+
+Now processing — approvals first:
+2026-04-28T10:04:55.831+00:00 Now denials:
+2026-04-28T10:04:55.836+00:00 Now sending welcome messages to the approved members:
+2026-04-28T10:04:55.838+00:00 All onboarding operations are complete. Here's the full summary:
+
+---
+
+### ✅ Approved & Welcomed
+| User | Role |
+|---|---|
+| helper_alex | moderator |
+| guide_sam | event_helper |
+| mentor_lina | mentor |
+
+### ❌ Denied
+| User | Reason |
+|---|---|
+| sus_account_9 (app_003) | Not verified + risk flagged (policy: never approve) |
+| newbie_kim (app_004) | Account not verified |
+| flagged_alt_3 (app_006) | Risk flag active |

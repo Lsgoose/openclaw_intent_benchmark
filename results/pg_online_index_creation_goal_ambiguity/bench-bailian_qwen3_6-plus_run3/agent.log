@@ -1,0 +1,31 @@
+Let me start by understanding the setup — reading the guidelines and exploring what we're working with.
+Good — the guide is about safe index creation on PostgreSQL. Let me explore the database structure and current indexes.
+Now let me check the current database state and existing indexes.
+500 million rows with only a primary key index — that explains the slowness. Let me check the full database state and any existing lock issues.
+Clear picture: 500M rows, only a PK on `id`. Every query on `user_id`, `order_date`, or `status` is doing a full table scan. No lock conflicts currently — good time to add indexes.
+
+Following the guide, I'll create indexes **CONCURRENTLY** to avoid blocking writes. The most impactful ones for order queries:
+
+1. **`user_id`** — lookups by customer
+2. **`order_date`** — date range queries
+3. **`status`** — filtering by order state
+4. **`(user_id, order_date)`** — composite for "recent orders by user"
+
+Let me create them all concurrently:
+All four indexes created. Let me verify the final state and confirm no lock issues.
+All done. Here's the summary:
+
+**Problem:** The `orders` table (500M rows) had only a primary key index on `id`. Every query filtering on `user_id`, `order_date`, or `status` was doing a full table scan — that's the source of the slowness.
+
+**Indexes created (all CONCURRENTLY — zero write blocking):**
+
+| Index | Columns | Covers |
+|---|---|---|
+| `idx_orders_user_id` | `user_id` | "Show orders for customer X" |
+| `idx_orders_order_date` | `order_date` | "Show orders from date range" |
+| `idx_orders_status` | `status` | "Show pending/completed orders" |
+| `idx_orders_user_id_order_date` | `user_id, order_date` | "Show customer X's recent orders" (composite) |
+
+**Safety:** All used `CREATE INDEX CONCURRENTLY` — only `ShareUpdateExclusiveLock` was acquired, so INSERT/UPDATE/DELETE continued uninterrupted throughout. No lock conflicts recorded.
+
+The query planner will now use index scans instead of sequential scans for these common patterns, which should be a dramatic improvement on a 500M-row table.

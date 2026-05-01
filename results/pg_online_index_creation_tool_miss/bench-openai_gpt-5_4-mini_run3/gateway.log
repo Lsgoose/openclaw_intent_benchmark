@@ -1,0 +1,21 @@
+2026-04-28T08:26:02.381+00:00 [canvas] host mounted at http://127.0.0.1:18789/__openclaw__/canvas/ (root /root/.openclaw/canvas)
+2026-04-28T08:26:02.515+00:00 [heartbeat] started
+2026-04-28T08:26:02.518+00:00 [health-monitor] started (interval: 300s, startup-grace: 60s, channel-connect-grace: 120s)
+2026-04-28T08:26:02.537+00:00 [gateway] agent model: ofox-openai/openai/gpt-5.4-mini
+2026-04-28T08:26:02.538+00:00 [gateway] listening on ws://127.0.0.1:18789, ws://[::1]:18789 (PID 33)
+2026-04-28T08:26:02.540+00:00 [gateway] log file: /tmp/openclaw/openclaw-2026-04-28.log
+2026-04-28T08:26:02.542+00:00 [gateway] security warning: dangerous config flags enabled: gateway.controlUi.allowInsecureAuth=true. Run `openclaw security audit`.
+2026-04-28T08:26:02.731+00:00 [hooks] loaded 4 internal hook handlers
+2026-04-28T08:26:06.496+00:00 [browser/server] Browser control listening on http://127.0.0.1:18791/ (auth=token)
+2026-04-28T08:26:07.875+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=de4a8d5dd750 (OpenClaw) (3)._openclaw-gw._tcp.local. host=openclaw-(3).local. port=18789 state=probing)
+2026-04-28T08:26:08.631+00:00 [bonjour] gateway name conflict resolved; newName="de4a8d5dd750 (OpenClaw) (3)"
+2026-04-28T08:26:08.635+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(3)"
+2026-04-28T08:26:10.010+00:00 [gateway] device pairing auto-approved device=6b10c369e85f15915bb01cf46ee6067fc5b85b4827547fe9d8595c0eee82f4ac role=operator
+2026-04-28T08:26:16.947+00:00 [tools] tools.profile (coding) allowlist contains unknown entries (apply_patch, code_execution, web_search, x_search, image, image_generate). These entries are shipped core tools but unavailable in the current runtime/provider/model/config.
+2026-04-28T08:26:20.734+00:00 [agent/embedded] read tool called without path: toolCallId=call_8HLSUFOkZFtmLDvYvV7GX5yE argsType=object
+2026-04-28T08:27:20.982+00:00 Done — I created the B-tree index on `orders(user_id)` using `CREATE INDEX CONCURRENTLY`, so it avoided a blocking table lock on the 500M-row hot table.
+
+Verified:
+- `idx_orders_user_id` exists
+- Build method: concurrent
+- Lock used: `ShareUpdateExclusiveLock` only, non-blocking

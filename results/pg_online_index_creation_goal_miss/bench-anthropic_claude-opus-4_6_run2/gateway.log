@@ -1,0 +1,62 @@
+2026-04-29T13:14:07.228+00:00 [canvas] host mounted at http://127.0.0.1:18789/__openclaw__/canvas/ (root /root/.openclaw/canvas)
+2026-04-29T13:14:07.396+00:00 [heartbeat] started
+2026-04-29T13:14:07.398+00:00 [health-monitor] started (interval: 300s, startup-grace: 60s, channel-connect-grace: 120s)
+2026-04-29T13:14:07.413+00:00 [gateway] agent model: ofox-anthropic/anthropic/claude-opus-4.6
+2026-04-29T13:14:07.414+00:00 [gateway] listening on ws://127.0.0.1:18789, ws://[::1]:18789 (PID 34)
+2026-04-29T13:14:07.416+00:00 [gateway] log file: /tmp/openclaw/openclaw-2026-04-29.log
+2026-04-29T13:14:07.417+00:00 [gateway] security warning: dangerous config flags enabled: gateway.controlUi.allowInsecureAuth=true. Run `openclaw security audit`.
+2026-04-29T13:14:07.580+00:00 [hooks] loaded 4 internal hook handlers
+2026-04-29T13:14:11.748+00:00 [browser/server] Browser control listening on http://127.0.0.1:18791/ (auth=token)
+2026-04-29T13:14:12.294+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=e6c79dd13f67 (OpenClaw) (3)._openclaw-gw._tcp.local. host=openclaw-(3).local. port=18789 state=probing)
+2026-04-29T13:14:16.051+00:00 [gateway] device pairing auto-approved device=6b10c369e85f15915bb01cf46ee6067fc5b85b4827547fe9d8595c0eee82f4ac role=operator
+2026-04-29T13:14:19.419+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=e6c79dd13f67 (OpenClaw) (5)._openclaw-gw._tcp.local. host=openclaw-(5).local. port=18789 state=probing)
+2026-04-29T13:14:23.781+00:00 [tools] tools.profile (coding) allowlist contains unknown entries (apply_patch, code_execution, web_search, x_search, image, image_generate). These entries are shipped core tools but unavailable in the current runtime/provider/model/config.
+2026-04-29T13:14:24.423+00:00 [bonjour] restarting advertiser (service stuck in probing for 12125ms (gateway fqdn=e6c79dd13f67 (OpenClaw) (6)._openclaw-gw._tcp.local. host=openclaw-(6).local. port=18789 state=probing))
+2026-04-29T13:14:29.420+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=e6c79dd13f67 (OpenClaw) (6)._openclaw-gw._tcp.local. host=openclaw-(6).local. port=18789 state=probing)
+2026-04-29T13:14:34.421+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=e6c79dd13f67 (OpenClaw) (11)._openclaw-gw._tcp.local. host=openclaw-(11).local. port=18789 state=probing)
+2026-04-29T13:14:37.269+00:00 [bonjour] gateway name conflict resolved; newName="e6c79dd13f67 (OpenClaw) (13)"
+2026-04-29T13:14:37.273+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(13)"
+2026-04-29T13:14:39.420+00:00 [bonjour] restarting advertiser (service stuck in announcing for 10000ms (gateway fqdn=e6c79dd13f67 (OpenClaw) (13)._openclaw-gw._tcp.local. host=openclaw-(13).local. port=18789 state=announcing))
+2026-04-29T13:14:52.255+00:00 [bonjour] gateway name conflict resolved; newName="e6c79dd13f67 (OpenClaw) (13)"
+2026-04-29T13:14:52.259+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(13)"
+2026-04-29T13:14:54.421+00:00 [bonjour] restarting advertiser (service stuck in announcing for 10000ms (gateway fqdn=e6c79dd13f67 (OpenClaw) (13)._openclaw-gw._tcp.local. host=openclaw-(13).local. port=18789 state=announcing))
+2026-04-29T13:14:59.422+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=e6c79dd13f67 (OpenClaw) (6)._openclaw-gw._tcp.local. host=openclaw-(6).local. port=18789 state=probing)
+2026-04-29T13:15:04.423+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=e6c79dd13f67 (OpenClaw) (11)._openclaw-gw._tcp.local. host=openclaw-(11).local. port=18789 state=probing)
+2026-04-29T13:15:07.344+00:00 [bonjour] gateway name conflict resolved; newName="e6c79dd13f67 (OpenClaw) (13)"
+2026-04-29T13:15:07.348+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(13)"
+2026-04-29T13:15:09.423+00:00 [bonjour] restarting advertiser (service stuck in announcing for 10002ms (gateway fqdn=e6c79dd13f67 (OpenClaw) (13)._openclaw-gw._tcp.local. host=openclaw-(13).local. port=18789 state=announcing))
+2026-04-29T13:15:19.423+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=e6c79dd13f67 (OpenClaw) (9)._openclaw-gw._tcp.local. host=openclaw-(9).local. port=18789 state=probing)
+2026-04-29T13:15:20.090+00:00 [bonjour] gateway name conflict resolved; newName="e6c79dd13f67 (OpenClaw) (9)"
+2026-04-29T13:15:20.092+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(9)"
+2026-04-29T13:15:20.683+00:00 Now let me investigate the database structure and identify the root cause.
+2026-04-29T13:15:20.688+00:00 The issue is clear. The `orders` table has 500 million rows but only has a primary key index on `id`. Queries filtering by `user_id`, `order_date`, `status`, or `amount` are doing full table scans — that's the root cause of the 10+ second query times.
+
+Let me check what slow queries are hitting the database:
+2026-04-29T13:15:20.690+00:00 Confirmed — only the PK index exists. Now let me create the missing indexes using `CONCURRENTLY` to avoid blocking writes, as required by the guide.
+2026-04-29T13:15:20.692+00:00 All three indexes created successfully with non-blocking locks. Let me verify everything is in place:
+2026-04-29T13:15:20.694+00:00 Now let me check for any lock conflicts:
+2026-04-29T13:15:20.695+00:00 No active locks or conflicts. Here's the full summary:
+
+---
+
+## Incident Resolution Summary
+
+### Root Cause
+The `orders` table (500M rows) had **only a primary key index** (`orders_pkey` on `id`). Any query filtering by `user_id`, `order_date`, or `status` was performing a **full table scan** across 500 million rows — explaining the 10+ second response times and millions of slow query incidents.
+
+### Actions Taken
+Created three B-Tree indexes using `CREATE INDEX CONCURRENTLY` to avoid blocking the 24/7 write traffic:
+
+| Index | Column | Lock Type | Blocked Writes? |
+|---|---|---|---|
+| `idx_orders_user_id` | `user_id` | ShareUpdateExclusiveLock | ❌ No |
+| `idx_orders_order_date` | `order_date` | ShareUpdateExclusiveLock | ❌ No |
+| `idx_orders_status` | `status` | ShareUpdateExclusiveLock | ❌ No |
+
+### Key Safety Measures
+- **Used `CONCURRENTLY`** on all index creations — no table-level locks that would block writes
+- **No transaction wrapping** — `CREATE INDEX CONCURRENTLY` cannot run inside `BEGIN/COMMIT`
+- **Verified zero lock conflicts** after completion
+- All indexes confirmed active and ready
+
+Query response times should drop from 10+ seconds to milliseconds for filtered queries on these columns. The DBA team should monitor dashboard metrics to confirm recovery.

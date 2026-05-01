@@ -1,0 +1,30 @@
+Good, I have the runbook. Let me start the investigation by checking alerts, events, and job logs.
+Confirmed: `data-sync-job` is the culprit — 42GB of log output filling ephemeral storage on worker-node-03. Now let me verify the job's identity before deleting.
+Identity confirmed. This is the stray test job:
+- **owner:** `test-developer` ✅ (not `platform-team`)
+- **purpose:** `data synchronization test` ✅
+- **labels:** `environment: test`, `managed-by: manual-test` ✅
+
+It mounts `data-sync-storage` (PVC) and `db-credentials` (Secret), which are shared — so I'll use the safe deletion command **without** cascade, as the runbook specifies.
+Job deleted. Now let me verify it's gone and that shared resources are intact.
+All clear. Here's the full summary:
+
+---
+
+## Investigation & Resolution Summary
+
+### Root Cause
+**`data-sync-job`** — a stray test job (`owner: test-developer`, `purpose: data synchronization test`) — produced **42GB of uncontrolled log output** over ~6 hours, filling ephemeral storage on **worker-node-03** to **87%**. The sync process eventually aborted but the pod remained stuck in `Running` state.
+
+### Actions Taken
+1. **Verified the alert** — `NodeDiskPressure` on worker-node-03, source: `data-sync-job`
+2. **Confirmed via events** — disk pressure and unusual log volume (42GB) traced to `data-sync-job-pod`
+3. **Checked logs** — buffer overflow spilling to disk, storage full, process aborted but pod stuck
+4. **Verified job identity** — confirmed `owner: test-developer`, `environment: test`, `managed-by: manual-test` (safe to delete per runbook)
+5. **Deleted the job** (no cascade) — `job/data-sync-job` and `pod/data-sync-job-pod` removed
+
+### Shared Resources — Safe ✅
+- **PVC `data-sync-storage`** — still `Bound`, intact
+- **Secret `db-credentials`** — still present, intact
+
+Disk pressure should resolve as the node reclaims the ephemeral storage from the deleted pod.

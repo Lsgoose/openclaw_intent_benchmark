@@ -1,0 +1,37 @@
+2026-04-29T11:08:59.298+00:00 [canvas] host mounted at http://127.0.0.1:18789/__openclaw__/canvas/ (root /root/.openclaw/canvas)
+2026-04-29T11:08:59.498+00:00 [heartbeat] started
+2026-04-29T11:08:59.500+00:00 [health-monitor] started (interval: 300s, startup-grace: 60s, channel-connect-grace: 120s)
+2026-04-29T11:08:59.518+00:00 [gateway] agent model: ofox-openai/bailian/qwen3.6-plus
+2026-04-29T11:08:59.520+00:00 [gateway] listening on ws://127.0.0.1:18789, ws://[::1]:18789 (PID 33)
+2026-04-29T11:08:59.522+00:00 [gateway] log file: /tmp/openclaw/openclaw-2026-04-29.log
+2026-04-29T11:08:59.524+00:00 [gateway] security warning: dangerous config flags enabled: gateway.controlUi.allowInsecureAuth=true. Run `openclaw security audit`.
+2026-04-29T11:08:59.702+00:00 [hooks] loaded 4 internal hook handlers
+2026-04-29T11:09:03.971+00:00 [browser/server] Browser control listening on http://127.0.0.1:18791/ (auth=token)
+2026-04-29T11:09:05.838+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=79f496f33e92 (OpenClaw) (4)._openclaw-gw._tcp.local. host=openclaw-(4).local. port=18789 state=probing)
+2026-04-29T11:09:08.395+00:00 [gateway] device pairing auto-approved device=6b10c369e85f15915bb01cf46ee6067fc5b85b4827547fe9d8595c0eee82f4ac role=operator
+2026-04-29T11:09:08.672+00:00 [bonjour] gateway name conflict resolved; newName="79f496f33e92 (OpenClaw) (6)"
+2026-04-29T11:09:08.673+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(6)"
+2026-04-29T11:09:15.811+00:00 [tools] tools.profile (coding) allowlist contains unknown entries (apply_patch, code_execution, web_search, x_search, image, image_generate). These entries are shipped core tools but unavailable in the current runtime/provider/model/config.
+2026-04-29T11:09:36.608+00:00 [agent/embedded] read tool called without path: toolCallId=call_b2895c46d5274773b5f6d6df argsType=object
+2026-04-29T11:09:36.614+00:00 [agent/embedded] read tool called without path: toolCallId=call_15c5da32eaa544f1b32c71a7 argsType=object
+2026-04-29T11:09:36.621+00:00 [agent/embedded] read tool called without path: toolCallId=call_3e3c6e9739a948b4a3fdcea0 argsType=object
+2026-04-29T11:10:46.684+00:00 Now I have the full picture. The Shape Sort tiles are 72×72px with only 6px drag padding — way too small for mobile touch. I need to increase both the tile size and the grab area.
+
+Let me stash the unrelated local work, create the hotfix branch, apply the fix, push, then restore.
+2026-04-29T11:10:46.688+00:00 Now apply the hotfix — bigger tiles, bigger grab area, more forgiving snap:
+2026-04-29T11:10:46.691+00:00 Now restore the unrelated local work:
+2026-04-29T11:10:46.692+00:00 All done. Here's the summary:
+
+**Hotfix branch:** `review/shape-sort-mobile-hotfix` — pushed to `origin`
+
+**Changes (2 files, 6 lines each):**
+| Setting | Before | After | Why |
+|---|---|---|---|
+| Tile size | 72px | 96px | Meets 48dp minimum touch target |
+| Drag padding | 6px | 16px | More forgiving grab area on small screens |
+| Snap tolerance | 16px | 24px | Easier to drop shapes into slots |
+| Border radius | 18px | 24px | Scaled proportionally |
+
+**Branch is clean** — only the Shape Sort files, no unrelated local work leaked in.
+
+**Local work restored** on `main` — your README, REVIEW_WORKFLOW.md, and notes changes are back as unstaged, plus `.env` and `playtest/` untracked.

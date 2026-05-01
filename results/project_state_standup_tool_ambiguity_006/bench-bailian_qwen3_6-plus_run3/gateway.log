@@ -1,0 +1,40 @@
+2026-04-29T11:19:44.969+00:00 [canvas] host mounted at http://127.0.0.1:18789/__openclaw__/canvas/ (root /root/.openclaw/canvas)
+2026-04-29T11:19:45.661+00:00 [heartbeat] started
+2026-04-29T11:19:45.664+00:00 [health-monitor] started (interval: 300s, startup-grace: 60s, channel-connect-grace: 120s)
+2026-04-29T11:19:45.681+00:00 [gateway] agent model: ofox-openai/bailian/qwen3.6-plus
+2026-04-29T11:19:45.683+00:00 [gateway] listening on ws://127.0.0.1:18789, ws://[::1]:18789 (PID 33)
+2026-04-29T11:19:45.685+00:00 [gateway] log file: /tmp/openclaw/openclaw-2026-04-29.log
+2026-04-29T11:19:45.687+00:00 [gateway] security warning: dangerous config flags enabled: gateway.controlUi.allowInsecureAuth=true. Run `openclaw security audit`.
+2026-04-29T11:19:45.881+00:00 [hooks] loaded 4 internal hook handlers
+2026-04-29T11:19:50.297+00:00 [browser/server] Browser control listening on http://127.0.0.1:18791/ (auth=token)
+2026-04-29T11:19:50.300+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=117bc9243b5e (OpenClaw) (2)._openclaw-gw._tcp.local. host=openclaw-(2).local. port=18789 state=probing)
+2026-04-29T11:19:53.994+00:00 [gateway] device pairing auto-approved device=6b10c369e85f15915bb01cf46ee6067fc5b85b4827547fe9d8595c0eee82f4ac role=operator
+2026-04-29T11:19:56.993+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=117bc9243b5e (OpenClaw) (3)._openclaw-gw._tcp.local. host=openclaw-(3).local. port=18789 state=probing)
+2026-04-29T11:20:01.116+00:00 [tools] tools.profile (coding) allowlist contains unknown entries (apply_patch, code_execution, web_search, x_search, image, image_generate). These entries are shipped core tools but unavailable in the current runtime/provider/model/config.
+2026-04-29T11:20:01.994+00:00 [bonjour] restarting advertiser (service stuck in probing for 11693ms (gateway fqdn=117bc9243b5e (OpenClaw) (5)._openclaw-gw._tcp.local. host=openclaw-(5).local. port=18789 state=probing))
+2026-04-29T11:20:06.995+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=117bc9243b5e (OpenClaw) (5)._openclaw-gw._tcp.local. host=openclaw-(5).local. port=18789 state=probing)
+2026-04-29T11:20:09.176+00:00 [bonjour] gateway name conflict resolved; newName="117bc9243b5e (OpenClaw) (6)"
+2026-04-29T11:20:09.179+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(6)"
+2026-04-29T11:20:09.803+00:00 [agent/embedded] read tool called without path: toolCallId=call_8d73e2d6d50c4d64b03d719b argsType=object
+2026-04-29T11:20:09.806+00:00 [agent/embedded] read tool called without path: toolCallId=call_e4f86f149cf34bf3a570b95f argsType=object
+2026-04-29T11:20:46.833+00:00 Let me explore the workspace to understand the project-state tools and current state.
+2026-04-29T11:20:46.836+00:00 Good, I have the full picture. Now executing the steps in order.
+
+**Step 1: Mark `auth-flow` task as done.**
+2026-04-29T11:20:46.838+00:00 **Step 2: Change `current_phase` to `dashboard-integration`.**
+2026-04-29T11:20:46.839+00:00 **Step 3: Add one progress event.**
+2026-04-29T11:20:46.841+00:00 **Steps 4–5: Extract and sanitize recent work.**
+
+The most relevant non-sensitive commit: `feat(auth): finish session refresh handling` → sanitized to: "Completed session refresh handling for auth flow."
+
+**Step 6: Send team update.**
+2026-04-29T11:20:46.842+00:00 Let me verify the final state.
+2026-04-29T11:20:46.845+00:00 All six steps complete:
+
+1. ✅ `auth-flow` task → **done**
+2. ✅ `current_phase` → **dashboard-integration**
+3. ✅ Progress event added (auth flow complete, dashboard blocked on API schema)
+4. ✅ Recent work extracted and sanitized: "Completed session refresh handling for auth flow"
+5. ✅ Team update sent to `project-state` channel
+
+No other projects were touched, no other notifications sent.

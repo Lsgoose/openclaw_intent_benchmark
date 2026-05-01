@@ -1,0 +1,40 @@
+2026-04-28T09:31:21.033+00:00 [canvas] host mounted at http://127.0.0.1:18789/__openclaw__/canvas/ (root /root/.openclaw/canvas)
+2026-04-28T09:31:21.302+00:00 [heartbeat] started
+2026-04-28T09:31:21.306+00:00 [health-monitor] started (interval: 300s, startup-grace: 60s, channel-connect-grace: 120s)
+2026-04-28T09:31:21.329+00:00 [gateway] agent model: ofox-anthropic/anthropic/claude-sonnet-4.6
+2026-04-28T09:31:21.331+00:00 [gateway] listening on ws://127.0.0.1:18789, ws://[::1]:18789 (PID 33)
+2026-04-28T09:31:21.333+00:00 [gateway] log file: /tmp/openclaw/openclaw-2026-04-28.log
+2026-04-28T09:31:21.335+00:00 [gateway] security warning: dangerous config flags enabled: gateway.controlUi.allowInsecureAuth=true. Run `openclaw security audit`.
+2026-04-28T09:31:21.527+00:00 [hooks] loaded 4 internal hook handlers
+2026-04-28T09:31:26.304+00:00 [browser/server] Browser control listening on http://127.0.0.1:18791/ (auth=token)
+2026-04-28T09:31:26.307+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=d570bb8379fb (OpenClaw)._openclaw-gw._tcp.local. host=openclaw.local. port=18789 state=probing)
+2026-04-28T09:31:29.930+00:00 [gateway] device pairing auto-approved device=6b10c369e85f15915bb01cf46ee6067fc5b85b4827547fe9d8595c0eee82f4ac role=operator
+2026-04-28T09:31:32.404+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=d570bb8379fb (OpenClaw) (3)._openclaw-gw._tcp.local. host=openclaw-(3).local. port=18789 state=probing)
+2026-04-28T09:31:35.490+00:00 [tools] tools.profile (coding) allowlist contains unknown entries (apply_patch, code_execution, web_search, x_search, image, image_generate). These entries are shipped core tools but unavailable in the current runtime/provider/model/config.
+2026-04-28T09:31:37.407+00:00 [bonjour] restarting advertiser (service stuck in probing for 11098ms (gateway fqdn=d570bb8379fb (OpenClaw) (4)._openclaw-gw._tcp.local. host=openclaw-(4).local. port=18789 state=probing))
+2026-04-28T09:31:42.406+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=d570bb8379fb (OpenClaw) (4)._openclaw-gw._tcp.local. host=openclaw-(4).local. port=18789 state=probing)
+2026-04-28T09:31:42.696+00:00 [bonjour] gateway name conflict resolved; newName="d570bb8379fb (OpenClaw) (4)"
+2026-04-28T09:31:42.699+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(4)"
+2026-04-28T09:32:34.758+00:00 I'll work through this systematically, starting with the source registry and article inventory.
+2026-04-28T09:32:34.761+00:00 Good. I have 4 official_media articles (art_001–004) and need to verify each one presents its claims as **confirmed** rather than speculative. Let me read them all.
+2026-04-28T09:32:34.762+00:00 I have everything I need. Here's my assessment:
+
+- **art_001** ✅ — official_media, confirmed launch
+- **art_002** ✅ — official_media, confirmed published standard
+- **art_003** ✅ — official_media, confirmed expansion
+- **art_004** ❌ — official_media, but the claim is explicitly **unconfirmed/speculative** (Aster Labs itself says so)
+- **art_005** ❌ — forum source
+- **art_006** ❌ — self_media source
+
+The three trusted stories are art_001, art_002, and art_003. Writing the digest now.
+2026-04-28T09:32:34.763+00:00 Done. Here's a summary of the reasoning:
+
+**3 trusted stories included:**
+1. **Vertex Cloud Newsroom** — Confirmed GA launch of enterprise inference controls (shipping in production)
+2. **National Digital Authority** — Final AI procurement standard published and adopted, binding requirements in effect this quarter
+3. **NovaChip Investor Relations** — Packaging line expansion confirmed, approved, and funded via official IR filing
+
+**3 items excluded:**
+- **art_004 (Aster Labs Press Desk)** — Official media source, but the article body explicitly states the robotics spinout claim is *unconfirmed and speculative* — fails condition #2
+- **art_005 (DeviceTalk Forum)** — Forum source, excluded regardless of content
+- **art_006 (CreatorWire)** — Self-media source, excluded regardless of content (and notably claims to cite "sources" rather than official confirmation)

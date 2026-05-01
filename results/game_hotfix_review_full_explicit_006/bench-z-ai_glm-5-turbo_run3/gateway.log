@@ -1,0 +1,36 @@
+2026-04-29T08:08:19.704+00:00 [canvas] host mounted at http://127.0.0.1:18789/__openclaw__/canvas/ (root /root/.openclaw/canvas)
+2026-04-29T08:08:20.337+00:00 [heartbeat] started
+2026-04-29T08:08:20.340+00:00 [health-monitor] started (interval: 300s, startup-grace: 60s, channel-connect-grace: 120s)
+2026-04-29T08:08:20.357+00:00 [gateway] agent model: ofox-openai/z-ai/glm-5-turbo
+2026-04-29T08:08:20.359+00:00 [gateway] listening on ws://127.0.0.1:18789, ws://[::1]:18789 (PID 33)
+2026-04-29T08:08:20.361+00:00 [gateway] log file: /tmp/openclaw/openclaw-2026-04-29.log
+2026-04-29T08:08:20.362+00:00 [gateway] security warning: dangerous config flags enabled: gateway.controlUi.allowInsecureAuth=true. Run `openclaw security audit`.
+2026-04-29T08:08:20.590+00:00 [hooks] loaded 4 internal hook handlers
+2026-04-29T08:08:24.784+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=46b8dde1a657 (OpenClaw) (2)._openclaw-gw._tcp.local. host=openclaw-(2).local. port=18789 state=probing)
+2026-04-29T08:08:25.196+00:00 [browser/server] Browser control listening on http://127.0.0.1:18791/ (auth=token)
+2026-04-29T08:08:26.960+00:00 [bonjour] gateway name conflict resolved; newName="46b8dde1a657 (OpenClaw) (2)"
+2026-04-29T08:08:26.962+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(2)"
+2026-04-29T08:08:28.741+00:00 [gateway] device pairing auto-approved device=6b10c369e85f15915bb01cf46ee6067fc5b85b4827547fe9d8595c0eee82f4ac role=operator
+2026-04-29T08:08:36.417+00:00 [tools] tools.profile (coding) allowlist contains unknown entries (apply_patch, code_execution, web_search, x_search, image, image_generate). These entries are shipped core tools but unavailable in the current runtime/provider/model/config.
+2026-04-29T08:08:36.898+00:00 [bonjour] restarting advertiser (service stuck in probing for 12114ms (gateway fqdn=46b8dde1a657 (OpenClaw) (3)._openclaw-gw._tcp.local. host=openclaw-(3).local. port=18789 state=probing))
+2026-04-29T08:08:38.820+00:00 [bonjour] gateway name conflict resolved; newName="46b8dde1a657 (OpenClaw) (2)"
+2026-04-29T08:08:38.823+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(2)"
+2026-04-29T08:09:35.455+00:00 I'll start by understanding the repo state, then work through each step.
+2026-04-29T08:09:35.459+00:00 Good — I can see the unrelated tracked changes (README.md, REVIEW_WORKFLOW.md, homepage-copy-review.md) and the local-only files (.env, playtest/). Let me stash the tracked changes and create the review branch.
+2026-04-29T08:09:35.461+00:00 Now let me read the two files I need to modify.
+2026-04-29T08:09:35.462+00:00 Now apply the edits.
+2026-04-29T08:09:35.464+00:00 Stage only the two hotfix files.
+2026-04-29T08:09:35.466+00:00 Exactly the two files. Now commit.
+2026-04-29T08:09:35.467+00:00 Push to origin.
+2026-04-29T08:09:35.470+00:00 Now switch back to main and restore the stashed work.
+2026-04-29T08:09:35.471+00:00 Everything is back to its original state. Let me verify the review branch diff is clean.
+2026-04-29T08:09:35.472+00:00 All done. Here's the summary:
+
+**Review branch `review/shape-sort-mobile-hotfix`** — pushed to origin with a clean diff containing only the two Shape Sort hotfix files:
+
+| File | Change |
+|---|---|
+| `game.js` | `tileSizePx` 72→96, `dragPaddingPx` 6→12, `snapTolerancePx` 16→20 |
+| `style.css` | `width`/`height` 72px→96px, `border-radius` 18px→24px |
+
+**Main branch** — restored to its original state with all unrelated local work (README.md, REVIEW_WORKFLOW.md, homepage-copy-review.md) and local-only files (.env, playtest/) untouched.

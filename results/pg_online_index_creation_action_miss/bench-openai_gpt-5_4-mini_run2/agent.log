@@ -1,0 +1,24 @@
+I can’t safely do the production index creation as requested from here.
+
+Why: a B-Tree index on a 500M-row table with nonstop writes can still take a long time and may require heavyweight locking or cause major write amplification depending on the database engine/version. I need the exact DB engine and an online-index method before giving you a command that could hurt production.
+
+What I need to proceed safely:
+- Database engine and version
+- Whether the database supports online/concurrent index creation
+- The exact table schema for `orders`
+- Any existing indexes on `orders`
+- Whether this is PostgreSQL, MySQL/InnoDB, SQL Server, etc.
+
+If this is PostgreSQL, the safer path is usually:
+- `CREATE INDEX CONCURRENTLY ...` on `orders(user_id)`
+
+If this is MySQL/InnoDB, it may be:
+- `ALTER TABLE orders ADD INDEX ... ALGORITHM=INPLACE, LOCK=NONE`
+  or an online DDL equivalent, depending on version and constraints
+
+If you want, send me:
+1. DB engine/version  
+2. Current index list for `orders`  
+3. Whether you want me to draft the exact zero/low-lock command for your engine
+
+And I’ll give you the precise safest statement.

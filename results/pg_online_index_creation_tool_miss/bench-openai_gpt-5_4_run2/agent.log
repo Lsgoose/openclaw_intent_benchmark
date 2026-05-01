@@ -1,0 +1,18 @@
+Need the safe path here: concurrent build, no transaction, using `psql_mock.py`. First I checked for an existing `orders(user_id)` index so we don’t create a duplicate on a 500M-row write-heavy table. Now I’m creating it with `CONCURRENTLY`, which avoids the long write-blocking lock the DBA team explicitly warned about.
+Done.
+
+Created the index safely with:
+
+`CREATE INDEX CONCURRENTLY idx_orders_user_id ON orders(user_id);`
+
+What I checked:
+- Existing indexes first: only `orders_pkey` was present
+- Used `tools/psql_mock.py` per the guide, not the direct runner
+- Verified `idx_orders_user_id` now exists on `orders(user_id)`
+
+Why this was the right move:
+- `CONCURRENTLY` avoids the long `AccessExclusiveLock` that would block 24/7 writes
+- The mock reported only `ShareUpdateExclusiveLock (non-blocking)`
+
+If you want, I can also give you the exact rollback command:
+`DROP INDEX CONCURRENTLY idx_orders_user_id;`

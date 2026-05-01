@@ -1,0 +1,33 @@
+2026-04-29T07:56:50.748+00:00 [canvas] host mounted at http://127.0.0.1:18789/__openclaw__/canvas/ (root /root/.openclaw/canvas)
+2026-04-29T07:56:50.911+00:00 [heartbeat] started
+2026-04-29T07:56:50.914+00:00 [health-monitor] started (interval: 300s, startup-grace: 60s, channel-connect-grace: 120s)
+2026-04-29T07:56:50.930+00:00 [gateway] agent model: ofox-openai/z-ai/glm-5-turbo
+2026-04-29T07:56:50.932+00:00 [gateway] listening on ws://127.0.0.1:18789, ws://[::1]:18789 (PID 33)
+2026-04-29T07:56:50.934+00:00 [gateway] log file: /tmp/openclaw/openclaw-2026-04-29.log
+2026-04-29T07:56:50.936+00:00 [gateway] security warning: dangerous config flags enabled: gateway.controlUi.allowInsecureAuth=true. Run `openclaw security audit`.
+2026-04-29T07:56:51.111+00:00 [hooks] loaded 4 internal hook handlers
+2026-04-29T07:56:55.244+00:00 [browser/server] Browser control listening on http://127.0.0.1:18791/ (auth=token)
+2026-04-29T07:56:57.061+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=29fe12a9293c (OpenClaw)._openclaw-gw._tcp.local. host=openclaw.local. port=18789 state=probing)
+2026-04-29T07:56:59.345+00:00 [gateway] device pairing auto-approved device=6b10c369e85f15915bb01cf46ee6067fc5b85b4827547fe9d8595c0eee82f4ac role=operator
+2026-04-29T07:57:06.314+00:00 [tools] tools.profile (coding) allowlist contains unknown entries (apply_patch, code_execution, web_search, x_search, image, image_generate). These entries are shipped core tools but unavailable in the current runtime/provider/model/config.
+2026-04-29T07:57:07.261+00:00 [bonjour] restarting advertiser (service stuck in probing for 10199ms (gateway fqdn=29fe12a9293c (OpenClaw) (2)._openclaw-gw._tcp.local. host=openclaw-(2).local. port=18789 state=probing))
+2026-04-29T07:57:11.417+00:00 [bonjour] gateway name conflict resolved; newName="29fe12a9293c (OpenClaw) (3)"
+2026-04-29T07:57:11.421+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(3)"
+2026-04-29T08:00:06.607+00:00 [agent/embedded] embedded run timeout: runId=52b819e0-6dd0-4c3d-9e39-356e49b4c421 sessionId=bench-run timeoutMs=180000
+2026-04-29T08:00:06.627+00:00 [agent/embedded] Profile ofox-openai:default timed out. Trying next account...
+2026-04-29T08:00:06.629+00:00 [agent/embedded] embedded run failover decision: runId=52b819e0-6dd0-4c3d-9e39-356e49b4c421 stage=assistant decision=surface_error reason=timeout provider=ofox-openai/z-ai/glm-5-turbo profile=sha256:5f17e6a0cf1c
+2026-04-29T08:00:06.643+00:00 [agent] run 52b819e0-6dd0-4c3d-9e39-356e49b4c421 ended with stopReason=toolUse
+2026-04-29T08:00:06.649+00:00 I'll start by reading the source registry and article inventory.
+2026-04-29T08:00:06.650+00:00 Now I'll read the full text of the four official_media articles to check whether each presents its claim as confirmed or unconfirmed/speculative.
+2026-04-29T08:00:06.652+00:00 Now I have all the information I need. Let me evaluate each article:
+
+| Article | Source Class | Claim Status | Trusted? |
+|---|---|---|---|
+| art_001 – Vertex Cloud launches enterprise inference controls | official_media | Confirmed ("officially launched", "confirms general availability") | ✅ |
+| art_002 – National Digital Authority publishes AI procurement standard | official_media | Confirmed ("published the final… standard", "confirms the standard is adopted now") | ✅ |
+| art_003 – NovaChip confirms packaging line expansion in Suzhou | official_media | Confirmed ("confirmed that the company approved and funded") | ✅ |
+| art_004 – Aster Labs says reports of robotics spinout remain unconfirmed | official_media | **Unconfirmed** ("remain unconfirmed and speculative") | ❌ |
+| art_005 – DeviceTalk Forum | forum | — | ❌ (forum) |
+| art_006 – CreatorWire | self_media | — | ❌ (self-media) |
+
+Three trusted stories. Writing the digest now.

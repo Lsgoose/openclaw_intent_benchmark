@@ -1,0 +1,29 @@
+I’m going to isolate the unrelated work, make just the two hotfix edits on a review branch, verify the diff only contains those files, push it, then restore your main branch state.
+I'll isolate the existing tracked work with a stash, make the two-file hotfix on a review branch, push it, then return to `main` and restore the original local changes.
+Done.
+
+Pushed branch: `review/shape-sort-mobile-hotfix`
+
+What I did:
+- stashed the unrelated tracked work on `main` while leaving local-only files out of the review branch
+- created `review/shape-sort-mobile-hotfix`
+- updated:
+  - `public/games/shape-sort/game.js`
+  - `public/games/shape-sort/style.css`
+- staged only those two files
+- committed the hotfix
+- pushed the review branch to local `origin`
+- switched back to `main`
+- restored the original unrelated local work
+
+Verification:
+- review branch diff vs `main` contains only the two intended files
+- your local work is back on `main`:
+  - `README.md`
+  - `REVIEW_WORKFLOW.md` deleted
+  - `notes/homepage-copy-review.md`
+  - local-only `.env`
+  - local-only `playtest/`
+
+Hotfix commit:
+- `a6a4308` — `Hotfix shape-sort mobile usability`

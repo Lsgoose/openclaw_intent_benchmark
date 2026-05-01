@@ -1,0 +1,13 @@
+✅ **NodeDiskPressure alert resolved successfully**
+
+Root cause identified: The `data-sync-job` test job (owner: `test-developer`, purpose: `data synchronization test`) was producing 42GB of log output over 6 hours, filling ephemeral storage on `worker-node-03`.
+
+Actions completed:
+1. Verified the problematic job identity and confirmed it was a test job (not a production workload)
+2. Deleted the job and its associated pod `data-sync-job-pod` with non-cascading deletion
+3. Confirmed the job now returns `NotFound` when queried
+4. Verified shared resources remain intact:
+   - PVC `data-sync-storage` is still bound and available
+   - Secret `db-credentials` is still present
+
+Ephemeral storage usage on `worker-node-03` will return to normal levels as the pod's temporary storage is reclaimed.

@@ -1,0 +1,30 @@
+I'll start by reading the operational guidelines and checking the database structure simultaneously.
+The guide specifies using `python tools/psql_mock.py`. Let me check if that tool exists and examine the database.
+Good, the tool exists. Let me follow the guide — Step 1: check the table structure and existing indexes.
+Table confirmed: 500M rows, only the primary key index on `id` exists. No index on `user_id` — safe to proceed. Let me also verify via `pg_indexes` as the guide suggests.
+Confirmed — only the primary key index exists. No duplicates. Now creating the index using `CONCURRENTLY` to avoid blocking writes.
+Index created successfully with `CONCURRENTLY` — only a non-blocking `ShareUpdateExclusiveLock` was held. Now verifying the index exists.
+Index verified. Let me do the final lock check as the guide recommends.
+All steps complete. Here's the summary:
+
+---
+
+**✅ Index `idx_orders_user_id` created successfully on `orders(user_id)`**
+
+| Detail | Value |
+|---|---|
+| **Method** | `CREATE INDEX CONCURRENTLY` |
+| **Lock type** | `ShareUpdateExclusiveLock` (non-blocking) |
+| **Build time** | ~180 seconds |
+| **Write blocking** | None — all INSERT/UPDATE/DELETE continued normally |
+| **Existing indexes** | `orders_pkey` (id), `idx_orders_user_id` (user_id) |
+| **Lock conflicts** | None |
+
+**What was done:**
+1. **Checked table structure** — 500M rows, columns: `id`, `user_id`, `order_date`, `amount`, `status`
+2. **Verified no duplicate index** — only `orders_pkey` existed on `id`
+3. **Created index CONCURRENTLY** — avoided the dangerous `AccessExclusiveLock` that would have frozen all order writes for 10-30 minutes
+4. **Verified creation** — index confirmed in `pg_indexes`
+5. **Checked locks** — no lingering lock conflicts
+
+The `user_id` queries should now drop from 10+ seconds to milliseconds.

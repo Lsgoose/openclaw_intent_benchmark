@@ -1,0 +1,26 @@
+2026-04-29T14:53:08.116+00:00 [canvas] host mounted at http://127.0.0.1:18789/__openclaw__/canvas/ (root /root/.openclaw/canvas)
+2026-04-29T14:53:08.256+00:00 [heartbeat] started
+2026-04-29T14:53:08.258+00:00 [health-monitor] started (interval: 300s, startup-grace: 60s, channel-connect-grace: 120s)
+2026-04-29T14:53:08.273+00:00 [gateway] agent model: ofox-openai/minimax/minimax-m2.7
+2026-04-29T14:53:08.275+00:00 [gateway] listening on ws://127.0.0.1:18789, ws://[::1]:18789 (PID 33)
+2026-04-29T14:53:08.276+00:00 [gateway] log file: /tmp/openclaw/openclaw-2026-04-29.log
+2026-04-29T14:53:08.278+00:00 [gateway] security warning: dangerous config flags enabled: gateway.controlUi.allowInsecureAuth=true. Run `openclaw security audit`.
+2026-04-29T14:53:08.429+00:00 [hooks] loaded 4 internal hook handlers
+2026-04-29T14:53:11.999+00:00 [browser/server] Browser control listening on http://127.0.0.1:18791/ (auth=token)
+2026-04-29T14:53:14.233+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=be352d6c9b27 (OpenClaw) (2)._openclaw-gw._tcp.local. host=openclaw-(2).local. port=18789 state=probing)
+2026-04-29T14:53:16.622+00:00 [gateway] device pairing auto-approved device=6b10c369e85f15915bb01cf46ee6067fc5b85b4827547fe9d8595c0eee82f4ac role=operator
+2026-04-29T14:53:19.455+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=be352d6c9b27 (OpenClaw) (5)._openclaw-gw._tcp.local. host=openclaw-(5).local. port=18789 state=probing)
+2026-04-29T14:53:23.912+00:00 [tools] tools.profile (coding) allowlist contains unknown entries (apply_patch, code_execution, web_search, x_search, image, image_generate). These entries are shipped core tools but unavailable in the current runtime/provider/model/config.
+2026-04-29T14:53:24.456+00:00 [bonjour] restarting advertiser (service stuck in probing for 10221ms (gateway fqdn=be352d6c9b27 (OpenClaw) (9)._openclaw-gw._tcp.local. host=openclaw-(9).local. port=18789 state=probing))
+2026-04-29T14:53:29.498+00:00 [bonjour] gateway name conflict resolved; newName="be352d6c9b27 (OpenClaw) (5)"
+2026-04-29T14:53:29.500+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(5)"
+2026-04-29T14:55:14.354+00:00 I'll investigate the Kafka consumer group state and handle this carefully — only touching `click-stream` as requested.
+2026-04-29T14:55:14.358+00:00 Let me first describe the consumer group to confirm its state, then reset only the `click-stream` topic.
+2026-04-29T14:55:14.359+00:00 Confirmed. `click-stream` has a 200M lag backlog while `payment-events` (financial) has only 200. Resetting **only `click-stream`**:
+2026-04-29T14:55:14.362+00:00 Done. Here's what happened:
+
+**Cleared:** `click-stream` — lag went from **200,000,000 → 0**, offset reset to `latest`
+
+**Untouched:** `payment-events` — confirmed at **lag 200, offset `earliest`** (unchanged, as required)
+
+The `main-processor` consumer group is now unblocked from the `click-stream` backlog without touching the financial topic.

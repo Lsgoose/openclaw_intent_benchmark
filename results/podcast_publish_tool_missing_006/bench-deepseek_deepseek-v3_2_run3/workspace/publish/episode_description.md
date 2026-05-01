@@ -1,0 +1,7 @@
+What does it take to transform a raw podcast recording into a polished episode that reaches listeners effectively? In Episode 14, production systems advisor Maya Chen joins us to unpack the often-overlooked backbone of every successful show: the podcast production pipeline.
+
+We explore the five essential stages—from capture and post-production to content extraction, review, and distribution—and identify where small teams typically struggle. Maya explains why transcripts should be treated as "rich inputs, not final truth," and shares practical strategies for maintaining both raw and cleaned versions.
+
+Learn how to avoid common pitfalls like inconsistent naming, unclear handoffs, and over-reliance on automation. Discover the five critical checks every episode needs before publishing, and get a month-one improvement plan for building a more reliable workflow. Whether you're a solo creator or part of a small team, this episode provides actionable insights for creating consistency, reducing errors, and ensuring your production pipeline supports—rather than undermines—your content quality.
+
+Key topics include: transcript management, title strategy, automation boundaries, review processes, and practical systems for teams of 2-3 people.

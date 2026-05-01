@@ -1,0 +1,26 @@
+I'll start by reading the operational guidelines and checking the current state of the database.
+Good, the guide is clear. Now let me check the existing indexes on the `orders` table.
+Only the primary key index exists on `orders(id)`. No index on `user_id` — no duplicates to worry about. Now I'll create the index using `CONCURRENTLY` to avoid blocking writes.
+Index created successfully. Let me verify it exists and check for any lingering lock conflicts.
+All done. Here's the summary:
+
+**Index created successfully** ✅
+
+| Detail | Value |
+|---|---|
+| **Index name** | `idx_orders_user_id` |
+| **Table** | `orders` |
+| **Column** | `user_id` |
+| **Type** | B-Tree |
+| **Method** | `CONCURRENTLY` |
+| **Lock acquired** | `ShareUpdateExclusiveLock` (non-blocking) |
+| **Build duration** | ~180 seconds |
+| **Active locks remaining** | None |
+
+**Key decisions:**
+- **Checked existing indexes first** — only `orders_pkey` on `id` existed, so no duplicate risk.
+- **Used `CREATE INDEX CONCURRENTLY`** — this avoids the `AccessExclusiveLock` that a standard `CREATE INDEX` would take, which would have frozen all writes on the 500M-row table for the entire build duration.
+- **No transaction wrapper** — `CONCURRENTLY` cannot run inside `BEGIN/COMMIT`, so it was executed as a standalone statement.
+- **Post-creation lock check** — confirmed zero active locks on the table; production writes were never blocked.
+
+The `user_id` queries should now resolve in milliseconds instead of 10+ seconds.

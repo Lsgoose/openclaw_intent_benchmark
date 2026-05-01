@@ -1,0 +1,27 @@
+I'll start by exploring the `repo/` directory to understand the structure and find the target files.
+Now I have a clear picture. The game config is in `game.js` and styles are in `style.css`. Let me proceed with the workflow.
+
+**Step 1: Stash unrelated local work**
+Good. Now **step 2: Create the review branch**
+**Steps 3 & 4: Update the game config and stylesheet**
+**Step 5: Stage only the two target files**
+**Step 6: Commit the hotfix**
+**Step 7: Push to local `origin`**
+**Step 8: Return to `main` and restore the original unrelated work**
+Let me verify the review branch diff contains only the two intended files:
+Let me also show the actual hotfix diff for confirmation:
+Done. Here's the summary:
+
+| Step | Action |
+|------|--------|
+| Stashed | `README.md`, `REVIEW_WORKFLOW.md`, `notes/homepage-copy-review.md` (local-only `.env` and `playtest/` were never tracked) |
+| Branch | Created `review/shape-sort-mobile-hotfix` |
+| Config (`game.js`) | `tileSizePx: 72→96`, `dragPaddingPx: 6→12`, `snapTolerancePx: 16→20` |
+| Styles (`style.css`) | `.shape-tile`: `width/height: 72px→96px`, `border-radius: 18px→24px` |
+| Commit | `ed7001d` — "fix(shape-sort): improve touch target sizes for phone usability" |
+| Push | Pushed to `origin/review/shape-sort-mobile-hotfix` |
+| Restore | Back on `main`, stashed work restored |
+
+**Diff vs `origin/main`** contains exactly the two intended hotfix files and nothing else:
+- `public/games/shape-sort/game.js`
+- `public/games/shape-sort/style.css`

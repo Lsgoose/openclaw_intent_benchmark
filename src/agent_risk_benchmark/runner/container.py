@@ -12,6 +12,7 @@ from __future__ import annotations
 import csv
 import hashlib
 import os
+import queue
 import shlex
 import signal
 import subprocess
@@ -35,6 +36,12 @@ DEFAULT_CONTAINER_IMAGE = 'openclaw-bench:v1.0'
 
 def _use_litellm_proxy_init() -> bool:
     v = os.environ.get('OPENCLAW_USE_LITELLM_PROXY', '').strip().lower()
+    return v in ('1', 'true', 'yes')
+
+
+def _use_softcoding_init() -> bool:
+    """Use openclaw-init-softcoding (Ofox bases from environment.json /run_dir copy)."""
+    v = os.environ.get('OPENCLAW_USE_SOFTCODING_INIT', '').strip().lower()
     return v in ('1', 'true', 'yes')
 
 
@@ -170,6 +177,7 @@ def container_run_case(
     llm_params: dict[str, str] | None = None,
     run_idx: int,
     run_total: int,
+    softcoding_port_pool: queue.Queue[int] | None = None,
 ) -> dict[str, Any]:
     """Full container lifecycle for one case.
 
@@ -225,6 +233,8 @@ def container_run_case(
     started = time.time()
     gateway_proc = None
     agent_proc = None
+    gw_port: int | None = None
+    gw_token = f'bench-{_fp}'
 
     # 1. Start container:
     #    workspace_dir → CONTAINER_WORKSPACE (openclaw reads/writes host files directly)
@@ -252,13 +262,27 @@ def container_run_case(
             v = lp.get(key)
             if v is not None and str(v).strip() != '':
                 init_env += f" {env_name}={shlex.quote(str(v).strip())}"
-        init_bin = 'openclaw-init-proxy' if _use_litellm_proxy_init() else 'openclaw-init'
+        if _use_litellm_proxy_init():
+            init_bin = 'openclaw-init-proxy'
+        elif _use_softcoding_init():
+            init_bin = 'openclaw-init-softcoding'
+        else:
+            init_bin = 'openclaw-init'
         container_exec(task_id, f"{init_env} {init_bin}")
 
         # 3. Start the in-container openclaw gateway.
         #    Each container has an isolated network namespace so port conflicts
         #    between parallel containers are impossible.
         emit_progress(format_progress(case_id, 'container-gateway', index=run_idx, total=run_total))
+        if _use_softcoding_init():
+            # Use a deterministic port pool so that a user can optionally expose/inspect the gateway
+            # via host networking, and so logs are predictable across parallel runs.
+            if softcoding_port_pool is None:
+                gw_port = 20000
+            else:
+                gw_port = int(softcoding_port_pool.get())
+        else:
+            gw_port = None
         gw_env_prefix = ''
         if model_api_key:
             gw_env_prefix = (
@@ -266,21 +290,93 @@ def container_run_case(
                 f"export OPENROUTER_API_KEY='{model_api_key}' && "
                 f"export MODEL_API_KEY='{model_api_key}' && "
             )
+        # Ensure HTTP OpenAI-compatible endpoints are available for curl-mode.
+        enable_http = ''
+        if _use_softcoding_init():
+            enable_http = (
+                "python3 - <<'PY'\n"
+                "import json, os\n"
+                "p=os.path.expanduser('~/.openclaw/openclaw.json')\n"
+                "cfg={}\n"
+                "try:\n"
+                "  cfg=json.loads(open(p,'r',encoding='utf-8').read())\n"
+                "except Exception:\n"
+                "  cfg={}\n"
+                "gw=cfg.setdefault('gateway',{})\n"
+                "http=gw.setdefault('http',{})\n"
+                "eps=http.setdefault('endpoints',{})\n"
+                "cc=eps.setdefault('chatCompletions',{})\n"
+                "cc['enabled']=True\n"
+                "open(p,'w',encoding='utf-8').write(json.dumps(cfg,indent=2)+\"\\n\")\n"
+                "print('[run-container] enabled gateway.http.endpoints.chatCompletions')\n"
+                "PY\n"
+            )
+        gw_port_arg = f" --port {int(gw_port)}" if gw_port is not None else ""
+        gw_token_env = f"export OPENCLAW_GATEWAY_TOKEN='{gw_token}' && "
+        gw_token_arg = " --token \"$OPENCLAW_GATEWAY_TOKEN\" --allow-unconfigured" if _use_softcoding_init() else ""
         gateway_proc = container_exec_background(
             task_id,
-            f'{gw_env_prefix}openclaw gateway',
+            f'{gw_env_prefix}{enable_http}{gw_token_env}openclaw gateway{gw_port_arg}{gw_token_arg}',
             log_path=run_dir / 'gateway.log',
         )
         time.sleep(4)  # wait for gateway to be ready
 
         # 4. Run agent inside container (connects to its own gateway).
         emit_progress(format_progress(case_id, 'container-agent', index=run_idx, total=run_total))
-        safe_prompt = prompt.replace("'", "'\\''")
-        agent_proc = container_exec_background(
-            task_id,
-            f"openclaw agent --session-id {CONTAINER_AGENT_SESSION} --timeout {timeout_sec} --message '{safe_prompt}'",
-            log_path=run_dir / 'agent.log',
-        )
+        if _use_softcoding_init():
+            # Curl-mode: use OpenAI-compatible HTTP API rather than openclaw agent CLI.
+            # Pin session key so the session JSONL lands at the same path as CLI mode.
+            gwp = int(gw_port or 20000)
+            safe_prompt = prompt.replace("'", "'\\''")
+            tok_q = shlex.quote(gw_token)
+            agent_proc = container_exec_background(
+                task_id,
+                (
+                    f"export OPENCLAW_GATEWAY_TOKEN={tok_q} && "
+                    "set -euo pipefail; "
+                    "req=/run_dir/openclaw_request.json; resp=/run_dir/openclaw_response.json; "
+                    "python3 - <<'PY'\n"
+                    "import json\n"
+                    f"prompt={safe_prompt!r}\n"
+                    "payload={\n"
+                    "  'model':'openclaw/default',\n"
+                    "  'messages':[{'role':'user','content':prompt}],\n"
+                    "  'max_tokens':256\n"
+                    "}\n"
+                    "open('/run_dir/openclaw_request.json','w',encoding='utf-8').write(json.dumps(payload,ensure_ascii=False,indent=2)+'\\n')\n"
+                    "PY\n"
+                    f"curl -sS --max-time {timeout_sec} "
+                    f"\"http://127.0.0.1:{gwp}/v1/chat/completions\" "
+                    "-H \"Authorization: Bearer $OPENCLAW_GATEWAY_TOKEN\" "
+                    "-H \"Content-Type: application/json\" "
+                    f"-H \"x-openclaw-session-key: {CONTAINER_AGENT_SESSION}\" "
+                    "-d @\"$req\" > \"$resp\"; "
+                    "python3 - <<'PY'\n"
+                    "import json\n"
+                    "p='/run_dir/openclaw_response.json'\n"
+                    "try:\n"
+                    "  obj=json.loads(open(p,'r',encoding='utf-8').read())\n"
+                    "except Exception:\n"
+                    "  obj={}\n"
+                    "txt=''\n"
+                    "choices=obj.get('choices')\n"
+                    "if isinstance(choices,list) and choices:\n"
+                    "  msg=choices[0].get('message') or {}\n"
+                    "  c=msg.get('content','')\n"
+                    "  if isinstance(c,str):\n"
+                    "    txt=c\n"
+                    "open('/run_dir/assistant.txt','w',encoding='utf-8').write(txt)\n"
+                    "PY\n"
+                ),
+                log_path=run_dir / 'agent.log',
+            )
+        else:
+            safe_prompt = prompt.replace("'", "'\\''")
+            agent_proc = container_exec_background(
+                task_id,
+                f"openclaw agent --session-id {CONTAINER_AGENT_SESSION} --timeout {timeout_sec} --message '{safe_prompt}'",
+                log_path=run_dir / 'agent.log',
+            )
         deadline = time.time() + timeout_sec + 30
         while agent_proc.poll() is None and time.time() < deadline:
             time.sleep(0.5)
@@ -308,6 +404,8 @@ def container_run_case(
                 if log_file and not log_file.closed:
                     log_file.close()
         container_rm(task_id)
+        if _use_softcoding_init() and gw_port is not None and softcoding_port_pool is not None:
+            softcoding_port_pool.put(int(gw_port))
 
     # 6. Score using oracle.py on the host.
     emit_progress(format_progress(case_id, 'score', index=run_idx, total=run_total))
@@ -670,6 +768,15 @@ def run_container_command(args: Any) -> int:
     ctr = _resolve_container_args(args, local_env)
     run_date = args.run_date
     total = len(case_dirs)
+    softcoding_port_pool: queue.Queue[int] | None = None
+    if _use_softcoding_init():
+        # When using the softcoding image + curl-mode HTTP path, reserve a small predictable
+        # port pool so parallel workers do not fight over local gateway ports.
+        # Port selection rule: [20000, 20000+parallel-1], and a freed port is returned to the pool.
+        softcoding_port_pool = queue.Queue()
+        base = 20000
+        for p in range(base, base + int(ctr['parallel'])):
+            softcoding_port_pool.put(p)
 
     emit_progress(
         f'run-container: {total} case(s), image={ctr["image"]}, '
@@ -714,6 +821,7 @@ def run_container_command(args: Any) -> int:
                     llm_params=ctr.get('llm_params'),
                     run_idx=idx,
                     run_total=total,
+                    softcoding_port_pool=softcoding_port_pool,
                 )
                 trial_paths.append(Path(result['run_dir']))
                 trial_results.append(result)
@@ -727,6 +835,7 @@ def run_container_command(args: Any) -> int:
                 llm_params=ctr.get('llm_params'),
                 run_idx=idx,
                 run_total=total,
+                softcoding_port_pool=softcoding_port_pool,
             )
             trial_paths.append(Path(result['run_dir']))
             trial_results.append(result)

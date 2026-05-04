@@ -130,6 +130,27 @@ def _apply_tools_exec_bench_defaults(config: dict) -> None:
         tools["exec"] = {"security": "full", "ask": "off"}
 
 
+def _apply_gateway_http_chat_completions_enabled(config: dict) -> None:
+    """Enable POST /v1/chat/completions on gateway (OpenClaw docs: off by default)."""
+    gw = config.setdefault("gateway", {})
+    if not isinstance(gw, dict):
+        config["gateway"] = {}
+        gw = config["gateway"]
+    http = gw.setdefault("http", {})
+    if not isinstance(http, dict):
+        gw["http"] = {}
+        http = gw["http"]
+    endpoints = http.setdefault("endpoints", {})
+    if not isinstance(endpoints, dict):
+        http["endpoints"] = {}
+        endpoints = http["endpoints"]
+    cc = endpoints.setdefault("chatCompletions", {})
+    if not isinstance(cc, dict):
+        endpoints["chatCompletions"] = {}
+        cc = endpoints["chatCompletions"]
+    cc["enabled"] = True
+
+
 def _apply_agents_defaults(
     config: dict,
     *,

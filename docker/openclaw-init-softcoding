@@ -1,0 +1,438 @@
+#!/usr/bin/env python3
+"""
+openclaw-init-softcoding: 与 openclaw-init 相同逻辑，但 Ofox 的 OpenAI/Anthropic/Gemini
+baseUrl 从 **environment.json** 读取，不再在脚本内写死 api.ofox.ai。
+
+配置来源（按优先级）:
+  1. 环境变量 OPENCLAW_ENV_JSON 指向的 JSON 文件（绝对路径）
+  2. 容器内挂载的 /run_dir/environment.json（run-container 会在 materialize_run 时从仓库根复制）
+  3. 若均不存在或缺少字段，则对 model_api 相关项使用与旧 openclaw-init 相同的默认值
+
+environment.json 字段:
+  model                与 OPENCLAW_MODEL 一致时可只配此项；路由见下
+  model_api            OpenAI 兼容根 URL（可省略 /v1，会自动补）；默认 https://api.ofox.ai/v1
+  model_api_anthropic  可选；默认由 model_api 推导
+  model_api_gemini     可选；默认由 model_api 推导
+  ofox_models          可选；{"v1": [...], "anthropic": [...], "gemini": [...]}，缺省则仅为当前模型注册到对应 provider
+  provider_base_urls   可选；非 Ofox 直连时覆盖/补充 provider -> baseUrl 表
+  legacy_provider_prefixes  可选；首段在此集合则走非 Ofox 直连（默认 moonshot/modelstudio/openrouter/deepseek）
+
+其余与 openclaw-init 相同:
+  OPENCLAW_MODEL, MODEL_API_KEY, TEMPERATURE, TOP_P, MAX_TOKENS, OFOX_ANTHROPIC_API
+
+启用方式: 宿主机设置 OPENCLAW_USE_SOFTCODING_INIT=1（与 OPENCLAW_USE_LITELLM_PROXY 互斥时
+以代理为先），且镜像 PATH 中需有本脚本（例如 COPY 到 /usr/local/bin/openclaw-init-softcoding）。
+"""
+from __future__ import annotations
+
+import json
+import os
+import subprocess
+import sys
+from typing import Any
+
+CONFIG_PATH = os.path.expanduser("~/.openclaw/openclaw.json")
+AUTH_PROFILES = os.path.expanduser("~/.openclaw/agents/main/agent/auth-profiles.json")
+
+OFOX_OPENAI_PROVIDER = "ofox-openai"
+OFOX_ANTHROPIC_PROVIDER = "ofox-anthropic"
+OFOX_GEMINI_PROVIDER = "ofox-gemini"
+
+DEFAULT_MODEL_API = "https://api.ofox.ai/v1"
+
+_LOG = "[openclaw-init-softcoding]"
+
+
+def _default_legacy_prefixes() -> frozenset[str]:
+    return frozenset({"moonshot", "modelstudio", "openrouter", "deepseek"})
+
+
+def _legacy_prefixes(cfg: dict[str, Any]) -> frozenset[str]:
+    raw = cfg.get("legacy_provider_prefixes")
+    if isinstance(raw, list) and raw:
+        return frozenset(str(x).strip() for x in raw if str(x).strip())
+    return _default_legacy_prefixes()
+
+
+def _provider_base_urls(cfg: dict[str, Any]) -> dict[str, str]:
+    base: dict[str, str] = {
+        "moonshot": "https://api.moonshot.cn/v1",
+        "modelstudio": "https://dashscope.aliyuncs.com/compatible-mode/v1",
+        "openrouter": "https://openrouter.ai/api/v1",
+        "anthropic": "https://api.anthropic.com/v1",
+        "openai": "https://api.openai.com/v1",
+        "deepseek": "https://api.deepseek.com/v1",
+    }
+    ov = cfg.get("provider_base_urls")
+    if isinstance(ov, dict):
+        for k, v in ov.items():
+            if isinstance(k, str) and isinstance(v, str) and k.strip() and v.strip():
+                base[k.strip()] = v.strip().rstrip("/")
+    return base
+
+
+def _normalize_v1_base(url: str) -> str:
+    s = (url or "").strip().rstrip("/")
+    if not s:
+        s = DEFAULT_MODEL_API.rstrip("/")
+    if not s.endswith("/v1"):
+        return f"{s}/v1"
+    return s
+
+
+def _triplet_from_v1(v1: str) -> tuple[str, str, str]:
+    """v1 形如 https://host/v1 -> anthropic / gemini 同 host。"""
+    v1n = _normalize_v1_base(v1)
+    if v1n.endswith("/v1"):
+        root = v1n[:-3]
+    else:
+        root = v1n.rsplit("/", 1)[0]
+    return v1n, f"{root}/anthropic", f"{root}/gemini"
+
+
+def _load_environment_json() -> dict[str, Any]:
+    candidates: list[str] = []
+    ev = os.environ.get("OPENCLAW_ENV_JSON", "").strip()
+    if ev:
+        candidates.append(ev)
+    candidates.append("/run_dir/environment.json")
+
+    for path in candidates:
+        if not path or not os.path.isfile(path):
+            continue
+        try:
+            raw = open(path, encoding="utf-8").read()
+            data = json.loads(raw)
+            if isinstance(data, dict):
+                print(f"{_LOG} loaded config: {path}", flush=True)
+                return data
+        except OSError as e:
+            print(f"{_LOG} WARN: cannot read {path}: {e}", file=sys.stderr, flush=True)
+        except json.JSONDecodeError as e:
+            print(f"{_LOG} WARN: invalid JSON in {path}: {e}", file=sys.stderr, flush=True)
+    print(f"{_LOG} WARN: no environment.json found; using default model_api", file=sys.stderr, flush=True)
+    return {}
+
+
+def _resolve_ofox_bases(cfg: dict[str, Any]) -> tuple[str, str, str]:
+    raw_v1 = cfg.get("model_api")
+    if raw_v1 is None or (isinstance(raw_v1, str) and not raw_v1.strip()):
+        v1 = _normalize_v1_base(DEFAULT_MODEL_API)
+    else:
+        v1 = _normalize_v1_base(str(raw_v1).strip())
+
+    a = cfg.get("model_api_anthropic")
+    g = cfg.get("model_api_gemini")
+    if isinstance(a, str) and a.strip():
+        anth = a.strip().rstrip("/")
+    else:
+        _, anth, _ = _triplet_from_v1(v1)
+    if isinstance(g, str) and g.strip():
+        gem = g.strip().rstrip("/")
+    else:
+        _, _, gem = _triplet_from_v1(v1)
+    return v1, anth, gem
+
+
+def _human_name(model_id: str) -> str:
+    tail = model_id.split("/")[-1] if "/" in model_id else model_id
+    return " ".join(w.capitalize() for w in tail.replace("-", " ").replace(".", " ").split())
+
+
+def _model_specs(ids: list[str]) -> list[dict]:
+    return [{"id": mid, "name": _human_name(mid)} for mid in ids]
+
+
+def _ofox_model_id_lists(
+    cfg: dict[str, Any],
+    *,
+    prov_key: str,
+    model_id: str,
+) -> tuple[list[str], list[str], list[str]]:
+    """从 ofox_models 读取三组 id；缺省则仅把当前 model_id 挂到对应 provider。"""
+    v1: list[str] = []
+    anth: list[str] = []
+    gem: list[str] = []
+    om = cfg.get("ofox_models")
+    if isinstance(om, dict):
+
+        def _take_list(key: str) -> list[str]:
+            x = om.get(key)
+            if not isinstance(x, list):
+                return []
+            return [str(s).strip() for s in x if str(s).strip()]
+
+        v1.extend(_take_list("v1"))
+        anth.extend(_take_list("anthropic"))
+        gem.extend(_take_list("gemini"))
+
+    def ensure(lst: list[str], mid: str) -> None:
+        if mid and mid not in lst:
+            lst.append(mid)
+
+    if prov_key == OFOX_OPENAI_PROVIDER:
+        ensure(v1, model_id)
+    elif prov_key == OFOX_ANTHROPIC_PROVIDER:
+        ensure(anth, model_id)
+    else:
+        ensure(gem, model_id)
+    return v1, anth, gem
+
+
+def _parse_llm_params_from_env() -> dict[str, float | int]:
+    out: dict[str, float | int] = {}
+
+    raw_t = os.environ.get("TEMPERATURE", "").strip()
+    if raw_t:
+        try:
+            out["temperature"] = float(raw_t)
+        except ValueError:
+            print(f"{_LOG} WARN: invalid TEMPERATURE={raw_t!r}, ignoring", file=sys.stderr)
+
+    raw_tp = os.environ.get("TOP_P", "").strip()
+    if raw_tp:
+        try:
+            out["topP"] = float(raw_tp)
+        except ValueError:
+            print(f"{_LOG} WARN: invalid TOP_P={raw_tp!r}, ignoring", file=sys.stderr)
+
+    raw_mt = os.environ.get("MAX_TOKENS", "").strip()
+    if raw_mt:
+        try:
+            out["maxTokens"] = int(raw_mt)
+        except ValueError:
+            print(f"{_LOG} WARN: invalid MAX_TOKENS={raw_mt!r}, ignoring", file=sys.stderr)
+
+    return out
+
+
+def _apply_tools_exec_bench_defaults(config: dict) -> None:
+    if not isinstance(config.get("tools"), dict):
+        config["tools"] = {}
+    tools = config["tools"]
+    raw_ex = tools.get("exec")
+    if isinstance(raw_ex, dict):
+        tools["exec"] = {**raw_ex, "security": "full", "ask": "off"}
+    else:
+        tools["exec"] = {"security": "full", "ask": "off"}
+
+
+def _apply_gateway_http_chat_completions_enabled(config: dict) -> None:
+    """与 OpenClaw 文档一致：默认关闭的 POST /v1/chat/completions 在 bench 容器里打开。"""
+    gw = config.setdefault("gateway", {})
+    if not isinstance(gw, dict):
+        config["gateway"] = {}
+        gw = config["gateway"]
+    http = gw.setdefault("http", {})
+    if not isinstance(http, dict):
+        gw["http"] = {}
+        http = gw["http"]
+    endpoints = http.setdefault("endpoints", {})
+    if not isinstance(endpoints, dict):
+        http["endpoints"] = {}
+        endpoints = http["endpoints"]
+    cc = endpoints.setdefault("chatCompletions", {})
+    if not isinstance(cc, dict):
+        endpoints["chatCompletions"] = {}
+        cc = endpoints["chatCompletions"]
+    cc["enabled"] = True
+
+
+def _apply_agents_defaults(
+    config: dict,
+    *,
+    primary: str,
+    params: dict[str, float | int],
+) -> None:
+    defaults = config.setdefault("agents", {}).setdefault("defaults", {})
+    defaults.setdefault("model", {})["primary"] = primary
+    if not params:
+        defaults.pop("models", None)
+        return
+    tail = primary.split("/")[-1] if "/" in primary else primary
+    defaults.setdefault("models", {})[primary] = {
+        "alias": _human_name(tail),
+        "params": dict(params),
+    }
+
+
+def _primary_for_ofox(model_env: str, cfg: dict[str, Any]) -> tuple[str, str] | None:
+    """Ofox 路由：显式 ofox-* / anthropic/* / google/* / 其余 vendor/… 默认走 ofox v1；legacy 前缀走直连。"""
+    raw = model_env.strip()
+    if not raw:
+        return None
+
+    for pfx, prov in (
+        (f"{OFOX_OPENAI_PROVIDER}/", OFOX_OPENAI_PROVIDER),
+        (f"{OFOX_ANTHROPIC_PROVIDER}/", OFOX_ANTHROPIC_PROVIDER),
+        (f"{OFOX_GEMINI_PROVIDER}/", OFOX_GEMINI_PROVIDER),
+    ):
+        if raw.startswith(pfx):
+            mid = raw[len(pfx) :].lstrip("/")
+            return prov, mid if mid else raw
+
+    if "/" not in raw:
+        return None
+
+    seg0 = raw.split("/")[0]
+    if seg0 in _legacy_prefixes(cfg):
+        return None
+    if seg0 == "anthropic":
+        return OFOX_ANTHROPIC_PROVIDER, raw
+    if seg0 == "google":
+        return OFOX_GEMINI_PROVIDER, raw
+    return OFOX_OPENAI_PROVIDER, raw
+
+
+def _build_ofox_providers(
+    api_key: str,
+    *,
+    anthropic_api: str,
+    v1_base: str,
+    anthropic_base: str,
+    gemini_base: str,
+    v1_ids: list[str],
+    anth_ids: list[str],
+    gem_ids: list[str],
+) -> dict[str, dict]:
+    def prov_block(base_url: str, ids: list[str], *, api: str) -> dict:
+        block: dict = {
+            "baseUrl": base_url,
+            "api": api,
+            "models": _model_specs(ids),
+        }
+        if api_key:
+            block["apiKey"] = api_key
+        return block
+
+    return {
+        OFOX_OPENAI_PROVIDER: prov_block(v1_base, v1_ids, api="openai-completions"),
+        OFOX_ANTHROPIC_PROVIDER: prov_block(anthropic_base, anth_ids, api=anthropic_api),
+        OFOX_GEMINI_PROVIDER: prov_block(gemini_base, gem_ids, api="openai-completions"),
+    }
+
+
+def main() -> None:
+    env_cfg_early = _load_environment_json()
+    model = os.environ.get("OPENCLAW_MODEL", "").strip()
+    if not model:
+        jm = env_cfg_early.get("model") or env_cfg_early.get("default_model")
+        if isinstance(jm, str) and jm.strip():
+            model = jm.strip()
+    api_key = os.environ.get("MODEL_API_KEY", "").strip()
+    if not api_key:
+        mk = env_cfg_early.get("model_api_key")
+        if isinstance(mk, str) and mk.strip():
+            api_key = mk.strip()
+    anthropic_api = os.environ.get("OFOX_ANTHROPIC_API", "anthropic-messages").strip() or "anthropic-messages"
+    if anthropic_api not in ("anthropic-messages", "openai-completions"):
+        print(f"{_LOG} ERROR: OFOX_ANTHROPIC_API must be anthropic-messages or openai-completions", flush=True)
+        sys.exit(1)
+
+    if not model:
+        print(f"{_LOG} ERROR: OPENCLAW_MODEL not set", flush=True)
+        sys.exit(1)
+
+    env_cfg = env_cfg_early
+    v1_base, anth_base, gem_base = _resolve_ofox_bases(env_cfg)
+    print(
+        f"{_LOG} ofox bases: v1={v1_base!r} anthropic={anth_base!r} gemini={gem_base!r}",
+        flush=True,
+    )
+
+    llm_params = _parse_llm_params_from_env()
+
+    try:
+        subprocess.run(
+            ["git", "config", "--global", "--add", "safe.directory", "*"],
+            check=False,
+            stdout=subprocess.DEVNULL,
+            stderr=subprocess.DEVNULL,
+        )
+    except Exception:
+        pass
+
+    try:
+        config = json.loads(open(CONFIG_PATH).read())
+    except Exception:
+        config = {}
+
+    ofox = _primary_for_ofox(model, env_cfg)
+    if ofox is not None:
+        prov_key, model_id = ofox
+        primary = f"{prov_key}/{model_id}"
+        v1_ids, anth_ids, gem_ids = _ofox_model_id_lists(env_cfg, prov_key=prov_key, model_id=model_id)
+        providers = _build_ofox_providers(
+            api_key,
+            anthropic_api=anthropic_api,
+            v1_base=v1_base,
+            anthropic_base=anth_base,
+            gemini_base=gem_base,
+            v1_ids=v1_ids,
+            anth_ids=anth_ids,
+            gem_ids=gem_ids,
+        )
+    else:
+        prov_name = model.split("/")[0]
+        model_id = "/".join(model.split("/")[1:]) or model
+        primary = model
+        bases = _provider_base_urls(env_cfg)
+        base_url = bases.get(prov_name, f"https://api.{prov_name}.com/v1")
+        block: dict = {
+            "baseUrl": base_url,
+            "api": "openai-completions",
+            "models": [{"id": model_id, "name": _human_name(model_id)}],
+        }
+        if api_key:
+            block["apiKey"] = api_key
+        providers = {prov_name: block}
+
+    _apply_agents_defaults(config, primary=primary, params=llm_params)
+
+    config.setdefault("models", {})["mode"] = "merge"
+    config["models"]["providers"] = providers
+
+    config.setdefault("auth", {})["profiles"] = {}
+    if ofox is not None:
+        for pname in (OFOX_OPENAI_PROVIDER, OFOX_ANTHROPIC_PROVIDER, OFOX_GEMINI_PROVIDER):
+            config["auth"]["profiles"][f"{pname}:default"] = {"provider": pname, "mode": "api_key"}
+    else:
+        prov_name = model.split("/")[0]
+        config["auth"]["profiles"][f"{prov_name}:default"] = {"provider": prov_name, "mode": "api_key"}
+
+    os.makedirs(os.path.dirname(CONFIG_PATH), exist_ok=True)
+    _apply_gateway_http_chat_completions_enabled(config)
+    _apply_tools_exec_bench_defaults(config)
+    open(CONFIG_PATH, "w").write(json.dumps(config, indent=2) + "\n")
+
+    if api_key:
+        os.makedirs(os.path.dirname(AUTH_PROFILES), exist_ok=True)
+        profiles: dict[str, dict] = {}
+        if ofox is not None:
+            for pname in (OFOX_OPENAI_PROVIDER, OFOX_ANTHROPIC_PROVIDER, OFOX_GEMINI_PROVIDER):
+                profiles[f"{pname}:default"] = {
+                    "type": "api_key",
+                    "provider": pname,
+                    "key": api_key,
+                }
+        else:
+            prov_name = model.split("/")[0]
+            profiles[f"{prov_name}:default"] = {
+                "type": "api_key",
+                "provider": prov_name,
+                "key": api_key,
+            }
+        auth = {"version": 1, "profiles": profiles}
+        open(AUTH_PROFILES, "w").write(json.dumps(auth, indent=2) + "\n")
+
+    extra = ""
+    if llm_params:
+        extra = "  params=" + json.dumps(llm_params, sort_keys=True)
+    print(
+        f"{_LOG} primary={primary}  key={'set' if api_key else 'NOT SET'}{extra}",
+        flush=True,
+    )
+
+
+if __name__ == "__main__":
+    main()

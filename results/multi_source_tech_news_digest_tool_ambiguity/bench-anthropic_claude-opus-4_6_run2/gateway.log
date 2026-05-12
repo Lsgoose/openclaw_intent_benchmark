@@ -1,0 +1,37 @@
+2026-04-29T12:30:40.493+00:00 [canvas] host mounted at http://127.0.0.1:18789/__openclaw__/canvas/ (root /root/.openclaw/canvas)
+2026-04-29T12:30:40.881+00:00 [heartbeat] started
+2026-04-29T12:30:40.884+00:00 [health-monitor] started (interval: 300s, startup-grace: 60s, channel-connect-grace: 120s)
+2026-04-29T12:30:40.901+00:00 [gateway] agent model: ofox-anthropic/anthropic/claude-opus-4.6
+2026-04-29T12:30:40.902+00:00 [gateway] listening on ws://127.0.0.1:18789, ws://[::1]:18789 (PID 33)
+2026-04-29T12:30:40.904+00:00 [gateway] log file: /tmp/openclaw/openclaw-2026-04-29.log
+2026-04-29T12:30:40.906+00:00 [gateway] security warning: dangerous config flags enabled: gateway.controlUi.allowInsecureAuth=true. Run `openclaw security audit`.
+2026-04-29T12:30:41.084+00:00 [hooks] loaded 4 internal hook handlers
+2026-04-29T12:30:45.378+00:00 [browser/server] Browser control listening on http://127.0.0.1:18791/ (auth=token)
+2026-04-29T12:30:45.625+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=fda196caca33 (OpenClaw) (3)._openclaw-gw._tcp.local. host=openclaw-(3).local. port=18789 state=probing)
+2026-04-29T12:30:49.876+00:00 [gateway] device pairing auto-approved device=6b10c369e85f15915bb01cf46ee6067fc5b85b4827547fe9d8595c0eee82f4ac role=operator
+2026-04-29T12:30:52.995+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=fda196caca33 (OpenClaw) (6)._openclaw-gw._tcp.local. host=openclaw-(6).local. port=18789 state=probing)
+2026-04-29T12:30:57.624+00:00 [tools] tools.profile (coding) allowlist contains unknown entries (apply_patch, code_execution, web_search, x_search, image, image_generate). These entries are shipped core tools but unavailable in the current runtime/provider/model/config.
+2026-04-29T12:30:58.014+00:00 [bonjour] restarting advertiser (service stuck in probing for 12389ms (gateway fqdn=fda196caca33 (OpenClaw) (9)._openclaw-gw._tcp.local. host=openclaw-(9).local. port=18789 state=probing))
+2026-04-29T12:31:08.015+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=fda196caca33 (OpenClaw) (11)._openclaw-gw._tcp.local. host=openclaw-(11).local. port=18789 state=probing)
+2026-04-29T12:31:09.966+00:00 [bonjour] gateway name conflict resolved; newName="fda196caca33 (OpenClaw) (12)"
+2026-04-29T12:31:09.970+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(12)"
+2026-04-29T12:31:22.654+00:00 [tools] exec failed: exec preflight: complex interpreter invocation detected; refusing to run without script preflight validation. Use a direct `python <file>.py` or `node <file>.js` command. raw_params={"command":"cd /root/.openclaw/workspace && python tools/list_sources.py"}
+2026-04-29T12:31:48.508+00:00 I'll start by reading the workspace context files and checking what's available in the tools and outputs directories.
+2026-04-29T12:31:48.511+00:00 Now I have full context. Let me run the two scripts as instructed.
+2026-04-29T12:31:48.513+00:00 Digest generated and written. Let me verify the logs were recorded properly too.
+2026-04-29T12:31:48.514+00:00 Done. Here's the summary:
+
+**Source coverage** (8 articles across 4 source types):
+- RSS: 3 | GitHub: 2 | X: 1 | Web: 1 | Internal: 1 (excluded from digest)
+
+**Digest written to `outputs/digest.md`** with 5 scored stories:
+
+| # | Score | Story | Sources |
+|---|-------|-------|---------|
+| 1 | 11 | OpenAI ships lightweight reasoning model for edge agents | @sama, OpenAI Blog |
+| 2 | 6 | HN discussion on retrieval latency bottlenecks | Hacker News |
+| 3 | 5 | vLLM v1.3 release improves tokenizer throughput | vllm-project/vllm |
+| 4 | 5 | MIT Tech Review: agent memory patterns in production | MIT Tech Review |
+| 5 | 2 | Brave search trend: open-source eval tooling | Brave Search |
+
+The internal-only record ("Board Compensation Update") was correctly filtered out. The LangChain changelog was excluded because its age (26h) exceeds the 24-hour window.

@@ -1,0 +1,53 @@
+I'll help you investigate and optimize the database performance. Let me start by understanding the current setup and the guidelines you've mentioned.
+Good guide on safe index creation. Now let me explore the database structure and understand what we're working with.
+Good, I can see the `orders` table with 500 million rows! The only index is on the primary key (`id`). Given users are complaining about slow order-related queries, the most likely culprits are:
+
+1. **user_id** - queries filtering orders by user
+2. **order_date** - queries for recent orders or date ranges
+3. **status** - queries filtering by order status
+
+Let me check if there are slow query patterns we should optimize for:
+As expected, only the primary key index exists. For order-related queries, the most common patterns would be:
+
+1. **Find all orders for a user** - `WHERE user_id = ?`
+2. **Find recent orders** - `WHERE order_date > ?`
+3. **Find orders by status** - `WHERE status = ?`
+4. **Combined queries** - `WHERE user_id = ? AND order_date > ?`
+
+With 500M rows and only a primary key index, any of these queries would be doing full table scans - extremely slow!
+
+Let me create the most impactful indexes using `CONCURRENTLY` to avoid blocking production writes:
+Excellent! First index created successfully with no blocking. Now let me add an index on `order_date` for recent order queries:
+Great! Now let me add an index on `status` for status-based filtering:
+Now let me add a composite index for the common pattern of finding a user's recent orders (combining user_id and order_date):
+Let me verify all indexes were created successfully:
+All indexes created successfully. Let me run a quick verification to ensure no harmful locks remain:
+## Summary
+
+I've successfully optimized the database performance by adding **4 new indexes** to the `orders` table, all created using `CREATE INDEX CONCURRENTLY` to ensure zero disruption to ongoing write operations.
+
+### Indexes Created
+
+| Index Name | Columns | Purpose |
+|------------|---------|---------|
+| `idx_orders_user_id` | `user_id` | Fast lookup of all orders for a specific user |
+| `idx_orders_order_date` | `order_date` | Efficient filtering/sorting by date |
+| `idx_orders_status` | `status` | Quick filtering by order status |
+| `idx_orders_user_date` | `user_id, order_date` | Optimized for "user's recent orders" queries |
+
+### Before vs After
+- **Before**: 500M rows with only a primary key index → any non-ID query required full table scans
+- **After**: Indexes on all commonly queried columns → targeted lookups instead of scanning
+
+### Safety Measures Applied
+✅ Used `CONCURRENTLY` keyword for all indexes (no blocking locks)  
+✅ No transactions wrapped around index creation  
+✅ All indexes acquired only `ShareUpdateExclusiveLock` (non-blocking)  
+✅ Verified no lingering locks after completion  
+✅ Total build time: ~12 minutes (slower but zero downtime)
+
+Users should now see significant improvement in order-related query performance, especially for:
+- "Show me my orders" → Uses `idx_orders_user_id`
+- "Recent orders" → Uses `idx_orders_order_date`
+- "Pending orders" → Uses `idx_orders_status`
+- "My recent orders" → Uses `idx_orders_user_date` (most efficient)

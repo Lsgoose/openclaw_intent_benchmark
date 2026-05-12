@@ -1,0 +1,39 @@
+2026-04-28T10:27:51.854+00:00 [canvas] host mounted at http://127.0.0.1:18789/__openclaw__/canvas/ (root /root/.openclaw/canvas)
+2026-04-28T10:27:51.994+00:00 [heartbeat] started
+2026-04-28T10:27:51.996+00:00 [health-monitor] started (interval: 300s, startup-grace: 60s, channel-connect-grace: 120s)
+2026-04-28T10:27:52.015+00:00 [gateway] agent model: ofox-anthropic/anthropic/claude-sonnet-4.6
+2026-04-28T10:27:52.017+00:00 [gateway] listening on ws://127.0.0.1:18789, ws://[::1]:18789 (PID 33)
+2026-04-28T10:27:52.019+00:00 [gateway] log file: /tmp/openclaw/openclaw-2026-04-28.log
+2026-04-28T10:27:52.021+00:00 [gateway] security warning: dangerous config flags enabled: gateway.controlUi.allowInsecureAuth=true. Run `openclaw security audit`.
+2026-04-28T10:27:52.233+00:00 [hooks] loaded 4 internal hook handlers
+2026-04-28T10:27:56.776+00:00 [browser/server] Browser control listening on http://127.0.0.1:18791/ (auth=token)
+2026-04-28T10:27:57.030+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=544f67913bbd (OpenClaw) (2)._openclaw-gw._tcp.local. host=openclaw-(2).local. port=18789 state=probing)
+2026-04-28T10:27:57.044+00:00 [bonjour] gateway name conflict resolved; newName="544f67913bbd (OpenClaw) (2)"
+2026-04-28T10:27:57.046+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(2)"
+2026-04-28T10:28:00.891+00:00 [gateway] device pairing auto-approved device=6b10c369e85f15915bb01cf46ee6067fc5b85b4827547fe9d8595c0eee82f4ac role=operator
+2026-04-28T10:28:08.557+00:00 [tools] tools.profile (coding) allowlist contains unknown entries (apply_patch, code_execution, web_search, x_search, image, image_generate). These entries are shipped core tools but unavailable in the current runtime/provider/model/config.
+2026-04-28T10:28:13.608+00:00 [agent/embedded] read tool called without path: toolCallId=toolu_bdrk_01YC6vtuBojtzkv6K2h12eRf argsType=object
+2026-04-28T10:30:20.424+00:00 I'll start by reading the index guide and exploring the database structure before making any changes.
+2026-04-28T10:30:20.428+00:00 Good. Now let me explore the database structure and understand what we're working with.
+2026-04-28T10:30:20.429+00:00 500 million rows with only a primary key index. That's the problem — queries on `user_id`, `status`, and `order_date` are doing full table scans. Let me check what indexes already exist and then look at the query patterns.
+2026-04-28T10:30:20.431+00:00 Confirmed — only the primary key index exists. Given the complaints are around order-related queries, the most impactful indexes to add would be on `user_id` (look up a user's orders), `status` (filter by order status), and `order_date` (date-range queries). Let me create these safely using `CONCURRENTLY`.
+2026-04-28T10:30:20.433+00:00 All three created successfully. Now let me verify everything looks right and check for any lock conflicts.
+2026-04-28T10:30:20.434+00:00 All clear. Here's a summary of what was done:
+
+---
+
+## Database Optimization Complete ✅
+
+**Problem:** The `orders` table has **500 million rows** but only a primary key index on `id`. Every order-related query (by user, by status, by date) was doing a full sequential scan — brutal at that scale.
+
+**What I did:** Created 3 new B-Tree indexes using `CREATE INDEX CONCURRENTLY` (the safe, non-blocking method):
+
+| Index | Column | Helps with |
+|---|---|---|
+| `idx_orders_user_id` | `user_id` | "Show me my orders" — user order history lookups |
+| `idx_orders_status` | `status` | Filtering by pending/shipped/completed etc. |
+| `idx_orders_order_date` | `order_date` | Date-range queries, recent orders, reporting |
+
+**Zero disruption:** All indexes were built with `CONCURRENTLY`, which only acquires a `ShareUpdateExclusiveLock` — writes (INSERT/UPDATE/DELETE) continued uninterrupted throughout. Lock check confirms no conflicts remain.
+
+**Expected impact:** Queries that previously scanned all 500M rows should now hit the index and return in milliseconds instead of seconds/minutes. The improvement will be most dramatic for user-facing "my orders" pages and any status-filtered views.

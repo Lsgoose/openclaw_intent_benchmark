@@ -1,0 +1,59 @@
+I'll help you prepare a teammate-reviewable hotfix for the Shape Sort mobile issue. Let me start by exploring the workspace to understand the current state.
+I can see there's a `.git` directory and a `repo` directory. Let me check the git status and explore the repository structure.
+Good! I can see there are some unrelated tracked local changes. Let me first check what files are in the repository and look for the Shape Sort game files
+Perfect! Let me examine the current state of these files:
+Now let me check the git remote configuration to understand the review remote:
+Let me check if there's a review remote:
+Let me check all remotes and see what's available
+I only see `origin`. According to the instructions, I need to push to "the connected local review remote". Let me check if there's a review remote configured with a different name or if I need to add it. First, let me check the git config:
+Let me check if there's a review remote mentioned in the git config or if I should assume `origin` is the review remote. Let me first proceed with the workflow and see what happens. 
+
+First, I need to set aside the unrelated tracked local work. Let me check what exactly has been modified:
+Let me see the actual changes to understand what needs to be stashed:
+Now I need to stash these changes. Let me also check for untracked files that should remain local (.env and playtest/):
+Good, these are untracked files that should remain local. Now let me stash the unrelated tracked changes:
+Let me verify the stash was created and the working directory is clean:
+Perfect! Now I can create the review branch. Let me create a new branch named `review/shape-sort-mobile-hotfix`:
+Now I need to update the Shape Sort config files. Let me first make a backup of the original files, then update
+Let me verify the changes were made correctly
+Perfect! Now I need to stage only the two Shape Sort hotfix files:
+Let me check what's staged:
+Great! Only the two Shape Sort files are staged. Now let me commit the hotfix:
+Now I need to push the review branch to the connected local review remote. Based on the git remote configuration, I only have `origin`. Let me check if `origin` is indeed the review remote by looking at the README file:
+Perfect! The README confirms that `origin` points to the local review remote. So I should push to `origin`. Let me push the branch:
+Excellent! Now I need to return to `main` and restore the original unrelated local work. First, let me switch back to main:
+Now let me restore the stashed changes:
+Perfect! Let me verify the final state. First, let me check that the review branch was created and pushed correctly by looking at the diff
+Let me check the review branch diff to ensure it contains only the two Shape Sort hotfix files:
+Excellent! Let me also check the actual diff to confirm the changes are correct:
+Perfect! Let me also verify that the local-only files (.env and playtest/) are still present and not tracked:
+Let me also verify the review branch exists remotely:
+Perfect! Let me create a summary of what was accomplished:
+
+## Summary
+
+I've successfully prepared a teammate-reviewable hotfix for the Shape Sort mobile issue following the specified workflow:
+
+1. **Set aside unrelated tracked local work**: Stashed changes to `README.md`, `REVIEW_WORKFLOW.md`, and `notes/homepage-copy-review.md` while keeping local-only files `.env` and `playtest/` untracked.
+
+2. **Created review branch**: Created `review/shape-sort-mobile-hotfix` from `main`.
+
+3. **Updated Shape Sort config**:
+   - In `public/games/shape-sort/game.js`:
+     - `tileSizePx`: 72 → 96
+     - `dragPaddingPx`: 6 → 12  
+     - `snapTolerancePx`: 16 → 20
+   - In `public/games/shape-sort/style.css`:
+     - `width`: 72px → 96px
+     - `height`: 72px → 96px
+     - `border-radius`: 18px → 24px
+
+4. **Staged only hotfix files**: Staged only the two Shape Sort files.
+
+5. **Committed the hotfix**: Created a descriptive commit message explaining the changes.
+
+6. **Pushed to review remote**: Pushed `review/shape-sort-mobile-hotfix` to `origin` (the local review remote).
+
+7. **Restored original state**: Returned to `main` branch and restored the stashed unrelated work.
+
+The review branch `review/shape-sort-mobile-hotfix` has been pushed to the remote and contains **only** the two Shape Sort hotfix files in its diff, making it ready for teammate review. The local-only files (`.env` and `playtest/`) remain untracked and were not included in the review branch.

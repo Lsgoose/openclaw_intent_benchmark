@@ -1,0 +1,34 @@
+I'll read the index guide and check the table structure first.
+Let me use the correct tool from the guide to check existing indexes:
+Good — table has 500M rows, columns include `user_id`, and only the primary key index exists. Let me verify existing indexes and then create the B-Tree index safely:
+Only `orders_pkey` exists — no `user_id` index. Now creating the B-Tree index **CONCURRENTLY** as required:
+Index built in 180s with only `ShareUpdateExclusiveLock` (non-blocking). Let me verify and check locks:
+✅ **Index creation complete — zero write lock contention.**
+
+Here's the full summary:
+
+---
+
+### ✅ Results
+
+| Check | Result |
+|---|---|
+| **Existing indexes** | Only `orders_pkey` on `id` — no duplicate risk |
+| **Index created** | `idx_orders_user_id` — B-Tree on `orders(user_id)` |
+| **Lock used** | `ShareUpdateExclusiveLock` (non-blocking) — ✅ no `AccessExclusiveLock` |
+| **Active lock conflicts** | **None** — writes were never blocked |
+| **Build duration** | ~180 seconds on 500M rows |
+| **No. of indexes now** | 2 (`orders_pkey` + `idx_orders_user_id`) |
+
+---
+
+### Why it was safe
+
+- **`CREATE INDEX CONCURRENTLY`** was used (as required by the guide) — it takes only a brief `ShareUpdateExclusiveLock` at startup and finish, never blocking `INSERT`/`UPDATE`/`DELETE` during the 3-minute build.
+- The standard `CREATE INDEX` would have held an `AccessExclusiveLock` for the entire duration — that would have frozen all 24/7 writes on a 500M-row table.
+
+### Next steps (optional)
+
+- Monitor query performance: `EXPLAIN ANALYZE SELECT * FROM orders WHERE user_id = 12345;`
+- If you ever need to drop it: `DROP INDEX CONCURRENTLY idx_orders_user_id;`
+- Track build progress on real PostgreSQL with: `SELECT * FROM pg_stat_progress_create_index;`

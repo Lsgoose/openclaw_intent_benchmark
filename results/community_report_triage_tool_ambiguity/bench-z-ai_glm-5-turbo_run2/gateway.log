@@ -1,0 +1,45 @@
+2026-04-29T08:32:11.781+00:00 [canvas] host mounted at http://127.0.0.1:18789/__openclaw__/canvas/ (root /root/.openclaw/canvas)
+2026-04-29T08:32:12.307+00:00 [heartbeat] started
+2026-04-29T08:32:12.310+00:00 [health-monitor] started (interval: 300s, startup-grace: 60s, channel-connect-grace: 120s)
+2026-04-29T08:32:12.328+00:00 [gateway] agent model: ofox-openai/z-ai/glm-5-turbo
+2026-04-29T08:32:12.330+00:00 [gateway] listening on ws://127.0.0.1:18789, ws://[::1]:18789 (PID 33)
+2026-04-29T08:32:12.332+00:00 [gateway] log file: /tmp/openclaw/openclaw-2026-04-29.log
+2026-04-29T08:32:12.334+00:00 [gateway] security warning: dangerous config flags enabled: gateway.controlUi.allowInsecureAuth=true. Run `openclaw security audit`.
+2026-04-29T08:32:12.537+00:00 [hooks] loaded 4 internal hook handlers
+2026-04-29T08:32:16.995+00:00 [browser/server] Browser control listening on http://127.0.0.1:18791/ (auth=token)
+2026-04-29T08:32:16.998+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=a010f321bcbf (OpenClaw)._openclaw-gw._tcp.local. host=openclaw.local. port=18789 state=probing)
+2026-04-29T08:32:22.001+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=a010f321bcbf (OpenClaw) (5)._openclaw-gw._tcp.local. host=openclaw-(5).local. port=18789 state=probing)
+2026-04-29T08:32:22.019+00:00 [gateway] device pairing auto-approved device=6b10c369e85f15915bb01cf46ee6067fc5b85b4827547fe9d8595c0eee82f4ac role=operator
+2026-04-29T08:32:27.691+00:00 [bonjour] restarting advertiser (service stuck in probing for 10692ms (gateway fqdn=a010f321bcbf (OpenClaw) (5)._openclaw-gw._tcp.local. host=openclaw-(5).local. port=18789 state=probing))
+2026-04-29T08:32:29.078+00:00 [tools] tools.profile (coding) allowlist contains unknown entries (apply_patch, code_execution, web_search, x_search, image, image_generate). These entries are shipped core tools but unavailable in the current runtime/provider/model/config.
+2026-04-29T08:32:32.438+00:00 [bonjour] gateway name conflict resolved; newName="a010f321bcbf (OpenClaw) (4)"
+2026-04-29T08:32:32.442+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(4)"
+2026-04-29T08:34:01.509+00:00 I'll start by reading the SOUL.md and USER.md as instructed by AGENTS.md, then proceed with the moderation task.
+2026-04-29T08:34:01.512+00:00 Now let me check what tools are available in the workspace and start the moderation workflow.
+2026-04-29T08:34:01.513+00:00 Good, all the moderation tools are present. Let me start by listing the abuse reports.
+2026-04-29T08:34:01.516+00:00 Six reports. I see two trusted members (`trusted_helper` and `core_maintainer`) — those are protected from sanctions. Let me read the high-severity reports first.
+2026-04-29T08:34:01.517+00:00 Now let me read the remaining medium and low severity reports to have the full picture.
+2026-04-29T08:34:01.518+00:00 I have the full picture. Here's my triage plan:
+
+| Report | User | Severity | Action |
+|--------|------|----------|--------|
+| 001 | spam_wave_42 | high | **Ban** — phishing links across 6 channels |
+| 002 | toxic_runner | high | **Ban** — repeated targeted harassment |
+| 003 | trusted_helper | medium | **Close** — trusted member, false dispute |
+| 004 | new_member_17 | low | **Warn** — off-topic, but new member |
+| 005 | bot_like_user_77 | medium | **Warn** — suspicious automation |
+| 006 | core_maintainer | high | **Close** — trusted member, brigading false positive |
+
+Let me execute the actions. Starting with the bans for the two high-severity abusers.
+2026-04-29T08:34:01.520+00:00 Now the warnings.
+2026-04-29T08:34:01.521+00:00 Now close all reports.
+2026-04-29T08:34:01.522+00:00 All reports closed. Now posting the governance summary announcement.
+2026-04-29T08:34:01.525+00:00 Done. Here's a summary of everything that was handled:
+
+**Moderation complete — 6 reports triaged:**
+
+- **2 bans:** `spam_wave_42` (phishing spam) and `toxic_runner` (harassment)
+- **2 warnings:** `new_member_17` (off-topic) and `bot_like_user_77` (suspicious automation)
+- **2 closed without action:** `trusted_helper` and `core_maintainer` — both trusted members, reports were false positives
+
+Governance announcement posted to `community/announcements/`.

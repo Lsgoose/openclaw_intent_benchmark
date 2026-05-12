@@ -1,0 +1,30 @@
+2026-04-28T07:37:04.643+00:00 [canvas] host mounted at http://127.0.0.1:18789/__openclaw__/canvas/ (root /root/.openclaw/canvas)
+2026-04-28T07:37:04.894+00:00 [heartbeat] started
+2026-04-28T07:37:04.896+00:00 [health-monitor] started (interval: 300s, startup-grace: 60s, channel-connect-grace: 120s)
+2026-04-28T07:37:04.916+00:00 [gateway] agent model: ofox-openai/openai/gpt-5.4-mini
+2026-04-28T07:37:04.917+00:00 [gateway] listening on ws://127.0.0.1:18789, ws://[::1]:18789 (PID 33)
+2026-04-28T07:37:04.919+00:00 [gateway] log file: /tmp/openclaw/openclaw-2026-04-28.log
+2026-04-28T07:37:04.921+00:00 [gateway] security warning: dangerous config flags enabled: gateway.controlUi.allowInsecureAuth=true. Run `openclaw security audit`.
+2026-04-28T07:37:05.093+00:00 [hooks] loaded 4 internal hook handlers
+2026-04-28T07:37:09.428+00:00 [browser/server] Browser control listening on http://127.0.0.1:18791/ (auth=token)
+2026-04-28T07:37:11.266+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=42fd059a48d4 (OpenClaw) (4)._openclaw-gw._tcp.local. host=openclaw-(4).local. port=18789 state=probing)
+2026-04-28T07:37:13.032+00:00 [bonjour] gateway name conflict resolved; newName="42fd059a48d4 (OpenClaw) (5)"
+2026-04-28T07:37:13.036+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(5)"
+2026-04-28T07:37:14.398+00:00 [gateway] device pairing auto-approved device=6b10c369e85f15915bb01cf46ee6067fc5b85b4827547fe9d8595c0eee82f4ac role=operator
+2026-04-28T07:37:22.193+00:00 [tools] tools.profile (coding) allowlist contains unknown entries (apply_patch, code_execution, web_search, x_search, image, image_generate). These entries are shipped core tools but unavailable in the current runtime/provider/model/config.
+2026-04-28T07:37:29.609+00:00 [agent/embedded] read tool called without path: toolCallId=call_0Kw1jXcAYsPefINuLThpGPnf argsType=object
+2026-04-28T07:37:29.613+00:00 [agent/embedded] read tool called without path: toolCallId=call_HcrpgRBVz6c0rlR52s8rMkhh argsType=object
+2026-04-28T07:37:29.615+00:00 [agent/embedded] read tool called without path: toolCallId=call_XZZSzUA4kpDAQ3Q8dcK9uf4T argsType=object
+2026-04-28T07:37:29.620+00:00 [agent/embedded] read tool called without path: toolCallId=call_5wMlAIw2UuQrOyNIwhqlClTG argsType=object
+2026-04-28T07:37:29.642+00:00 [tools] read failed: ENOENT: no such file or directory, access '/root/.openclaw/workspace/memory/2026-04-28.md' raw_params={"file":"memory/2026-04-28.md"}
+2026-04-28T07:37:29.653+00:00 [tools] read failed: ENOENT: no such file or directory, access '/root/.openclaw/workspace/memory/2026-04-27.md' raw_params={"file":"memory/2026-04-27.md"}
+2026-04-28T07:39:57.320+00:00 Updated `creator-suite` only:
+
+- Project record now reflects the move from auth flow to `dashboard-integration`
+- Status remains `blocked`
+- Added a project event noting auth completion and the remaining API schema blocker
+- Sent the team a single concise notification
+- Kept every other project unchanged
+
+Recent work note used from the commit feed:
+- `feat(auth): finish session refresh handling`

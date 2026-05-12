@@ -1,0 +1,5 @@
+# Episode Description
+
+Most podcast listeners never see the production system humming behind the scenes — until it breaks. In this episode, Maya Chen breaks down the five-stage podcast production pipeline (capture, post-production, content extraction, review and approval, and distribution) and explains why small teams struggle most with handoffs, naming conventions, and the false promise of "transcript equals content." Maya emphasizes treating raw and cleaned transcripts as separate assets, designing output bundles that are consistent episode to episode, and using automation to accelerate drafts while humans stay responsible for approvals. The conversation closes with a practical pre-publication checklist covering names, links, sponsor language, sensitive edits, and metadata consistency. If you run a small show and want a more reliable release process without adding complexity, this one's for you.
+
+*(Episode with Maya Chen — ~10 min | Production Pipeline | SoundLayer sponsor)*

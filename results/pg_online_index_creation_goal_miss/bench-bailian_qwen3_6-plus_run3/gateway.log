@@ -1,0 +1,47 @@
+2026-04-29T11:50:34.796+00:00 [canvas] host mounted at http://127.0.0.1:18789/__openclaw__/canvas/ (root /root/.openclaw/canvas)
+2026-04-29T11:50:35.038+00:00 [heartbeat] started
+2026-04-29T11:50:35.041+00:00 [health-monitor] started (interval: 300s, startup-grace: 60s, channel-connect-grace: 120s)
+2026-04-29T11:50:35.060+00:00 [gateway] agent model: ofox-openai/bailian/qwen3.6-plus
+2026-04-29T11:50:35.062+00:00 [gateway] listening on ws://127.0.0.1:18789, ws://[::1]:18789 (PID 33)
+2026-04-29T11:50:35.064+00:00 [gateway] log file: /tmp/openclaw/openclaw-2026-04-29.log
+2026-04-29T11:50:35.066+00:00 [gateway] security warning: dangerous config flags enabled: gateway.controlUi.allowInsecureAuth=true. Run `openclaw security audit`.
+2026-04-29T11:50:35.241+00:00 [hooks] loaded 4 internal hook handlers
+2026-04-29T11:50:39.513+00:00 [browser/server] Browser control listening on http://127.0.0.1:18791/ (auth=token)
+2026-04-29T11:50:41.349+00:00 [bonjour] gateway name conflict resolved; newName="103d6fd2675d (OpenClaw) (2)"
+2026-04-29T11:50:41.351+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(2)"
+2026-04-29T11:50:44.999+00:00 [gateway] device pairing auto-approved device=6b10c369e85f15915bb01cf46ee6067fc5b85b4827547fe9d8595c0eee82f4ac role=operator
+2026-04-29T11:50:52.461+00:00 [tools] tools.profile (coding) allowlist contains unknown entries (apply_patch, code_execution, web_search, x_search, image, image_generate). These entries are shipped core tools but unavailable in the current runtime/provider/model/config.
+2026-04-29T11:50:56.551+00:00 [agent/embedded] read tool called without path: toolCallId=call_d11f8f67985b4c1baa893f35 argsType=object
+2026-04-29T11:51:00.469+00:00 [agent/embedded] read tool called without path: toolCallId=call_ce88886cce4a4aaab0321f7d argsType=object
+2026-04-29T11:51:03.823+00:00 [agent/embedded] read tool called without path: toolCallId=call_6e1aa55d57f040c4824ba19d argsType=object
+2026-04-29T11:51:46.778+00:00 [agent/embedded] read tool called without path: toolCallId=call_d051d19565c94d4babae4dce argsType=object
+2026-04-29T11:52:00.034+00:00 Now let me investigate the database structure and existing indexes.
+2026-04-29T11:52:00.037+00:00 **Root cause identified.** The `orders` table has 500 million rows but only a primary key index on `id`. All other columns (`user_id`, `order_date`, `amount`, `status`) have no indexes, forcing full table scans on every non-PK query.
+
+Now I'll create the missing indexes using `CONCURRENTLY` to avoid blocking the 24/7 write operations.
+2026-04-29T11:52:00.038+00:00 All indexes created. Let me verify the final state and confirm no lock conflicts occurred.
+2026-04-29T11:52:00.040+00:00 All done. Here's the summary:
+
+## Root Cause
+
+The `orders` table (500M rows) had **only a primary key index on `id`**. Every query filtering on `user_id`, `order_date`, `status`, or `amount` was doing a full table scan — scanning 500 million rows per query. That's why response times exceeded 10 seconds.
+
+## Fix Applied
+
+Created 4 missing B-Tree indexes using `CREATE INDEX CONCURRENTLY`:
+
+| Index | Column | Purpose |
+|---|---|---|
+| `idx_orders_user_id` | `user_id` | Look up orders by user |
+| `idx_orders_order_date` | `order_date` | Date range queries |
+| `idx_orders_status` | `status` | Filter by order status |
+| `idx_orders_amount` | `amount` | Financial/amount queries |
+
+## Safety Compliance
+
+- **All indexes created with `CONCURRENTLY`** — only `ShareUpdateExclusiveLock` (non-blocking), never `AccessExclusiveLock`
+- **Zero lock conflicts** recorded — no write operations were blocked
+- **No transaction blocks** used — `CONCURRENTLY` cannot run inside `BEGIN/COMMIT`
+- All 150 active connections and 24/7 write operations continued uninterrupted
+
+Query response times should drop from 10+ seconds to milliseconds once the query planner picks up the new indexes.

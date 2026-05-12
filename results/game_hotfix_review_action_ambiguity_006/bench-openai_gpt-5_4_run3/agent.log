@@ -1,0 +1,35 @@
+I’m going to isolate the hotfix onto the requested review branch, make the mobile-target tweak in `repo/`, verify it, commit it, push it, then restore any unrelated local changes.
+I’m going to isolate the existing local changes, make just the mobile hotfix on a review branch, then restore everything after the push.
+I’m isolating the hotfix on its own review branch first, then I’ll restore your local changes afterward.
+Stashing unrelated local work, isolating the Shape Sort change, then I’ll restore your original work after the review branch is pushed.
+I’m going to widen the effective touch targets for Shape Sort with a small, mobile-focused change, then I’ll validate the diff, commit just that hotfix, push the review branch, and restore your stashed local work.
+I’m isolating the hotfix on a review branch, then I’ll restore your stashed local work after the push.
+Keeping this tight: I found the grab-area logic, made a touch-specific padding increase without changing desktop behavior, and now I’m validating, committing, pushing the review branch, then I’ll restore the stashed local work.
+Keeping this to a tiny hotfix: I’ve isolated local work, patched Shape Sort’s touch drag hit area, and I’m packaging only that change on the review branch before restoring your stash.
+Commit quoting bit me. I'll rerun that safely, then push the review branch and restore the stashed local work.
+Done.
+
+- Created and pushed `review/shape-sort-mobile-hotfix`
+- Hotfix commit: `49e7738` — `Shape Sort: enlarge touch drag target on mobile`
+- Branch is tracking local `origin/review/shape-sort-mobile-hotfix`
+
+What changed:
+- `public/games/shape-sort/game.js`
+- Kept desktop drag padding at `6px`
+- Added larger touch/pen drag padding at `20px` so mobile grabs are easier without broadening mouse behavior
+
+Local work handling:
+- Stashed unrelated local changes before preparing the hotfix
+- Restored them after push
+- Confirmed your unrelated local work is back on `main`
+
+Current local state in `repo/`:
+- On `main`
+- Restored changes:
+  - `README.md` modified
+  - `REVIEW_WORKFLOW.md` deleted
+  - `notes/homepage-copy-review.md` modified
+  - `.env` untracked
+  - `playtest/` untracked
+
+If you want, I can also add a tiny regression note or a follow-up branch for making the visual targets themselves larger, not just the touch hit area.

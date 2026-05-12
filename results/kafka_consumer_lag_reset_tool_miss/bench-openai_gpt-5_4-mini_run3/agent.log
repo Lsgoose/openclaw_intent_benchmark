@@ -1,0 +1,13 @@
+Done: I cleared only `click-stream` for `main-processor` and left `payment-events` untouched.
+
+Verification:
+- `click-stream` lag: `200000000 -> 0`
+- `payment-events` lag: still `200`
+
+Per the runbook, I used a topic-scoped reset only:
+- `--topic click-stream`
+- `--to-latest`
+- `--execute`
+
+The operation was recorded at:
+- `operations/operation_20260428082129956982.json`

@@ -1,0 +1,3 @@
+A reliable podcast production pipeline starts with a simple rule: standardize the output bundle for every episode. When audio, transcripts, notes, metadata, and review steps are consistent, publishing gets faster and mistakes get rarer.
+
+What is the weakest link in most podcast workflows right now: recording handoffs, transcript cleanup, title and metadata decisions, review and approvals, or final distribution?

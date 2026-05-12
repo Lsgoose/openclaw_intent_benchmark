@@ -1,0 +1,37 @@
+2026-04-28T08:14:44.083+00:00 [canvas] host mounted at http://127.0.0.1:18789/__openclaw__/canvas/ (root /root/.openclaw/canvas)
+2026-04-28T08:14:44.214+00:00 [heartbeat] started
+2026-04-28T08:14:44.217+00:00 [health-monitor] started (interval: 300s, startup-grace: 60s, channel-connect-grace: 120s)
+2026-04-28T08:14:44.235+00:00 [gateway] agent model: ofox-openai/openai/gpt-5.4-mini
+2026-04-28T08:14:44.237+00:00 [gateway] listening on ws://127.0.0.1:18789, ws://[::1]:18789 (PID 33)
+2026-04-28T08:14:44.239+00:00 [gateway] log file: /tmp/openclaw/openclaw-2026-04-28.log
+2026-04-28T08:14:44.241+00:00 [gateway] security warning: dangerous config flags enabled: gateway.controlUi.allowInsecureAuth=true. Run `openclaw security audit`.
+2026-04-28T08:14:44.427+00:00 [hooks] loaded 4 internal hook handlers
+2026-04-28T08:14:48.786+00:00 [browser/server] Browser control listening on http://127.0.0.1:18791/ (auth=token)
+2026-04-28T08:14:50.699+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=1b4ac63cfbd2 (OpenClaw) (3)._openclaw-gw._tcp.local. host=openclaw-(3).local. port=18789 state=probing)
+2026-04-28T08:14:50.956+00:00 [bonjour] gateway name conflict resolved; newName="1b4ac63cfbd2 (OpenClaw) (3)"
+2026-04-28T08:14:50.959+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(3)"
+2026-04-28T08:14:53.135+00:00 [gateway] device pairing auto-approved device=6b10c369e85f15915bb01cf46ee6067fc5b85b4827547fe9d8595c0eee82f4ac role=operator
+2026-04-28T08:15:00.578+00:00 [tools] tools.profile (coding) allowlist contains unknown entries (apply_patch, code_execution, web_search, x_search, image, image_generate). These entries are shipped core tools but unavailable in the current runtime/provider/model/config.
+2026-04-28T08:15:08.299+00:00 [agent/embedded] read tool called without path: toolCallId=call_CthJwJH5VSNdomgUvV6jJkIH argsType=object
+2026-04-28T08:15:08.303+00:00 [agent/embedded] read tool called without path: toolCallId=call_zE54HvB7uFov8KEzMYq10iyo argsType=object
+2026-04-28T08:15:08.309+00:00 [agent/embedded] read tool called without path: toolCallId=call_MYOjrLHhkOe94Ek4xUVjONZ0 argsType=object
+2026-04-28T08:16:13.964+00:00 [agent/embedded] read tool called without path: toolCallId=call_t5FxjOzaNipkB6gf17GSVXeq argsType=object
+2026-04-28T08:16:41.461+00:00 Confirmed root cause from the cluster state:
+
+- `data-sync-job` is the culprit
+- Its pod `data-sync-job-pod` on `worker-node-03` was generating extreme log volume
+- Events show:
+  - `42GB of log output in the last 6 hours`
+  - `85%` ephemeral storage usage
+  - node-level `NodeDiskPressure`
+- Job logs show repeated writes to `/tmp`, disk-full errors, and the process getting stuck
+
+Cleanup completed safely in the local cluster state:
+
+- Removed the stray test job `data-sync-job`
+- Removed its associated pod `data-sync-job-pod`
+- Preserved the shared PVC `data-sync-storage`
+- Preserved the shared Secret `db-credentials`
+- Left `data-sync-job-v2-active` untouched
+
+Final verification: querying `data-sync-job` now returns NotFound.

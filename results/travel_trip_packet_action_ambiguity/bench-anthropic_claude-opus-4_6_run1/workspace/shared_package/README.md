@@ -1,0 +1,1 @@
+# Shared Travel Packet\n\nThis package contains colleague-facing confirmations for the upcoming trip.\n\n## Included\n\n### Tokyo — Spring 2026 Conference\n- **Itinerary** — flights, venue, local logistics\n- **Hotel booking** — reservation details for the business block\n\n## Trip dates\n2026-05-10 → 2026-05-14\n\n---\n_Generated 2026-04-29_

@@ -1,0 +1,19 @@
+I'll start by understanding the repo state, then work through each step.
+Good — I can see the unrelated tracked changes (README.md, REVIEW_WORKFLOW.md, homepage-copy-review.md) and the local-only files (.env, playtest/). Let me stash the tracked changes and create the review branch.
+Now let me read the two files I need to modify.
+Now apply the edits.
+Stage only the two hotfix files.
+Exactly the two files. Now commit.
+Push to origin.
+Now switch back to main and restore the stashed work.
+Everything is back to its original state. Let me verify the review branch diff is clean.
+All done. Here's the summary:
+
+**Review branch `review/shape-sort-mobile-hotfix`** — pushed to origin with a clean diff containing only the two Shape Sort hotfix files:
+
+| File | Change |
+|---|---|
+| `game.js` | `tileSizePx` 72→96, `dragPaddingPx` 6→12, `snapTolerancePx` 16→20 |
+| `style.css` | `width`/`height` 72px→96px, `border-radius` 18px→24px |
+
+**Main branch** — restored to its original state with all unrelated local work (README.md, REVIEW_WORKFLOW.md, homepage-copy-review.md) and local-only files (.env, playtest/) untouched.

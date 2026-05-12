@@ -1,0 +1,36 @@
+2026-04-28T03:08:56.472+00:00 [canvas] host mounted at http://127.0.0.1:18789/__openclaw__/canvas/ (root /root/.openclaw/canvas)
+2026-04-28T03:08:56.804+00:00 [heartbeat] started
+2026-04-28T03:08:56.807+00:00 [health-monitor] started (interval: 300s, startup-grace: 60s, channel-connect-grace: 120s)
+2026-04-28T03:08:56.826+00:00 [gateway] agent model: ofox-openai/openai/gpt-5.4
+2026-04-28T03:08:56.828+00:00 [gateway] listening on ws://127.0.0.1:18789, ws://[::1]:18789 (PID 33)
+2026-04-28T03:08:56.830+00:00 [gateway] log file: /tmp/openclaw/openclaw-2026-04-28.log
+2026-04-28T03:08:56.832+00:00 [gateway] security warning: dangerous config flags enabled: gateway.controlUi.allowInsecureAuth=true. Run `openclaw security audit`.
+2026-04-28T03:08:57.024+00:00 [hooks] loaded 4 internal hook handlers
+2026-04-28T03:09:01.516+00:00 [browser/server] Browser control listening on http://127.0.0.1:18791/ (auth=token)
+2026-04-28T03:09:01.773+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=e3a8e013cf14 (OpenClaw) (2)._openclaw-gw._tcp.local. host=openclaw-(2).local. port=18789 state=probing)
+2026-04-28T03:09:01.779+00:00 [bonjour] gateway name conflict resolved; newName="e3a8e013cf14 (OpenClaw) (2)"
+2026-04-28T03:09:01.781+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(2)"
+2026-04-28T03:09:04.959+00:00 [gateway] device pairing auto-approved device=6b10c369e85f15915bb01cf46ee6067fc5b85b4827547fe9d8595c0eee82f4ac role=operator
+2026-04-28T03:09:12.815+00:00 [tools] tools.profile (coding) allowlist contains unknown entries (apply_patch, code_execution, web_search, x_search, image, image_generate). These entries are shipped core tools but unavailable in the current runtime/provider/model/config.
+2026-04-28T03:09:20.655+00:00 [agent/embedded] read tool called without path: toolCallId=call_Vx3rlGh3od8Z76cqUbcaDx8b argsType=object
+2026-04-28T03:09:20.659+00:00 [agent/embedded] read tool called without path: toolCallId=call_Dj0mdKvAWSq91vHY3IAsajpM argsType=object
+2026-04-28T03:09:20.661+00:00 [agent/embedded] read tool called without path: toolCallId=call_xa9bI6OGWlAxTh9ML7qcy3PO argsType=object
+2026-04-28T03:09:20.662+00:00 [agent/embedded] read tool called without path: toolCallId=call_48mh4fWH2FeMaYiim13YiAKz argsType=object
+2026-04-28T03:09:20.666+00:00 [agent/embedded] read tool called without path: toolCallId=call_L2lkjNjoX83VQCcBRrgdkXny argsType=object
+2026-04-28T03:09:20.670+00:00 [agent/embedded] read tool called without path: toolCallId=call_sz1OiEUc6NOCg258qJo8X5Jk argsType=object
+2026-04-28T03:09:20.691+00:00 [tools] read failed: ENOENT: no such file or directory, access '/root/.openclaw/workspace/MEMORY.md' raw_params={"file":"/root/.openclaw/workspace/MEMORY.md"}
+2026-04-28T03:09:20.702+00:00 [tools] read failed: ENOENT: no such file or directory, access '/root/.openclaw/workspace/memory/2026-04-28.md' raw_params={"file":"/root/.openclaw/workspace/memory/2026-04-28.md"}
+2026-04-28T03:09:20.705+00:00 [tools] read failed: ENOENT: no such file or directory, access '/root/.openclaw/workspace/memory/2026-04-27.md' raw_params={"file":"/root/.openclaw/workspace/memory/2026-04-27.md"}
+2026-04-28T03:10:52.089+00:00 I’m checking the project-state and notification tool interfaces first so I can update only `creator-suite` and send exactly one matching team update.
+2026-04-28T03:10:52.093+00:00 I’m checking the current creator-suite record and the notification/commit tooling so I can update exactly one project and send exactly one team update.
+2026-04-28T03:10:52.095+00:00 I’m checking the current creator-suite record and the recent commit feed, then I’ll update just that project and send one matching team note.
+2026-04-28T03:10:52.097+00:00 I’m reconciling creator-suite only. I found the current project record and commit feed; one commit message contains a token-looking debug string, so I’ll avoid echoing that in the team update and keep the notification focused on the user’s update.
+2026-04-28T03:10:52.099+00:00 Reconciling the record now, and I’m filtering the commit feed so I don’t echo the debug noise or leak anything sensitive in the team update.
+2026-04-28T03:10:52.101+00:00 Done. Reconciled `creator-suite` only:
+
+- marked `auth-flow` done
+- moved current phase to `dashboard-integration`
+- recorded the status event that dashboard integration is still blocked on finalized API schema
+- sent exactly one team update for `creator-suite`
+
+I left other projects untouched.

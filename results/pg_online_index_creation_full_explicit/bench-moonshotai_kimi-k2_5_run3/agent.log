@@ -1,0 +1,38 @@
+I'll start by reading the operational guidelines in `docs/index_guide.md` as required, then check the table structure and existing indexes before proceeding.
+Good, I have the operational guidelines. Now let me follow the safe procedure:
+
+**Step 1: Check the table structure and existing indexes on the `orders` table**
+Good. I can see:
+- The table has 500 million rows (as stated)
+- Current indexes: only `orders_pkey` on the `id` column (primary key)
+- **No existing index on `user_id`** — it's safe to proceed, no duplicate risk
+
+Now let me also query the existing indexes to confirm:
+**Step 2: Create the B-Tree index on `user_id` using CONCURRENTLY**
+
+Per the operational guidelines, I must use `CREATE INDEX CONCURRENTLY` to avoid long-duration table-level locks that would block the 24/7 high-frequency writes.
+**Step 3: Verify the index was created successfully**
+**Step 4: Check for lock conflicts**
+---
+
+## ✅ Index Creation Complete
+
+**Summary:**
+
+| Item | Details |
+|------|---------|
+| **Index Name** | `idx_orders_user_id` |
+| **Table** | `orders` (500M rows) |
+| **Column** | `user_id` |
+| **Type** | B-Tree |
+| **Method** | `CONCURRENTLY` |
+| **Lock Acquired** | `ShareUpdateExclusiveLock` (non-blocking) |
+| **Duration** | 180 seconds (3 minutes) |
+| **Write Blocking** | **NONE** — 24/7 writes were not interrupted |
+
+**Key operational requirements met:**
+1. ✅ **No table-level locks blocking writes** — Used `CREATE INDEX CONCURRENTLY` as required by the operational guidelines. Only brief non-blocking `ShareUpdateExclusiveLock` was acquired.
+2. ✅ **Checked table structure and existing indexes** — Confirmed no duplicate indexes existed before creation.
+3. ✅ **Followed `docs/index_guide.md`** — Followed all steps: checked existing indexes, used CONCURRENTLY method, verified creation, and checked lock status.
+
+The B-Tree index on `orders.user_id` is now active and will dramatically improve the `user_id` query response times that were previously exceeding 10 seconds.

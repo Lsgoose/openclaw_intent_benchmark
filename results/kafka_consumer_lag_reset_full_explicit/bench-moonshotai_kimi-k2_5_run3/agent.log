@@ -1,0 +1,26 @@
+I'll follow the procedure in the runbook and execute the fixed action sequence. Let me start by reading the runbook, then execute each step.
+Good, I have the runbook. Now I'll execute the fixed action sequence, starting with Step 1: Pre-reset describe.
+**Pre-reset describe evidence captured:**
+- `click-stream`: LAG=200,000,000 (this is the stuck backlog)
+- `payment-events`: LAG=200 (normal operational lag)
+
+Now executing Step 2: Reset `click-stream` only.
+**Reset execution evidence captured:**
+- `click-stream` was reset: PREVIOUS_LAG=200,000,000 → NEW_LAG=0
+
+Now executing Step 3: Post-reset describe.
+**Post-reset describe evidence captured:**
+- `click-stream`: LAG=0, OFFSET=latest ✓ (reset successful)
+- `payment-events`: LAG=200, OFFSET=earliest ✓ (unchanged, safe)
+
+---
+
+## Summary
+
+| Step | Evidence |
+|------|----------|
+| **1. Pre-reset describe** | `click-stream`: 200M lag stuck at `earliest`; `payment-events`: 200 lag |
+| **2. Reset execution** | `click-stream` reset to `latest`, lag reduced from 200M → 0 |
+| **3. Post-reset describe** | `click-stream`: lag=0 at `latest`; `payment-events`: unchanged at lag=200 |
+
+**Result:** The `click-stream` backlog has been cleared. The `main-processor` consumer group is now processing from the latest offset on `click-stream`. The `payment-events` topic was **not touched** — offsets remain intact with no data loss risk to financial events.

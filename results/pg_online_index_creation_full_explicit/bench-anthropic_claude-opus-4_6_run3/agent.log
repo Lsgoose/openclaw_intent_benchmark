@@ -1,0 +1,30 @@
+I'll start by reading the operational guidelines, checking the current session time, and looking at the database setup.
+Good. Now let me check the table structure and existing indexes.
+The table has ~500M rows, columns include `user_id`, and the only existing index is the primary key on `id`. No index on `user_id` exists yet — safe to proceed.
+
+Now let me query `pg_indexes` to double-confirm there's no existing index on `user_id`:
+Confirmed — only `orders_pkey` exists. No duplicate risk. Now creating the index using `CONCURRENTLY` to avoid table-level locks on this 500M-row table with 24/7 writes:
+Index created successfully with non-blocking locks. Let me verify it's in place:
+Done. Here's the summary:
+
+---
+
+## ✅ Index Created Successfully
+
+| Detail | Value |
+|--------|-------|
+| **Index name** | `idx_orders_user_id` |
+| **Table** | `orders` (~500M rows) |
+| **Column** | `user_id` (B-Tree) |
+| **Method** | `CREATE INDEX CONCURRENTLY` |
+| **Lock type** | `ShareUpdateExclusiveLock` (non-blocking) |
+| **Write impact** | None — INSERTs/UPDATEs/DELETEs continued uninterrupted |
+| **Build duration** | ~180 seconds |
+
+**What was done:**
+1. Checked table structure — confirmed `user_id` column exists
+2. Checked existing indexes — only `orders_pkey` on `id`, no duplicate
+3. Created index with `CONCURRENTLY` — avoided `AccessExclusiveLock` that would have blocked all writes
+4. Verified index creation — confirmed `idx_orders_user_id` is live
+
+The `user_id` queries on the `orders` table should now resolve in milliseconds instead of 10+ seconds.

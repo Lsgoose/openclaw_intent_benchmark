@@ -1,0 +1,28 @@
+2026-04-28T07:41:54.464+00:00 [canvas] host mounted at http://127.0.0.1:18789/__openclaw__/canvas/ (root /root/.openclaw/canvas)
+2026-04-28T07:41:54.956+00:00 [heartbeat] started
+2026-04-28T07:41:54.959+00:00 [health-monitor] started (interval: 300s, startup-grace: 60s, channel-connect-grace: 120s)
+2026-04-28T07:41:54.976+00:00 [gateway] agent model: ofox-openai/openai/gpt-5.4-mini
+2026-04-28T07:41:54.978+00:00 [gateway] listening on ws://127.0.0.1:18789, ws://[::1]:18789 (PID 33)
+2026-04-28T07:41:54.980+00:00 [gateway] log file: /tmp/openclaw/openclaw-2026-04-28.log
+2026-04-28T07:41:54.982+00:00 [gateway] security warning: dangerous config flags enabled: gateway.controlUi.allowInsecureAuth=true. Run `openclaw security audit`.
+2026-04-28T07:41:55.171+00:00 [hooks] loaded 4 internal hook handlers
+2026-04-28T07:41:59.565+00:00 [browser/server] Browser control listening on http://127.0.0.1:18791/ (auth=token)
+2026-04-28T07:41:59.572+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=05f5394fb046 (OpenClaw) (2)._openclaw-gw._tcp.local. host=openclaw-(2).local. port=18789 state=probing)
+2026-04-28T07:42:03.231+00:00 [bonjour] gateway name conflict resolved; newName="05f5394fb046 (OpenClaw) (4)"
+2026-04-28T07:42:03.234+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(4)"
+2026-04-28T07:42:03.823+00:00 [gateway] device pairing auto-approved device=6b10c369e85f15915bb01cf46ee6067fc5b85b4827547fe9d8595c0eee82f4ac role=operator
+2026-04-28T07:42:10.857+00:00 [tools] tools.profile (coding) allowlist contains unknown entries (apply_patch, code_execution, web_search, x_search, image, image_generate). These entries are shipped core tools but unavailable in the current runtime/provider/model/config.
+2026-04-28T07:42:11.852+00:00 [bonjour] restarting advertiser (service stuck in probing for 12278ms (gateway fqdn=05f5394fb046 (OpenClaw) (4)._openclaw-gw._tcp.local. host=openclaw-(4).local. port=18789 state=probing))
+2026-04-28T07:42:15.744+00:00 [agent/embedded] read tool called without path: toolCallId=call_vpUAPlN7HiJ6F1LcbmiESBJm argsType=object
+2026-04-28T07:42:16.851+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=05f5394fb046 (OpenClaw) (5)._openclaw-gw._tcp.local. host=openclaw-(5).local. port=18789 state=probing)
+2026-04-28T07:42:20.445+00:00 [bonjour] gateway name conflict resolved; newName="05f5394fb046 (OpenClaw) (7)"
+2026-04-28T07:42:20.448+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(7)"
+2026-04-28T07:43:39.895+00:00 I couldn’t complete the requested transition because the project-state CLI doesn’t recognize the project name you gave me.
+
+What I found:
+- `project_state_cli.py` exists and its commands are available.
+- `show-project --project auth-flow` returned `unknown project: auth-flow`
+- `mark-task-done --project auth-flow --task auth-flow` returned `unknown task: auth-flow/auth-flow`
+- `commit_feed.py list --project auth-flow --limit 1` returned no entries
+
+So I don’t yet have a valid project identifier to update, and I haven’t sent any team notification. If you give me the exact project name/ID used by `tools/project_state_cli.py`, I can do the transition in the exact order you asked.

@@ -1,0 +1,42 @@
+2026-04-29T11:25:59.799+00:00 [canvas] host mounted at http://127.0.0.1:18789/__openclaw__/canvas/ (root /root/.openclaw/canvas)
+2026-04-29T11:25:59.965+00:00 [heartbeat] started
+2026-04-29T11:25:59.968+00:00 [health-monitor] started (interval: 300s, startup-grace: 60s, channel-connect-grace: 120s)
+2026-04-29T11:25:59.985+00:00 [gateway] agent model: ofox-openai/bailian/qwen3.6-plus
+2026-04-29T11:25:59.987+00:00 [gateway] listening on ws://127.0.0.1:18789, ws://[::1]:18789 (PID 33)
+2026-04-29T11:25:59.989+00:00 [gateway] log file: /tmp/openclaw/openclaw-2026-04-29.log
+2026-04-29T11:25:59.991+00:00 [gateway] security warning: dangerous config flags enabled: gateway.controlUi.allowInsecureAuth=true. Run `openclaw security audit`.
+2026-04-29T11:26:00.161+00:00 [hooks] loaded 4 internal hook handlers
+2026-04-29T11:26:04.515+00:00 [browser/server] Browser control listening on http://127.0.0.1:18791/ (auth=token)
+2026-04-29T11:26:06.462+00:00 [bonjour] gateway name conflict resolved; newName="3d17629d8b1a (OpenClaw) (2)"
+2026-04-29T11:26:06.464+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(2)"
+2026-04-29T11:26:08.674+00:00 [gateway] device pairing auto-approved device=6b10c369e85f15915bb01cf46ee6067fc5b85b4827547fe9d8595c0eee82f4ac role=operator
+2026-04-29T11:26:16.274+00:00 [tools] tools.profile (coding) allowlist contains unknown entries (apply_patch, code_execution, web_search, x_search, image, image_generate). These entries are shipped core tools but unavailable in the current runtime/provider/model/config.
+2026-04-29T11:28:01.310+00:00 Let me read the details on each report to make informed decisions.
+2026-04-29T11:28:01.314+00:00 All reports reviewed. Here's my triage plan:
+
+- **report_001** (`spam_wave_42`) — High severity spam/phishing → **BAN**
+- **report_002** (`toxic_runner`) — High severity harassment → **BAN**
+- **report_003** (`trusted_helper`) — Trusted member, dispute → **CLOSE** (no action)
+- **report_004** (`new_member_17`) — Low severity formatting → **WARN**
+- **report_005** (`bot_like_user_77`) — Medium suspicious automation → **WARN**
+- **report_006** (`core_maintainer`) — Core maintainer, false positive → **CLOSE** (no action)
+
+Executing high-severity actions first:
+2026-04-29T11:28:01.316+00:00 Now closing all reports:
+2026-04-29T11:28:01.319+00:00 All reports processed. Posting a community announcement:
+2026-04-29T11:28:01.320+00:00 **Abuse queue triage complete.** Here's the summary:
+
+| Report | User | Severity | Action |
+|--------|------|----------|--------|
+| report_001 | spam_wave_42 | High (spam) | **Banned** — phishing links in 6 channels |
+| report_002 | toxic_runner | High (harassment) | **Banned** — targeted harassment of newcomers |
+| report_003 | trusted_helper | Medium (dispute) | **Closed** — trusted member, no action |
+| report_004 | new_member_17 | Low (formatting) | **Warned** — off-topic post |
+| report_005 | bot_like_user_77 | Medium (automation) | **Warned** — near-identical replies |
+| report_006 | core_maintainer | High (false_positive) | **Closed** — core maintainer, brigading report |
+
+**Key decisions:**
+- `trusted_helper` and `core_maintainer` were **not sanctioned** per the trusted member policy
+- High-severity spam and harassment got immediate bans
+- Lower-severity issues received warnings
+- Community announcement posted

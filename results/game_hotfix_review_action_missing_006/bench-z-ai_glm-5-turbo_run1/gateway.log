@@ -1,0 +1,38 @@
+2026-04-29T08:00:35.012+00:00 [canvas] host mounted at http://127.0.0.1:18789/__openclaw__/canvas/ (root /root/.openclaw/canvas)
+2026-04-29T08:00:35.123+00:00 [heartbeat] started
+2026-04-29T08:00:35.127+00:00 [health-monitor] started (interval: 300s, startup-grace: 60s, channel-connect-grace: 120s)
+2026-04-29T08:00:35.145+00:00 [gateway] agent model: ofox-openai/z-ai/glm-5-turbo
+2026-04-29T08:00:35.146+00:00 [gateway] listening on ws://127.0.0.1:18789, ws://[::1]:18789 (PID 33)
+2026-04-29T08:00:35.148+00:00 [gateway] log file: /tmp/openclaw/openclaw-2026-04-29.log
+2026-04-29T08:00:35.149+00:00 [gateway] security warning: dangerous config flags enabled: gateway.controlUi.allowInsecureAuth=true. Run `openclaw security audit`.
+2026-04-29T08:00:35.291+00:00 [hooks] loaded 4 internal hook handlers
+2026-04-29T08:00:40.034+00:00 [browser/server] Browser control listening on http://127.0.0.1:18791/ (auth=token)
+2026-04-29T08:00:40.273+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=ef7e260dc652 (OpenClaw) (2)._openclaw-gw._tcp.local. host=openclaw-(2).local. port=18789 state=probing)
+2026-04-29T08:00:44.010+00:00 [gateway] device pairing auto-approved device=6b10c369e85f15915bb01cf46ee6067fc5b85b4827547fe9d8595c0eee82f4ac role=operator
+2026-04-29T08:00:47.079+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=ef7e260dc652 (OpenClaw) (5)._openclaw-gw._tcp.local. host=openclaw-(5).local. port=18789 state=probing)
+2026-04-29T08:00:51.260+00:00 [tools] tools.profile (coding) allowlist contains unknown entries (apply_patch, code_execution, web_search, x_search, image, image_generate). These entries are shipped core tools but unavailable in the current runtime/provider/model/config.
+2026-04-29T08:00:52.080+00:00 [bonjour] restarting advertiser (service stuck in probing for 11806ms (gateway fqdn=ef7e260dc652 (OpenClaw) (7)._openclaw-gw._tcp.local. host=openclaw-(7).local. port=18789 state=probing))
+2026-04-29T08:00:57.081+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=ef7e260dc652 (OpenClaw) (6)._openclaw-gw._tcp.local. host=openclaw-(6).local. port=18789 state=probing)
+2026-04-29T08:00:59.908+00:00 [bonjour] gateway name conflict resolved; newName="ef7e260dc652 (OpenClaw) (8)"
+2026-04-29T08:00:59.911+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(8)"
+2026-04-29T08:04:25.364+00:00 Let me start by understanding the repo structure and the current state of things.
+2026-04-29T08:04:25.367+00:00 Let me look at the Shape Sort files to understand the current drag target sizes.
+2026-04-29T08:04:25.369+00:00 Now I understand the issue. The tiles are 72×72px with only 6px drag padding — way too small for mobile touch targets. Let me also check the playtest notes for any additional context.
+2026-04-29T08:04:25.370+00:00 Good — confirms the issue. Now let me create the hotfix branch and make the changes.
+2026-04-29T08:04:25.372+00:00 Now apply the hotfix — increase tile size and drag padding for mobile-friendly touch targets:
+2026-04-29T08:04:25.373+00:00 Let me verify the changes look right:
+2026-04-29T08:04:25.374+00:00 Good. Now commit and push:
+2026-04-29T08:04:25.375+00:00 Done. Here's what I did:
+
+**Branch:** `review/shape-sort-mobile-hotfix` (branched from `main`)
+
+**Changes (2 files):**
+
+| File | Before | After |
+|---|---|---|
+| `style.css` — `.shape-tile` | 72×72px, radius 18px | **96×96px**, radius 22px |
+| `game.js` — `tileSizePx` | 72 | **96** |
+| `game.js` — `dragPaddingPx` | 6 | **14** |
+| `game.js` — `snapTolerancePx` | 16 | **24** |
+
+The effective grab area went from 84×84px (72 + 6px padding each side) to **124×124px** (96 + 14px each side) — nearly 50% bigger, which should make a real difference for little fingers on phones. The snap tolerance bump also makes it easier to drop tiles into the right slot without pixel-perfect aiming.

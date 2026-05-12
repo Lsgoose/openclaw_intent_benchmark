@@ -1,0 +1,22 @@
+Now I have the full picture. Let me execute the workflow.
+
+**Step 1:** Stash the tracked local work (keeping untracked `.env` and `playtest/` untouched).
+**Step 2:** Create the review branch.
+**Steps 3–4:** Apply the hotfix changes to both files.
+**Step 5–6:** Stage only the two hotfix files and commit.
+**Step 7:** Push the review branch.
+**Step 8:** Return to `main` and restore the original local work.
+Let me verify the review branch diff is clean — only the two hotfix files.
+Done. Here's the summary:
+
+| Step | Status |
+|---|---|
+| Stashed tracked local work | ✅ `README.md`, `REVIEW_WORKFLOW.md`, `notes/homepage-copy-review.md` |
+| Created review branch | ✅ `review/shape-sort-mobile-hotfix` |
+| Updated `game.js` | ✅ `tileSizePx: 96`, `dragPaddingPx: 12`, `snapTolerancePx: 20` |
+| Updated `style.css` | ✅ `width: 96px`, `height: 96px`, `border-radius: 24px` |
+| Committed (2 files only) | ✅ `543a75f` |
+| Pushed to origin | ✅ |
+| Restored `main` + local work | ✅ All 3 tracked changes + `.env`/`playtest/` intact |
+
+The review branch diff contains exactly the two Shape Sort files — nothing else.

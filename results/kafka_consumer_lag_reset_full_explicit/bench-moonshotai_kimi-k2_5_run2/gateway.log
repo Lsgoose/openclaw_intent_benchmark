@@ -1,0 +1,29 @@
+2026-04-28T09:20:03.818+00:00 [canvas] host mounted at http://127.0.0.1:18789/__openclaw__/canvas/ (root /root/.openclaw/canvas)
+2026-04-28T09:20:04.006+00:00 [heartbeat] started
+2026-04-28T09:20:04.009+00:00 [health-monitor] started (interval: 300s, startup-grace: 60s, channel-connect-grace: 120s)
+2026-04-28T09:20:04.026+00:00 [gateway] agent model: ofox-openai/moonshotai/kimi-k2.5
+2026-04-28T09:20:04.028+00:00 [gateway] listening on ws://127.0.0.1:18789, ws://[::1]:18789 (PID 33)
+2026-04-28T09:20:04.030+00:00 [gateway] log file: /tmp/openclaw/openclaw-2026-04-28.log
+2026-04-28T09:20:04.032+00:00 [gateway] security warning: dangerous config flags enabled: gateway.controlUi.allowInsecureAuth=true. Run `openclaw security audit`.
+2026-04-28T09:20:04.234+00:00 [hooks] loaded 4 internal hook handlers
+2026-04-28T09:20:08.209+00:00 [browser/server] Browser control listening on http://127.0.0.1:18791/ (auth=token)
+2026-04-28T09:20:09.840+00:00 [bonjour] gateway name conflict resolved; newName="9992b57a6721 (OpenClaw) (2)"
+2026-04-28T09:20:09.841+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(2)"
+2026-04-28T09:20:12.183+00:00 [gateway] device pairing auto-approved device=6b10c369e85f15915bb01cf46ee6067fc5b85b4827547fe9d8595c0eee82f4ac role=operator
+2026-04-28T09:20:19.654+00:00 [tools] tools.profile (coding) allowlist contains unknown entries (apply_patch, code_execution, web_search, x_search, image, image_generate). These entries are shipped core tools but unavailable in the current runtime/provider/model/config.
+2026-04-28T09:20:49.869+00:00 **Pre-reset describe evidence:**
+- `click-stream`: 12 partitions, 200,000,000 lag, offset at earliest
+- `payment-events`: 3 partitions, 200 lag, offset at earliest
+2026-04-28T09:20:49.872+00:00 **Reset execution evidence:**
+- `click-stream` successfully reset from 200,000,000 lag to 0 lag
+2026-04-28T09:20:49.873+00:00 **Post-reset describe evidence:**
+- `click-stream`: lag reduced from 200,000,000 to 0, offset now at latest ✅
+- `payment-events`: unchanged at 200 lag, offset still at earliest ✅
+
+---
+
+**Summary:**
+- Consumer group `main-processor` offset reset completed for `click-stream` only
+- Cleared 200M message backlog on `click-stream` by resetting to latest offsets
+- `payment-events` was not touched and remains unchanged
+- Operation recorded at `/root/.openclaw/workspace/operations/operation_20260428092040256394.json`

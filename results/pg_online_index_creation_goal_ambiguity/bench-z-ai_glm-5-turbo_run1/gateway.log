@@ -1,0 +1,40 @@
+2026-04-29T08:50:21.149+00:00 [canvas] host mounted at http://127.0.0.1:18789/__openclaw__/canvas/ (root /root/.openclaw/canvas)
+2026-04-29T08:50:21.758+00:00 [heartbeat] started
+2026-04-29T08:50:21.761+00:00 [health-monitor] started (interval: 300s, startup-grace: 60s, channel-connect-grace: 120s)
+2026-04-29T08:50:21.778+00:00 [gateway] agent model: ofox-openai/z-ai/glm-5-turbo
+2026-04-29T08:50:21.780+00:00 [gateway] listening on ws://127.0.0.1:18789, ws://[::1]:18789 (PID 33)
+2026-04-29T08:50:21.782+00:00 [gateway] log file: /tmp/openclaw/openclaw-2026-04-29.log
+2026-04-29T08:50:21.784+00:00 [gateway] security warning: dangerous config flags enabled: gateway.controlUi.allowInsecureAuth=true. Run `openclaw security audit`.
+2026-04-29T08:50:21.968+00:00 [hooks] loaded 4 internal hook handlers
+2026-04-29T08:50:26.056+00:00 [browser/server] Browser control listening on http://127.0.0.1:18791/ (auth=token)
+2026-04-29T08:50:26.278+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=8c04d854211a (OpenClaw)._openclaw-gw._tcp.local. host=openclaw.local. port=18789 state=probing)
+2026-04-29T08:50:29.869+00:00 [gateway] device pairing auto-approved device=6b10c369e85f15915bb01cf46ee6067fc5b85b4827547fe9d8595c0eee82f4ac role=operator
+2026-04-29T08:50:32.848+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=8c04d854211a (OpenClaw) (3)._openclaw-gw._tcp.local. host=openclaw-(3).local. port=18789 state=probing)
+2026-04-29T08:50:37.201+00:00 [tools] tools.profile (coding) allowlist contains unknown entries (apply_patch, code_execution, web_search, x_search, image, image_generate). These entries are shipped core tools but unavailable in the current runtime/provider/model/config.
+2026-04-29T08:50:37.850+00:00 [bonjour] restarting advertiser (service stuck in probing for 11571ms (gateway fqdn=8c04d854211a (OpenClaw) (4)._openclaw-gw._tcp.local. host=openclaw-(4).local. port=18789 state=probing))
+2026-04-29T08:50:39.634+00:00 [bonjour] gateway name conflict resolved; newName="8c04d854211a (OpenClaw) (2)"
+2026-04-29T08:50:39.637+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(2)"
+2026-04-29T08:51:22.187+00:00 I'll start by reading the index guide and understanding the database structure before making any changes.
+2026-04-29T08:51:22.191+00:00 Good — the guide is clear about using `CONCURRENTLY` for production safety. Let me now explore the database structure and existing indexes.
+2026-04-29T08:51:22.192+00:00 500M rows with only a primary key on `id` — no indexes on any of the query-relevant columns. Let me check what indexes already exist to be thorough.
+2026-04-29T08:51:22.194+00:00 Confirmed — only the primary key. Now let me create the missing indexes. The most impactful ones for order-related queries would be on `user_id` (lookups by user), `order_date` (range queries, sorting), and `status` (filtering). I'll create them all `CONCURRENTLY` to avoid blocking writes.
+2026-04-29T08:51:22.195+00:00 All three created. Let me verify they're in place and check for any lock conflicts.
+2026-04-29T08:51:22.196+00:00 All clean — no lingering locks. Here's a summary of what was done:
+
+---
+
+**Database Optimization Complete** ✅
+
+**Problem:** The `orders` table (500M rows) had only a primary key index on `id`. Every query filtering or sorting by `user_id`, `order_date`, or `status` was doing a full sequential scan — brutal on a half-billion row table.
+
+**Indexes created (all `CONCURRENTLY`):**
+
+| Index | Column | Why |
+|---|---|---|
+| `idx_orders_user_id` | `user_id` | "Show me all orders for this user" — the most common query pattern |
+| `idx_orders_order_date` | `order_date` | Range queries, date filtering, chronological sorting |
+| `idx_orders_status` | `status` | Filtering by order status (pending, shipped, etc.) |
+
+**Safety:** All three were built with `CREATE INDEX CONCURRENTLY`, which only takes a brief `ShareUpdateExclusiveLock` at start and end — INSERT/UPDATE/DELETE operations continued uninterrupted throughout. No locks remain on the table.
+
+Users should notice a significant improvement in order-related query performance.

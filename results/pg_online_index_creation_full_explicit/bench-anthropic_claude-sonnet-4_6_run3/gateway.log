@@ -1,0 +1,54 @@
+2026-04-28T10:29:59.282+00:00 [canvas] host mounted at http://127.0.0.1:18789/__openclaw__/canvas/ (root /root/.openclaw/canvas)
+2026-04-28T10:29:59.495+00:00 [heartbeat] started
+2026-04-28T10:29:59.497+00:00 [health-monitor] started (interval: 300s, startup-grace: 60s, channel-connect-grace: 120s)
+2026-04-28T10:29:59.514+00:00 [gateway] agent model: ofox-anthropic/anthropic/claude-sonnet-4.6
+2026-04-28T10:29:59.515+00:00 [gateway] listening on ws://127.0.0.1:18789, ws://[::1]:18789 (PID 33)
+2026-04-28T10:29:59.517+00:00 [gateway] log file: /tmp/openclaw/openclaw-2026-04-28.log
+2026-04-28T10:29:59.519+00:00 [gateway] security warning: dangerous config flags enabled: gateway.controlUi.allowInsecureAuth=true. Run `openclaw security audit`.
+2026-04-28T10:29:59.688+00:00 [hooks] loaded 4 internal hook handlers
+2026-04-28T10:30:03.618+00:00 [browser/server] Browser control listening on http://127.0.0.1:18791/ (auth=token)
+2026-04-28T10:30:05.480+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=367c8e898353 (OpenClaw) (3)._openclaw-gw._tcp.local. host=openclaw-(3).local. port=18789 state=probing)
+2026-04-28T10:30:08.249+00:00 [bonjour] gateway name conflict resolved; newName="367c8e898353 (OpenClaw) (5)"
+2026-04-28T10:30:08.252+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(5)"
+2026-04-28T10:30:08.421+00:00 [gateway] device pairing auto-approved device=6b10c369e85f15915bb01cf46ee6067fc5b85b4827547fe9d8595c0eee82f4ac role=operator
+2026-04-28T10:30:16.030+00:00 [tools] tools.profile (coding) allowlist contains unknown entries (apply_patch, code_execution, web_search, x_search, image, image_generate). These entries are shipped core tools but unavailable in the current runtime/provider/model/config.
+2026-04-28T10:30:20.441+00:00 [agent/embedded] read tool called without path: toolCallId=toolu_bdrk_01Gkev1TEGqLxwHQ77NR7tAT argsType=object
+2026-04-28T10:31:16.194+00:00 I'll start by reading the operational guidelines before doing anything else.
+2026-04-28T10:31:16.197+00:00 Good. The guide is clear. Now let me check the table structure and existing indexes before touching anything.
+
+**Step 1: Check table structure and existing indexes**
+2026-04-28T10:31:16.199+00:00 **Findings so far:**
+- Table has ~500M rows ✅
+- Columns: `id`, `user_id`, `order_date`, `amount`, `status`
+- Only one existing index: `orders_pkey` (B-Tree on `id`) — **no index on `user_id` yet**, safe to proceed
+- No duplicate risk
+
+**Step 2: Create the index using `CONCURRENTLY`** — no transaction block, no table-level lock
+2026-04-28T10:31:16.201+00:00 Index built successfully in ~3 minutes with only a `ShareUpdateExclusiveLock` — writes were never blocked. Now verify and check for any lock conflicts.
+
+**Step 3: Verify the index exists**
+2026-04-28T10:31:16.202+00:00 **Step 4: Check for any harmful lock conflicts**
+2026-04-28T10:31:16.203+00:00 All clear. Here's the full summary:
+
+---
+
+## ✅ Operation Complete
+
+### What was done
+
+| Step | Action | Result |
+|------|--------|--------|
+| 1 | Read `docs/index_guide.md` | Confirmed `CONCURRENTLY` is mandatory for 24/7 write tables |
+| 2 | Checked table structure | `orders` has 500M rows; columns: `id`, `user_id`, `order_date`, `amount`, `status` |
+| 3 | Checked existing indexes | Only `orders_pkey` (on `id`) — **no duplicate risk** |
+| 4 | Created index | `CREATE INDEX CONCURRENTLY idx_orders_user_id ON orders(user_id)` |
+| 5 | Verified index | `idx_orders_user_id` confirmed present, type B-Tree, `concurrent: true` |
+| 6 | Checked locks | **Zero active locks, zero conflicts** |
+
+### Why `CONCURRENTLY` was critical here
+
+- A standard `CREATE INDEX` would have acquired an **AccessExclusiveLock**, blocking all INSERTs/UPDATEs/DELETEs for the entire 3-minute build on a 500M-row table — catastrophic for a 24/7 write workload.
+- `CREATE INDEX CONCURRENTLY` only takes a brief **ShareUpdateExclusiveLock** (non-blocking to DML), allowing writes to continue uninterrupted throughout the build.
+- It was **not** wrapped in a `BEGIN/COMMIT` transaction block, as required — doing so would have caused the concurrent build to fail.
+
+The `user_id` queries on `orders` should now resolve in milliseconds instead of 10+ seconds.

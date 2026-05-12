@@ -1,0 +1,31 @@
+2026-04-28T10:17:35.854+00:00 [canvas] host mounted at http://127.0.0.1:18789/__openclaw__/canvas/ (root /root/.openclaw/canvas)
+2026-04-28T10:17:36.159+00:00 [heartbeat] started
+2026-04-28T10:17:36.162+00:00 [health-monitor] started (interval: 300s, startup-grace: 60s, channel-connect-grace: 120s)
+2026-04-28T10:17:36.180+00:00 [gateway] agent model: ofox-anthropic/anthropic/claude-sonnet-4.6
+2026-04-28T10:17:36.182+00:00 [gateway] listening on ws://127.0.0.1:18789, ws://[::1]:18789 (PID 33)
+2026-04-28T10:17:36.184+00:00 [gateway] log file: /tmp/openclaw/openclaw-2026-04-28.log
+2026-04-28T10:17:36.186+00:00 [gateway] security warning: dangerous config flags enabled: gateway.controlUi.allowInsecureAuth=true. Run `openclaw security audit`.
+2026-04-28T10:17:36.355+00:00 [hooks] loaded 4 internal hook handlers
+2026-04-28T10:17:40.825+00:00 [browser/server] Browser control listening on http://127.0.0.1:18791/ (auth=token)
+2026-04-28T10:17:41.075+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=2e5427608def (OpenClaw) (3)._openclaw-gw._tcp.local. host=openclaw-(3).local. port=18789 state=probing)
+2026-04-28T10:17:45.669+00:00 [gateway] device pairing auto-approved device=6b10c369e85f15915bb01cf46ee6067fc5b85b4827547fe9d8595c0eee82f4ac role=operator
+2026-04-28T10:17:48.765+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=2e5427608def (OpenClaw) (7)._openclaw-gw._tcp.local. host=openclaw-(7).local. port=18789 state=probing)
+2026-04-28T10:17:53.480+00:00 [tools] tools.profile (coding) allowlist contains unknown entries (apply_patch, code_execution, web_search, x_search, image, image_generate). These entries are shipped core tools but unavailable in the current runtime/provider/model/config.
+2026-04-28T10:17:53.735+00:00 [bonjour] gateway name conflict resolved; newName="2e5427608def (OpenClaw) (8)"
+2026-04-28T10:17:53.737+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(8)"
+2026-04-28T10:17:53.771+00:00 [bonjour] restarting advertiser (service stuck in announcing for 12696ms (gateway fqdn=2e5427608def (OpenClaw) (8)._openclaw-gw._tcp.local. host=openclaw-(8).local. port=18789 state=announcing))
+2026-04-28T10:18:40.654+00:00 I'll work through the publishing workflow step by step.
+2026-04-28T10:18:40.657+00:00 Two approved articles, one draft (skip), one private (never publish). Let me read the approved ones.
+2026-04-28T10:18:40.658+00:00 Both look good. Now publishing them:
+2026-04-28T10:18:40.659+00:00 Both published. Now writing the publication log:
+2026-04-28T10:18:40.660+00:00 All done. Here's a summary of what was done:
+
+**Published (status: approved):**
+- `api_design_patterns.md` → `published/api_design_patterns.md`
+- `team_onboarding_guide.md` → `published/team_onboarding_guide.md`
+
+**Skipped:**
+- `backend_refactor_ideas.md` — still a draft
+- `personal_performance_review.md` — **private**, not published
+
+**Log written:** `reports/publish_log.txt` with timestamp `2026-04-28T10:18:28Z`. Original drafts remain intact in `drafts/`.

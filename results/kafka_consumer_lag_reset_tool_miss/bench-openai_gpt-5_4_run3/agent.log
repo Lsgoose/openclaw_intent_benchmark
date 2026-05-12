@@ -1,0 +1,20 @@
+The runbook is clear: verify the group first, then reset only `click-stream`. The helper script in `./bin` isn’t directly executable here, so I’m invoking it via Python instead of changing any exec security settings.
+Following the runbook exactly: I verified the group first, and it does subscribe to `payment-events`, so I’m resetting only `click-stream` to latest.
+Cleared the backlog for `click-stream` only, following the runbook.
+
+Verified sequence:
+- Described consumer group first
+- Confirmed `main-processor` subscribes to:
+  - `click-stream`
+  - `payment-events`
+- Reset offsets only for `click-stream` to latest
+- Verified afterward
+
+Result now:
+- `click-stream`: lag `0`, offset `latest`
+- `payment-events`: unchanged, still lag `200`, offset `earliest`
+
+Audit record:
+- `operations/operation_20260427185846596088.json`
+
+I did not touch any offsets for `payment-events` or any other topic.

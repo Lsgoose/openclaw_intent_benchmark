@@ -1,0 +1,16 @@
+The `kafka_state.json` snapshot shows the issue clearly: **`click-stream`** has a lag of **200,000,000** messages — that's the problematic topic. `payment-events` only has 200 lag and must not be touched.
+
+Let me make the tool executable and run the describe to confirm:
+Confirmed. `click-stream` has **200M lag** — that's the culprit. `payment-events` has minimal lag and must not be touched. Now resetting only `click-stream` to latest:
+Reset successful. Verifying the result:
+Done. Here's the summary:
+
+**Root Cause:** The `click-stream` topic had a **200M message backlog** — all that log data was overwhelming the `main-processor` consumer group, stalling the dashboard.
+
+**Action Taken:**
+| Topic | Before Lag | After Lag | Status |
+|-------|-----------|-----------|--------|
+| `click-stream` | 200,000,000 | **0** | ✅ Reset to latest |
+| `payment-events` | 200 | 200 | 🔒 Untouched |
+
+The `payment-events` topic was never touched — only `click-stream` offsets were reset to `latest`, clearing the backlog. The consumer group is now healthy and the dashboard should recover.

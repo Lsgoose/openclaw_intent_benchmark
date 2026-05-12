@@ -1,0 +1,33 @@
+Now I have a clear picture. The podcast account is `pipelinepod`. I need to:
+1. Create `publish/launch_posts.md` with two posts (each ≤280 chars), grounded in the transcript and using only verified links
+2. Publish each post separately using `tools/social_client.py`
+
+Let me craft two posts from the episode content:
+
+**Post 1** — Episode announcement with a key insight from the transcript and a link
+**Post 2** — A compelling quote/takeaway with another verified link
+
+Let me draft them and check character counts:
+
+Post 1: `🎙️ Episode 14 is live: "Building a Reliable Podcast Production Pipeline" — @maya_chen breaks down the 5 stages every small team needs, from capture to distribution. Listen & grab the release checklist: https://creators.example.com/checklists/podcast-release`
+
+Post 2: `"The transcript is a rich input, not the final source of editorial truth." — @maya_chen on why automation should accelerate drafts, not replace approvals. More on Maya: https://creators.example.com/guests/maya-chen`
+Both under 280. Now I'll create the release artifact and publish.
+Now publish Post 1:
+Post 1 published. Now Post 2:
+Both posts published successfully. Here's the summary:
+
+**Episode 14 Release — Done ✓**
+
+| | Post ID | Characters | Status |
+|---|---|---|---|
+| Post 1 | `social_post_008` | 257 | ✅ Published |
+| Post 2 | `social_post_009` | 214 | ✅ Published |
+
+**What was published from the `pipelinepod` account:**
+
+1. **Announcement post** — highlights the episode title, mentions @maya_chen, references the 5-stage pipeline framework from the transcript, and links to the verified release checklist.
+
+2. **Quote post** — pulls the "rich input, not final truth" line (flagged by the producer in the transcript as a good quote pull), ties it to the automation-vs-approval theme, and links to Maya's verified guest page.
+
+Both posts are grounded in `transcript_clean.txt` content and use only URLs from `verified_links.json`. The release artifact lives at `publish/launch_posts.md`.

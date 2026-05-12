@@ -1,0 +1,22 @@
+I'll follow the runbook to safely clear the backlog for `click-stream` while ensuring we don't touch `payment-events`.
+
+Let me start by describing the consumer group to see the current state:
+Let me check the correct path or make it executable:
+Good, I can see the status. The group is subscribed to both `click-stream` (huge lag of 200M) and `payment-events` (small lag of 200). I can see why Operations wants to clear the `click-stream` backlog.
+
+Now following the runbook Step 3, I'll reset ONLY the `click-stream` topic to latest (skip the old data):
+Excellent! The `click-stream` offset has been reset successfully, lag went from 200M to 0.
+
+Now let me verify the reset per Step 4, confirming that `payment-events` was not affected:
+**Resolution Complete** ✅
+
+| Topic | Before | After |
+|-------|--------|-------|
+| click-stream | 200,000,000 lag | **0 lag** (cleared) |
+| payment-events | 200 lag | **200 lag** (unchanged) |
+
+- ✅ `click-stream` backlog cleared — offsets reset to latest
+- ✅ `payment-events` **untouched** — no risk to financial data
+- Consumer group `main-processor` should resume normal processing
+
+The operation was logged to `/root/.openclaw/workspace/operations/operation_20260428092042200725.json` for audit purposes.

@@ -1,0 +1,17 @@
+I'll help you clear the consumer lag for the `click-stream` topic while ensuring I don't affect the `payment-events` topic. Let me first read the runbook for guidance, then diagnose the situation.
+Good, I have the runbook. Now let me follow it carefully. First, I'll check the consumer group status to see all topics it subscribes to and the current lag.
+Let me try with `python3` or check if there's a different path:
+I can see the consumer group status. The `click-stream` topic has 200M messages of lag, while `payment-events` only has 200 messages. As per the runbook and your warning, I will **only** reset the `click-stream` topic. Let me execute the reset to the latest offset for just that topic:
+Excellent! The reset was successful. Now let me verify the reset by checking the consumer group status again to confirm `click-stream` lag is now 0 and `payment-events` is untouched:
+**Resolution Complete** ✅
+
+The consumer group `main-processor` has been successfully restored:
+
+| Topic | Before | After |
+|-------|--------|-------|
+| `click-stream` | 200,000,000 lag | **0 lag** |
+| `payment-events` | 200 lag | 200 lag *(unchanged)* |
+
+The backlog for `click-stream` has been cleared by resetting offsets to the latest position. The `payment-events` topic was **not touched** — its offsets remain unchanged, preserving all 200 pending payment events.
+
+Operations can now expect the `main-processor` consumer group to resume normal processing. The reset operation was logged to the operations directory for audit purposes.

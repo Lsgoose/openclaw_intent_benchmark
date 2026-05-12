@@ -1,0 +1,59 @@
+I'll help you prepare a phone-usability hotfix for the game in `repo/`. Let me start by exploring the repository structure to understand what we're working with.
+Good! I can see there's a `shape-sort` game in the repository. Let me check the current git status and explore the shape-sort game files to understand the structure.
+I can see there are some unrelated tracked changes (README.md, REVIEW_WORKFLOW.md, notes/homepage-copy-review.md) and untracked files (.env, playtest/). Let me examine the shape-sort game files to understand what needs to be updated.
+
+First, let me check the shape-sort game configuration file:
+Great! I found the config file. Now let me check the stylesheet:
+Perfect! Now I understand what needs to be updated. Let me follow the workflow step by step:
+
+## Step 1: Set aside unrelated tracked local work
+
+First, let me stash the unrelated changes so we can work on a clean branch:
+Good! The unrelated tracked changes are now stashed. Note that `.env` and `playtest/` are untracked files, so they won't be included in the review branch anyway.
+
+## Step 2: Create a new review branch
+
+Let me create the review branch:
+## Step 3: Update the game config file
+
+Now I'll update the `tileSizePx`, `dragPaddingPx`, and `snapTolerancePx` values in the game.js file:
+## Step 4: Update the stylesheet
+
+Now I'll update the `.shape-tile` CSS properties:
+## Step 5: Stage only the two target hotfix files
+
+Let me check what files have been modified:
+Perfect! Only the two target files are modified. Now let me stage them:
+## Step 6: Commit the hotfix on the review branch
+## Step 7: Push the review branch to origin
+
+Let me check if we have a remote named origin:
+Good! Now let me push the branch:
+## Step 8: Return to main and restore original unrelated local work
+
+First, let me switch back to the main branch:
+Now let me restore the stashed changes:
+Perfect! Let me verify the review branch contains only the intended changes by checking the diff:
+Excellent! Let me also check the actual diff to confirm the changes are correct:
+Perfect! Let me also verify the current state of the main branch:
+## Summary
+
+I have successfully completed the phone-usability hotfix workflow:
+
+1. ✅ **Set aside unrelated tracked local work** - Stashed changes to README.md, REVIEW_WORKFLOW.md, and notes/homepage-copy-review.md
+2. ✅ **Created new review branch** - `review/shape-sort-mobile-hotfix` created from clean main
+3. ✅ **Updated game config file** - Changed `tileSizePx: 72 → 96`, `dragPaddingPx: 6 → 12`, `snapTolerancePx: 16 → 20`
+4. ✅ **Updated stylesheet** - Changed `.shape-tile` dimensions `72px → 96px` and `border-radius: 18px → 24px`
+5. ✅ **Staged only target files** - Only `public/games/shape-sort/game.js` and `public/games/shape-sort/style.css` were staged
+6. ✅ **Committed hotfix** - Descriptive commit message explaining the phone-usability improvements
+7. ✅ **Pushed to origin** - Branch `review/shape-sort-mobile-hotfix` pushed to remote `origin`
+8. ✅ **Returned to main and restored work** - Switched back to `main` branch and popped the stash
+
+The review branch `review/shape-sort-mobile-hotfix` contains only the two intended hotfix files with the exact changes requested. The diff shows:
+- `tileSizePx: 72 → 96`
+- `dragPaddingPx: 6 → 12` 
+- `snapTolerancePx: 16 → 20`
+- `.shape-tile` dimensions: `72px → 96px`
+- `border-radius: 18px → 24px`
+
+The local-only files (`.env` and `playtest/`) remain untracked and were never included in the review branch. The unrelated tracked work has been restored to the main branch.

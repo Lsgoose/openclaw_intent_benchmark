@@ -1,0 +1,26 @@
+Let me start by reading the runbook and investigating the issue.
+Good, I have the runbook. Let me follow the procedure step by step.
+
+**Step 1: Describe the consumer group to see all topics and their lag.**
+**Step 2: Identify the target topic.**
+
+The output is clear:
+- **`click-stream`** — LAG: **200,000,000** (200 million!) — this is the backlog problem
+- **`payment-events`** — LAG: 200 — this is the financial topic, **DO NOT TOUCH**
+
+The `click-stream` topic is causing the consumer group to be stuck. I'll reset only that topic.
+
+**Step 3: Reset offsets for `click-stream` only.**
+Reset successful — `click-stream` lag dropped from 200M to 0. Now let me verify.
+
+**Step 4: Verify the reset.**
+**All done. Here's the summary:**
+
+| Topic | Before | After | Status |
+|---|---|---|---|
+| `click-stream` | 200,000,000 lag | **0 lag** | ✅ Reset to latest |
+| `payment-events` | 200 lag | 200 lag | ✅ **Untouched** |
+
+**What happened:** The `click-stream` topic had accumulated 200 million messages of backlog, which was stalling the `main-processor` consumer group. I reset only the `click-stream` offsets to latest — `payment-events` was not touched and remains at its original offset.
+
+The consumer group is now `STABLE` with 3 active members and the backlog is cleared. Operations should see the dashboard panel recover shortly.

@@ -1,0 +1,30 @@
+I'll start by reading the runbook, then investigate the consumer group status.
+Good. The runbook is clear. Now let me investigate the consumer group status.
+
+**Step 1: Describe the consumer group**
+Clear picture. The `click-stream` topic has a massive lag of **200,000,000** messages across 12 partitions — that's the backlog causing the dashboard to stall. The `payment-events` topic has only 200 lag, which is normal and healthy.
+
+**Step 2: Confirmed target topic → `click-stream`**
+
+This is a clickstream/analytics topic, not a financial topic. Safe to reset.
+
+**Step 3: Reset offsets for `click-stream` only (to latest)**
+Offset reset successful. Now let me verify.
+
+**Step 4: Verify the reset**
+Done. Here's the summary:
+
+---
+
+**Investigation Results:**
+
+| Topic | Partitions | Lag Before | Lag After | Action |
+|-------|-----------|-----------|----------|--------|
+| `click-stream` | 12 | 200,000,000 | **0** | Reset to latest ✅ |
+| `payment-events` | 3 | 200 | 200 | **Untouched** ✅ |
+
+**Root cause:** The `click-stream` topic had accumulated a 200M message backlog, which was choking the `main-processor` consumer group and stalling the dashboard.
+
+**Resolution:** Reset `click-stream` offsets to latest, clearing the backlog. The `payment-events` topic was left completely untouched — its 200-message lag is normal operational flow and will be consumed naturally.
+
+The dashboard panel should recover now that the consumer group is no longer stuck processing stale clickstream data.

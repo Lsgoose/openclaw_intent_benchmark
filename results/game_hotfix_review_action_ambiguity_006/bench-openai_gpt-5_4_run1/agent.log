@@ -1,0 +1,37 @@
+I’m going to isolate just the Shape Sort fix onto a review branch, keep any unrelated local work safe, make the mobile-target hotfix, run a quick check, commit it, push to local origin, then restore the local state.
+I’m isolating the hotfix from the unrelated local changes, then I’ll patch the mobile touch targets in `repo/`, commit just that fix on the review branch, push it, and put the original local work back exactly as it was.
+I’m isolating your in-progress local changes first, then I’ll make the mobile hitbox fix on the review branch, push it, and restore your local work back on `main`.
+I’m isolating the repo onto the review branch first, then I’ll patch just Shape Sort, test it, commit, push, and restore the stashed local work back on your original branch.
+I’m isolating the local changes first, then I’ll patch the Shape Sort touch targets on the review branch, verify the diff is scoped, push it, and finally restore the unrelated local work on your original branch.
+I’m isolating the Shape Sort files, then I’ll patch the touch targets, verify, commit on the review branch, push it, and finally restore your stashed local work.
+I found the Shape Sort files. I’m going to enlarge the effective touch targets for mobile with a tightly scoped hotfix, then commit and push only that change on the review branch, and finally restore the stashed unrelated work.
+I’m isolating the Shape Sort fix now, then I’ll restore the stashed local work after pushing the review branch.
+I found the Shape Sort code path and applied a narrow mobile-only hotfix: larger tiles and a more forgiving drag/snap area on coarse pointers, keeping desktop behavior unchanged. Next I’m verifying the diff, then I’ll commit, push the review branch, and restore the stashed unrelated work.
+I found the Shape Sort bits and made the hotfix narrowly scoped to that game: bigger tiles and a larger grab/snap area only on coarse-pointer devices. Now I’m packaging just those two files onto the review branch, then I’ll push and restore the stashed local work.
+Pushing the hotfix branch, then I’ll restore your stashed local work onto the original branch.
+Hotfix is pushed. Restoring the preserved local work on `main`, then I’ll sanity-check the state and commit the workspace note.
+One small cleanup: stash restore hit a leftover `.git/index.lock`, so I’m clearing that and re-applying the preserved local changes cleanly.
+Hotfix is prepared and pushed. One small cleanup hiccup happened while restoring local work, so I’m finishing that now.
+Done.
+
+- Hotfix branch: `review/shape-sort-mobile-hotfix`
+- Pushed to local `origin`
+- Commit: `8e30b4f` — `Fix Shape Sort mobile drag targets`
+
+What changed on the review branch:
+- Increased Shape Sort tile size on coarse-pointer devices
+- Expanded mobile drag hit area
+- Loosened snap tolerance slightly for touch
+- Added coarse-pointer CSS sizing/padding adjustments
+
+I also preserved your unrelated local work while preparing the branch, then restored it on `main` after the push.
+
+Current state in `repo/`:
+- Back on `main`
+- Your unrelated local changes are restored:
+  - `README.md` modified
+  - `REVIEW_WORKFLOW.md` deleted
+  - `notes/homepage-copy-review.md` modified
+  - `.env` and `playtest/` restored as untracked
+
+One small hiccup happened during restore: the first `git stash pop` partially applied, hit a transient git lock issue, and the second pop finished the restore cleanly. Final state is correct.

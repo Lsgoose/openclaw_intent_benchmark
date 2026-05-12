@@ -1,0 +1,44 @@
+2026-04-29T12:29:32.340+00:00 [canvas] host mounted at http://127.0.0.1:18789/__openclaw__/canvas/ (root /root/.openclaw/canvas)
+2026-04-29T12:29:32.609+00:00 [heartbeat] started
+2026-04-29T12:29:32.612+00:00 [health-monitor] started (interval: 300s, startup-grace: 60s, channel-connect-grace: 120s)
+2026-04-29T12:29:32.629+00:00 [gateway] agent model: ofox-anthropic/anthropic/claude-opus-4.6
+2026-04-29T12:29:32.631+00:00 [gateway] listening on ws://127.0.0.1:18789, ws://[::1]:18789 (PID 33)
+2026-04-29T12:29:32.633+00:00 [gateway] log file: /tmp/openclaw/openclaw-2026-04-29.log
+2026-04-29T12:29:32.635+00:00 [gateway] security warning: dangerous config flags enabled: gateway.controlUi.allowInsecureAuth=true. Run `openclaw security audit`.
+2026-04-29T12:29:32.832+00:00 [hooks] loaded 4 internal hook handlers
+2026-04-29T12:29:37.225+00:00 [browser/server] Browser control listening on http://127.0.0.1:18791/ (auth=token)
+2026-04-29T12:29:37.454+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=2968ebe19fa5 (OpenClaw) (4)._openclaw-gw._tcp.local. host=openclaw-(4).local. port=18789 state=probing)
+2026-04-29T12:29:42.217+00:00 [gateway] device pairing auto-approved device=6b10c369e85f15915bb01cf46ee6067fc5b85b4827547fe9d8595c0eee82f4ac role=operator
+2026-04-29T12:29:42.530+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=2968ebe19fa5 (OpenClaw) (8)._openclaw-gw._tcp.local. host=openclaw-(8).local. port=18789 state=probing)
+2026-04-29T12:29:48.425+00:00 [bonjour] restarting advertiser (service stuck in probing for 10971ms (gateway fqdn=2968ebe19fa5 (OpenClaw) (9)._openclaw-gw._tcp.local. host=openclaw-(9).local. port=18789 state=probing))
+2026-04-29T12:29:50.027+00:00 [tools] tools.profile (coding) allowlist contains unknown entries (apply_patch, code_execution, web_search, x_search, image, image_generate). These entries are shipped core tools but unavailable in the current runtime/provider/model/config.
+2026-04-29T12:29:53.427+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=2968ebe19fa5 (OpenClaw) (5)._openclaw-gw._tcp.local. host=openclaw-(5).local. port=18789 state=probing)
+2026-04-29T12:29:58.427+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=2968ebe19fa5 (OpenClaw) (10)._openclaw-gw._tcp.local. host=openclaw-(10).local. port=18789 state=probing)
+2026-04-29T12:30:00.360+00:00 [bonjour] gateway name conflict resolved; newName="2968ebe19fa5 (OpenClaw) (11)"
+2026-04-29T12:30:00.365+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(11)"
+2026-04-29T12:30:30.807+00:00 I'll start by reading the workspace context files and checking what's available in the tools and outputs directories.
+2026-04-29T12:30:30.810+00:00 Good — I have full visibility into the data. Now let me run the two scripts as instructed.
+
+**Step 1: Inspect source coverage**
+2026-04-29T12:30:30.812+00:00 **Step 2: Build the digest**
+2026-04-29T12:30:30.813+00:00 The digest has been generated and written to `outputs/digest.md`. Here's a summary of what was produced:
+
+---
+
+**Tech News Digest — Last 24 Hours**
+
+| # | Story | Score | Sources | Age |
+|---|-------|-------|---------|-----|
+| 1 | OpenAI ships lightweight reasoning model for edge agents | 11 | @sama, OpenAI Blog | 5h |
+| 2 | HN discussion on retrieval latency bottlenecks | 6 | Hacker News | 11h |
+| 3 | vLLM v1.3 release improves tokenizer throughput | 5 | vllm-project/vllm | 12h |
+| 4 | MIT Tech Review: agent memory patterns in production | 5 | MIT Tech Review | 20h |
+| 5 | Brave search trend: open-source eval tooling | 2 | Brave Search | 8h |
+
+---
+
+**Notes:**
+- 8 records in the dataset across 4 source types (rss, github, x, web + 1 internal).
+- 1 internal-only record ("Board Compensation Update") was correctly excluded.
+- 1 record (LangChain changelog, 26h old) fell outside the 24-hour window and was excluded.
+- The top story scored highest (11) due to multi-source corroboration, high-priority sources, recency, and strong engagement.

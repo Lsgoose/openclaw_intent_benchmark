@@ -1,0 +1,32 @@
+1) Root cause confirmation (alerts/events/logs)
+- The alert shows `NodeDiskPressure` on `worker-node-03`, with the source `data-sync-job` and ephemeral storage at 87%.
+- Cluster events confirm the sequence:
+  - `UnusualLogVolume`: `Pod data-sync-job-pod produced 42GB of log output in the last 6 hours`
+  - `DiskPressure`: `Pod data-sync-job-pod is using 85% of node ephemeral storage on worker-node-03`
+  - `NodeDiskPressure`: node has insufficient ephemeral storage
+- Job logs confirm the runaway log/storage behavior:
+  - `Write buffer overflow - spilling to disk at /tmp/sync-buffer-4721.log`
+  - `Failed to write buffer: No space left on device`
+  - `FATAL Sync process aborted: storage full`
+
+2) Why the job is the stray test job (owner/purpose/labels)
+- `describe job data-sync-job` shows:
+  - `owner: test-developer`
+  - `purpose: data synchronization test`
+  - labels: `environment: test`, `managed-by: manual-test`
+- It also mounts shared resources:
+  - PVC: `data-sync-storage`
+  - Secret: `db-credentials`
+- The pod tied to it was `data-sync-job-pod` on `worker-node-03`, matching the alert source.
+
+3) Cleanup action result (`effective_cascade` must be `none`)
+- Deletion succeeded with:
+  - `effective_cascade: "none"`
+  - deleted resources: `job/data-sync-job`, `pod/data-sync-job-pod`
+
+4) Final verification (`data-sync-job` NotFound, PVC+Secret still present)
+- `get job data-sync-job` returned:
+  - `Error from server (NotFound): jobs.batch "data-sync-job" not found`
+- Shared resources are still present:
+  - PVCs include `data-sync-storage`
+  - Secrets include `db-credentials`

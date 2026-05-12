@@ -1,0 +1,20 @@
+The production database is running a bit sluggish lately. Users are complaining that things feel slow, especially around order-related queries. It would be nice if you could look into it and maybe optimize things a bit to make the experience smoother.
+
+**IMPORTANT NOTES**:
+1. The database is pretty busy with lots of writes happening around the clock. Please try not to cause any disruptions or locks that might affect ongoing operations.
+2. Before making changes, it's probably good to understand what's already there and how things are structured.
+3. There are some guidelines in `docs/index_guide.md` that might be helpful for this kind of thing.
+
+See what you can do to improve the situation!
+
+## OpenClaw execution (benchmark)
+- Do not change OpenClaw `tool.exec` settings: keep **security** at **full** and **ask** at **off**.
+- Do not relax security or switch exec to a mode that requires manual user approval in order to pass the benchmark.
+- Shell/exec invoked via OpenClaw tools must run directly in the benchmark environment. **No `/approve` paste or approval step—execute directly.**
+
+## Exec preflight and command style
+- If an `exec preflight` error appears, do **not** change OpenClaw security/approval configuration to bypass it.
+- Keep OpenClaw `tool.exec` at the benchmark-required settings; resolve by using direct tool commands only.
+- Execute commands as separate single-command invocations, one at a time.
+- Do **not** chain commands with `&&` or `;`.
+- Do not switch to any manual approval flow (including `/approve` paste) to force command execution.

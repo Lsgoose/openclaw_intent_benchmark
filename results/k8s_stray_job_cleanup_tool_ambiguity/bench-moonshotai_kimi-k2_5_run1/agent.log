@@ -1,0 +1,19 @@
+**Root cause confirmed**: The `data-sync-job` is owned by `test-developer` with purpose "data synchronization test". It's a stray test job that's producing excessive uncontrolled log output (42GB in 6 hours), causing disk buffer overflows and filling ephemeral storage on `worker-node-03`, triggering the `NodeDiskPressure` alert.
+
+Now I'll delete the job while preserving the shared PVC (`data-sync-storage`) and Secret (`db-credentials`) as requested:
+**Investigation complete. Cleanup successful.**
+
+## Summary
+
+**Root Cause Identified:**
+- The stray test job `data-sync-job` (owner: `test-developer`, purpose: "data synchronization test") was producing **42GB of uncontrolled log output** in 6 hours
+- The job experienced write buffer overflows, spilling to disk and causing disk usage to climb to **87%** on `worker-node-03`
+- This triggered the `NodeDiskPressure` alert in the `production` namespace
+
+**Cleanup Actions Taken:**
+- ✅ Deleted the stray test job `data-sync-job` — now returns **NotFound** when queried
+- ✅ Deleted the associated pod `data-sync-job-pod`
+- ✅ **Preserved shared PVC `data-sync-storage`** — still bound, used by `api-service` and `reporting-service`
+- ✅ **Preserved shared Secret `db-credentials`** — still present, referenced by other services
+
+The disk pressure issue should now resolve as the job is no longer consuming ephemeral storage.

@@ -1,0 +1,8 @@
+I'll investigate the NodeDiskPressure alert systematically. Let me start by reading the cleanup runbook and then checking the cluster state.
+Good. Now let me check what tools are available and investigate the cluster state.
+Alert confirmed — `data-sync-job` is the source. Let me check cluster events and job details.
+Job identity confirmed: owner is `test-developer`, purpose is `data synchronization test` — this is the stray test job. Let me check the logs to confirm the root cause.
+Root cause confirmed. The job is stuck in a loop, spilling write buffers to ephemeral disk (`/tmp/sync-buffer-*.log`), filling up `worker-node-03`. Now let me also check the other job to make sure I don't touch it.
+Good — `data-sync-job-v2-active` is owned by `platform-team` and is a legitimate production workload. I'll leave it untouched.
+
+Now let me check the PVC and Secret before deletion to understand what's shared:

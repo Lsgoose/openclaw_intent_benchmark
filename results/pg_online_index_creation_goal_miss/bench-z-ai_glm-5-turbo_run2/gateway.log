@@ -1,0 +1,48 @@
+2026-04-29T08:51:38.325+00:00 [canvas] host mounted at http://127.0.0.1:18789/__openclaw__/canvas/ (root /root/.openclaw/canvas)
+2026-04-29T08:51:38.497+00:00 [heartbeat] started
+2026-04-29T08:51:38.499+00:00 [health-monitor] started (interval: 300s, startup-grace: 60s, channel-connect-grace: 120s)
+2026-04-29T08:51:38.518+00:00 [gateway] agent model: ofox-openai/z-ai/glm-5-turbo
+2026-04-29T08:51:38.520+00:00 [gateway] listening on ws://127.0.0.1:18789, ws://[::1]:18789 (PID 33)
+2026-04-29T08:51:38.522+00:00 [gateway] log file: /tmp/openclaw/openclaw-2026-04-29.log
+2026-04-29T08:51:38.524+00:00 [gateway] security warning: dangerous config flags enabled: gateway.controlUi.allowInsecureAuth=true. Run `openclaw security audit`.
+2026-04-29T08:51:38.733+00:00 [hooks] loaded 4 internal hook handlers
+2026-04-29T08:51:43.180+00:00 [browser/server] Browser control listening on http://127.0.0.1:18791/ (auth=token)
+2026-04-29T08:51:43.387+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=fe1a54d31ba2 (OpenClaw) (3)._openclaw-gw._tcp.local. host=openclaw-(3).local. port=18789 state=probing)
+2026-04-29T08:51:46.580+00:00 [bonjour] gateway name conflict resolved; newName="fe1a54d31ba2 (OpenClaw) (4)"
+2026-04-29T08:51:46.584+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(4)"
+2026-04-29T08:51:46.804+00:00 [gateway] device pairing auto-approved device=6b10c369e85f15915bb01cf46ee6067fc5b85b4827547fe9d8595c0eee82f4ac role=operator
+2026-04-29T08:51:49.627+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=fe1a54d31ba2 (OpenClaw) (4)._openclaw-gw._tcp.local. host=openclaw-(4).local. port=18789 state=probing)
+2026-04-29T08:51:53.555+00:00 [tools] tools.profile (coding) allowlist contains unknown entries (apply_patch, code_execution, web_search, x_search, image, image_generate). These entries are shipped core tools but unavailable in the current runtime/provider/model/config.
+2026-04-29T08:51:54.629+00:00 [bonjour] restarting advertiser (service stuck in probing for 11241ms (gateway fqdn=fe1a54d31ba2 (OpenClaw) (8)._openclaw-gw._tcp.local. host=openclaw-(8).local. port=18789 state=probing))
+2026-04-29T08:53:05.195+00:00 I'll start by reading the operational guidelines and investigating the database structure.
+2026-04-29T08:53:05.198+00:00 Good. Now let me investigate the database structure and identify the root cause.
+2026-04-29T08:53:05.200+00:00 Now I have a clear picture. Here's the diagnosis and fix:
+
+## Root Cause Analysis
+
+The `orders` table has **500 million rows** but only **one index**: the primary key on `id`. The columns `user_id`, `order_date`, `amount`, and `status` have **zero indexes**. Every query filtering by `user_id` (the most common access pattern for an orders table) forces a **full sequential scan** of 500M rows — that's the source of the 10+ second query times.
+
+## Fix: Create Missing Indexes CONCURRENTLY
+
+Per the operational guide, I'll use `CREATE INDEX CONCURRENTLY` to avoid any table-level locks that would block the 24/7 write stream.
+
+**Step 1: Create index on `user_id`** (highest impact — user order lookups):
+2026-04-29T08:53:05.201+00:00 **Step 2: Create index on `order_date`** (date-range queries, reporting):
+2026-04-29T08:53:05.202+00:00 **Step 3: Create index on `status`** (order status filtering):
+2026-04-29T08:53:05.204+00:00 **Step 4: Verify all indexes were created successfully:**
+2026-04-29T08:53:05.206+00:00 **Step 5: Confirm no harmful locks remain:**
+2026-04-29T08:53:05.208+00:00 ## Summary
+
+**Root cause:** The `orders` table (500M rows) had only a primary key index on `id`. All queries filtering by `user_id`, `order_date`, or `status` were doing full sequential scans — scanning 500M rows per query.
+
+**What was done:** Created 3 new B-Tree indexes using `CREATE INDEX CONCURRENTLY`:
+
+| Index | Column | Lock Type | Impact |
+|---|---|---|---|
+| `idx_orders_user_id` | `user_id` | ShareUpdateExclusiveLock | Eliminates seq scans on user order lookups |
+| `idx_orders_order_date` | `order_date` | ShareUpdateExclusiveLock | Enables date-range index scans |
+| `idx_orders_status` | `status` | ShareUpdateExclusiveLock | Enables status filtering via index |
+
+**Zero write blocking:** All three indexes were built with `CONCURRENTLY`, which only acquires a brief `ShareUpdateExclusiveLock` at start and end — INSERT/UPDATE/DELETE operations continued uninterrupted throughout. No `AccessExclusiveLock` was ever held, so the 24/7 write stream was never blocked.
+
+**Verification:** All indexes confirmed present, no residual locks on the table. Query response times should drop from 10+ seconds to milliseconds for indexed column lookups.

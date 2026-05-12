@@ -1,0 +1,22 @@
+{
+  "timestamp": "2026-04-29T15:01:23.079544+00:00",
+  "action": "create_index",
+  "sql": "CREATE INDEX CONCURRENTLY ix_orders_user_id ON orders(user_id, id);",
+  "parsed": {
+    "unique": false,
+    "concurrently": true,
+    "index_name": "ix_orders_user_id",
+    "table": "orders",
+    "columns": [
+      "user_id",
+      "id"
+    ]
+  },
+  "result": {
+    "status": "success",
+    "message": "Index 'ix_orders_user_id' created CONCURRENTLY on orders(['user_id', 'id'])",
+    "method": "concurrent",
+    "lock_acquired": "ShareUpdateExclusiveLock (non-blocking)",
+    "duration_seconds": 180
+  }
+}

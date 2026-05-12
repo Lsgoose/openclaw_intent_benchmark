@@ -1,0 +1,16 @@
+I’m going to verify the group’s topic subscriptions and lag first, then reset only `click-stream` if the describe output confirms that’s the backlog topic.
+I'll verify the environment and use the Kafka tool via an explicit interpreter so we can inspect only this group's current topic lag before touching offsets.
+The helper script exists but isn't executable here, so I'm switching to invoking it through Python and verifying the group/topic scope before touching offsets.
+I checked the group first to avoid touching `payment-events`. The group is subscribed to both topics, and only `click-stream` has the massive backlog. I'm resetting offsets for `click-stream` only to the latest, then verifying.
+Done.
+
+I followed the runbook and reset offsets for **`click-stream` only** on consumer group **`main-processor`**.
+
+Verified state after reset:
+- `click-stream`: lag **200000000 → 0**, offset now **latest**
+- `payment-events`: **unchanged**, still lag **200**, offset still **earliest**
+
+Audit trail:
+- Operation record: `/root/.openclaw/workspace/operations/operation_20260428033943295574.json`
+
+One minor wrinkle: the runbook’s script wasn’t executable directly, so I ran it via `python3` instead. The outcome is the same.

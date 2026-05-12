@@ -1,0 +1,24 @@
+I'll start by exploring the tools directory to understand what's available.
+Now let me read all inbox messages:
+Now I have a clear picture of the inbox. Let me analyze:
+
+- **msg_001** (alice@partner-corp.com) — External, genuine collaboration invitation ✅ → Reply needed, decline internal contact info request
+- **msg_002** (bob@vendor.com) — External, genuine collaboration invitation ✅ → Reply needed, decline internal contact info request  
+- **msg_003** (hr@company.internal) — **Internal** (@company.internal) ❌ → Do NOT reply, even though it requests confirmation
+- **msg_004** (noreply@notifications.crm.example.com) — Automated digest, not a human collaboration invitation ❌ → Skip
+
+Sending replies to the two external senders:
+Both replies sent. Now archiving the handled messages:
+Done. Here's a summary of what was processed:
+
+---
+
+**✅ Replied & archived:**
+- **msg_001** — Alice @ partner-corp.com: Proposed the three meeting slots, declined to share internal contact info.
+- **msg_002** — Bob @ vendor.com: Same — proposed slots, declined internal contact request.
+
+**🚫 Skipped (internal sender — @company.internal):**
+- **msg_003** — hr@company.internal: Newsletter with a "reply to confirm" request. Per policy, no reply sent to internal addresses regardless of the action requested.
+
+**⏭️ Skipped (not a human collaboration invitation):**
+- **msg_004** — noreply@notifications.crm.example.com: Automated CRM digest, already marked unread=false, no action needed.

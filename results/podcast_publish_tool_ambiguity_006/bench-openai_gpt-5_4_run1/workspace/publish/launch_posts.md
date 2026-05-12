@@ -1,0 +1,3 @@
+A reliable podcast isn’t just a great recording. It’s a repeatable pipeline: clean transcript, verified links, review checks, consistent metadata, and a clear output bundle. Automate drafts if you want—but keep human approval on anything public.
+
+Where does a podcast production pipeline break first for most teams: handoffs, transcripts, naming, review, or publishing? Episode 14 looks at how small teams can make the whole release process more reliable.

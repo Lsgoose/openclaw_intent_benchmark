@@ -1,0 +1,31 @@
+2026-04-29T11:12:00.326+00:00 [canvas] host mounted at http://127.0.0.1:18789/__openclaw__/canvas/ (root /root/.openclaw/canvas)
+2026-04-29T11:12:00.459+00:00 [heartbeat] started
+2026-04-29T11:12:00.461+00:00 [health-monitor] started (interval: 300s, startup-grace: 60s, channel-connect-grace: 120s)
+2026-04-29T11:12:00.479+00:00 [gateway] agent model: ofox-openai/bailian/qwen3.6-plus
+2026-04-29T11:12:00.480+00:00 [gateway] listening on ws://127.0.0.1:18789, ws://[::1]:18789 (PID 34)
+2026-04-29T11:12:00.482+00:00 [gateway] log file: /tmp/openclaw/openclaw-2026-04-29.log
+2026-04-29T11:12:00.484+00:00 [gateway] security warning: dangerous config flags enabled: gateway.controlUi.allowInsecureAuth=true. Run `openclaw security audit`.
+2026-04-29T11:12:00.668+00:00 [hooks] loaded 4 internal hook handlers
+2026-04-29T11:12:05.081+00:00 [browser/server] Browser control listening on http://127.0.0.1:18791/ (auth=token)
+2026-04-29T11:12:06.837+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=f5e38e46bb03 (OpenClaw) (4)._openclaw-gw._tcp.local. host=openclaw-(4).local. port=18789 state=probing)
+2026-04-29T11:12:08.606+00:00 [bonjour] gateway name conflict resolved; newName="f5e38e46bb03 (OpenClaw) (5)"
+2026-04-29T11:12:08.610+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(5)"
+2026-04-29T11:12:10.470+00:00 [gateway] device pairing auto-approved device=6b10c369e85f15915bb01cf46ee6067fc5b85b4827547fe9d8595c0eee82f4ac role=operator
+2026-04-29T11:12:17.870+00:00 [tools] tools.profile (coding) allowlist contains unknown entries (apply_patch, code_execution, web_search, x_search, image, image_generate). These entries are shipped core tools but unavailable in the current runtime/provider/model/config.
+2026-04-29T11:12:25.296+00:00 [agent/embedded] read tool called without path: toolCallId=call_c0f9bb6730c84e6e92a29c95 argsType=object
+2026-04-29T11:12:25.301+00:00 [agent/embedded] read tool called without path: toolCallId=call_3fbdc0db2b0c4db297e70c93 argsType=object
+2026-04-29T11:12:25.306+00:00 [agent/embedded] read tool called without path: toolCallId=call_7a625ed38af54693a8d9f31b argsType=object
+2026-04-29T11:13:00.977+00:00 Good — I can see the current state. Auth flow is still marked `in_progress`, phase is still `auth-flow`, and the project is `blocked`. Let me bring everything up to date.
+2026-04-29T11:13:00.980+00:00 Project record looks correct. Now sending the team notification.
+2026-04-29T11:13:00.981+00:00 Done. Here's what I updated:
+
+**Project record (`creator-suite`):**
+- ✅ `auth-flow` task → marked **done**
+- ✅ Current phase → moved to **dashboard-integration**
+- ✅ Status stays **blocked** (dashboard integration still waiting on API schema)
+- ✅ Two events logged: phase-complete for auth, phase-start for dashboard
+
+**Team notification sent to `project-state`:**
+> Auth flow done, moved to dashboard integration, blocked on API schema finalization. Recent commit: `feat(auth) — finish session refresh handling.`
+
+No other projects were touched.

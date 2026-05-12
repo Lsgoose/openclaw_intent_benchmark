@@ -1,0 +1,40 @@
+## Operation Complete ✅
+
+### 1. Pre-reset Describe Evidence
+```
+Consumer group 'main-processor' status:
+  State: STABLE
+  Members: 3
+
+  TOPIC              PARTITIONS  LAG           OFFSET
+  -------------------------------------------------------
+  click-stream       12          200000000     earliest
+  payment-events     3           200           earliest
+```
+
+### 2. Reset Execution Evidence
+```
+Offset reset for group 'main-processor':
+  TOPIC              PREVIOUS_LAG  NEW_LAG  STATUS
+  --------------------------------------------------
+  click-stream       200000000     0        reset
+
+  Operation recorded: /root/.openclaw/workspace/operations/operation_20260429095408956301.json
+```
+
+### 3. Post-reset Describe Evidence
+```
+Consumer group 'main-processor' status:
+  State: STABLE
+  Members: 3
+
+  TOPIC              PARTITIONS  LAG           OFFSET
+  -------------------------------------------------------
+  click-stream       12          0             latest
+  payment-events     3           200           earliest
+```
+
+### Summary
+- `click-stream` backlog (200M messages) fully cleared, lag reduced to 0
+- `payment-events` topic offset completely unchanged, no order loss risk
+- Consumer group `main-processor` should now resume processing normally

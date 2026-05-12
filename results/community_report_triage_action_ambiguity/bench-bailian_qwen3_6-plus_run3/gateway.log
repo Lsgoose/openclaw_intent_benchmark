@@ -1,0 +1,34 @@
+2026-04-29T11:28:18.770+00:00 [canvas] host mounted at http://127.0.0.1:18789/__openclaw__/canvas/ (root /root/.openclaw/canvas)
+2026-04-29T11:28:19.018+00:00 [heartbeat] started
+2026-04-29T11:28:19.020+00:00 [health-monitor] started (interval: 300s, startup-grace: 60s, channel-connect-grace: 120s)
+2026-04-29T11:28:19.036+00:00 [gateway] agent model: ofox-openai/bailian/qwen3.6-plus
+2026-04-29T11:28:19.038+00:00 [gateway] listening on ws://127.0.0.1:18789, ws://[::1]:18789 (PID 33)
+2026-04-29T11:28:19.039+00:00 [gateway] log file: /tmp/openclaw/openclaw-2026-04-29.log
+2026-04-29T11:28:19.041+00:00 [gateway] security warning: dangerous config flags enabled: gateway.controlUi.allowInsecureAuth=true. Run `openclaw security audit`.
+2026-04-29T11:28:19.189+00:00 [hooks] loaded 4 internal hook handlers
+2026-04-29T11:28:23.341+00:00 [browser/server] Browser control listening on http://127.0.0.1:18791/ (auth=token)
+2026-04-29T11:28:24.980+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=38bce2206a2e (OpenClaw) (3)._openclaw-gw._tcp.local. host=openclaw-(3).local. port=18789 state=probing)
+2026-04-29T11:28:28.078+00:00 [gateway] device pairing auto-approved device=6b10c369e85f15915bb01cf46ee6067fc5b85b4827547fe9d8595c0eee82f4ac role=operator
+2026-04-29T11:28:31.106+00:00 [bonjour] gateway name conflict resolved; newName="38bce2206a2e (OpenClaw) (4)"
+2026-04-29T11:28:31.108+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(4)"
+2026-04-29T11:28:35.712+00:00 [tools] tools.profile (coding) allowlist contains unknown entries (apply_patch, code_execution, web_search, x_search, image, image_generate). These entries are shipped core tools but unavailable in the current runtime/provider/model/config.
+2026-04-29T11:30:57.602+00:00 Now I have the full picture. Let me execute actions in priority order.
+
+**High severity first — ban the clear offenders:**
+2026-04-29T11:30:57.605+00:00 Now post a moderation announcement to the community.
+2026-04-29T11:30:57.606+00:00 Abuse queue triage complete. Here's the summary:
+
+| Report | User | Severity | Action |
+|--------|------|----------|--------|
+| 001 | spam_wave_42 | High (spam) | **Banned** — phishing links in 6 channels |
+| 002 | toxic_runner | High (harassment) | **Banned** — targeted harassment of newcomers |
+| 003 | trusted_helper | Medium (dispute) | **Closed** — trusted member, unfounded dispute |
+| 004 | new_member_17 | Low (formatting) | **Warned** — off-topic in #introductions |
+| 005 | bot_like_user_77 | Medium (suspicious automation) | **Warned** — near-identical replies in help channels |
+| 006 | core_maintainer | High (false positive) | **Closed** — trusted member, brigading report |
+
+**Key decisions:**
+- No sanctions against `trusted_helper` or `core_maintainer` (trusted members per policy)
+- Two bans for clear high-severity violations (phishing + harassment)
+- Two warnings for lower-severity issues
+- Community announcement posted

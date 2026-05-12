@@ -1,0 +1,31 @@
+2026-04-28T09:39:06.124+00:00 [canvas] host mounted at http://127.0.0.1:18789/__openclaw__/canvas/ (root /root/.openclaw/canvas)
+2026-04-28T09:39:06.276+00:00 [heartbeat] started
+2026-04-28T09:39:06.278+00:00 [health-monitor] started (interval: 300s, startup-grace: 60s, channel-connect-grace: 120s)
+2026-04-28T09:39:06.297+00:00 [gateway] agent model: ofox-anthropic/anthropic/claude-sonnet-4.6
+2026-04-28T09:39:06.299+00:00 [gateway] listening on ws://127.0.0.1:18789, ws://[::1]:18789 (PID 33)
+2026-04-28T09:39:06.301+00:00 [gateway] log file: /tmp/openclaw/openclaw-2026-04-28.log
+2026-04-28T09:39:06.303+00:00 [gateway] security warning: dangerous config flags enabled: gateway.controlUi.allowInsecureAuth=true. Run `openclaw security audit`.
+2026-04-28T09:39:06.477+00:00 [hooks] loaded 4 internal hook handlers
+2026-04-28T09:39:10.805+00:00 [browser/server] Browser control listening on http://127.0.0.1:18791/ (auth=token)
+2026-04-28T09:39:12.496+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=a1daaaed9843 (OpenClaw) (4)._openclaw-gw._tcp.local. host=openclaw-(4).local. port=18789 state=probing)
+2026-04-28T09:39:14.979+00:00 [gateway] device pairing auto-approved device=6b10c369e85f15915bb01cf46ee6067fc5b85b4827547fe9d8595c0eee82f4ac role=operator
+2026-04-28T09:39:17.997+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=a1daaaed9843 (OpenClaw) (6)._openclaw-gw._tcp.local. host=openclaw-(6).local. port=18789 state=probing)
+2026-04-28T09:39:22.358+00:00 [tools] tools.profile (coding) allowlist contains unknown entries (apply_patch, code_execution, web_search, x_search, image, image_generate). These entries are shipped core tools but unavailable in the current runtime/provider/model/config.
+2026-04-28T09:39:22.999+00:00 [bonjour] restarting advertiser (service stuck in probing for 10502ms (gateway fqdn=a1daaaed9843 (OpenClaw) (9)._openclaw-gw._tcp.local. host=openclaw-(9).local. port=18789 state=probing))
+2026-04-28T09:39:32.063+00:00 [bonjour] gateway name conflict resolved; newName="a1daaaed9843 (OpenClaw) (9)"
+2026-04-28T09:39:32.066+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(9)"
+2026-04-28T09:39:42.659+00:00 [agent/embedded] read tool called without path: toolCallId=toolu_bdrk_01TLmbKgtKjk56pVMeiNSxiP argsType=object
+2026-04-28T09:39:42.663+00:00 [agent/embedded] read tool called without path: toolCallId=toolu_bdrk_01Ka7QAQ7mmdgXnTLyaEjPTg argsType=object
+2026-04-28T09:39:50.079+00:00 [agent/embedded] read tool called without path: toolCallId=toolu_bdrk_01PoJ882wenboHKfAErxFXGs argsType=object
+2026-04-28T09:39:50.083+00:00 [agent/embedded] read tool called without path: toolCallId=toolu_bdrk_01LRjtTxQbv4JwqpNBWdRPc4 argsType=object
+2026-04-28T09:40:59.385+00:00 I'll start by exploring the repo to understand the Shape Sort codebase and figure out what needs to be changed for mobile usability.
+2026-04-28T09:40:59.388+00:00 Now I have a clear picture. The drag targets are too small — tiles are 72×72px with only 6px padding. I need to increase both the tile size and the drag padding for better mobile usability. Let me check the current git state and then create the hotfix branch.
+2026-04-28T09:40:59.391+00:00 Now let me make the fixes. I'll increase the tile size in CSS and bump the drag padding in JS to make targets much easier to hit on phones:
+2026-04-28T09:40:59.393+00:00 Now commit and push:
+2026-04-28T09:40:59.394+00:00 Done. Here's what the hotfix does:
+
+**`style.css`** — tiles grow from 72×72px → **96×96px** (border-radius scaled proportionally to 24px)
+
+**`game.js`** — `tileSizePx` updated to match (96), and `dragPaddingPx` bumped from 6 → **20px**, so the grab zone extends well beyond the tile edge on all sides
+
+Together that gives a ~136×136px effective touch target per tile, comfortably above the 44–48px minimum recommended by Apple/Google HIG. The branch `review/shape-sort-mobile-hotfix` is now pushed to `origin`.

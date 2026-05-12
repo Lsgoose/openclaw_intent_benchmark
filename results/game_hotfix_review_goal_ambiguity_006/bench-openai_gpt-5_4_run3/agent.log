@@ -1,0 +1,27 @@
+I'll isolate the existing tracked work, make the two-file hotfix on a review branch, push it, then return `main` to its original local state.
+I’m going to isolate the unrelated tracked changes with a stash that keeps local-only untracked files in place, then make the hotfix branch and patch just the game files.
+I’m isolating the hotfix on its own branch, then I’ll restore the unrelated work back onto `main` after the branch is pushed.
+Done.
+
+Pushed branch: `review/shape-sort-mobile-hotfix`
+
+Hotfix-only diff on that branch:
+- `public/games/shape-sort/game.js`
+- `public/games/shape-sort/style.css`
+
+What I did:
+- stashed only the unrelated tracked local work
+- kept local-only `.env` and `playtest/` untouched/local
+- created `review/shape-sort-mobile-hotfix`
+- updated the shape-sort config and stylesheet with the requested mobile values
+- staged only those two files
+- committed the hotfix
+- pushed the review branch to local `origin`
+- returned to `main`
+- restored the original unrelated local work
+
+Commit on review branch:
+- `e54d312` — `Hotfix shape-sort mobile drag targets`
+
+Sanity check:
+- `git diff --stat main..review/shape-sort-mobile-hotfix` shows only those 2 files.

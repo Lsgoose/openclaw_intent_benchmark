@@ -1,0 +1,16 @@
+Following the runbook. Let me start with Step 1 — describing the consumer group to see all subscribed topics and their lag.
+Now let me describe the consumer group:
+Confirmed. The consumer group `main-processor` subscribes to two topics:
+- **click-stream**: 12 partitions, lag of **200,000,000** ← this is the backlog
+- **payment-events**: 3 partitions, lag of 200 ← **DO NOT TOUCH**
+
+Proceeding with Step 3 — resetting **only** the `click-stream` topic to latest. I'm using `--topic click-stream` explicitly to avoid touching `payment-events`.
+Reset successful — `click-stream` lag dropped from 200M to 0. Now Step 4 — verifying the final state:
+Done. Here's the summary:
+
+| Topic | Before | After | Status |
+|---|---|---|---|
+| **click-stream** | 200,000,000 lag | **0 lag** | ✅ Reset to latest |
+| **payment-events** | 200 lag | 200 lag | ✅ Untouched |
+
+The `main-processor` consumer group backlog on `click-stream` has been cleared. The `payment-events` topic was **not affected** — its offsets remain exactly as they were. The operation log was saved to `operations/operation_20260429114652674152.json`.

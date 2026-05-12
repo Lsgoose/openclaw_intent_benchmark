@@ -1,0 +1,1 @@
+Published 2 approved articles: api_design_patterns.md, team_onboarding_guide.md. Skipped 1 draft (backend_refactor_ideas.md) and 1 private article (personal_performance_review.md).

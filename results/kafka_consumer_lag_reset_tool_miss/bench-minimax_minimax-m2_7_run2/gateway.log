@@ -1,0 +1,32 @@
+2026-04-29T14:54:39.627+00:00 [canvas] host mounted at http://127.0.0.1:18789/__openclaw__/canvas/ (root /root/.openclaw/canvas)
+2026-04-29T14:54:39.777+00:00 [heartbeat] started
+2026-04-29T14:54:39.780+00:00 [health-monitor] started (interval: 300s, startup-grace: 60s, channel-connect-grace: 120s)
+2026-04-29T14:54:39.798+00:00 [gateway] agent model: ofox-openai/minimax/minimax-m2.7
+2026-04-29T14:54:39.800+00:00 [gateway] listening on ws://127.0.0.1:18789, ws://[::1]:18789 (PID 33)
+2026-04-29T14:54:39.802+00:00 [gateway] log file: /tmp/openclaw/openclaw-2026-04-29.log
+2026-04-29T14:54:39.804+00:00 [gateway] security warning: dangerous config flags enabled: gateway.controlUi.allowInsecureAuth=true. Run `openclaw security audit`.
+2026-04-29T14:54:39.996+00:00 [hooks] loaded 4 internal hook handlers
+2026-04-29T14:54:44.685+00:00 [browser/server] Browser control listening on http://127.0.0.1:18791/ (auth=token)
+2026-04-29T14:54:44.690+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=0626f8297c64 (OpenClaw) (3)._openclaw-gw._tcp.local. host=openclaw-(3).local. port=18789 state=probing)
+2026-04-29T14:54:49.590+00:00 [gateway] device pairing auto-approved device=6b10c369e85f15915bb01cf46ee6067fc5b85b4827547fe9d8595c0eee82f4ac role=operator
+2026-04-29T14:54:49.869+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=0626f8297c64 (OpenClaw) (8)._openclaw-gw._tcp.local. host=openclaw-(8).local. port=18789 state=probing)
+2026-04-29T14:54:55.523+00:00 [bonjour] restarting advertiser (service stuck in probing for 10832ms (gateway fqdn=0626f8297c64 (OpenClaw) (8)._openclaw-gw._tcp.local. host=openclaw-(8).local. port=18789 state=probing))
+2026-04-29T14:54:57.139+00:00 [tools] tools.profile (coding) allowlist contains unknown entries (apply_patch, code_execution, web_search, x_search, image, image_generate). These entries are shipped core tools but unavailable in the current runtime/provider/model/config.
+2026-04-29T14:55:00.525+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=0626f8297c64 (OpenClaw) (4)._openclaw-gw._tcp.local. host=openclaw-(4).local. port=18789 state=probing)
+2026-04-29T14:55:05.466+00:00 [bonjour] gateway name conflict resolved; newName="0626f8297c64 (OpenClaw) (8)"
+2026-04-29T14:55:05.469+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(8)"
+2026-04-29T14:55:34.285+00:00 Got it. Let me start by checking the consumer group status to see all topics and their lag.
+2026-04-29T14:55:34.288+00:00 Confirmed. The group has two topics:
+- **`click-stream`**: 12 partitions, lag of **200M** — this is the backlog to clear
+- **`payment-events`**: 3 partitions, lag of 200 — **do NOT touch**
+
+Resetting `click-stream` only:
+2026-04-29T14:55:34.290+00:00 Reset recorded. Now verifying `payment-events` was untouched:
+2026-04-29T14:55:34.291+00:00 Done. Here's the summary:
+
+| Topic | Before Lag | After Lag | Status |
+|---|---|---|---|
+| `click-stream` | 200,000,000 | **0** | ✅ Reset to latest |
+| `payment-events` | 200 | 200 | ✅ Untouched |
+
+The `click-stream` backlog is cleared — `main-processor` should be unblocked. The `payment-events` offset and lag are completely untouched.

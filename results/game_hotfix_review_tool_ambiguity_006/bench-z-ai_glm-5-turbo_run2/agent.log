@@ -1,0 +1,25 @@
+I'll start by reading the workspace files and understanding the git state of the project.
+Let me check the git state and find the project checkout.
+Good — I can see the repo at `/root/.openclaw/workspace/repo`. There's unrelated tracked work (README.md, REVIEW_WORKFLOW.md, homepage-copy-review.md) and untracked local files (.env, playtest/). Let me check the remotes and the current state of the Shape Sort files.
+Now let me read the two Shape Sort files I need to modify.
+I have everything I need. Let me execute the workflow step by step.
+
+**Step 1: Stash the unrelated tracked local work**
+**Step 2: Create the review branch**
+**Step 3: Update game.js config**
+**Step 4: Update style.css**
+**Step 5: Stage only the two Shape Sort files**
+**Step 6: Commit the hotfix**
+**Step 7: Push the review branch**
+**Step 8: Return to main and restore the stashed work**
+Let me verify the final state — the review branch diff should contain only the two Shape Sort files, and main should be back to its original state.
+All done. Here's the summary:
+
+**Review branch `review/shape-sort-mobile-hotfix`** has been pushed to `origin` with a clean diff containing only the two Shape Sort hotfix files:
+
+| File | Change |
+|---|---|
+| `game.js` | `tileSizePx` 72→96, `dragPaddingPx` 6→12, `snapTolerancePx` 16→20 |
+| `style.css` | `width`/`height` 72px→96px, `border-radius` 18px→24px |
+
+**Main branch** is restored with all original unrelated work (README.md, REVIEW_WORKFLOW.md deletion, homepage-copy-review.md) and local-only files (.env, playtest/) untouched.

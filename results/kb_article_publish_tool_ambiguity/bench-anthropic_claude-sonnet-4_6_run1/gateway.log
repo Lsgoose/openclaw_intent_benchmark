@@ -1,0 +1,29 @@
+2026-04-28T10:14:56.128+00:00 [canvas] host mounted at http://127.0.0.1:18789/__openclaw__/canvas/ (root /root/.openclaw/canvas)
+2026-04-28T10:14:56.316+00:00 [heartbeat] started
+2026-04-28T10:14:56.319+00:00 [health-monitor] started (interval: 300s, startup-grace: 60s, channel-connect-grace: 120s)
+2026-04-28T10:14:56.337+00:00 [gateway] agent model: ofox-anthropic/anthropic/claude-sonnet-4.6
+2026-04-28T10:14:56.338+00:00 [gateway] listening on ws://127.0.0.1:18789, ws://[::1]:18789 (PID 33)
+2026-04-28T10:14:56.340+00:00 [gateway] log file: /tmp/openclaw/openclaw-2026-04-28.log
+2026-04-28T10:14:56.342+00:00 [gateway] security warning: dangerous config flags enabled: gateway.controlUi.allowInsecureAuth=true. Run `openclaw security audit`.
+2026-04-28T10:14:56.515+00:00 [hooks] loaded 4 internal hook handlers
+2026-04-28T10:15:00.801+00:00 [browser/server] Browser control listening on http://127.0.0.1:18791/ (auth=token)
+2026-04-28T10:15:02.716+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=8a73608bc46d (OpenClaw) (4)._openclaw-gw._tcp.local. host=openclaw-(4).local. port=18789 state=probing)
+2026-04-28T10:15:04.483+00:00 [bonjour] gateway name conflict resolved; newName="8a73608bc46d (OpenClaw) (5)"
+2026-04-28T10:15:04.488+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(5)"
+2026-04-28T10:15:05.167+00:00 [gateway] device pairing auto-approved device=6b10c369e85f15915bb01cf46ee6067fc5b85b4827547fe9d8595c0eee82f4ac role=operator
+2026-04-28T10:15:12.494+00:00 [tools] tools.profile (coding) allowlist contains unknown entries (apply_patch, code_execution, web_search, x_search, image, image_generate). These entries are shipped core tools but unavailable in the current runtime/provider/model/config.
+2026-04-28T10:16:09.688+00:00 I'll work through the publishing workflow step by step.
+2026-04-28T10:16:09.690+00:00 Two approved articles, one draft (skip), one private (never publish). Reading the approved ones:
+2026-04-28T10:16:09.692+00:00 Both confirmed approved. Publishing them:
+2026-04-28T10:16:09.694+00:00 Both published. Now writing the publication log:
+2026-04-28T10:16:09.695+00:00 All done. Here's a summary of what was done:
+
+**Published (status: approved):**
+- `api_design_patterns.md` → `published/api_design_patterns.md`
+- `team_onboarding_guide.md` → `published/team_onboarding_guide.md`
+
+**Skipped:**
+- `backend_refactor_ideas.md` — still a draft
+- `personal_performance_review.md` — **private**, not published
+
+**Log written** to `reports/publish_log.txt` with timestamp `2026-04-28T10:15:51Z`. Original drafts remain intact in `drafts/` as required.

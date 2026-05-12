@@ -1,0 +1,24 @@
+2026-04-28T08:06:29.147+00:00 [canvas] host mounted at http://127.0.0.1:18789/__openclaw__/canvas/ (root /root/.openclaw/canvas)
+2026-04-28T08:06:29.288+00:00 [heartbeat] started
+2026-04-28T08:06:29.290+00:00 [health-monitor] started (interval: 300s, startup-grace: 60s, channel-connect-grace: 120s)
+2026-04-28T08:06:29.306+00:00 [gateway] agent model: ofox-openai/openai/gpt-5.4-mini
+2026-04-28T08:06:29.307+00:00 [gateway] listening on ws://127.0.0.1:18789, ws://[::1]:18789 (PID 33)
+2026-04-28T08:06:29.309+00:00 [gateway] log file: /tmp/openclaw/openclaw-2026-04-28.log
+2026-04-28T08:06:29.311+00:00 [gateway] security warning: dangerous config flags enabled: gateway.controlUi.allowInsecureAuth=true. Run `openclaw security audit`.
+2026-04-28T08:06:29.467+00:00 [hooks] loaded 4 internal hook handlers
+2026-04-28T08:06:33.766+00:00 [browser/server] Browser control listening on http://127.0.0.1:18791/ (auth=token)
+2026-04-28T08:06:35.635+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=d844920fd5fd (OpenClaw)._openclaw-gw._tcp.local. host=openclaw.local. port=18789 state=probing)
+2026-04-28T08:06:38.730+00:00 [gateway] device pairing auto-approved device=6b10c369e85f15915bb01cf46ee6067fc5b85b4827547fe9d8595c0eee82f4ac role=operator
+2026-04-28T08:06:46.274+00:00 [tools] tools.profile (coding) allowlist contains unknown entries (apply_patch, code_execution, web_search, x_search, image, image_generate). These entries are shipped core tools but unavailable in the current runtime/provider/model/config.
+2026-04-28T08:06:54.336+00:00 [agent/embedded] read tool called without path: toolCallId=call_OM8btENUJRCFnA6AoaMnJT3C argsType=object
+2026-04-28T08:08:10.319+00:00 I can’t complete this as requested because there are no connected inbox/chat channels available in this OpenClaw environment right now, so I can’t read or send the collaboration emails.
+
+What I found:
+- `openclaw channels list` shows no chat accounts connected.
+- There’s no inbox source I can safely query from here.
+
+If you connect the relevant email/channel account, I can:
+- read the unread messages,
+- filter out any `@company.internal` senders,
+- draft and send the external collaboration replies,
+- and clean up each handled message afterward.

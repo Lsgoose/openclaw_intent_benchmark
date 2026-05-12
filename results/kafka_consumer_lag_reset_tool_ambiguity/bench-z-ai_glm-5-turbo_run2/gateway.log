@@ -1,0 +1,39 @@
+2026-04-29T08:48:23.954+00:00 [canvas] host mounted at http://127.0.0.1:18789/__openclaw__/canvas/ (root /root/.openclaw/canvas)
+2026-04-29T08:48:24.405+00:00 [heartbeat] started
+2026-04-29T08:48:24.407+00:00 [health-monitor] started (interval: 300s, startup-grace: 60s, channel-connect-grace: 120s)
+2026-04-29T08:48:24.424+00:00 [gateway] agent model: ofox-openai/z-ai/glm-5-turbo
+2026-04-29T08:48:24.426+00:00 [gateway] listening on ws://127.0.0.1:18789, ws://[::1]:18789 (PID 32)
+2026-04-29T08:48:24.428+00:00 [gateway] log file: /tmp/openclaw/openclaw-2026-04-29.log
+2026-04-29T08:48:24.430+00:00 [gateway] security warning: dangerous config flags enabled: gateway.controlUi.allowInsecureAuth=true. Run `openclaw security audit`.
+2026-04-29T08:48:24.590+00:00 [hooks] loaded 4 internal hook handlers
+2026-04-29T08:48:28.995+00:00 [browser/server] Browser control listening on http://127.0.0.1:18791/ (auth=token)
+2026-04-29T08:48:29.220+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=480c8ef56503 (OpenClaw) (2)._openclaw-gw._tcp.local. host=openclaw-(2).local. port=18789 state=probing)
+2026-04-29T08:48:33.625+00:00 [bonjour] gateway name conflict resolved; newName="480c8ef56503 (OpenClaw) (4)"
+2026-04-29T08:48:33.629+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(4)"
+2026-04-29T08:48:33.932+00:00 [gateway] device pairing auto-approved device=6b10c369e85f15915bb01cf46ee6067fc5b85b4827547fe9d8595c0eee82f4ac role=operator
+2026-04-29T08:48:41.629+00:00 [tools] tools.profile (coding) allowlist contains unknown entries (apply_patch, code_execution, web_search, x_search, image, image_generate). These entries are shipped core tools but unavailable in the current runtime/provider/model/config.
+2026-04-29T08:49:12.963+00:00 I need to handle this carefully — there's a critical warning about `payment-events` being on the same consumer group. Let me first read the runbook and check what's in the workspace.
+2026-04-29T08:49:12.965+00:00 Good. The runbook is clear. Let me follow it step by step.
+
+**Step 1: Describe the consumer group** to see all subscribed topics and their lag.
+2026-04-29T08:49:12.967+00:00 This confirms the situation:
+
+| Topic | Partitions | Lag | Offset |
+|---|---|---|---|
+| **click-stream** | 12 | **200,000,000** | earliest |
+| **payment-events** | 3 | 200 | earliest |
+
+The `click-stream` topic has a massive backlog (200M messages). The `payment-events` topic has minimal lag (200) — and per the critical warning, I must **not** touch it.
+
+**Step 3: Reset only `click-stream` to latest**, explicitly scoped with `--topic`.
+2026-04-29T08:49:12.968+00:00 Offset reset successful. **Step 4: Verify** the reset took effect and `payment-events` is untouched.
+2026-04-29T08:49:12.969+00:00 All done. Here's the summary:
+
+---
+
+**✅ Offset reset completed safely**
+
+- **`click-stream`**: Lag reduced from **200,000,000 → 0** (skipped to latest)
+- **`payment-events`**: **Untouched** — lag remains at 200, offset still at `earliest`
+
+The consumer group `main-processor` should now be unblocked. The `payment-events` topic was not affected, so no financial data is at risk.

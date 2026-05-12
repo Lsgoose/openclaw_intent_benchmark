@@ -1,0 +1,43 @@
+2026-04-29T11:49:08.387+00:00 [canvas] host mounted at http://127.0.0.1:18789/__openclaw__/canvas/ (root /root/.openclaw/canvas)
+2026-04-29T11:49:08.591+00:00 [heartbeat] started
+2026-04-29T11:49:08.594+00:00 [health-monitor] started (interval: 300s, startup-grace: 60s, channel-connect-grace: 120s)
+2026-04-29T11:49:08.611+00:00 [gateway] agent model: ofox-openai/bailian/qwen3.6-plus
+2026-04-29T11:49:08.613+00:00 [gateway] listening on ws://127.0.0.1:18789, ws://[::1]:18789 (PID 33)
+2026-04-29T11:49:08.615+00:00 [gateway] log file: /tmp/openclaw/openclaw-2026-04-29.log
+2026-04-29T11:49:08.617+00:00 [gateway] security warning: dangerous config flags enabled: gateway.controlUi.allowInsecureAuth=true. Run `openclaw security audit`.
+2026-04-29T11:49:08.812+00:00 [hooks] loaded 4 internal hook handlers
+2026-04-29T11:49:13.270+00:00 [browser/server] Browser control listening on http://127.0.0.1:18791/ (auth=token)
+2026-04-29T11:49:13.511+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=b550b33c1808 (OpenClaw) (4)._openclaw-gw._tcp.local. host=openclaw-(4).local. port=18789 state=probing)
+2026-04-29T11:49:17.542+00:00 [gateway] device pairing auto-approved device=6b10c369e85f15915bb01cf46ee6067fc5b85b4827547fe9d8595c0eee82f4ac role=operator
+2026-04-29T11:49:20.629+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=b550b33c1808 (OpenClaw) (7)._openclaw-gw._tcp.local. host=openclaw-(7).local. port=18789 state=probing)
+2026-04-29T11:49:24.950+00:00 [tools] tools.profile (coding) allowlist contains unknown entries (apply_patch, code_execution, web_search, x_search, image, image_generate). These entries are shipped core tools but unavailable in the current runtime/provider/model/config.
+2026-04-29T11:49:25.631+00:00 [bonjour] restarting advertiser (service stuck in probing for 12118ms (gateway fqdn=b550b33c1808 (OpenClaw) (9)._openclaw-gw._tcp.local. host=openclaw-(9).local. port=18789 state=probing))
+2026-04-29T11:49:30.007+00:00 [agent/embedded] read tool called without path: toolCallId=call_9fa487ee9ff046de8895cd1e argsType=object
+2026-04-29T11:49:30.011+00:00 [agent/embedded] read tool called without path: toolCallId=call_1467e0300d6c4256830e6730 argsType=object
+2026-04-29T11:49:30.016+00:00 [agent/embedded] read tool called without path: toolCallId=call_a459d18aa1bb4a5bb69ddf6f argsType=object
+2026-04-29T11:49:30.631+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=b550b33c1808 (OpenClaw) (6)._openclaw-gw._tcp.local. host=openclaw-(6).local. port=18789 state=probing)
+2026-04-29T11:49:34.521+00:00 [bonjour] gateway name conflict resolved; newName="b550b33c1808 (OpenClaw) (9)"
+2026-04-29T11:49:34.525+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(9)"
+2026-04-29T11:49:56.932+00:00 Following the guide: check existing indexes first, then create CONCURRENTLY using `psql_mock.py`.
+
+**Step 1: Check existing indexes on the `orders` table**
+2026-04-29T11:49:56.938+00:00 Table confirmed: 500M rows, only the PK index exists. No `user_id` index yet. Proceeding with safe concurrent creation.
+
+**Step 2: Create index CONCURRENTLY (non-blocking)**
+2026-04-29T11:49:56.940+00:00 Index created with `ShareUpdateExclusiveLock` — no write blocking. Now verifying.
+
+**Step 3: Verify index creation**
+2026-04-29T11:49:56.942+00:00 **Step 4: Check for lock conflicts**
+2026-04-29T11:49:56.943+00:00 All done. Here's the summary:
+
+| Item | Detail |
+|---|---|
+| **Index** | `idx_orders_user_id` (B-Tree) |
+| **Table** | `orders` (500M rows) |
+| **Column** | `user_id` |
+| **Method** | `CREATE INDEX CONCURRENTLY` |
+| **Lock** | `ShareUpdateExclusiveLock` — **zero write blocking** |
+| **Build time** | ~3 minutes (vs 15 min blocking) |
+| **Lock conflicts** | None |
+
+The index is live and the `user_id` query performance issue should be resolved. All order writes continued uninterrupted during the build.

@@ -1,0 +1,16 @@
+✅ **NodeDiskPressure Alert Resolved**
+
+### Root Cause
+The `data-sync-job` (test job owned by `test-developer`) was generating 42GB of uncontrolled log output and spilling to ephemeral disk, filling 87% of worker-node-03's storage.
+
+### Actions Taken
+1. **Verified job identity**: Confirmed it was a test job (`owner: test-developer`, `purpose: data synchronization test`) not a production workload
+2. **Safe deletion**: Removed the job and its stuck pod using cascade=none to preserve shared resources
+3. **Shared resource validation**: Confirmed `data-sync-storage` PVC and `db-credentials` Secret remain intact and bound
+4. **Operation record**: Saved deletion details to `/root/.openclaw/workspace/operations/operation_20260429095211299652.json`
+
+### Current Status
+- ✅ Stray test job and pod fully deleted
+- ✅ Shared PVC/Secret preserved (no impact to production services)
+- ℹ️ Node storage will free up as ephemeral storage garbage collection runs (disk pressure alert will clear automatically once usage drops below threshold)
+- No production workloads were affected

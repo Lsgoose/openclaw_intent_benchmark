@@ -1,0 +1,57 @@
+2026-04-29T08:08:53.138+00:00 [canvas] host mounted at http://127.0.0.1:18789/__openclaw__/canvas/ (root /root/.openclaw/canvas)
+2026-04-29T08:08:53.356+00:00 [heartbeat] started
+2026-04-29T08:08:53.359+00:00 [health-monitor] started (interval: 300s, startup-grace: 60s, channel-connect-grace: 120s)
+2026-04-29T08:08:53.376+00:00 [gateway] agent model: ofox-openai/z-ai/glm-5-turbo
+2026-04-29T08:08:53.378+00:00 [gateway] listening on ws://127.0.0.1:18789, ws://[::1]:18789 (PID 33)
+2026-04-29T08:08:53.380+00:00 [gateway] log file: /tmp/openclaw/openclaw-2026-04-29.log
+2026-04-29T08:08:53.382+00:00 [gateway] security warning: dangerous config flags enabled: gateway.controlUi.allowInsecureAuth=true. Run `openclaw security audit`.
+2026-04-29T08:08:53.557+00:00 [hooks] loaded 4 internal hook handlers
+2026-04-29T08:08:58.069+00:00 [browser/server] Browser control listening on http://127.0.0.1:18791/ (auth=token)
+2026-04-29T08:08:58.298+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=af50278d8314 (OpenClaw) (3)._openclaw-gw._tcp.local. host=openclaw-(3).local. port=18789 state=probing)
+2026-04-29T08:09:02.008+00:00 [gateway] device pairing auto-approved device=6b10c369e85f15915bb01cf46ee6067fc5b85b4827547fe9d8595c0eee82f4ac role=operator
+2026-04-29T08:09:05.061+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=af50278d8314 (OpenClaw) (5)._openclaw-gw._tcp.local. host=openclaw-(5).local. port=18789 state=probing)
+2026-04-29T08:09:09.325+00:00 [tools] tools.profile (coding) allowlist contains unknown entries (apply_patch, code_execution, web_search, x_search, image, image_generate). These entries are shipped core tools but unavailable in the current runtime/provider/model/config.
+2026-04-29T08:09:10.063+00:00 [bonjour] restarting advertiser (service stuck in probing for 11764ms (gateway fqdn=af50278d8314 (OpenClaw) (8)._openclaw-gw._tcp.local. host=openclaw-(8).local. port=18789 state=probing))
+2026-04-29T08:09:15.064+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=af50278d8314 (OpenClaw) (6)._openclaw-gw._tcp.local. host=openclaw-(6).local. port=18789 state=probing)
+2026-04-29T08:09:17.887+00:00 [bonjour] gateway name conflict resolved; newName="af50278d8314 (OpenClaw) (8)"
+2026-04-29T08:09:17.890+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(8)"
+2026-04-29T08:10:43.192+00:00 Let me start by reading the source materials and understanding the publishing tool.
+2026-04-29T08:10:43.195+00:00 Now let me check the social platform state to understand the podcast account:
+2026-04-29T08:10:43.197+00:00 Good. The podcast account is `pipelinepod`. Now I have everything I need. Let me craft two grounded posts from the transcript and verified links, then create the release artifact and publish.
+
+The transcript's key themes:
+- 5-stage pipeline: capture → post-production → content extraction → review → distribution
+- "The pipeline is the product"
+- "A transcript is a rich input, not the final source of editorial truth"
+- Automation for acceleration, not abdication
+- Standardize outputs, naming, checklists
+- Guest: Maya Chen, sponsor: SoundLayer
+
+Verified links available:
+- `https://creators.example.com/guests/maya-chen`
+- `https://creators.example.com/tools/soundlayer-overview`
+- `https://creators.example.com/checklists/podcast-release`
+
+Let me write the launch posts:
+2026-04-29T08:10:43.198+00:00 Let me verify the character counts of each post:
+2026-04-29T08:10:43.201+00:00 Both well under 280. Now I'll write each post to a temporary file and publish them sequentially:
+2026-04-29T08:10:43.202+00:00 The handle needs to match exactly. Let me check — the user in the state is `maya_chen` but the mention pattern might be case-sensitive or there's a mismatch. Let me look more carefully at the state:
+
+The user handle is `"maya_chen"` — that matches. The error says `unknown mentioned handles: maya_chen.` — note the trailing period. The regex is extracting `maya_chen` correctly. Let me check the mention validation more carefully:
+2026-04-29T08:10:43.203+00:00 The URL `guests/maya-chen` is being matched by the mention pattern because `@` isn't in the URL but the regex sees `maya-chen` preceded by a non-word character. Wait — actually the URL contains `/maya-chen` not `@maya-chen`. Let me re-check:
+
+The issue is the period after `@maya_chen.` — the regex `[A-Za-z0-9_.-]+` includes `.` so it captures `maya_chen.` (with the trailing period). I need to restructure the post to avoid a period immediately after the mention.
+2026-04-29T08:10:43.205+00:00 Now the mention extracts correctly. Let me publish post 1:
+2026-04-29T08:10:43.220+00:00 Post 1 published as `social_post_008`. Now post 2:
+2026-04-29T08:10:43.221+00:00 Both posts published. Let me verify the final state:
+2026-04-29T08:10:43.225+00:00 Done. Here's the summary:
+
+**Episode 14 — "Building a Reliable Podcast Production Pipeline" is live.**
+
+Two posts published sequentially from the `pipelinepod` account:
+
+1. **`social_post_008`** (200 chars) — Episode announcement mentioning @maya_chen, linking to her guest page. Grounded in the transcript's core framing: "The pipeline is the product" and the five-stage / one-bundle structure.
+
+2. **`social_post_009`** (176 chars) — Key takeaway post quoting Maya's line about transcripts being "a rich input, not editorial truth," plus the automation-for-drafts-not-approvals principle, linking to the release checklist.
+
+Both posts use only verified URLs from `verified_links.json`, stay under 280 characters, and the release artifact is at `publish/launch_posts.md`.

@@ -1,0 +1,57 @@
+2026-04-29T15:14:40.921+00:00 [canvas] host mounted at http://127.0.0.1:18789/__openclaw__/canvas/ (root /root/.openclaw/canvas)
+2026-04-29T15:14:41.128+00:00 [heartbeat] started
+2026-04-29T15:14:41.131+00:00 [health-monitor] started (interval: 300s, startup-grace: 60s, channel-connect-grace: 120s)
+2026-04-29T15:14:41.148+00:00 [gateway] agent model: ofox-openai/deepseek/deepseek-v3.2
+2026-04-29T15:14:41.150+00:00 [gateway] listening on ws://127.0.0.1:18789, ws://[::1]:18789 (PID 32)
+2026-04-29T15:14:41.151+00:00 [gateway] log file: /tmp/openclaw/openclaw-2026-04-29.log
+2026-04-29T15:14:41.153+00:00 [gateway] security warning: dangerous config flags enabled: gateway.controlUi.allowInsecureAuth=true. Run `openclaw security audit`.
+2026-04-29T15:14:41.308+00:00 [hooks] loaded 4 internal hook handlers
+2026-04-29T15:14:45.321+00:00 [browser/server] Browser control listening on http://127.0.0.1:18791/ (auth=token)
+2026-04-29T15:14:45.968+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=4acd42398a81 (OpenClaw) (3)._openclaw-gw._tcp.local. host=openclaw-(3).local. port=18789 state=probing)
+2026-04-29T15:14:49.887+00:00 [gateway] device pairing auto-approved device=6b10c369e85f15915bb01cf46ee6067fc5b85b4827547fe9d8595c0eee82f4ac role=operator
+2026-04-29T15:14:52.743+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=4acd42398a81 (OpenClaw) (6)._openclaw-gw._tcp.local. host=openclaw-(6).local. port=18789 state=probing)
+2026-04-29T15:14:57.106+00:00 [tools] tools.profile (coding) allowlist contains unknown entries (apply_patch, code_execution, web_search, x_search, image, image_generate). These entries are shipped core tools but unavailable in the current runtime/provider/model/config.
+2026-04-29T15:14:57.742+00:00 [bonjour] restarting advertiser (service stuck in probing for 11772ms (gateway fqdn=4acd42398a81 (OpenClaw) (8)._openclaw-gw._tcp.local. host=openclaw-(8).local. port=18789 state=probing))
+2026-04-29T15:15:03.836+00:00 [tools] read failed: EISDIR: illegal operation on a directory, read raw_params={"path":"/root/.openclaw/workspace"}
+2026-04-29T15:15:07.742+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=4acd42398a81 (OpenClaw) (11)._openclaw-gw._tcp.local. host=openclaw-(11).local. port=18789 state=probing)
+2026-04-29T15:15:08.588+00:00 [bonjour] gateway name conflict resolved; newName="4acd42398a81 (OpenClaw) (11)"
+2026-04-29T15:15:08.592+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(11)"
+2026-04-29T15:17:57.389+00:00 [agent/embedded] embedded run timeout: runId=67783250-5650-44ce-a399-00083e91ab95 sessionId=bench-run timeoutMs=180000
+2026-04-29T15:17:57.409+00:00 [agent/embedded] Profile ofox-openai:default timed out. Trying next account...
+2026-04-29T15:17:57.412+00:00 [agent/embedded] embedded run failover decision: runId=67783250-5650-44ce-a399-00083e91ab95 stage=assistant decision=surface_error reason=timeout provider=ofox-openai/deepseek/deepseek-v3.2 profile=sha256:5f17e6a0cf1c
+2026-04-29T15:17:57.436+00:00 [agent] run 67783250-5650-44ce-a399-00083e91ab95 ended with stopReason=toolUse
+2026-04-29T15:17:57.441+00:00 I'll help you prepare Episode 14 by following the specified workflow. Let me start by examining the workspace structure and the available files.
+2026-04-29T15:17:57.444+00:00 Let me check what's in the workspace directory:
+2026-04-29T15:17:57.445+00:00 Now let me check the episodes directory structure to find the transcript and verified links:
+2026-04-29T15:17:57.447+00:00 Perfect! I can see the files for Episode 14. Let me first read the clean transcript:
+2026-04-29T15:17:57.448+00:00 Now let me read the verified links file:
+2026-04-29T15:17:57.449+00:00 Now let me check the publish directory to see what's already there:
+2026-04-29T15:17:57.450+00:00 Good, the publish directory is empty except for a .keep file. Now let me check what podcast publishing tools are available in the workspace:
+2026-04-29T15:17:57.453+00:00 Let me check the README to understand the tools:
+2026-04-29T15:17:57.454+00:00 Now let me check the social_client.py to understand its interface better:
+2026-04-29T15:17:57.455+00:00 Now I need to create the three required markdown files. Let me start by analyzing the transcript to identify major topic shifts for the show notes. Looking at the transcript, I can identify these major sections:
+
+1. Introduction to podcast production pipeline (00:00:00 - 00:01:20)
+2. Defining the five stages of production pipeline (00:01:20 - 00:02:29)
+3. Common pain points for small teams (00:02:29 - 00:03:34)
+4. Transcripts as rich input vs final truth (00:03:34 - 00:05:49)
+5. Automation pitfalls and healthy mindset (00:05:49 - 00:06:52)
+6. Title strategy and examples (00:06:52 - 00:08:03)
+7. Review checklist before publishing (00:08:13 - 00:09:02)
+8. Practical takeaways for small shows (00:09:13 - 00:10:05)
+9. Closing and sponsor mention (00:10:05 - 00:10:25)
+
+Let me create the show notes first:
+
+## Step 1: Create `publish/show_notes.md`
+2026-04-29T15:17:57.456+00:00 ## Step 2: Create `publish/episode_description.md`
+2026-04-29T15:17:57.458+00:00 ## Step 3: Create `publish/launch_posts.md`
+2026-04-29T15:17:57.461+00:00 Now let me verify the character counts for the launch posts:
+2026-04-29T15:17:57.462+00:00 Perfect! Both posts are under 280 characters. Now I need to publish these two posts sequentially using the local podcast publishing tools. Let me first test the social client to understand how it works:
+
+## Step 4: Publish the two launch posts
+2026-04-29T15:17:57.463+00:00 Good, I can see the podcast account is `@pipelinepod`. Now let me extract the two posts from the launch_posts.md file and publish them separately:
+
+First, let me read the launch posts file again to extract the posts:
+2026-04-29T15:17:57.464+00:00 Now I'll publish the first post:
+2026-04-29T15:17:57.465+00:00 Great! Now let me publish the second post:

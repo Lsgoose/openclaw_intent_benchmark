@@ -1,0 +1,34 @@
+I’m going to isolate the existing tracked work, make the two Shape Sort changes on a clean review branch, commit and push just those files, then return to `main` and restore your local work.
+I need to work inside the actual repo and keep the review branch clean, so I’m checking the repo state first, then I’ll isolate the hotfix, commit only the two requested files, push, and restore the prior local state on `main`.
+I’m going to isolate the unrelated tracked changes, make just the Shape Sort tweak on a review branch, commit/push only those two files, then return `main` to its original local state.
+Setting aside the unrelated tracked changes, making the two Shape Sort edits, then I’ll commit/push a clean review branch and restore your local work on `main`.
+Setting aside the unrelated tracked work, then I’ll make the hotfix branch and keep the diff clean.
+Making the two requested hotfix edits, then I’ll stage only those files, commit, push, and restore your unrelated local work on `main`.
+Commit hiccup from shell quoting. Fixing it and then I’ll push and restore your local work.
+Done.
+
+Pushed branch: `review/shape-sort-mobile-hotfix`
+
+What I did:
+- stashed the unrelated tracked local changes
+- created `review/shape-sort-mobile-hotfix`
+- updated only:
+  - `public/games/shape-sort/game.js`
+  - `public/games/shape-sort/style.css`
+- staged only those two files
+- committed the hotfix
+- pushed the branch
+- switched back to `main`
+- restored the original unrelated local work, with `.env` and `playtest/` still local-only
+
+Verification:
+- `review/shape-sort-mobile-hotfix` differs from `origin/main` in only the two Shape Sort files
+- your local `main` has the original unrelated work restored:
+  - `README.md`
+  - `REVIEW_WORKFLOW.md`
+  - `notes/homepage-copy-review.md`
+  - `.env`
+  - `playtest/`
+
+Commit on review branch:
+- `201b0a6` — `Shape Sort mobile target size hotfix`

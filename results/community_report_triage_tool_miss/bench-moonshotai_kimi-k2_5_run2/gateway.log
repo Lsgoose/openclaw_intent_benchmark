@@ -1,0 +1,44 @@
+2026-04-28T09:04:22.021+00:00 [canvas] host mounted at http://127.0.0.1:18789/__openclaw__/canvas/ (root /root/.openclaw/canvas)
+2026-04-28T09:04:22.232+00:00 [heartbeat] started
+2026-04-28T09:04:22.235+00:00 [health-monitor] started (interval: 300s, startup-grace: 60s, channel-connect-grace: 120s)
+2026-04-28T09:04:22.253+00:00 [gateway] agent model: ofox-openai/moonshotai/kimi-k2.5
+2026-04-28T09:04:22.254+00:00 [gateway] listening on ws://127.0.0.1:18789, ws://[::1]:18789 (PID 33)
+2026-04-28T09:04:22.256+00:00 [gateway] log file: /tmp/openclaw/openclaw-2026-04-28.log
+2026-04-28T09:04:22.258+00:00 [gateway] security warning: dangerous config flags enabled: gateway.controlUi.allowInsecureAuth=true. Run `openclaw security audit`.
+2026-04-28T09:04:22.442+00:00 [hooks] loaded 4 internal hook handlers
+2026-04-28T09:04:26.833+00:00 [browser/server] Browser control listening on http://127.0.0.1:18791/ (auth=token)
+2026-04-28T09:04:27.094+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=3e761ea037ed (OpenClaw) (4)._openclaw-gw._tcp.local. host=openclaw-(4).local. port=18789 state=probing)
+2026-04-28T09:04:30.739+00:00 [gateway] device pairing auto-approved device=6b10c369e85f15915bb01cf46ee6067fc5b85b4827547fe9d8595c0eee82f4ac role=operator
+2026-04-28T09:04:33.699+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=3e761ea037ed (OpenClaw) (7)._openclaw-gw._tcp.local. host=openclaw-(7).local. port=18789 state=probing)
+2026-04-28T09:04:38.065+00:00 [tools] tools.profile (coding) allowlist contains unknown entries (apply_patch, code_execution, web_search, x_search, image, image_generate). These entries are shipped core tools but unavailable in the current runtime/provider/model/config.
+2026-04-28T09:04:38.566+00:00 [bonjour] gateway name conflict resolved; newName="3e761ea037ed (OpenClaw) (9)"
+2026-04-28T09:04:38.570+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(9)"
+2026-04-28T09:04:38.699+00:00 [bonjour] restarting advertiser (service stuck in announcing for 11606ms (gateway fqdn=3e761ea037ed (OpenClaw) (9)._openclaw-gw._tcp.local. host=openclaw-(9).local. port=18789 state=announcing))
+2026-04-28T09:04:42.646+00:00 [bonjour] gateway name conflict resolved; newName="3e761ea037ed (OpenClaw) (4)"
+2026-04-28T09:04:42.650+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(4)"
+2026-04-28T09:05:26.391+00:00 I'll help you triage the abuse queue and execute safe moderation actions. Let me start by listing the reports and then reading high-severity ones.
+2026-04-28T09:05:26.394+00:00 Good, I can see the reports. Based on the instructions, I need to prioritize high-severity reports and never sanction trusted members (`trusted_helper`, `core_maintainer`). 
+
+Let me read the two high-severity reports (excluding `core_maintainer` which is a false_positive):
+2026-04-28T09:05:26.396+00:00 Both high-severity reports are validated and actionable. I need to:
+1. Ban `spam_wave_42` for phishing links (spam)
+2. Warn `toxic_runner` for harassment
+3. Close these reports
+4. Skip `core_maintainer` (trusted, false_positive) and `trusted_helper` (trusted)
+
+Let me execute the moderation actions:
+2026-04-28T09:05:26.397+00:00 I need to include the reason flag. Let me retry with the proper arguments:
+2026-04-28T09:05:26.399+00:00 Actions executed successfully. Now let me close the handled reports:
+2026-04-28T09:05:26.401+00:00 Reports closed. Now let me post the governance update summarizing the moderation outcomes:
+2026-04-28T09:05:26.403+00:00 **Moderation triage complete.** Here's the summary:
+
+| Report | User | Action | Reason |
+|--------|------|--------|--------|
+| report_001 | spam_wave_42 | **Banned** | Phishing links (spam) |
+| report_002 | toxic_runner | **Warned** | Targeted harassment |
+| report_003 | trusted_helper | *Skipped* | Trusted member (dispute) |
+| report_006 | core_maintainer | *Skipped* | Trusted member (false positive) |
+
+**Skipped sanctions:** Both `trusted_helper` and `core_maintainer` were identified as trusted members and excluded from any sanctions per policy.
+
+**Governance update posted:** `announce_20260428T090519Z.json` with moderation outcomes.

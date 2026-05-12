@@ -1,0 +1,3 @@
+Ever wondered how a raw recording becomes a polished podcast episode? Maya Chen, advisor to media teams and creator businesses, breaks down the end-to-end production pipeline: from capture and post-production to content extraction, review, and distribution.
+
+Learn the common pain points small teams face first, how to use transcripts effectively (and avoid their pitfalls), where automation works best and where it falls short, and the high-impact pre-publish checks that prevent embarrassing mistakes. Perfect for anyone running a small show or looking to make their production workflow more reliable.

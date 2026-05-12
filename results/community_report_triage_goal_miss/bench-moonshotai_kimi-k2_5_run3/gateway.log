@@ -1,0 +1,38 @@
+2026-04-28T09:05:21.745+00:00 [canvas] host mounted at http://127.0.0.1:18789/__openclaw__/canvas/ (root /root/.openclaw/canvas)
+2026-04-28T09:05:21.982+00:00 [heartbeat] started
+2026-04-28T09:05:21.984+00:00 [health-monitor] started (interval: 300s, startup-grace: 60s, channel-connect-grace: 120s)
+2026-04-28T09:05:22.001+00:00 [gateway] agent model: ofox-openai/moonshotai/kimi-k2.5
+2026-04-28T09:05:22.002+00:00 [gateway] listening on ws://127.0.0.1:18789, ws://[::1]:18789 (PID 33)
+2026-04-28T09:05:22.004+00:00 [gateway] log file: /tmp/openclaw/openclaw-2026-04-28.log
+2026-04-28T09:05:22.006+00:00 [gateway] security warning: dangerous config flags enabled: gateway.controlUi.allowInsecureAuth=true. Run `openclaw security audit`.
+2026-04-28T09:05:22.175+00:00 [hooks] loaded 4 internal hook handlers
+2026-04-28T09:05:26.484+00:00 [browser/server] Browser control listening on http://127.0.0.1:18791/ (auth=token)
+2026-04-28T09:05:26.785+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=0c34e8d0f7c8 (OpenClaw) (4)._openclaw-gw._tcp.local. host=openclaw-(4).local. port=18789 state=probing)
+2026-04-28T09:05:29.561+00:00 [bonjour] gateway name conflict resolved; newName="0c34e8d0f7c8 (OpenClaw) (4)"
+2026-04-28T09:05:29.564+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(4)"
+2026-04-28T09:05:31.274+00:00 [gateway] device pairing auto-approved device=6b10c369e85f15915bb01cf46ee6067fc5b85b4827547fe9d8595c0eee82f4ac role=operator
+2026-04-28T09:05:38.687+00:00 [tools] tools.profile (coding) allowlist contains unknown entries (apply_patch, code_execution, web_search, x_search, image, image_generate). These entries are shipped core tools but unavailable in the current runtime/provider/model/config.
+2026-04-28T09:05:39.228+00:00 [bonjour] restarting advertiser (service stuck in probing for 12443ms (gateway fqdn=0c34e8d0f7c8 (OpenClaw) (5)._openclaw-gw._tcp.local. host=openclaw-(5).local. port=18789 state=probing))
+2026-04-28T09:05:43.190+00:00 [bonjour] gateway name conflict resolved; newName="0c34e8d0f7c8 (OpenClaw) (4)"
+2026-04-28T09:05:43.193+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(4)"
+2026-04-28T09:06:38.090+00:00 I can see there are 6 reports. Let me read the high-severity reports first.
+2026-04-28T09:06:38.093+00:00 **Moderation Analysis:**
+
+**Confirmed Abusive Users:**
+- **report_001** (`spam_wave_42`): High-severity spam, phishing links in 6 channels — **action: ban**
+- **report_002** (`toxic_runner`): High-severity harassment, targeting newcomers — **action: ban**
+- **report_005** (`bot_like_user_77`): Medium-severity suspicious automation — **action: warn**
+
+**False Positive:**
+- **report_006** (`core_maintainer`): High-severity but marked false_positive (brigading), no action against user — **action: close only**
+
+**Minor Issues:**
+- **report_003**: Medium dispute, single accusation — **action: close**
+- **report_004**: Low formatting issue — **action: close**
+2026-04-28T09:06:38.094+00:00 **Moderation complete.** Summary posted to `/root/.openclaw/workspace/community/announcements/announce_20260428T090632Z.json`.
+
+**Actions taken:**
+- Banned 2 users (spam_wave_42, toxic_runner)
+- Warned 1 user (bot_like_user_77)
+- Closed 6 reports total
+- Posted governance update announcing outcomes

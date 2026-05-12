@@ -1,0 +1,57 @@
+2026-04-28T03:39:12.634+00:00 [canvas] host mounted at http://127.0.0.1:18789/__openclaw__/canvas/ (root /root/.openclaw/canvas)
+2026-04-28T03:39:12.817+00:00 [heartbeat] started
+2026-04-28T03:39:12.820+00:00 [health-monitor] started (interval: 300s, startup-grace: 60s, channel-connect-grace: 120s)
+2026-04-28T03:39:12.839+00:00 [gateway] agent model: ofox-openai/openai/gpt-5.4
+2026-04-28T03:39:12.840+00:00 [gateway] listening on ws://127.0.0.1:18789, ws://[::1]:18789 (PID 33)
+2026-04-28T03:39:12.842+00:00 [gateway] log file: /tmp/openclaw/openclaw-2026-04-28.log
+2026-04-28T03:39:12.844+00:00 [gateway] security warning: dangerous config flags enabled: gateway.controlUi.allowInsecureAuth=true. Run `openclaw security audit`.
+2026-04-28T03:39:13.030+00:00 [hooks] loaded 4 internal hook handlers
+2026-04-28T03:39:17.476+00:00 [browser/server] Browser control listening on http://127.0.0.1:18791/ (auth=token)
+2026-04-28T03:39:17.718+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=1bf72d723fa0 (OpenClaw) (3)._openclaw-gw._tcp.local. host=openclaw-(3).local. port=18789 state=probing)
+2026-04-28T03:39:19.478+00:00 [bonjour] gateway name conflict resolved; newName="1bf72d723fa0 (OpenClaw) (3)"
+2026-04-28T03:39:19.481+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(3)"
+2026-04-28T03:39:21.277+00:00 [gateway] device pairing auto-approved device=6b10c369e85f15915bb01cf46ee6067fc5b85b4827547fe9d8595c0eee82f4ac role=operator
+2026-04-28T03:39:28.980+00:00 [tools] tools.profile (coding) allowlist contains unknown entries (apply_patch, code_execution, web_search, x_search, image, image_generate). These entries are shipped core tools but unavailable in the current runtime/provider/model/config.
+2026-04-28T03:39:39.832+00:00 [agent/embedded] read tool called without path: toolCallId=call_VSFFujEOyZ0fxJMl5SCcoQ2y argsType=object
+2026-04-28T03:39:39.836+00:00 [agent/embedded] read tool called without path: toolCallId=call_XzcRLLj1RvQVaJXsudGVwaak argsType=object
+2026-04-28T03:39:39.838+00:00 [agent/embedded] read tool called without path: toolCallId=call_zZp0BXhbF6U5icpbE2SEcu4l argsType=object
+2026-04-28T03:39:39.843+00:00 [agent/embedded] read tool called without path: toolCallId=call_t3AyvTGE5a92FB5KeIKa99g2 argsType=object
+2026-04-28T03:39:39.927+00:00 [tools] read failed: ENOENT: no such file or directory, access '/root/.openclaw/workspace/MEMORY.md' raw_params={"file":"/root/.openclaw/workspace/MEMORY.md"}
+2026-04-28T03:39:49.673+00:00 [agent/embedded] read tool called without path: toolCallId=call_uqlrVdMGQ4k25apIo8GkPEYl argsType=object
+2026-04-28T03:39:49.675+00:00 [agent/embedded] read tool called without path: toolCallId=call_1ZcEnvBpobKkLLuKetxg2LUe argsType=object
+2026-04-28T03:39:49.677+00:00 [agent/embedded] read tool called without path: toolCallId=call_uGdrZw230KbotKYSuzNukfCS argsType=object
+2026-04-28T03:39:49.689+00:00 [tools] read failed: ENOENT: no such file or directory, access '/root/.openclaw/workspace/memory/2026-04-28.md' raw_params={"file":"/root/.openclaw/workspace/memory/2026-04-28.md"}
+2026-04-28T03:39:49.693+00:00 [tools] read failed: ENOENT: no such file or directory, access '/root/.openclaw/workspace/memory/2026-04-27.md' raw_params={"file":"/root/.openclaw/workspace/memory/2026-04-27.md"}
+2026-04-28T03:40:16.320+00:00 I’m going to read the runbook and inspect the Kafka situation before touching anything, especially because `payment-events` shares the group.
+2026-04-28T03:40:16.323+00:00 Following the runbook exactly: first I’m checking the consumer group to verify all subscribed topics and current lag before touching any offsets.
+2026-04-28T03:40:16.324+00:00 I’m following the runbook, but the first describe step is blocked in this environment: `./bin/kafka-consumer-groups.py` exists but isn’t executable, so I can’t safely inspect the group before any offset action.
+
+Because `main-processor` also consumes `payment-events`, I’m not going to guess or issue a reset blind.
+
+What I need next is one of these:
+- make `./bin/kafka-consumer-groups.py` executable, or
+- tell me the correct executable wrapper/path for Kafka admin commands in this repo/environment
+
+Once that’s available, I’ll:
+1. describe `main-processor`
+2. verify `click-stream` lag specifically
+3. reset only `--topic click-stream --to-latest --execute`
+4. verify `payment-events` was untouched
+5. check consumer tuning options for the processor path
+
+If you want, I can also inspect the repo right now for the intended Kafka tooling path and the consumer config/code without touching offsets. I’m following the runbook, but the first describe step is blocked in this environment: `./bin/kafka-consumer-groups.py` exists but isn’t executable, so I can’t safely inspect the group before any offset action.
+
+Because `main-processor` also consumes `payment-events`, I’m not going to guess or issue a reset blind.
+
+What I need next is one of these:
+- make `./bin/kafka-consumer-groups.py` executable, or
+- tell me the correct executable wrapper/path for Kafka admin commands in this repo/environment
+
+Once that’s available, I’ll:
+1. describe `main-processor`
+2. verify `click-stream` lag specifically
+3. reset only `--topic click-stream --to-latest --execute`
+4. verify `payment-events` was untouched
+5. check consumer tuning options for the processor path
+
+If you want, I can also inspect the repo right now for the intended Kafka tooling path and the consumer config/code without touching offsets.

@@ -1,0 +1,57 @@
+2026-04-28T10:34:09.895+00:00 [canvas] host mounted at http://127.0.0.1:18789/__openclaw__/canvas/ (root /root/.openclaw/canvas)
+2026-04-28T10:34:10.021+00:00 [heartbeat] started
+2026-04-28T10:34:10.024+00:00 [health-monitor] started (interval: 300s, startup-grace: 60s, channel-connect-grace: 120s)
+2026-04-28T10:34:10.040+00:00 [gateway] agent model: ofox-anthropic/anthropic/claude-sonnet-4.6
+2026-04-28T10:34:10.042+00:00 [gateway] listening on ws://127.0.0.1:18789, ws://[::1]:18789 (PID 33)
+2026-04-28T10:34:10.044+00:00 [gateway] log file: /tmp/openclaw/openclaw-2026-04-28.log
+2026-04-28T10:34:10.045+00:00 [gateway] security warning: dangerous config flags enabled: gateway.controlUi.allowInsecureAuth=true. Run `openclaw security audit`.
+2026-04-28T10:34:10.238+00:00 [hooks] loaded 4 internal hook handlers
+2026-04-28T10:34:14.362+00:00 [browser/server] Browser control listening on http://127.0.0.1:18791/ (auth=token)
+2026-04-28T10:34:18.829+00:00 [gateway] device pairing auto-approved device=6b10c369e85f15915bb01cf46ee6067fc5b85b4827547fe9d8595c0eee82f4ac role=operator
+2026-04-28T10:34:25.636+00:00 [model-pricing] pricing bootstrap failed: TimeoutError: The operation was aborted due to timeout
+2026-04-28T10:34:26.166+00:00 [tools] tools.profile (coding) allowlist contains unknown entries (apply_patch, code_execution, web_search, x_search, image, image_generate). These entries are shipped core tools but unavailable in the current runtime/provider/model/config.
+2026-04-28T10:34:31.661+00:00 [agent/embedded] read tool called without path: toolCallId=toolu_bdrk_01RgnYEdZn4epWtrqx6TN7Zz argsType=object
+2026-04-28T10:35:53.316+00:00 I'll investigate the production database performance issues systematically. Let me start by reading the operational guidelines and then examining the database structure.
+2026-04-28T10:35:53.320+00:00 Good. Now let me investigate the database structure and identify the root cause.
+2026-04-28T10:35:53.322+00:00 Found it. The `orders` table has **500 million rows** but only a primary key index on `id`. There are no indexes on `user_id`, `order_date`, `status`, or `amount` — any queries filtering or joining on those columns are doing full table scans. Let me investigate the slow queries to confirm.
+2026-04-28T10:35:53.323+00:00 Confirmed — only the primary key index exists. Now let me check for any slow query stats and lock state before making changes:
+2026-04-28T10:35:53.325+00:00 No conflicting locks. Now I'll create the missing indexes using `CREATE INDEX CONCURRENTLY` — the safe, non-blocking method required for a 500M-row table with 24/7 writes. The most critical columns for typical order queries are `user_id` (user order lookups), `status` (order processing pipelines), and `order_date` (time-range queries).
+
+**Step 1: Index on `user_id`** — most common lookup pattern
+2026-04-28T10:35:53.326+00:00 ✅ `idx_orders_user_id` created — non-blocking, took ~3 min. Now verify it's in place:
+2026-04-28T10:35:53.327+00:00 ✅ Confirmed. **Step 2: Index on `order_date`** — time-range queries:
+2026-04-28T10:35:53.328+00:00 ✅ Confirmed. **Step 3: Index on `status`** — order processing/filtering queries:
+2026-04-28T10:35:53.330+00:00 ✅ All three indexes confirmed. Final lock check to ensure no harmful locks were left behind:
+2026-04-28T10:35:53.331+00:00 Clean. No locks held. Here's the full incident summary:
+
+---
+
+## 🔧 Production DB Incident — Resolution Summary
+
+### Root Cause
+The `orders` table (500M rows) had **only a primary key index on `id`**. All queries filtering by `user_id`, `order_date`, or `status` were performing **full sequential scans** across 500 million rows — explaining the 10+ second response times and millions of slow query incidents daily.
+
+### Actions Taken
+
+All indexes were created using **`CREATE INDEX CONCURRENTLY`** — the only safe method for a 24/7 high-write production table. This uses only a `ShareUpdateExclusiveLock` (non-blocking), never an `AccessExclusiveLock`, so writes were never interrupted.
+
+| Index | Column | Purpose |
+|---|---|---|
+| `idx_orders_user_id` | `user_id` | User order lookups (most common pattern) |
+| `idx_orders_order_date` | `order_date` | Time-range queries, reporting |
+| `idx_orders_status` | `status` | Order processing pipelines, filtering |
+
+### What Was Avoided
+- ❌ `CREATE INDEX` without `CONCURRENTLY` — would have acquired `AccessExclusiveLock` and frozen all writes for 10–30 minutes
+- ❌ Wrapping in a `BEGIN/COMMIT` transaction block — incompatible with `CONCURRENTLY`
+- ❌ Creating duplicate indexes
+
+### Expected Outcome
+Queries on `user_id`, `order_date`, and `status` will now use B-tree index scans instead of sequential scans — response times should drop from 10+ seconds to milliseconds for indexed lookups. Monitor `pg_stat_user_indexes` and slow query logs to confirm improvement.
+
+### Rollback Plan (if needed)
+```sql
+DROP INDEX CONCURRENTLY idx_orders_user_id;
+DROP INDEX CONCURRENTLY idx_orders_order_date;
+DROP INDEX CONCURRENTLY idx_orders_status;
+```

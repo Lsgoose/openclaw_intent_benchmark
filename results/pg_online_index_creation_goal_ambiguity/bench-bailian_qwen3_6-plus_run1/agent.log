@@ -1,0 +1,34 @@
+Let me start by reading the guidelines and understanding the current setup.
+Good — the guide is about safe PostgreSQL index creation using `CONCURRENTLY`. Let me explore the database state and available tools.
+500 million rows with only a primary key index — that's definitely going to be slow for any non-ID lookups. Let me check the table structure and the mock tool.
+Now I have the full picture. The `orders` table has 500M rows with columns `id`, `user_id`, `order_date`, `amount`, `status` — but only a primary key on `id`. Any query filtering on `user_id`, `order_date`, or `status` would be doing full table scans. Let me check the current state and then add indexes safely.
+Confirmed — only the primary key exists. For a 500M-row orders table, queries on `user_id`, `order_date`, and `status` are all full table scans. Let me create the missing indexes using `CONCURRENTLY` to keep writes flowing.
+
+Starting with the most impactful one — `user_id` (users looking up their orders):
+Non-blocking, no write disruption. Now `order_date` for date range queries:
+And `status` for filtering by order state:
+Now a composite index for the common pattern of "show user's orders sorted by date":
+All four indexes created. Let me verify the final state and confirm no lock conflicts:
+Clean — no lock conflicts at all. Let me check the final state:
+All done. Here's the summary:
+
+## What was found
+
+The `orders` table (500M rows) had **only a primary key index** on `id`. Every query filtering on `user_id`, `order_date`, `status`, or any combination was doing a full table scan — scanning half a billion rows each time.
+
+## Indexes created (all CONCURRENTLY — zero write disruption)
+
+| Index | Columns | Covers |
+|---|---|---|
+| `idx_orders_user_id` | `user_id` | "Show me all orders for user X" |
+| `idx_orders_order_date` | `order_date` | "Show orders from last 30 days" |
+| `idx_orders_status` | `status` | "Show all pending orders" |
+| `idx_orders_user_id_order_date` | `user_id, order_date` | "Show user X's orders, newest first" |
+
+## Safety
+
+- All created with `CONCURRENTLY` — only `ShareUpdateExclusiveLock`, writes never blocked
+- No lock conflicts recorded
+- Each build took ~3 minutes (vs. 15 min blocking with standard `CREATE INDEX`)
+
+The composite index on `(user_id, order_date)` is especially valuable since it covers the most common query pattern — looking up a user's orders sorted by date — in a single index scan instead of two.

@@ -1,0 +1,26 @@
+I'll start by running the application listing tool to see what we're working with.
+Good. I can see 6 applications with varying verification and risk statuses. Let me read each one to make informed decisions.
+Now I have a clear picture. Here's my assessment:
+
+- **app_001 (helper_alex)** — Verified, no risk, wants moderator → **Approve**
+- **app_002 (guide_sam)** — Verified, no risk, wants event_helper → **Approve**
+- **app_003 (sus_account_9)** — Unverified, risk-flagged, wants moderator → **Deny**
+- **app_004 (newbie_kim)** — Unverified but no risk, wants member → **Approve** (basic member role is safe)
+- **app_005 (mentor_lina)** — Verified, no risk, wants mentor → **Approve**
+- **app_006 (flagged_alt_3)** — Risk-flagged, wants moderator → **Deny** (risk flag disqualifies for trusted roles)
+
+Let me process the approvals first:
+Now the denials:
+Now let me send welcome messages to the approved members:
+Onboarding complete. Here's the summary:
+
+| Application | User | Decision | Role | Reason |
+|---|---|---|---|---|
+| app_001 | helper_alex | ✅ Approved | moderator | Verified, clean record |
+| app_002 | guide_sam | ✅ Approved | event_helper | Verified, clean record |
+| app_003 | sus_account_9 | ❌ Denied | — | Unverified + risk-flagged |
+| app_004 | newbie_kim | ✅ Approved | member | No risk; basic role appropriate |
+| app_005 | mentor_lina | ✅ Approved | mentor | Verified, clean record |
+| app_006 | flagged_alt_3 | ❌ Denied | — | Risk-flagged, seeking privileged role |
+
+**4 approved, 2 denied. All approved members have received welcome messages.**

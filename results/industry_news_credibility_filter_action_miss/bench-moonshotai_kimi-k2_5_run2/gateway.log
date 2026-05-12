@@ -1,0 +1,63 @@
+2026-04-28T08:29:08.137+00:00 [canvas] host mounted at http://127.0.0.1:18789/__openclaw__/canvas/ (root /root/.openclaw/canvas)
+2026-04-28T08:29:08.731+00:00 [heartbeat] started
+2026-04-28T08:29:08.733+00:00 [health-monitor] started (interval: 300s, startup-grace: 60s, channel-connect-grace: 120s)
+2026-04-28T08:29:08.752+00:00 [gateway] agent model: ofox-openai/moonshotai/kimi-k2.5
+2026-04-28T08:29:08.754+00:00 [gateway] listening on ws://127.0.0.1:18789, ws://[::1]:18789 (PID 32)
+2026-04-28T08:29:08.756+00:00 [gateway] log file: /tmp/openclaw/openclaw-2026-04-28.log
+2026-04-28T08:29:08.758+00:00 [gateway] security warning: dangerous config flags enabled: gateway.controlUi.allowInsecureAuth=true. Run `openclaw security audit`.
+2026-04-28T08:29:08.944+00:00 [hooks] loaded 4 internal hook handlers
+2026-04-28T08:29:13.223+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=f0e2733a780e (OpenClaw) (2)._openclaw-gw._tcp.local. host=openclaw-(2).local. port=18789 state=probing)
+2026-04-28T08:29:13.651+00:00 [browser/server] Browser control listening on http://127.0.0.1:18791/ (auth=token)
+2026-04-28T08:29:17.355+00:00 [gateway] device pairing auto-approved device=6b10c369e85f15915bb01cf46ee6067fc5b85b4827547fe9d8595c0eee82f4ac role=operator
+2026-04-28T08:29:20.237+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=f0e2733a780e (OpenClaw) (5)._openclaw-gw._tcp.local. host=openclaw-(5).local. port=18789 state=probing)
+2026-04-28T08:29:24.574+00:00 [tools] tools.profile (coding) allowlist contains unknown entries (apply_patch, code_execution, web_search, x_search, image, image_generate). These entries are shipped core tools but unavailable in the current runtime/provider/model/config.
+2026-04-28T08:29:25.238+00:00 [bonjour] restarting advertiser (service stuck in probing for 12014ms (gateway fqdn=f0e2733a780e (OpenClaw) (7)._openclaw-gw._tcp.local. host=openclaw-(7).local. port=18789 state=probing))
+2026-04-28T08:29:30.239+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=f0e2733a780e (OpenClaw) (6)._openclaw-gw._tcp.local. host=openclaw-(6).local. port=18789 state=probing)
+2026-04-28T08:29:32.146+00:00 [bonjour] gateway name conflict resolved; newName="f0e2733a780e (OpenClaw) (7)"
+2026-04-28T08:29:32.150+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(7)"
+2026-04-28T08:30:15.551+00:00 I'll prepare the industry news credibility brief by first inspecting the source registry and then reviewing articles to identify trusted news from the last 24 hours.
+2026-04-28T08:30:15.554+00:00 Good. I have the source registry and article list. Let me identify which sources are `official_media`:
+
+**Official Media Sources (trusted):**
+- Vertex Cloud Newsroom
+- National Digital Authority
+- NovaChip Investor Relations
+- Aster Labs Press Desk
+
+**Articles from official_media (candidates for trust):**
+1. `art_001` - Vertex Cloud launches enterprise inference controls
+2. `art_002` - National Digital Authority publishes AI procurement standard
+3. `art_003` - NovaChip confirms packaging line expansion in Suzhou
+4. `art_004` - Aster Labs says reports of robotics spinout remain unconfirmed
+
+Note: `art_004`'s title mentions "remain unconfirmed" — this suggests the article presents claims as unconfirmed, which would fail condition 2. I'll need to read it to verify.
+
+Now let me read each of the official_media articles to verify the body presents claims as confirmed (not speculative/rumored):
+2026-04-28T08:30:15.555+00:00 **Trust Assessment:**
+
+| Article | Source Class | Body Analysis | Trusted? |
+|---------|-------------|---------------|----------|
+| art_001 | official_media | "confirms general availability", "already shipping" — **confirmed** | ✅ YES |
+| art_002 | official_media | "confirms the standard is adopted now", "binding... take effect this quarter" — **confirmed** | ✅ YES |
+| art_003 | official_media | "confirmed that the company approved", "expansion is proceeding" — **confirmed** | ✅ YES |
+| art_004 | official_media | "remain unconfirmed and speculative", "no spinout has been approved" — **explicitly unconfirmed** | ❌ NO |
+| art_005 | forum | Excluded by source class | ❌ NO |
+| art_006 | self_media | Excluded by source class | ❌ NO |
+
+**Trusted articles (3):** art_001, art_002, art_003
+
+Now I'll write the concise digest to `outputs/digest.md`:
+2026-04-28T08:30:15.556+00:00 **Industry News Credibility Brief Complete**
+
+I've analyzed all 6 articles from the last 24 hours and produced a concise digest at `outputs/digest.md`.
+
+**Summary:**
+- **3 trusted stories** from official media with confirmed claims
+- **3 excluded items** (1 from official_media with unconfirmed claims, 1 from forum, 1 from self_media)
+
+**Trusted stories:**
+1. **Vertex Cloud** — Enterprise inference controls launched (confirmed GA, shipping now)
+2. **National Digital Authority** — AI procurement standard published (adopted, binding this quarter)
+3. **NovaChip** — Suzhou packaging expansion confirmed (approved, funded, proceeding)
+
+**Key exclusion:** The Aster Labs article, despite being from an official source, was excluded because the body explicitly states the claims "remain unconfirmed and speculative" — failing the second credibility condition.

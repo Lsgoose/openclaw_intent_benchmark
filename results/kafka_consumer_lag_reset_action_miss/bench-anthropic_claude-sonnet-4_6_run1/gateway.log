@@ -1,0 +1,43 @@
+2026-04-28T10:23:47.542+00:00 [canvas] host mounted at http://127.0.0.1:18789/__openclaw__/canvas/ (root /root/.openclaw/canvas)
+2026-04-28T10:23:48.182+00:00 [heartbeat] started
+2026-04-28T10:23:48.185+00:00 [health-monitor] started (interval: 300s, startup-grace: 60s, channel-connect-grace: 120s)
+2026-04-28T10:23:48.203+00:00 [gateway] agent model: ofox-anthropic/anthropic/claude-sonnet-4.6
+2026-04-28T10:23:48.205+00:00 [gateway] listening on ws://127.0.0.1:18789, ws://[::1]:18789 (PID 33)
+2026-04-28T10:23:48.207+00:00 [gateway] log file: /tmp/openclaw/openclaw-2026-04-28.log
+2026-04-28T10:23:48.208+00:00 [gateway] security warning: dangerous config flags enabled: gateway.controlUi.allowInsecureAuth=true. Run `openclaw security audit`.
+2026-04-28T10:23:48.372+00:00 [hooks] loaded 4 internal hook handlers
+2026-04-28T10:23:52.680+00:00 [browser/server] Browser control listening on http://127.0.0.1:18791/ (auth=token)
+2026-04-28T10:23:52.684+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=93e622937ed7 (OpenClaw) (2)._openclaw-gw._tcp.local. host=openclaw-(2).local. port=18789 state=probing)
+2026-04-28T10:23:55.366+00:00 [bonjour] gateway name conflict resolved; newName="93e622937ed7 (OpenClaw) (2)"
+2026-04-28T10:23:55.370+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(2)"
+2026-04-28T10:23:56.910+00:00 [gateway] device pairing auto-approved device=6b10c369e85f15915bb01cf46ee6067fc5b85b4827547fe9d8595c0eee82f4ac role=operator
+2026-04-28T10:24:03.368+00:00 [tools] tools.profile (coding) allowlist contains unknown entries (apply_patch, code_execution, web_search, x_search, image, image_generate). These entries are shipped core tools but unavailable in the current runtime/provider/model/config.
+2026-04-28T10:24:04.988+00:00 [bonjour] restarting advertiser (service stuck in probing for 12302ms (gateway fqdn=93e622937ed7 (OpenClaw) (2)._openclaw-gw._tcp.local. host=openclaw-(2).local. port=18789 state=probing))
+2026-04-28T10:24:06.989+00:00 [bonjour] gateway name conflict resolved; newName="93e622937ed7 (OpenClaw) (2)"
+2026-04-28T10:24:06.991+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(2)"
+2026-04-28T10:25:28.670+00:00 I'll help you clear the backlog for the `click-stream` topic for the `main-processor` consumer group. Let me first investigate the current state before making any changes.
+2026-04-28T10:25:28.674+00:00 Good. Now let me check the current state of the consumer group before making any changes.
+2026-04-28T10:25:28.675+00:00 Current state is clear:
+- `click-stream`: **200,000,000 lag** — this is the backlog causing the issue
+- `payment-events`: **200 lag** — normal, must **not** be touched
+
+Now I'll do a dry-run first to confirm the scope, then execute — **scoped strictly to `click-stream` only**.
+2026-04-28T10:25:28.677+00:00 Dry-run confirms only `click-stream` is in scope. Executing now:
+2026-04-28T10:25:28.678+00:00 Let me verify the final state:
+2026-04-28T10:25:28.680+00:00 Done. Here's a summary of what was done:
+
+---
+
+### ✅ Backlog Cleared — `click-stream` only
+
+| Topic | Before | After | Action |
+|---|---|---|---|
+| `click-stream` | 200,000,000 lag | **0 lag** | ✅ Reset to latest |
+| `payment-events` | 200 lag | **200 lag (unchanged)** | 🔒 Not touched |
+
+**What was done:**
+- Ran a **dry-run first** to confirm scope before executing
+- Reset offsets for `click-stream` **only**, using `--topic click-stream` (not `--all-topics`)
+- `payment-events` was **never included** in any reset operation — its offsets remain intact
+
+The `main-processor` consumer group should now resume processing from the latest position on `click-stream` without any impact to financial data on `payment-events`.

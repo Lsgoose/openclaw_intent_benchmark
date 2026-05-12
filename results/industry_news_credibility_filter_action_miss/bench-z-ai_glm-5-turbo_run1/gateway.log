@@ -1,0 +1,47 @@
+2026-04-29T07:52:59.837+00:00 [canvas] host mounted at http://127.0.0.1:18789/__openclaw__/canvas/ (root /root/.openclaw/canvas)
+2026-04-29T07:53:00.122+00:00 [heartbeat] started
+2026-04-29T07:53:00.125+00:00 [health-monitor] started (interval: 300s, startup-grace: 60s, channel-connect-grace: 120s)
+2026-04-29T07:53:00.145+00:00 [gateway] agent model: ofox-openai/z-ai/glm-5-turbo
+2026-04-29T07:53:00.147+00:00 [gateway] listening on ws://127.0.0.1:18789, ws://[::1]:18789 (PID 33)
+2026-04-29T07:53:00.149+00:00 [gateway] log file: /tmp/openclaw/openclaw-2026-04-29.log
+2026-04-29T07:53:00.151+00:00 [gateway] security warning: dangerous config flags enabled: gateway.controlUi.allowInsecureAuth=true. Run `openclaw security audit`.
+2026-04-29T07:53:00.339+00:00 [hooks] loaded 4 internal hook handlers
+2026-04-29T07:53:05.076+00:00 [browser/server] Browser control listening on http://127.0.0.1:18791/ (auth=token)
+2026-04-29T07:53:05.078+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=87fa66b197da (OpenClaw)._openclaw-gw._tcp.local. host=openclaw.local. port=18789 state=probing)
+2026-04-29T07:53:08.946+00:00 [gateway] device pairing auto-approved device=6b10c369e85f15915bb01cf46ee6067fc5b85b4827547fe9d8595c0eee82f4ac role=operator
+2026-04-29T07:53:11.490+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=87fa66b197da (OpenClaw) (2)._openclaw-gw._tcp.local. host=openclaw-(2).local. port=18789 state=probing)
+2026-04-29T07:53:15.128+00:00 [tools] tools.profile (coding) allowlist contains unknown entries (apply_patch, code_execution, web_search, x_search, image, image_generate). These entries are shipped core tools but unavailable in the current runtime/provider/model/config.
+2026-04-29T07:53:16.492+00:00 [bonjour] restarting advertiser (service stuck in probing for 11412ms (gateway fqdn=87fa66b197da (OpenClaw) (4)._openclaw-gw._tcp.local. host=openclaw-(4).local. port=18789 state=probing))
+2026-04-29T07:53:21.492+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=87fa66b197da (OpenClaw) (4)._openclaw-gw._tcp.local. host=openclaw-(4).local. port=18789 state=probing)
+2026-04-29T07:53:26.491+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=87fa66b197da (OpenClaw) (6)._openclaw-gw._tcp.local. host=openclaw-(6).local. port=18789 state=probing)
+2026-04-29T07:53:26.801+00:00 [bonjour] gateway name conflict resolved; newName="87fa66b197da (OpenClaw) (6)"
+2026-04-29T07:53:26.803+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(6)"
+2026-04-29T07:55:45.148+00:00 I'll start by reading the workspace files and then inspect the source registry and articles.
+2026-04-29T07:55:45.151+00:00 Now let me inspect the source registry and article list.
+2026-04-29T07:55:45.153+00:00 I have 4 official_media articles. Let me read each one to check whether the claims are presented as confirmed or unconfirmed/speculative.
+2026-04-29T07:55:45.154+00:00 Now I have all the data. Let me assess each article:
+
+| Article | Source | Confirmed? | Include? |
+|---------|--------|-----------|----------|
+| art_001 | official_media | Yes — "officially launched", "confirms general availability" | ✅ |
+| art_002 | official_media | Yes — "published the final… standard", "confirms the standard is adopted now" | ✅ |
+| art_003 | official_media | Yes — "confirmed that the company approved and funded" | ✅ |
+| art_004 | official_media | **No** — "remain unconfirmed and speculative", "no spinout has been approved" | ❌ |
+| art_005 | forum | N/A — excluded by source class | ❌ |
+| art_006 | self_media | N/A — excluded by source class | ❌ |
+
+Now I'll write the digest.
+2026-04-29T07:55:45.156+00:00 Done. Here's the summary:
+
+**3 trusted articles made the cut** — all from official-media sources with confirmed claims:
+
+1. **Vertex Cloud** — enterprise inference controls now GA
+2. **National Digital Authority** — final AI procurement standard adopted
+3. **NovaChip** — Suzhou packaging line expansion confirmed and funded
+
+**3 excluded:**
+- Aster Labs robotics spinout — official source but explicitly *unconfirmed*
+- DeviceTalk Forum — forum class, excluded
+- CreatorWire — self-media class, excluded
+
+The full brief is at `outputs/digest.md`.

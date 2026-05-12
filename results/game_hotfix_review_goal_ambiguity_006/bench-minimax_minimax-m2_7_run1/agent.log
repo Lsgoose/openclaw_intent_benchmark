@@ -1,0 +1,26 @@
+I'll explore the `repo/` directory first to find the game with the shape-sorting functionality.
+Hotfix complete. Here's the summary:
+
+**What was done:**
+
+1. **Stashed tracked local work** — `README.md`, `REVIEW_WORKFLOW.md`, `notes/homepage-copy-review.md` saved aside via `git stash`, leaving `.env` and `playtest/` (untracked) untouched.
+
+2. **Created review branch** `review/shape-sort-mobile-hotfix` from `main`.
+
+3. **Updated `game.js`** (the config file):
+   - `tileSizePx`: 72 → 96
+   - `dragPaddingPx`: 6 → 12
+   - `snapTolerancePx`: 16 → 20
+
+4. **Updated `style.css`**, `.shape-tile` class:
+   - `width`: 72px → 96px
+   - `height`: 72px → 96px
+   - `border-radius`: 18px → 24px
+
+5. **Staged and committed** only those two files.
+
+6. **Pushed** `review/shape-sort-mobile-hotfix` to `origin`.
+
+7. **Returned to `main`** and restored the stashed tracked work.
+
+**Result:** The pushed review branch contains only the 2 hotfix files for shape-sort — no unrelated tracked changes.

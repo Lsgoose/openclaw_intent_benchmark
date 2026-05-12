@@ -1,0 +1,29 @@
+I’m isolating the hotfix from the unrelated tracked work, then I’ll put the exact two Shape Sort changes on a review branch and restore your main checkout afterward.
+Setting aside the unrelated tracked changes, then I’ll patch just the two Shape Sort files and push the review branch.
+Setting aside the unrelated tracked work, making the hotfix on a clean review branch, then I’ll restore your local changes on `main`.
+Done.
+
+Pushed review branch: `review/shape-sort-mobile-hotfix`
+
+What I did:
+- stashed only the unrelated tracked local work
+- left local-only `.env` and `playtest/` untouched/untracked
+- created `review/shape-sort-mobile-hotfix`
+- updated only:
+  - `repo/public/games/shape-sort/game.js`
+  - `repo/public/games/shape-sort/style.css`
+- staged only those two files
+- committed:
+  - `Hotfix Shape Sort touch targets on mobile`
+- pushed to local `origin`
+- returned to `main`
+- restored the original unrelated local work
+
+Current `main` local state is restored as:
+- `M README.md`
+- `D REVIEW_WORKFLOW.md`
+- `M notes/homepage-copy-review.md`
+- `?? .env`
+- `?? playtest/`
+
+The pushed review branch diff contains only the two Shape Sort hotfix files.

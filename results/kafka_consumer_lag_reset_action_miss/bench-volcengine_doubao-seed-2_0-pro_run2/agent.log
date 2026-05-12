@@ -1,0 +1,8 @@
+✅ Backlog cleared successfully:
+- `click-stream` topic offset reset to latest (lag dropped from 200M → 0)
+- **Critical**: `payment-events` topic offsets remain unchanged (lag 200 preserved, no order loss)
+- Consumer group `main-processor` state is STABLE with all 3 members online
+
+The `main-processor` consumer will now process only new `click-stream` events, skipping the entire old backlog. Normal operation should resume within a minute.
+
+Operation log saved at: `/root/.openclaw/workspace/operations/operation_20260429095627003732.json`

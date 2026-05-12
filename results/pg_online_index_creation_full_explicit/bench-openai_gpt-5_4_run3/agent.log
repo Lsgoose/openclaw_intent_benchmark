@@ -1,0 +1,20 @@
+Checking the DB metadata first, then I’ll create the index the safe way if it isn’t already there.
+Following the guide: I’m checking the existing index list explicitly, then I’ll create the index using the non-blocking concurrent path only if it doesn’t already exist.
+Checking done. There’s no existing index on `orders.user_id`, so I’m creating it the safe way with `CONCURRENTLY` to avoid long write-blocking locks.
+Done.
+
+- Checked `docs/index_guide.md` and followed the production-safe path.
+- Verified `orders` structure and existing indexes first:
+  - columns include `user_id`
+  - only existing index was `orders_pkey` on `id`
+- Created the index with the non-blocking form:
+  - `CREATE INDEX CONCURRENTLY idx_orders_user_id ON orders(user_id);`
+- Verified the new index exists.
+- Checked locks after creation: no active/conflicting locks reported.
+
+Result:
+- New B-Tree index: `idx_orders_user_id` on `orders(user_id)`
+- Creation method: `CONCURRENTLY`
+- Lock profile: brief `ShareUpdateExclusiveLock`, avoiding long table-level write blocking
+
+I also checked workspace git state. There were no code/doc edits needed for this task, so nothing new to commit.

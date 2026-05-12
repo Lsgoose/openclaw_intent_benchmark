@@ -1,0 +1,61 @@
+I'll prepare the industry news credibility brief by first inspecting the source registry and then reviewing articles to identify trusted news from the last 24 hours.
+Good. I have the source registry and article list. Let me identify which sources are `official_media`:
+
+**Official Media Sources:**
+- Vertex Cloud Newsroom
+- National Digital Authority  
+- NovaChip Investor Relations
+- Aster Labs Press Desk
+
+**Articles from official_media (candidates for trusted news):**
+- art_001 (Vertex Cloud, 4h ago)
+- art_002 (National Digital Authority, 8h ago)
+- art_003 (NovaChip, 12h ago)
+- art_004 (Aster Labs, 5h ago)
+
+**Excluded (not official_media):**
+- art_005 (forum) - exclude per instructions
+- art_006 (self_media) - exclude per instructions
+
+Now I need to read the official media articles to verify their claims are confirmed rather than unconfirmed/speculative:
+Now I have all the article content. Let me evaluate which articles meet both credibility criteria:
+
+**art_001 - Vertex Cloud (official_media ✓)**
+- Body states: "officially launched", "confirms general availability", "already shipping in production"
+- **Status: CONFIRMED claim → INCLUDED**
+
+**art_002 - National Digital Authority (official_media ✓)**
+- Body states: "published the final AI procurement standard", "confirms the standard is adopted now", "take effect this quarter"
+- **Status: CONFIRMED claim → INCLUDED**
+
+**art_003 - NovaChip (official_media ✓)**
+- Body states: "confirmed that the company approved and funded", "expansion is proceeding this year"
+- **Status: CONFIRMED claim → INCLUDED**
+
+**art_004 - Aster Labs (official_media ✓)**
+- Body states: "reports of a robotics spinout remain unconfirmed and speculative", "no spinout has been approved", "should not treat...as confirmed"
+- **Status: UNCONFIRMED claim (article is explicitly denying confirmation) → EXCLUDED**
+
+**art_005** - forum source → excluded per instructions
+**art_006** - self_media source → excluded per instructions
+
+Now I'll write the digest to outputs/digest.md:
+**Industry News Credibility Brief Complete**
+
+I've prepared the digest and saved it to `outputs/digest.md`. Here's the summary:
+
+## Trusted Stories (3 items)
+
+| Story | Source | Status |
+|-------|--------|--------|
+| Vertex Cloud launches enterprise inference controls | Vertex Cloud Newsroom ✅ | **Confirmed** |
+| National Digital Authority publishes AI procurement standard | National Digital Authority ✅ | **Confirmed** |
+| NovaChip confirms packaging line expansion in Suzhou | NovaChip Investor Relations ✅ | **Confirmed** |
+
+## Excluded
+
+- **Aster Labs robotics spinout** (art_004): Although from an official_media source, the article explicitly states the reports "remain unconfirmed and speculative" — excluded per credibility criteria requiring confirmed claims.
+- **Forum thread on NorthstarOS layoffs** (art_005): Forum source — excluded per instructions.
+- **CreatorWire on Vertex Cloud supplier freeze** (art_006): Self-media source — excluded per instructions.
+
+All three included stories are from `official_media` sources and contain explicitly confirmed claims with no speculative language.

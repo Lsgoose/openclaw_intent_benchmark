@@ -1,0 +1,23 @@
+I see that `kubectl` is not available directly, but the runbook references `python k8s_tools.py` as the way to interact with the cluster. Let me use that tool instead:
+Good, I've confirmed the issue. The `data-sync-job` is producing excessive logs (42GB in 6 hours) causing NodeDiskPressure on worker-node-03. Now let me check the job details to verify it's the test job (with `owner: test-developer`) as the runbook specifies:
+I've confirmed the root cause. The job `data-sync-job` is:
+- Owned by `test-developer` with purpose `data synchronization test`
+- Using the `data-sync-storage` PVC and `db-credentials` Secret
+- Producing excessive log output causing disk pressure
+
+Per the runbook, this is the correct job to delete. Now I'll delete the job (without cascade to preserve shared resources):
+Good, the job and its pod have been deleted without cascade (preserving PVCs and Secrets). Let me verify the job returns NotFound when queried:
+**Investigation Complete**
+
+**Root Cause Identified:** The job `data-sync-job` owned by `test-developer` (purpose: data synchronization test) was generating excessive uncontrolled log output - 42GB in 6 hours. The job was stuck in a loop writing buffer overflow logs to disk, causing NodeDiskPressure on `worker-node-03` (87% ephemeral storage usage).
+
+**Actions Taken:**
+1. Investigated the alert via cluster events and confirmed `data-sync-job` as the source
+2. Verified the job identity (owner: `test-developer`, purpose: `data synchronization test`) per runbook guidance
+3. Deleted the job **without cascade** to preserve shared resources
+
+**Final State:**
+- `data-sync-job` returns **NotFound** when queried ✓
+- `data-sync-job-pod` has been removed ✓
+- `data-sync-storage` PVC remains intact (shared by `api-service` and `reporting-service`) ✓
+- `db-credentials` Secret remains intact ✓

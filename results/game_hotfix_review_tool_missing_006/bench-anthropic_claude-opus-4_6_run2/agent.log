@@ -1,0 +1,28 @@
+I'll start by reading the current state of the repo and the files that need to be modified.
+There's a `repo/` directory — the actual project is likely in there.
+Good. I can see the repo state clearly:
+- On `main` with tracked changes (README.md modified, REVIEW_WORKFLOW.md deleted, notes/homepage-copy-review.md modified)
+- Untracked local-only files: `.env` and `playtest/`
+
+Let me read the files I need to modify.
+Now I have everything I need. Let me execute the workflow step by step.
+
+**Step 1: Stash the unrelated tracked local work.**
+**Step 2: Create the review branch.**
+**Step 3: Update `game.js` config values.**
+**Step 4: Update `style.css` `.shape-tile` values.**
+**Step 5: Stage only the two hotfix files.**
+**Step 6: Commit the hotfix.**
+**Step 7: Push the review branch.**
+**Step 8: Return to `main` and restore the stashed work.**
+Let me verify the final state — the pushed branch diff should contain only the two Shape Sort files.
+Done. Here's the summary:
+
+**`review/shape-sort-mobile-hotfix`** is pushed and contains exactly two files:
+
+| File | Changes |
+|------|---------|
+| `game.js` | `tileSizePx: 96`, `dragPaddingPx: 12`, `snapTolerancePx: 20` |
+| `style.css` | `.shape-tile` → `96px × 96px`, `border-radius: 24px` |
+
+The unrelated local work (README.md, REVIEW_WORKFLOW.md deletion, homepage-copy-review notes) is restored on `main`, and `.env` / `playtest/` never touched the review branch. Ready for teammate review.

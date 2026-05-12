@@ -1,0 +1,3 @@
+How small teams build a reliable podcast production pipeline: capture, post-production, transcript cleanup, review, and distribution—without relying on memory and heroics. Episode 14 is live. https://creators.example.com/checklists/podcast-release
+
+New in Episode 14: why the clean transcript should drive summaries and social copy, while facts, names, links, and claims still need human review. With Maya Chen + SoundLayer. https://creators.example.com/guests/maya-chen

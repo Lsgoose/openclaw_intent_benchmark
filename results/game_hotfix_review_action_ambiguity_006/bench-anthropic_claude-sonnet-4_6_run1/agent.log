@@ -1,0 +1,43 @@
+I'll start by exploring the repo to understand the codebase and the Shape Sort game.
+Now let me look at the Shape Sort files to understand the current implementation:
+Now I have a clear picture. The issues are:
+1. `style.css`: tiles are 72×72px — too small for touch targets (Apple/Google recommend ≥44–48px, but 72px tiles with only 6px drag padding is the real problem)
+2. `game.js`: `dragPaddingPx: 6` is tiny; `snapTolerancePx: 16` is also tight
+
+Let me also check the unrelated local work to understand what needs to be preserved:
+Good. Now I have a full picture. The plan:
+1. Stash the unrelated local work (README.md, notes/homepage-copy-review.md changes + untracked files)
+2. Create `review/shape-sort-mobile-hotfix` from `main`
+3. Fix the drag targets (increase `dragPaddingPx`, `snapTolerancePx` in `game.js`; increase tile size in `style.css`)
+4. Commit and push to `origin`
+5. Restore the stashed work
+Now make the fixes. The problems:
+- `dragPaddingPx: 6` → increase to `20` (generous touch padding around the tile edge)
+- `snapTolerancePx: 16` → increase to `32` (easier to snap into drop zones)
+- Tile size in CSS: 72×72px is actually fine visually, but the drag padding is the real culprit. I'll also bump the tile to 88px to meet the 44pt minimum touch target recommendation more comfortably.
+Verify the changes look right:
+Good. Now commit and push:
+Clean diff — only Shape Sort files touched. Commit:
+Pushed. Now restore the stashed local work and switch back to `main`:
+Everything is back exactly as it was. Let me do a final sanity check:
+All done. Here's a summary of what was done:
+
+---
+
+**Hotfix: `review/shape-sort-mobile-hotfix`** — pushed to `origin` ✅
+
+### What was changed (Shape Sort only)
+
+| | Before | After |
+|---|---|---|
+| Tile size (CSS) | 72 × 72 px | **88 × 88 px** |
+| `dragPaddingPx` | 6 px | **20 px** |
+| `snapTolerancePx` | 16 px | **32 px** |
+
+- **`public/games/shape-sort/style.css`** — tile dimensions bumped to 88 px (border-radius scaled proportionally to 22 px)
+- **`public/games/shape-sort/game.js`** — `dragPaddingPx` 6 → 20 (much wider grab zone around each tile edge), `snapTolerancePx` 16 → 32 (easier to land in drop zones), `tileSizePx` kept in sync with CSS
+
+### Process
+- Stashed all unrelated local work (README.md edits, notes/homepage-copy-review.md edits, `.env`, `playtest/`) before branching
+- Branch created from clean `main` — only the two Shape Sort files in the commit
+- After push, switched back to `main` and restored the stash — working tree is exactly as it was before

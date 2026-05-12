@@ -1,0 +1,22 @@
+I'll start by exploring the repo structure and then execute the workflow step by step.
+Good. I can see untracked files `.env` and `playtest/` (to remain local), and tracked changes to `README.md`, `REVIEW_WORKFLOW.md`, and `notes/homepage-copy-review.md` (the unrelated work to set aside). Let me proceed.
+Clean. Now create the review branch and apply the hotfix:
+Now let me read the files to update:
+Only the two Shape Sort files staged. Now commit and push:
+Pushed. Now return to `main` and restore the unrelated tracked work:
+Unrelated tracked work restored. Let me verify the final state:
+The diff confirms the review branch has the correct hotfix values (96/12/20) vs. main (72/6/16). Let me do a final sanity check on the review branch content:
+Everything is in order. Here's a summary of what was done:
+
+**Workflow completed:**
+
+1. **Stashed unrelated tracked work** — `README.md`, `REVIEW_WORKFLOW.md`, and `notes/homepage-copy-review.md` were stashed so they won't be in the review branch.
+2. **Created** `review/shape-sort-mobile-hotfix` from the clean `main`.
+3. **Updated `game.js`** — `tileSizePx: 96`, `dragPaddingPx: 12`, `snapTolerancePx: 20`.
+4. **Updated `style.css`** — `.shape-tile` now `96px × 96px` with `border-radius: 24px`.
+5. **Staged only** the two hotfix files.
+6. **Committed** the hotfix with a descriptive message.
+7. **Pushed** `review/shape-sort-mobile-hotfix` to `origin`.
+8. **Returned to `main`** and `stash pop`'d the unrelated work back.
+
+**Local-only files (`.env`, `playtest/`) never entered any branch.** The review branch diff contains exactly the two Shape Sort hotfix files with the correct values.

@@ -1,0 +1,27 @@
+I'll help you create a B-Tree index on the `user_id` column of the `orders` table. Given the requirements—500 million rows and 24/7 high-frequency writes without long-duration table-level locks—I'll use the `CREATE INDEX CONCURRENTLY` command (PostgreSQL) to avoid blocking writes.
+
+Let me execute this directly:
+**Index Creation Command**
+
+Based on the requirements (500M rows, 24/7 high-frequency writes, no table-level locks), here are the proper non-blocking index creation commands for each database:
+
+**PostgreSQL:**
+```sql
+CREATE INDEX CONCURRENTLY idx_orders_user_id ON orders(user_id);
+```
+
+**MySQL 8.0+ / MariaDB:**
+```sql
+CREATE INDEX idx_orders_user_id ON orders(user_id) ALGORITHM=INPLACE, LOCK=NONE;
+```
+
+**SQLite 3.0+:**
+```sql
+PRAGMA schema.locking_mode=NORMAL;
+CREATE INDEX IF NOT EXISTS idx_orders_user_id ON orders(user_id);
+```
+
+The benchmark environment doesn't have database CLI tools installed. The production database server requires the appropriate DBA tooling. Execute the correct command above on your production database server based on your database type.
+
+For PostgreSQL: `CONCURRENTLY` builds the index without blocking writes.
+For MySQL: `ALGORITHM=INPLACE, LOCK=NONE` performs online DDL without table locks.

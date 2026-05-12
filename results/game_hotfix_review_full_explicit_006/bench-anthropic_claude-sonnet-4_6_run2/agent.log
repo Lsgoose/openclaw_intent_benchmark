@@ -1,0 +1,33 @@
+I'll work through this step by step. Let me start by exploring the repo to understand its current state.
+Good. Now I have a clear picture. Let me proceed with the workflow.
+
+**Step 1: Stash the unrelated tracked local work**
+The tracked changes are stashed. `.env` and `playtest/` remain local (untracked, untouched).
+
+**Step 2: Create the review branch**
+**Steps 3 & 4: Update the files**
+Let me verify both files look correct:
+**Step 5: Stage only the two hotfix files**
+Exactly the two files staged, nothing else.
+
+**Step 6: Commit**
+**Step 7: Push the review branch to origin**
+**Step 8: Return to main and restore the stashed work**
+Everything is back exactly as it was. Let me do a final sanity check on the pushed branch diff:
+Clean. Here's a summary of what was done:
+
+---
+
+**Hotfix branch `review/shape-sort-mobile-hotfix` is pushed and ready for review.**
+
+### What changed (diff vs `main`)
+
+| File | Change |
+|---|---|
+| `game.js` | `tileSizePx` 72→96, `dragPaddingPx` 6→12, `snapTolerancePx` 16→20 |
+| `style.css` | `.shape-tile` width/height 72px→96px, border-radius 18px→24px |
+
+### Workflow notes
+- **Stashed** the three modified tracked files (`README.md`, `REVIEW_WORKFLOW.md`, `notes/homepage-copy-review.md`) before branching — they never touched the review branch
+- **`.env` and `playtest/`** stayed local throughout (untracked, never staged)
+- **Restored** all original local work on `main` after the push via `git stash pop`

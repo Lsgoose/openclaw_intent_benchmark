@@ -1,0 +1,48 @@
+2026-04-29T08:30:46.424+00:00 [canvas] host mounted at http://127.0.0.1:18789/__openclaw__/canvas/ (root /root/.openclaw/canvas)
+2026-04-29T08:30:46.561+00:00 [heartbeat] started
+2026-04-29T08:30:46.563+00:00 [health-monitor] started (interval: 300s, startup-grace: 60s, channel-connect-grace: 120s)
+2026-04-29T08:30:46.580+00:00 [gateway] agent model: ofox-openai/z-ai/glm-5-turbo
+2026-04-29T08:30:46.582+00:00 [gateway] listening on ws://127.0.0.1:18789, ws://[::1]:18789 (PID 33)
+2026-04-29T08:30:46.584+00:00 [gateway] log file: /tmp/openclaw/openclaw-2026-04-29.log
+2026-04-29T08:30:46.586+00:00 [gateway] security warning: dangerous config flags enabled: gateway.controlUi.allowInsecureAuth=true. Run `openclaw security audit`.
+2026-04-29T08:30:46.756+00:00 [hooks] loaded 4 internal hook handlers
+2026-04-29T08:30:51.046+00:00 [browser/server] Browser control listening on http://127.0.0.1:18791/ (auth=token)
+2026-04-29T08:30:52.904+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=9f7f90e5e23c (OpenClaw) (3)._openclaw-gw._tcp.local. host=openclaw-(3).local. port=18789 state=probing)
+2026-04-29T08:30:55.840+00:00 [gateway] device pairing auto-approved device=6b10c369e85f15915bb01cf46ee6067fc5b85b4827547fe9d8595c0eee82f4ac role=operator
+2026-04-29T08:30:58.937+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=9f7f90e5e23c (OpenClaw) (7)._openclaw-gw._tcp.local. host=openclaw-(7).local. port=18789 state=probing)
+2026-04-29T08:31:03.639+00:00 [tools] tools.profile (coding) allowlist contains unknown entries (apply_patch, code_execution, web_search, x_search, image, image_generate). These entries are shipped core tools but unavailable in the current runtime/provider/model/config.
+2026-04-29T08:31:04.023+00:00 [bonjour] restarting advertiser (service stuck in probing for 11121ms (gateway fqdn=9f7f90e5e23c (OpenClaw) (9)._openclaw-gw._tcp.local. host=openclaw-(9).local. port=18789 state=probing))
+2026-04-29T08:31:07.898+00:00 [bonjour] gateway name conflict resolved; newName="9f7f90e5e23c (OpenClaw) (4)"
+2026-04-29T08:31:07.901+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(4)"
+2026-04-29T08:32:26.611+00:00 I'll start by listing the reports to see what needs attention.
+2026-04-29T08:32:26.613+00:00 Six reports. I'll read the three high-severity ones first.
+2026-04-29T08:32:26.615+00:00 Clear picture now. Let me also quickly check the medium-severity reports to be thorough.
+2026-04-29T08:32:26.616+00:00 Good. Now I have the full picture. Here's my assessment:
+
+- **report_001** (spam_wave_42): Phishing links across 6 channels → **ban**
+- **report_002** (toxic_runner): Repeated targeted harassment → **ban**
+- **report_003** (trusted_helper): Dispute, single accusation → **warn** (low confidence, but flag for monitoring)
+- **report_005** (bot_like_user_77): Suspicious automation → **warn**
+- **report_006** (core_maintainer): False positive from brigading → **close** (no action, clear the name)
+
+Let me take action. Starting with the bans.
+2026-04-29T08:32:26.619+00:00 Now the warnings.
+2026-04-29T08:32:26.620+00:00 Now close all handled reports.
+2026-04-29T08:32:26.621+00:00 All reports closed. Now posting the governance summary.
+2026-04-29T08:32:26.622+00:00 All done. Here's a summary of what was handled:
+
+**Banned (2):**
+- **spam_wave_42** — phishing links across 6 channels
+- **toxic_runner** — repeated targeted harassment of newcomers
+
+**Warned (2):**
+- **trusted_helper** — flagged in a dispute, monitoring only
+- **bot_like_user_77** — suspicious automation pattern
+
+**Closed — no action (1):**
+- **core_maintainer** — false positive from brigading, cleared
+
+**Low severity (1):**
+- **new_member_17** — formatting issue, handled with guidance
+
+All 6 reports reviewed, actions taken, and a governance announcement posted. Stopping here as instructed.

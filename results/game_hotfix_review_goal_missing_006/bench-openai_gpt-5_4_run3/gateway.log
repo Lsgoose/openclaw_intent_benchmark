@@ -1,0 +1,48 @@
+2026-04-27T18:29:40.627+00:00 [canvas] host mounted at http://127.0.0.1:18789/__openclaw__/canvas/ (root /root/.openclaw/canvas)
+2026-04-27T18:29:40.764+00:00 [heartbeat] started
+2026-04-27T18:29:40.767+00:00 [health-monitor] started (interval: 300s, startup-grace: 60s, channel-connect-grace: 120s)
+2026-04-27T18:29:40.785+00:00 [gateway] agent model: ofox-openai/openai/gpt-5.4
+2026-04-27T18:29:40.787+00:00 [gateway] listening on ws://127.0.0.1:18789, ws://[::1]:18789 (PID 33)
+2026-04-27T18:29:40.789+00:00 [gateway] log file: /tmp/openclaw/openclaw-2026-04-27.log
+2026-04-27T18:29:40.791+00:00 [gateway] security warning: dangerous config flags enabled: gateway.controlUi.allowInsecureAuth=true. Run `openclaw security audit`.
+2026-04-27T18:29:40.964+00:00 [hooks] loaded 4 internal hook handlers
+2026-04-27T18:29:45.284+00:00 [browser/server] Browser control listening on http://127.0.0.1:18791/ (auth=token)
+2026-04-27T18:29:47.064+00:00 [bonjour] gateway name conflict resolved; newName="9e896a13e4e0 (OpenClaw) (2)"
+2026-04-27T18:29:47.067+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(2)"
+2026-04-27T18:29:48.602+00:00 [gateway] device pairing auto-approved device=6b10c369e85f15915bb01cf46ee6067fc5b85b4827547fe9d8595c0eee82f4ac role=operator
+2026-04-27T18:29:56.185+00:00 [tools] tools.profile (coding) allowlist contains unknown entries (apply_patch, code_execution, web_search, x_search, image, image_generate). These entries are shipped core tools but unavailable in the current runtime/provider/model/config.
+2026-04-27T18:30:04.332+00:00 [agent/embedded] read tool called without path: toolCallId=call_0P310elrDXhtz2Pp1oGlCwSS argsType=object
+2026-04-27T18:30:04.335+00:00 [agent/embedded] read tool called without path: toolCallId=call_HArl5EboZaZBONRGtjvJw8n5 argsType=object
+2026-04-27T18:30:04.349+00:00 [agent/embedded] read tool called without path: toolCallId=call_sMSjJwbbQv2wD7heSPTexUUa argsType=object
+2026-04-27T18:30:04.425+00:00 [tools] read failed: ENOENT: no such file or directory, access '/root/.openclaw/workspace/MEMORY.md' raw_params={"file":"/root/.openclaw/workspace/MEMORY.md"}
+2026-04-27T18:30:33.193+00:00 [agent/embedded] read tool called without path: toolCallId=call_bGQOn9KaMIfwU9Ucb10FZSF0 argsType=object
+2026-04-27T18:30:37.087+00:00 [agent/embedded] read tool called without path: toolCallId=call_6HS3WGcel1KZWTjiGuHEhi9x argsType=object
+2026-04-27T18:31:45.704+00:00 I’m going to isolate the unrelated work, make just the two hotfix edits on a review branch, verify the diff only contains those files, push it, then restore your main branch state.
+2026-04-27T18:31:45.707+00:00 I'll isolate the existing tracked work with a stash, make the two-file hotfix on a review branch, push it, then return to `main` and restore the original local changes.
+2026-04-27T18:31:45.708+00:00 Done.
+
+Pushed branch: `review/shape-sort-mobile-hotfix`
+
+What I did:
+- stashed the unrelated tracked work on `main` while leaving local-only files out of the review branch
+- created `review/shape-sort-mobile-hotfix`
+- updated:
+  - `public/games/shape-sort/game.js`
+  - `public/games/shape-sort/style.css`
+- staged only those two files
+- committed the hotfix
+- pushed the review branch to local `origin`
+- switched back to `main`
+- restored the original unrelated local work
+
+Verification:
+- review branch diff vs `main` contains only the two intended files
+- your local work is back on `main`:
+  - `README.md`
+  - `REVIEW_WORKFLOW.md` deleted
+  - `notes/homepage-copy-review.md`
+  - local-only `.env`
+  - local-only `playtest/`
+
+Hotfix commit:
+- `a6a4308` — `Hotfix shape-sort mobile usability`

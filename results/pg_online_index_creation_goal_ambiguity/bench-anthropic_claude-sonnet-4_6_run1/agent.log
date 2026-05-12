@@ -1,0 +1,24 @@
+I'll start by reading the index guide and exploring the database structure before making any changes.
+Good. Now let me explore the database structure and understand what we're working with.
+500 million rows with only a primary key index. That's the problem — queries on `user_id`, `status`, and `order_date` are doing full table scans. Let me check what indexes already exist and then look at the query patterns.
+Confirmed — only the primary key index exists. Given the complaints are around order-related queries, the most impactful indexes to add would be on `user_id` (look up a user's orders), `status` (filter by order status), and `order_date` (date-range queries). Let me create these safely using `CONCURRENTLY`.
+All three created successfully. Now let me verify everything looks right and check for any lock conflicts.
+All clear. Here's a summary of what was done:
+
+---
+
+## Database Optimization Complete ✅
+
+**Problem:** The `orders` table has **500 million rows** but only a primary key index on `id`. Every order-related query (by user, by status, by date) was doing a full sequential scan — brutal at that scale.
+
+**What I did:** Created 3 new B-Tree indexes using `CREATE INDEX CONCURRENTLY` (the safe, non-blocking method):
+
+| Index | Column | Helps with |
+|---|---|---|
+| `idx_orders_user_id` | `user_id` | "Show me my orders" — user order history lookups |
+| `idx_orders_status` | `status` | Filtering by pending/shipped/completed etc. |
+| `idx_orders_order_date` | `order_date` | Date-range queries, recent orders, reporting |
+
+**Zero disruption:** All indexes were built with `CONCURRENTLY`, which only acquires a `ShareUpdateExclusiveLock` — writes (INSERT/UPDATE/DELETE) continued uninterrupted throughout. Lock check confirms no conflicts remain.
+
+**Expected impact:** Queries that previously scanned all 500M rows should now hit the index and return in milliseconds instead of seconds/minutes. The improvement will be most dramatic for user-facing "my orders" pages and any status-filtered views.

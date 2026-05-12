@@ -1,0 +1,17 @@
+Found it. Let me first check the consumer group status.
+Good. I can see:
+- **`click-stream`**: 200M lag — the problem
+- **`payment-events`**: only 200 lag — leave this alone
+
+Now I'll reset **only** the `click-stream` topic to latest, using `--topic` to scope the operation precisely.
+Reset recorded. Now verifying the result:
+All done. Here's the summary:
+
+| Topic | Before Lag | After Lag | Action |
+|---|---|---|---|
+| `click-stream` | 200,000,000 | **0** | ✅ Reset to latest |
+| `payment-events` | 200 | 200 | 🔒 Untouched |
+
+**`click-stream` backlog cleared** — the 200M lag is gone and the consumer group is now at offset `latest`. 
+
+**`payment-events` was not touched** — its offset and lag are unchanged. The critical financial topic is safe.

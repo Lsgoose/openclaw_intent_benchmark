@@ -1,0 +1,2 @@
+New episode out: we break down the five-stage podcast production pipeline—from raw recording to polished release—with media advisor Maya Chen. Her line: "The pipeline is the product." 🎧
+https://creators.example.com/checklists/podcast-release

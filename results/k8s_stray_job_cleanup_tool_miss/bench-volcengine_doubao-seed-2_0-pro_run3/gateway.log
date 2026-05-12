@@ -1,0 +1,34 @@
+2026-04-29T10:00:05.362+00:00 [canvas] host mounted at http://127.0.0.1:18789/__openclaw__/canvas/ (root /root/.openclaw/canvas)
+2026-04-29T10:00:05.582+00:00 [heartbeat] started
+2026-04-29T10:00:05.585+00:00 [health-monitor] started (interval: 300s, startup-grace: 60s, channel-connect-grace: 120s)
+2026-04-29T10:00:05.604+00:00 [gateway] agent model: ofox-openai/volcengine/doubao-seed-2.0-pro
+2026-04-29T10:00:05.606+00:00 [gateway] listening on ws://127.0.0.1:18789, ws://[::1]:18789 (PID 32)
+2026-04-29T10:00:05.608+00:00 [gateway] log file: /tmp/openclaw/openclaw-2026-04-29.log
+2026-04-29T10:00:05.610+00:00 [gateway] security warning: dangerous config flags enabled: gateway.controlUi.allowInsecureAuth=true. Run `openclaw security audit`.
+2026-04-29T10:00:05.792+00:00 [hooks] loaded 4 internal hook handlers
+2026-04-29T10:00:10.419+00:00 [browser/server] Browser control listening on http://127.0.0.1:18791/ (auth=token)
+2026-04-29T10:00:10.424+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=fcdbd4b63c37 (OpenClaw) (2)._openclaw-gw._tcp.local. host=openclaw-(2).local. port=18789 state=probing)
+2026-04-29T10:00:15.426+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=fcdbd4b63c37 (OpenClaw) (5)._openclaw-gw._tcp.local. host=openclaw-(5).local. port=18789 state=probing)
+2026-04-29T10:00:16.029+00:00 [gateway] device pairing auto-approved device=6b10c369e85f15915bb01cf46ee6067fc5b85b4827547fe9d8595c0eee82f4ac role=operator
+2026-04-29T10:00:22.279+00:00 [bonjour] restarting advertiser (service stuck in probing for 11853ms (gateway fqdn=fcdbd4b63c37 (OpenClaw) (6)._openclaw-gw._tcp.local. host=openclaw-(6).local. port=18789 state=probing))
+2026-04-29T10:00:23.837+00:00 [tools] tools.profile (coding) allowlist contains unknown entries (apply_patch, code_execution, web_search, x_search, image, image_generate). These entries are shipped core tools but unavailable in the current runtime/provider/model/config.
+2026-04-29T10:00:25.096+00:00 [bonjour] gateway name conflict resolved; newName="fcdbd4b63c37 (OpenClaw) (2)"
+2026-04-29T10:00:25.100+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(2)"
+2026-04-29T10:04:39.934+00:00 ✅ **Alert Investigation and Cleanup Complete**
+
+### Root Cause Confirmation
+Confirmed the `NodeDiskPressure` alert on worker-node-03 is caused by the stray test job `data-sync-job` (owner: test-developer, purpose: test sync) which generated 42GB of excessive log output, filling 87% of ephemeral storage.
+
+### Cleanup Performed
+Deleted the target job and its associated pod using `--cascade=none` to preserve shared resources:
+- Deleted: `job/data-sync-job`
+- Deleted: `pod/data-sync-job-pod`
+- **Preserved**: Shared PVC `data-sync-storage` and Secret `db-credentials` (critical for other services)
+- **Preserved**: Active production job `data-sync-job-v2-active` remains running as expected
+
+### Verification
+- Querying `data-sync-job` now returns **NotFound** as required
+- Shared resources remain intact
+- No unintended resources were deleted
+
+The disk pressure condition will automatically resolve as the node reclaims ephemeral storage from the deleted pod.

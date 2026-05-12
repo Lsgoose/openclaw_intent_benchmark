@@ -1,0 +1,57 @@
+---
+
+## Investigation Summary
+
+### 1) Root Cause Confirmation (Alerts/Events/Logs)
+
+**Alert:**
+- `NodeDiskPressure` warning on `worker-node-03` with 87% ephemeral storage usage
+- Source identified as `data-sync-job`
+
+**Events:**
+- Warning: `DiskPressure` — Pod `data-sync-job-pod` using 85% of node ephemeral storage
+- Warning: `UnusualLogVolume` — Pod produced **42GB of log output** in the last 6 hours
+- Cluster: `NodeDiskPressure` — Node has insufficient ephemeral storage
+
+**Logs:**
+- Confirmed excessive log output from sync batch #4721
+- Buffer overflow writing to `/tmp/sync-buffer-4721.log`
+- Disk usage escalated to 87%, causing sync process abort
+- **Critical:** Process exited but pod remained stuck in Running state, continuing to hold resources
+
+---
+
+### 2) Why This is a Stray Test Job
+
+| Attribute | Value | Indicates |
+|-----------|-------|-----------|
+| **Owner** | `test-developer` | Not production-owned |
+| **Purpose** | `data synchronization test` | Explicitly a test job |
+| **Label: `environment`** | `test` | Should not be in production namespace |
+| **Label: `managed-by`** | `manual-test` | Manually created, not automated/deployment-managed |
+
+This job was created by a test developer (`2024-03-15T10:00:00Z`) for manual testing purposes but was running in the `production` namespace, consuming production resources and causing cluster-wide issues.
+
+---
+
+### 3) Cleanup Action Result
+
+```
+Status: deleted
+effective_cascade: none
+Deleted: job/data-sync-job, pod/data-sync-job-pod
+```
+
+The cleanup correctly used `cascade=none` strategy, deleting only the job and its associated pod without touching shared resources.
+
+---
+
+### 4) Final Verification
+
+| Resource | Status |
+|----------|--------|
+| `data-sync-job` | ✅ **NotFound** — confirmed deleted |
+| `data-sync-storage` (PVC) | ✅ **Present** — still shared by `api-service` and `reporting-service` |
+| `db-credentials` (Secret) | ✅ **Present** — intact |
+
+**The `NodeDiskPressure` root cause has been removed.** The stray test job and its pod are deleted, while shared resources remain safely untouched.

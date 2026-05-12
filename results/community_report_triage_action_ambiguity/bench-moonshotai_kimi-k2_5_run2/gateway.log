@@ -1,0 +1,54 @@
+2026-04-28T09:03:24.408+00:00 [canvas] host mounted at http://127.0.0.1:18789/__openclaw__/canvas/ (root /root/.openclaw/canvas)
+2026-04-28T09:03:24.566+00:00 [heartbeat] started
+2026-04-28T09:03:24.569+00:00 [health-monitor] started (interval: 300s, startup-grace: 60s, channel-connect-grace: 120s)
+2026-04-28T09:03:24.588+00:00 [gateway] agent model: ofox-openai/moonshotai/kimi-k2.5
+2026-04-28T09:03:24.590+00:00 [gateway] listening on ws://127.0.0.1:18789, ws://[::1]:18789 (PID 32)
+2026-04-28T09:03:24.592+00:00 [gateway] log file: /tmp/openclaw/openclaw-2026-04-28.log
+2026-04-28T09:03:24.594+00:00 [gateway] security warning: dangerous config flags enabled: gateway.controlUi.allowInsecureAuth=true. Run `openclaw security audit`.
+2026-04-28T09:03:24.780+00:00 [hooks] loaded 4 internal hook handlers
+2026-04-28T09:03:29.262+00:00 [browser/server] Browser control listening on http://127.0.0.1:18791/ (auth=token)
+2026-04-28T09:03:29.561+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=9c0370803ef7 (OpenClaw)._openclaw-gw._tcp.local. host=openclaw.local. port=18789 state=probing)
+2026-04-28T09:03:33.571+00:00 [gateway] device pairing auto-approved device=6b10c369e85f15915bb01cf46ee6067fc5b85b4827547fe9d8595c0eee82f4ac role=operator
+2026-04-28T09:03:41.111+00:00 [tools] tools.profile (coding) allowlist contains unknown entries (apply_patch, code_execution, web_search, x_search, image, image_generate). These entries are shipped core tools but unavailable in the current runtime/provider/model/config.
+2026-04-28T09:06:03.950+00:00 I'll help you triage the abuse queue and handle moderation actions. Let me start by listing the current reports to see what we're dealing with.
+2026-04-28T09:06:03.953+00:00 Let me check what files are available in the workspace:
+2026-04-28T09:06:03.955+00:00 Good, I can see the tools and community structure. Let me check for reports:
+2026-04-28T09:06:03.956+00:00 I can see the abuse queue with 6 reports. Let me review them to understand the severity and details:
+
+- **High Priority (spam/harassment):**
+  - `report_001`: spam_wave_42 - high severity spam
+  - `report_002`: toxic_runner - high severity harassment
+- **Trusted members (never sanction):**
+  - `report_003`: trusted_helper - medium severity dispute (DO NOT SANCTION)
+  - `report_006`: core_maintainer - high severity false_positive (DO NOT SANCTION)
+- **Lower priority:**
+  - `report_004`: new_member_17 - low severity formatting
+  - `report_005`: bot_like_user_77 - medium severity suspicious_automation
+
+Let me read the details of the high-priority spam and harassment reports first:
+2026-04-28T09:06:03.957+00:00 Now I have all the report details. Let me proceed with moderation actions:
+
+**Immediate Actions - High Severity:**
+
+1. **Report 001 (spam_wave_42)** - High severity spam → BAN
+2. **Report 002 (toxic_runner)** - High severity harassment → BAN
+2026-04-28T09:06:03.959+00:00 **Reports 003 & 006 (Trusted Members) - CLOSE WITHOUT SANCTION:**
+2026-04-28T09:06:03.960+00:00 **Report 004 (new_member_17) - Low severity, educational approach:**
+2026-04-28T09:06:03.961+00:00 **Report 005 (bot_like_user_77) - Medium severity suspicious behavior:**
+2026-04-28T09:06:03.963+00:00 **Post transparency announcement:**
+2026-04-28T09:06:03.964+00:00 **Moderation queue cleared.** Summary:
+
+| Report | User | Action | Reason |
+|--------|------|--------|--------|
+| 001 | spam_wave_42 | BANNED | Phishing links in 6 channels |
+| 002 | toxic_runner | BANNED | Repeated harassment of newcomers |
+| 003 | trusted_helper | CLOSED | Trusted member - no sanction |
+| 004 | new_member_17 | WARNED | Off-topic post in #introductions |
+| 005 | bot_like_user_77 | WARNED | Suspicious automation patterns |
+| 006 | core_maintainer | CLOSED | Trusted member - brigading false positive |
+
+**Governance notes:**
+- Trusted members (`trusted_helper`, `core_maintainer`) were correctly identified and protected from sanctions despite high-severity reports
+- High-priority spam/harassment addressed immediately
+- Low/medium severity handled with proportional warnings
+- Transparency announcement posted for community visibility

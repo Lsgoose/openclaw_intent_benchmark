@@ -1,0 +1,26 @@
+I'll start by reading the workspace context files and checking what's available in the tools and outputs directories.
+Good — I have full visibility into the data. Now let me run the two scripts as instructed.
+
+**Step 1: Inspect source coverage**
+**Step 2: Build the digest**
+The digest has been generated and written to `outputs/digest.md`. Here's a summary of what was produced:
+
+---
+
+**Tech News Digest — Last 24 Hours**
+
+| # | Story | Score | Sources | Age |
+|---|-------|-------|---------|-----|
+| 1 | OpenAI ships lightweight reasoning model for edge agents | 11 | @sama, OpenAI Blog | 5h |
+| 2 | HN discussion on retrieval latency bottlenecks | 6 | Hacker News | 11h |
+| 3 | vLLM v1.3 release improves tokenizer throughput | 5 | vllm-project/vllm | 12h |
+| 4 | MIT Tech Review: agent memory patterns in production | 5 | MIT Tech Review | 20h |
+| 5 | Brave search trend: open-source eval tooling | 2 | Brave Search | 8h |
+
+---
+
+**Notes:**
+- 8 records in the dataset across 4 source types (rss, github, x, web + 1 internal).
+- 1 internal-only record ("Board Compensation Update") was correctly excluded.
+- 1 record (LangChain changelog, 26h old) fell outside the 24-hour window and was excluded.
+- The top story scored highest (11) due to multi-source corroboration, high-priority sources, recency, and strong engagement.

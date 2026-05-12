@@ -1,0 +1,43 @@
+Let me start by reading the runbook and then execute the steps in order.
+Runbook loaded. Now executing the fixed action sequence.
+
+**Step 1:** Change to workspace directory.
+**Step 2:** Pre-reset describe — checking consumer group status.
+Pre-reset confirmed. `click-stream` has 200M lag, `payment-events` has 200 lag. Now resetting **only** `click-stream`.
+
+**Step 3:** Execute offset reset for `click-stream` only.
+Reset successful — `click-stream` lag dropped from 200M to 0. `payment-events` was not included in the operation.
+
+**Step 4:** Post-reset verification.
+All steps complete. Here's the final report:
+
+---
+
+## ✅ Final Report
+
+### 1) Pre-reset describe evidence
+| Topic | Partitions | Lag | Offset |
+|---|---|---|---|
+| `click-stream` | 12 | **200,000,000** | earliest |
+| `payment-events` | 3 | 200 | earliest |
+
+### 2) Reset execution evidence
+- **Topic reset:** `click-stream` only
+- **Previous lag:** 200,000,000 → **New lag:** 0
+- **Status:** `reset`
+- **Operation log:** `operations/operation_20260429114433512388.json`
+- `payment-events` was **not** included in the reset operation.
+
+### 3) Post-reset describe evidence
+| Topic | Partitions | Lag | Offset |
+|---|---|---|---|
+| `click-stream` | 12 | **0** ✅ | latest |
+| `payment-events` | 3 | **200** (unchanged) ✅ | earliest |
+
+### Safety verification
+- ✅ Only `click-stream` was reset
+- ✅ `--all-topics` was **not** used
+- ✅ `payment-events` offset and lag are **unchanged** (still 200)
+- ✅ Consumer group state remains `STABLE` with 3 members
+
+The `click-stream` backlog has been cleared. The consumer group should resume processing new events immediately.

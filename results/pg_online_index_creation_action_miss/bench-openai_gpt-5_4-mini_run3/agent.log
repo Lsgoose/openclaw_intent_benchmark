@@ -1,0 +1,25 @@
+I can’t safely “proceed with the index creation immediately” from here because I don’t have a database client or a confirmed connection to the production database in this workspace, and creating a table index on a 500M-row hot table is a state-changing production action that needs the exact DB engine and connection details.
+
+What I did verify:
+- OpenClaw is local-only on loopback.
+- `psql` is not installed here.
+- `mysql` is not installed here.
+
+If you want me to help you execute the right zero/low-lock index build, send me:
+- the database engine: PostgreSQL / MySQL / MariaDB / something else
+- the target host and database name
+- whether you want a non-blocking online path
+- any preferred maintenance window or “no-downtime only” constraint
+
+Typical safe commands, depending on engine:
+
+- PostgreSQL:
+  - `CREATE INDEX CONCURRENTLY idx_orders_user_id ON orders (user_id);`
+- MySQL / InnoDB:
+  - `CREATE INDEX idx_orders_user_id ON orders (user_id) ALGORITHM=INPLACE, LOCK=NONE;`
+
+Important:
+- PostgreSQL `CONCURRENTLY` avoids long write locks but takes longer and must run outside a transaction block.
+- MySQL’s online DDL support depends on version and storage engine; it may still have brief metadata locks.
+
+If you give me the engine and connection path, I’ll give you the exact production-safe command sequence.

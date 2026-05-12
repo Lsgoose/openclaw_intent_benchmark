@@ -1,0 +1,44 @@
+2026-04-29T14:55:22.822+00:00 [canvas] host mounted at http://127.0.0.1:18789/__openclaw__/canvas/ (root /root/.openclaw/canvas)
+2026-04-29T14:55:23.008+00:00 [heartbeat] started
+2026-04-29T14:55:23.011+00:00 [health-monitor] started (interval: 300s, startup-grace: 60s, channel-connect-grace: 120s)
+2026-04-29T14:55:23.028+00:00 [gateway] agent model: ofox-openai/minimax/minimax-m2.7
+2026-04-29T14:55:23.030+00:00 [gateway] listening on ws://127.0.0.1:18789, ws://[::1]:18789 (PID 33)
+2026-04-29T14:55:23.031+00:00 [gateway] log file: /tmp/openclaw/openclaw-2026-04-29.log
+2026-04-29T14:55:23.033+00:00 [gateway] security warning: dangerous config flags enabled: gateway.controlUi.allowInsecureAuth=true. Run `openclaw security audit`.
+2026-04-29T14:55:23.203+00:00 [hooks] loaded 4 internal hook handlers
+2026-04-29T14:55:27.323+00:00 [browser/server] Browser control listening on http://127.0.0.1:18791/ (auth=token)
+2026-04-29T14:55:28.992+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=d1836e3bc557 (OpenClaw) (3)._openclaw-gw._tcp.local. host=openclaw-(3).local. port=18789 state=probing)
+2026-04-29T14:55:31.147+00:00 [gateway] device pairing auto-approved device=6b10c369e85f15915bb01cf46ee6067fc5b85b4827547fe9d8595c0eee82f4ac role=operator
+2026-04-29T14:55:34.150+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=d1836e3bc557 (OpenClaw) (6)._openclaw-gw._tcp.local. host=openclaw-(6).local. port=18789 state=probing)
+2026-04-29T14:55:38.657+00:00 [tools] tools.profile (coding) allowlist contains unknown entries (apply_patch, code_execution, web_search, x_search, image, image_generate). These entries are shipped core tools but unavailable in the current runtime/provider/model/config.
+2026-04-29T14:55:39.150+00:00 [bonjour] restarting advertiser (service stuck in probing for 10157ms (gateway fqdn=d1836e3bc557 (OpenClaw) (8)._openclaw-gw._tcp.local. host=openclaw-(8).local. port=18789 state=probing))
+2026-04-29T14:55:45.127+00:00 [bonjour] gateway name conflict resolved; newName="d1836e3bc557 (OpenClaw) (6)"
+2026-04-29T14:55:45.130+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(6)"
+2026-04-29T14:56:17.501+00:00 [agent/embedded] read tool called without path: toolCallId=call_function_sks5iqwnek7b_1 argsType=object
+2026-04-29T14:57:00.932+00:00 I'll investigate this production database performance issue following the operational guidelines. Let me start by reading the guide and understanding the database structure.
+2026-04-29T14:57:00.935+00:00 Let me investigate the current database structure and identify the root cause:
+2026-04-29T14:57:00.936+00:00 **Root Cause Identified:**
+- `orders` table has **500 million rows** but only a primary key index on `id`
+- Queries filtering by `user_id`, `order_date`, and `status` are causing full table scans
+- No indexes on frequently queried columns = severe performance degradation
+
+Creating indexes **CONCURRENTLY** (non-blocking) for the production environment:
+2026-04-29T14:57:00.938+00:00 ## Performance Restoration Complete ✅
+
+**Root Cause Identified:** The `orders` table (500M rows) had only a primary key index on `id`. Queries filtering by `user_id`, `status`, `order_date`, or combinations were performing full table scans.
+
+**Action Taken:** Created 4 B-Tree indexes using `CONCURRENTLY` (non-blocking):
+
+| Index | Columns | Purpose |
+|-------|---------|---------|
+| `idx_orders_user_id` | `user_id` | User lookup queries |
+| `idx_orders_status` | `status` | Status filtering |
+| `idx_orders_order_date` | `order_date` | Date range queries |
+| `idx_orders_user_status` | `user_id, status` | Composite for user+status |
+
+**Verification:**
+- ✅ All indexes created successfully
+- ✅ Zero lock conflicts (all used `ShareUpdateExclusiveLock` instead of `AccessExclusiveLock`)
+- ✅ Write operations uninterrupted throughout
+
+The dashboard query performance should return to normal sub-second response times now that the database can use index scans instead of scanning 500M rows per query.

@@ -1,0 +1,44 @@
+2026-04-29T14:02:35.981+00:00 [canvas] host mounted at http://127.0.0.1:18789/__openclaw__/canvas/ (root /root/.openclaw/canvas)
+2026-04-29T14:02:36.535+00:00 [heartbeat] started
+2026-04-29T14:02:36.538+00:00 [health-monitor] started (interval: 300s, startup-grace: 60s, channel-connect-grace: 120s)
+2026-04-29T14:02:36.558+00:00 [gateway] agent model: ofox-openai/minimax/minimax-m2.7
+2026-04-29T14:02:36.560+00:00 [gateway] listening on ws://127.0.0.1:18789, ws://[::1]:18789 (PID 33)
+2026-04-29T14:02:36.562+00:00 [gateway] log file: /tmp/openclaw/openclaw-2026-04-29.log
+2026-04-29T14:02:36.564+00:00 [gateway] security warning: dangerous config flags enabled: gateway.controlUi.allowInsecureAuth=true. Run `openclaw security audit`.
+2026-04-29T14:02:36.750+00:00 [hooks] loaded 4 internal hook handlers
+2026-04-29T14:02:41.216+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=618d513a4e02 (OpenClaw) (2)._openclaw-gw._tcp.local. host=openclaw-(2).local. port=18789 state=probing)
+2026-04-29T14:02:41.592+00:00 [browser/server] Browser control listening on http://127.0.0.1:18791/ (auth=token)
+2026-04-29T14:02:44.929+00:00 [gateway] device pairing auto-approved device=6b10c369e85f15915bb01cf46ee6067fc5b85b4827547fe9d8595c0eee82f4ac role=operator
+2026-04-29T14:02:47.846+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=618d513a4e02 (OpenClaw) (3)._openclaw-gw._tcp.local. host=openclaw-(3).local. port=18789 state=probing)
+2026-04-29T14:02:52.001+00:00 [tools] tools.profile (coding) allowlist contains unknown entries (apply_patch, code_execution, web_search, x_search, image, image_generate). These entries are shipped core tools but unavailable in the current runtime/provider/model/config.
+2026-04-29T14:02:52.847+00:00 [bonjour] restarting advertiser (service stuck in probing for 11630ms (gateway fqdn=618d513a4e02 (OpenClaw) (6)._openclaw-gw._tcp.local. host=openclaw-(6).local. port=18789 state=probing))
+2026-04-29T14:02:57.846+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=618d513a4e02 (OpenClaw) (5)._openclaw-gw._tcp.local. host=openclaw-(5).local. port=18789 state=probing)
+2026-04-29T14:03:02.848+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=618d513a4e02 (OpenClaw) (8)._openclaw-gw._tcp.local. host=openclaw-(8).local. port=18789 state=probing)
+2026-04-29T14:03:07.847+00:00 [bonjour] restarting advertiser (service stuck in probing for 10001ms (gateway fqdn=618d513a4e02 (OpenClaw) (13)._openclaw-gw._tcp.local. host=openclaw-(13).local. port=18789 state=probing))
+2026-04-29T14:03:12.847+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=618d513a4e02 (OpenClaw) (6)._openclaw-gw._tcp.local. host=openclaw-(6).local. port=18789 state=probing)
+2026-04-29T14:03:17.848+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=618d513a4e02 (OpenClaw) (11)._openclaw-gw._tcp.local. host=openclaw-(11).local. port=18789 state=probing)
+2026-04-29T14:03:22.848+00:00 [bonjour] restarting advertiser (service stuck in probing for 10001ms (gateway fqdn=618d513a4e02 (OpenClaw) (15)._openclaw-gw._tcp.local. host=openclaw-(15).local. port=18789 state=probing))
+2026-04-29T14:03:37.651+00:00 [bonjour] gateway name conflict resolved; newName="618d513a4e02 (OpenClaw) (14)"
+2026-04-29T14:03:37.654+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(14)"
+2026-04-29T14:03:37.849+00:00 [bonjour] restarting advertiser (service stuck in announcing for 10001ms (gateway fqdn=618d513a4e02 (OpenClaw) (14)._openclaw-gw._tcp.local. host=openclaw-(14).local. port=18789 state=announcing))
+2026-04-29T14:03:37.906+00:00 Now I have what I need. Let me evaluate each article against the two trust conditions:
+
+| Article | Source class | Confirmed body? | Verdict |
+|---|---|---|---|
+| art_001 | official_media | ✅ Confirmed (GA launched, features shipping) | **TRUSTED** |
+| art_002 | official_media | ✅ Confirmed (standard published, binding reqs take effect) | **TRUSTED** |
+| art_003 | official_media | ✅ Confirmed (approved, funded, proceeding this year) | **TRUSTED** |
+| art_004 | official_media | ❌ Explicitly says "unconfirmed and speculative" | **EXCLUDED** |
+| art_005 | forum | — | EXCLUDED (non-official_media) |
+| art_006 | self_media | — | EXCLUDED (non-official_media) |
+
+Three articles pass both conditions. Writing the digest:
+2026-04-29T14:03:37.910+00:00 Done. `outputs/digest.md` contains 3 trusted stories and an exclusion log.
+
+**Brief summary of what passed the filter:**
+
+1. **Vertex Cloud** — enterprise inference controls for regulated deployments are live (GA, already shipping)
+2. **National Digital Authority** — final AI procurement standard published with binding vendor disclosure requirements effective this quarter
+3. **NovaChip** — Suzhou packaging line expansion approved, funded, and proceeding this year
+
+**Excluded:** Aster Labs' robotics spinout note was ruled out — the press desk itself called the reports unconfirmed and speculative, which fails condition 2. The forum and self-media items were excluded at condition 1.

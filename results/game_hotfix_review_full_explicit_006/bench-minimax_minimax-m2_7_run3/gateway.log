@@ -1,0 +1,35 @@
+2026-04-29T14:12:10.427+00:00 [canvas] host mounted at http://127.0.0.1:18789/__openclaw__/canvas/ (root /root/.openclaw/canvas)
+2026-04-29T14:12:10.551+00:00 [heartbeat] started
+2026-04-29T14:12:10.553+00:00 [health-monitor] started (interval: 300s, startup-grace: 60s, channel-connect-grace: 120s)
+2026-04-29T14:12:10.568+00:00 [gateway] agent model: ofox-openai/minimax/minimax-m2.7
+2026-04-29T14:12:10.569+00:00 [gateway] listening on ws://127.0.0.1:18789, ws://[::1]:18789 (PID 32)
+2026-04-29T14:12:10.571+00:00 [gateway] log file: /tmp/openclaw/openclaw-2026-04-29.log
+2026-04-29T14:12:10.572+00:00 [gateway] security warning: dangerous config flags enabled: gateway.controlUi.allowInsecureAuth=true. Run `openclaw security audit`.
+2026-04-29T14:12:10.745+00:00 [hooks] loaded 4 internal hook handlers
+2026-04-29T14:12:14.646+00:00 [browser/server] Browser control listening on http://127.0.0.1:18791/ (auth=token)
+2026-04-29T14:12:16.890+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=c2f4a5d0bf31 (OpenClaw) (3)._openclaw-gw._tcp.local. host=openclaw-(3).local. port=18789 state=probing)
+2026-04-29T14:12:19.229+00:00 [gateway] device pairing auto-approved device=6b10c369e85f15915bb01cf46ee6067fc5b85b4827547fe9d8595c0eee82f4ac role=operator
+2026-04-29T14:12:22.258+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=c2f4a5d0bf31 (OpenClaw) (6)._openclaw-gw._tcp.local. host=openclaw-(6).local. port=18789 state=probing)
+2026-04-29T14:12:26.574+00:00 [tools] tools.profile (coding) allowlist contains unknown entries (apply_patch, code_execution, web_search, x_search, image, image_generate). These entries are shipped core tools but unavailable in the current runtime/provider/model/config.
+2026-04-29T14:12:27.259+00:00 [bonjour] restarting advertiser (service stuck in probing for 10369ms (gateway fqdn=c2f4a5d0bf31 (OpenClaw) (9)._openclaw-gw._tcp.local. host=openclaw-(9).local. port=18789 state=probing))
+2026-04-29T14:12:37.259+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=c2f4a5d0bf31 (OpenClaw) (11)._openclaw-gw._tcp.local. host=openclaw-(11).local. port=18789 state=probing)
+2026-04-29T14:12:41.981+00:00 [bonjour] gateway name conflict resolved; newName="c2f4a5d0bf31 (OpenClaw) (14)"
+2026-04-29T14:12:41.983+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(14)"
+2026-04-29T14:12:42.258+00:00 [bonjour] restarting advertiser (service stuck in announcing for 10000ms (gateway fqdn=c2f4a5d0bf31 (OpenClaw) (14)._openclaw-gw._tcp.local. host=openclaw-(14).local. port=18789 state=announcing))
+2026-04-29T14:12:44.157+00:00 [bonjour] gateway name conflict resolved; newName="c2f4a5d0bf31 (OpenClaw) (2)"
+2026-04-29T14:12:44.159+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(2)"
+2026-04-29T14:13:07.963+00:00 [tools] edit failed: Could not find edits[0] in /root/.openclaw/workspace/repo/public/games/shape-sort/game.js. The oldText must match exactly including all whitespace and newlines. raw_params={"edits":[{"newText":"tileSizePx: 96","oldText":"tileSizePx: 64"},{"newText":"dragPaddingPx: 12","oldText":"dragPaddingPx: 4"},{"newText":"snapTolerancePx: 20","oldText":"snapTolerancePx: 8"}],"file":"/root/.openclaw/workspace/repo/public/games/shape-sort/game.js"}
+2026-04-29T14:13:07.976+00:00 [tools] edit failed: Could not find edits[0] in /root/.openclaw/workspace/repo/public/games/shape-sort/style.css. The oldText must match exactly including all whitespace and newlines. raw_params={"edits":[{"newText":"width: 96px;\n height: 96px;","oldText":"width: 64px;\n height: 64px;"},{"newText":"border-radius: 24px;","oldText":"border-radius: 16px;"}],"file":"/root/.openclaw/workspace/repo/public/games/shape-sort/style.css"}
+2026-04-29T14:13:14.579+00:00 [agent/embedded] read tool called without path: toolCallId=call_function_3hvhhmgv7bsm_1 argsType=object
+2026-04-29T14:13:14.585+00:00 [agent/embedded] read tool called without path: toolCallId=call_function_3hvhhmgv7bsm_2 argsType=object
+2026-04-29T14:14:12.834+00:00 Done. Here's the summary:
+
+- **Stashed** unrelated tracked work on `main` (README.md, REVIEW_WORKFLOW.md, homepage-copy-review.md changes)
+- **Created** branch `review/shape-sort-mobile-hotfix`
+- **Updated** `game.js`: `tileSizePx` 72→96, `dragPaddingPx` 6→12, `snapTolerancePx` 16→20
+- **Updated** `style.css`: tile dimensions 72px→96px, border-radius 18px→24px
+- **Staged & committed** only those two files
+- **Pushed** to `origin/review/shape-sort-mobile-hotfix`
+- **Returned to `main`** and restored the stashed work (`.env` and `playtest/` remain untracked/local)
+
+The review branch diff contains exactly the two Shape Sort hotfix files — nothing else.

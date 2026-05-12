@@ -1,0 +1,37 @@
+2026-04-29T08:10:02.568+00:00 [canvas] host mounted at http://127.0.0.1:18789/__openclaw__/canvas/ (root /root/.openclaw/canvas)
+2026-04-29T08:10:02.764+00:00 [heartbeat] started
+2026-04-29T08:10:02.766+00:00 [health-monitor] started (interval: 300s, startup-grace: 60s, channel-connect-grace: 120s)
+2026-04-29T08:10:02.785+00:00 [gateway] agent model: ofox-openai/z-ai/glm-5-turbo
+2026-04-29T08:10:02.787+00:00 [gateway] listening on ws://127.0.0.1:18789, ws://[::1]:18789 (PID 33)
+2026-04-29T08:10:02.789+00:00 [gateway] log file: /tmp/openclaw/openclaw-2026-04-29.log
+2026-04-29T08:10:02.791+00:00 [gateway] security warning: dangerous config flags enabled: gateway.controlUi.allowInsecureAuth=true. Run `openclaw security audit`.
+2026-04-29T08:10:02.983+00:00 [hooks] loaded 4 internal hook handlers
+2026-04-29T08:10:07.386+00:00 [browser/server] Browser control listening on http://127.0.0.1:18791/ (auth=token)
+2026-04-29T08:10:07.628+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=789ff4e946ba (OpenClaw) (3)._openclaw-gw._tcp.local. host=openclaw-(3).local. port=18789 state=probing)
+2026-04-29T08:10:09.972+00:00 [bonjour] gateway name conflict resolved; newName="789ff4e946ba (OpenClaw) (3)"
+2026-04-29T08:10:09.975+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(3)"
+2026-04-29T08:10:11.649+00:00 [gateway] device pairing auto-approved device=6b10c369e85f15915bb01cf46ee6067fc5b85b4827547fe9d8595c0eee82f4ac role=operator
+2026-04-29T08:10:19.328+00:00 [tools] tools.profile (coding) allowlist contains unknown entries (apply_patch, code_execution, web_search, x_search, image, image_generate). These entries are shipped core tools but unavailable in the current runtime/provider/model/config.
+2026-04-29T08:11:36.984+00:00 Let me start by understanding the repo structure and current state.
+2026-04-29T08:11:36.989+00:00 The target game is `shape-sort`. Let me find the config file and read both target files.
+2026-04-29T08:11:36.991+00:00 Found both files. Now let me execute the workflow step by step.
+
+**Step 1:** Stash the unrelated tracked local work (`.env` and `playtest/` are untracked, so they stay local automatically).
+2026-04-29T08:11:36.994+00:00 **Step 2:** Create the review branch.
+2026-04-29T08:11:36.996+00:00 **Step 3:** Update the game config in `game.js`.
+2026-04-29T08:11:36.998+00:00 **Step 4:** Update the stylesheet.
+2026-04-29T08:11:37.000+00:00 **Step 5:** Stage only the two hotfix files.
+2026-04-29T08:11:37.002+00:00 **Step 6:** Commit the hotfix.
+2026-04-29T08:11:37.004+00:00 **Step 7:** Push to origin.
+2026-04-29T08:11:37.008+00:00 **Step 8:** Return to `main` and restore the stashed work.
+2026-04-29T08:11:37.010+00:00 Let me verify the final state — the review branch diff should contain only the two hotfix files, and `main` should be restored.
+2026-04-29T08:11:37.011+00:00 All done. Here's the summary:
+
+**Review branch `review/shape-sort-mobile-hotfix`** — pushed to origin with a clean diff containing exactly 2 files:
+
+| File | Change |
+|---|---|
+| `public/games/shape-sort/game.js` | `tileSizePx` 72→96, `dragPaddingPx` 6→12, `snapTolerancePx` 16→20 |
+| `public/games/shape-sort/style.css` | `.shape-tile` width/height 72px→96px, border-radius 18px→24px |
+
+**Back on `main`** with all original local work restored (modified `README.md`, deleted `REVIEW_WORKFLOW.md`, modified `notes/homepage-copy-review.md`, plus untracked `.env` and `playtest/` untouched).

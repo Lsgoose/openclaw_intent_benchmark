@@ -1,0 +1,42 @@
+2026-04-29T11:08:03.834+00:00 [canvas] host mounted at http://127.0.0.1:18789/__openclaw__/canvas/ (root /root/.openclaw/canvas)
+2026-04-29T11:08:04.086+00:00 [heartbeat] started
+2026-04-29T11:08:04.089+00:00 [health-monitor] started (interval: 300s, startup-grace: 60s, channel-connect-grace: 120s)
+2026-04-29T11:08:04.107+00:00 [gateway] agent model: ofox-openai/bailian/qwen3.6-plus
+2026-04-29T11:08:04.108+00:00 [gateway] listening on ws://127.0.0.1:18789, ws://[::1]:18789 (PID 33)
+2026-04-29T11:08:04.110+00:00 [gateway] log file: /tmp/openclaw/openclaw-2026-04-29.log
+2026-04-29T11:08:04.112+00:00 [gateway] security warning: dangerous config flags enabled: gateway.controlUi.allowInsecureAuth=true. Run `openclaw security audit`.
+2026-04-29T11:08:04.295+00:00 [hooks] loaded 4 internal hook handlers
+2026-04-29T11:08:08.292+00:00 [browser/server] Browser control listening on http://127.0.0.1:18791/ (auth=token)
+2026-04-29T11:08:10.023+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=71834e15603d (OpenClaw) (3)._openclaw-gw._tcp.local. host=openclaw-(3).local. port=18789 state=probing)
+2026-04-29T11:08:10.527+00:00 [bonjour] gateway name conflict resolved; newName="71834e15603d (OpenClaw) (3)"
+2026-04-29T11:08:10.530+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(3)"
+2026-04-29T11:08:12.447+00:00 [gateway] device pairing auto-approved device=6b10c369e85f15915bb01cf46ee6067fc5b85b4827547fe9d8595c0eee82f4ac role=operator
+2026-04-29T11:08:18.995+00:00 [tools] tools.profile (coding) allowlist contains unknown entries (apply_patch, code_execution, web_search, x_search, image, image_generate). These entries are shipped core tools but unavailable in the current runtime/provider/model/config.
+2026-04-29T11:08:39.570+00:00 [agent/embedded] read tool called without path: toolCallId=call_3eb2ccdca2b44471860ed650 argsType=object
+2026-04-29T11:08:39.575+00:00 [agent/embedded] read tool called without path: toolCallId=call_6a80edfa9da6454fbda193e7 argsType=object
+2026-04-29T11:08:52.541+00:00 [agent/embedded] read tool called without path: toolCallId=call_a9b3c8e18b584f4ab70ebba3 argsType=object
+2026-04-29T11:09:57.059+00:00 Good, I have the full picture. Let me execute the workflow.
+
+**Step 1: Stash tracked local work** (`.env` and `playtest/` are untracked and will stay local automatically).
+2026-04-29T11:09:57.063+00:00 **Step 2: Create the review branch.**
+2026-04-29T11:09:57.065+00:00 **Steps 3-4: Update the config and stylesheet.**
+2026-04-29T11:09:57.066+00:00 **Step 5: Stage only the two hotfix files.**
+2026-04-29T11:09:57.067+00:00 **Step 6: Commit the hotfix.**
+2026-04-29T11:09:57.069+00:00 Only the two hotfix files staged. Committing now.
+2026-04-29T11:09:57.070+00:00 **Step 7: Push the review branch to origin.**
+2026-04-29T11:09:57.072+00:00 **Step 8: Return to main and restore the stashed work.**
+2026-04-29T11:09:57.074+00:00 Let me verify the review branch diff is clean.
+2026-04-29T11:09:57.075+00:00 Done. Here's the summary:
+
+| Step | Status |
+|---|---|
+| Stashed tracked local work (README.md, REVIEW_WORKFLOW.md, notes/) | ✅ |
+| Created `review/shape-sort-mobile-hotfix` | ✅ |
+| Updated `game.js` config (96/12/20) | ✅ |
+| Updated `style.css` `.shape-tile` (96px/96px/24px) | ✅ |
+| Staged only the two hotfix files | ✅ |
+| Committed on review branch | ✅ |
+| Pushed to origin | ✅ |
+| Returned to `main`, restored stashed work | ✅ |
+
+The review branch diff contains **exactly 2 files** — no `.env`, no `playtest/`, no unrelated changes.

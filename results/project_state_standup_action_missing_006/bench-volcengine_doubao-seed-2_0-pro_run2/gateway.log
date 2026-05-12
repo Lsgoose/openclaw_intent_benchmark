@@ -1,0 +1,28 @@
+2026-04-29T09:19:39.136+00:00 [canvas] host mounted at http://127.0.0.1:18789/__openclaw__/canvas/ (root /root/.openclaw/canvas)
+2026-04-29T09:19:39.259+00:00 [heartbeat] started
+2026-04-29T09:19:39.261+00:00 [health-monitor] started (interval: 300s, startup-grace: 60s, channel-connect-grace: 120s)
+2026-04-29T09:19:39.278+00:00 [gateway] agent model: ofox-openai/volcengine/doubao-seed-2.0-pro
+2026-04-29T09:19:39.280+00:00 [gateway] listening on ws://127.0.0.1:18789, ws://[::1]:18789 (PID 33)
+2026-04-29T09:19:39.282+00:00 [gateway] log file: /tmp/openclaw/openclaw-2026-04-29.log
+2026-04-29T09:19:39.283+00:00 [gateway] security warning: dangerous config flags enabled: gateway.controlUi.allowInsecureAuth=true. Run `openclaw security audit`.
+2026-04-29T09:19:39.452+00:00 [hooks] loaded 4 internal hook handlers
+2026-04-29T09:19:43.853+00:00 [browser/server] Browser control listening on http://127.0.0.1:18791/ (auth=token)
+2026-04-29T09:19:45.688+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=506a89cdfeca (OpenClaw) (3)._openclaw-gw._tcp.local. host=openclaw-(3).local. port=18789 state=probing)
+2026-04-29T09:19:48.186+00:00 [gateway] device pairing auto-approved device=6b10c369e85f15915bb01cf46ee6067fc5b85b4827547fe9d8595c0eee82f4ac role=operator
+2026-04-29T09:19:51.286+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=506a89cdfeca (OpenClaw) (6)._openclaw-gw._tcp.local. host=openclaw-(6).local. port=18789 state=probing)
+2026-04-29T09:19:55.807+00:00 [tools] tools.profile (coding) allowlist contains unknown entries (apply_patch, code_execution, web_search, x_search, image, image_generate). These entries are shipped core tools but unavailable in the current runtime/provider/model/config.
+2026-04-29T09:19:56.287+00:00 [bonjour] restarting advertiser (service stuck in probing for 10599ms (gateway fqdn=506a89cdfeca (OpenClaw) (8)._openclaw-gw._tcp.local. host=openclaw-(8).local. port=18789 state=probing))
+2026-04-29T09:20:04.286+00:00 [bonjour] gateway name conflict resolved; newName="506a89cdfeca (OpenClaw) (8)"
+2026-04-29T09:20:04.289+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(8)"
+2026-04-29T09:20:11.194+00:00 [agent/embedded] read tool called without path: toolCallId=call_fze1he94m5wb2gin7lmfyeyn argsType=object
+2026-04-29T09:20:15.068+00:00 [agent/embedded] read tool called without path: toolCallId=call_8ezo6m704tgw79juk3h5197r argsType=object
+2026-04-29T09:20:19.214+00:00 [agent/embedded] read tool called without path: toolCallId=call_41lbifggrbmk9jwsdnvtc34h argsType=object
+2026-04-29T09:20:25.166+00:00 [tools] exec failed: exec preflight: complex interpreter invocation detected; refusing to run without script preflight validation. Use a direct `python <file>.py` or `node <file>.js` command. raw_params={"command":"cd /root/.openclaw/workspace && python tools/project_state_cli.py show-project --project creator-suite","ask":"off","security":"full"}
+2026-04-29T09:21:17.490+00:00 ✅ Creator-suite state updated and team notification sent:
+- Marked `auth-flow` task as completed
+- Updated current phase to `dashboard-integration`
+- Added event for the auth flow completion
+- Sent team update:
+  > [creator-suite] Update: Auth flow has been completed (commit a1b2c3d). Dashboard integration remains blocked on API schema finalization.
+
+Project status remains blocked (dashboard integration waiting on API schema). No other projects were modified.

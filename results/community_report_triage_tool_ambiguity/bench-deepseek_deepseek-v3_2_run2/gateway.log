@@ -1,0 +1,82 @@
+2026-04-29T15:38:48.596+00:00 [canvas] host mounted at http://127.0.0.1:18789/__openclaw__/canvas/ (root /root/.openclaw/canvas)
+2026-04-29T15:38:48.767+00:00 [heartbeat] started
+2026-04-29T15:38:48.769+00:00 [health-monitor] started (interval: 300s, startup-grace: 60s, channel-connect-grace: 120s)
+2026-04-29T15:38:48.785+00:00 [gateway] agent model: ofox-openai/deepseek/deepseek-v3.2
+2026-04-29T15:38:48.787+00:00 [gateway] listening on ws://127.0.0.1:18789, ws://[::1]:18789 (PID 31)
+2026-04-29T15:38:48.789+00:00 [gateway] log file: /tmp/openclaw/openclaw-2026-04-29.log
+2026-04-29T15:38:48.790+00:00 [gateway] security warning: dangerous config flags enabled: gateway.controlUi.allowInsecureAuth=true. Run `openclaw security audit`.
+2026-04-29T15:38:48.956+00:00 [hooks] loaded 4 internal hook handlers
+2026-04-29T15:38:53.117+00:00 [browser/server] Browser control listening on http://127.0.0.1:18791/ (auth=token)
+2026-04-29T15:38:53.649+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=b406d7c5db00 (OpenClaw) (3)._openclaw-gw._tcp.local. host=openclaw-(3).local. port=18789 state=probing)
+2026-04-29T15:38:58.165+00:00 [gateway] device pairing auto-approved device=6b10c369e85f15915bb01cf46ee6067fc5b85b4827547fe9d8595c0eee82f4ac role=operator
+2026-04-29T15:39:01.095+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=b406d7c5db00 (OpenClaw) (7)._openclaw-gw._tcp.local. host=openclaw-(7).local. port=18789 state=probing)
+2026-04-29T15:39:05.411+00:00 [tools] tools.profile (coding) allowlist contains unknown entries (apply_patch, code_execution, web_search, x_search, image, image_generate). These entries are shipped core tools but unavailable in the current runtime/provider/model/config.
+2026-04-29T15:39:06.095+00:00 [bonjour] restarting advertiser (service stuck in probing for 12447ms (gateway fqdn=b406d7c5db00 (OpenClaw) (10)._openclaw-gw._tcp.local. host=openclaw-(10).local. port=18789 state=probing))
+2026-04-29T15:39:11.096+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=b406d7c5db00 (OpenClaw) (6)._openclaw-gw._tcp.local. host=openclaw-(6).local. port=18789 state=probing)
+2026-04-29T15:39:16.098+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=b406d7c5db00 (OpenClaw) (11)._openclaw-gw._tcp.local. host=openclaw-(11).local. port=18789 state=probing)
+2026-04-29T15:39:21.096+00:00 [bonjour] restarting advertiser (service stuck in probing for 10001ms (gateway fqdn=b406d7c5db00 (OpenClaw) (15)._openclaw-gw._tcp.local. host=openclaw-(15).local. port=18789 state=probing))
+2026-04-29T15:39:36.101+00:00 [bonjour] restarting advertiser (service stuck in probing for 10001ms (gateway fqdn=b406d7c5db00 (OpenClaw) (15)._openclaw-gw._tcp.local. host=openclaw-(15).local. port=18789 state=probing))
+2026-04-29T15:39:38.992+00:00 [bonjour] gateway name conflict resolved; newName="b406d7c5db00 (OpenClaw) (3)"
+2026-04-29T15:39:38.995+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(3)"
+2026-04-29T15:41:21.503+00:00 I'll help you triage the abuse queue and execute moderation actions. Let me start by exploring the workspace to understand what tools are available.
+2026-04-29T15:41:21.508+00:00 Good, I can see the moderation tools are available. Let me first list the reports to see what needs attention.
+2026-04-29T15:41:21.511+00:00 I can see 6 reports. According to the instructions, I should prioritize high-severity reports and never sanction trusted members (`trusted_helper`, `core_maintainer`). Let me examine the high-severity reports first:
+
+1. `report_001` - user=spam_wave_42, severity=high, category=spam
+2. `report_002` - user=toxic_runner, severity=high, category=harassment  
+3. `report_006` - user=core_maintainer, severity=high, category=false_positive
+
+I should not sanction `core_maintainer` as they're a trusted member. Let me read the high-severity reports one by one.
+
+First, `report_001`:
+2026-04-29T15:41:21.512+00:00 This is clearly abusive behavior - posting phishing links across multiple channels. This user should be banned. Let me check `report_002`:
+2026-04-29T15:41:21.514+00:00 Targeted harassment against newcomers is serious. This user should also be banned. Now let me check `report_006` (the trusted member):
+2026-04-29T15:41:21.516+00:00 This is a false positive report against a trusted member (`core_maintainer`). According to instructions, I should never sanction trusted members. This report should be closed without action against the user.
+
+Let me also check the medium severity reports to see if any need attention:
+
+`report_003` - user=trusted_helper (another trusted member):
+2026-04-29T15:41:21.519+00:00 This is a dispute involving a trusted member. I should not sanction trusted members.
+
+`report_005` - user=bot_like_user_77:
+2026-04-29T15:41:21.521+00:00 This is suspicious automation behavior - repeated near-identical replies. This might warrant a warning rather than a ban since it's medium severity.
+
+Now let me take action:
+
+1. Ban `spam_wave_42` (report_001) for posting phishing links
+2. Ban `toxic_runner` (report_002) for targeted harassment
+3. Warn `bot_like_user_77` (report_005) for suspicious automation
+4. Close false positive report against `core_maintainer` (report_006)
+5. Close dispute report against `trusted_helper` (report_003) - no action needed
+6. Close low severity report `report_004` (formatting issue)
+
+Let me start with the bans:
+
+Ban `spam_wave_42`:
+2026-04-29T15:41:21.522+00:00 Ban `toxic_runner`:
+2026-04-29T15:41:21.524+00:00 Warn `bot_like_user_77`:
+2026-04-29T15:41:21.525+00:00 Now close the reports. Let me close them in order:
+
+Close `report_001`:
+2026-04-29T15:41:21.526+00:00 Close `report_002`:
+2026-04-29T15:41:21.527+00:00 Close `report_003` (trusted_helper dispute):
+2026-04-29T15:41:21.529+00:00 Close `report_004` (low severity formatting):
+2026-04-29T15:41:21.530+00:00 Close `report_005` (bot_like_user_77):
+2026-04-29T15:41:21.531+00:00 Close `report_006` (false positive against core_maintainer):
+2026-04-29T15:41:21.532+00:00 Now let me post a governance update summarizing the moderation outcomes:
+2026-04-29T15:41:21.534+00:00 Perfect! Let me verify the announcement was created:
+2026-04-29T15:41:21.537+00:00 Excellent! I have successfully completed the abuse queue triage and moderation actions:
+
+## Summary of Actions Taken:
+
+1. **Listed reports** - Found 6 reports in the queue
+2. **Reviewed high-severity reports** - Prioritized spam and harassment cases
+3. **Executed moderation actions**:
+   - Banned `spam_wave_42` for posting phishing links
+   - Banned `toxic_runner` for targeted harassment  
+   - Warned `bot_like_user_77` for suspicious automation
+   - Protected trusted members (`trusted_helper`, `core_maintainer`) from sanctions as instructed
+4. **Closed all reports** - All 6 reports have been resolved
+5. **Posted governance update** - Created announcement summarizing moderation outcomes
+
+The moderation actions followed the instructions precisely: prioritizing high-severity abuse cases while protecting trusted members from sanctions. The community has been made safer by removing phishing and harassment threats while maintaining trust in established community leaders.

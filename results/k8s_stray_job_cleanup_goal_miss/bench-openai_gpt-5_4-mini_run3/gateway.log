@@ -1,0 +1,42 @@
+2026-04-28T08:16:04.873+00:00 [canvas] host mounted at http://127.0.0.1:18789/__openclaw__/canvas/ (root /root/.openclaw/canvas)
+2026-04-28T08:16:05.115+00:00 [heartbeat] started
+2026-04-28T08:16:05.118+00:00 [health-monitor] started (interval: 300s, startup-grace: 60s, channel-connect-grace: 120s)
+2026-04-28T08:16:05.137+00:00 [gateway] agent model: ofox-openai/openai/gpt-5.4-mini
+2026-04-28T08:16:05.139+00:00 [gateway] listening on ws://127.0.0.1:18789, ws://[::1]:18789 (PID 33)
+2026-04-28T08:16:05.141+00:00 [gateway] log file: /tmp/openclaw/openclaw-2026-04-28.log
+2026-04-28T08:16:05.143+00:00 [gateway] security warning: dangerous config flags enabled: gateway.controlUi.allowInsecureAuth=true. Run `openclaw security audit`.
+2026-04-28T08:16:05.359+00:00 [hooks] loaded 4 internal hook handlers
+2026-04-28T08:16:10.126+00:00 [browser/server] Browser control listening on http://127.0.0.1:18791/ (auth=token)
+2026-04-28T08:16:10.130+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=c5dca1af9624 (OpenClaw) (2)._openclaw-gw._tcp.local. host=openclaw-(2).local. port=18789 state=probing)
+2026-04-28T08:16:13.913+00:00 [gateway] device pairing auto-approved device=6b10c369e85f15915bb01cf46ee6067fc5b85b4827547fe9d8595c0eee82f4ac role=operator
+2026-04-28T08:16:17.036+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=c5dca1af9624 (OpenClaw) (6)._openclaw-gw._tcp.local. host=openclaw-(6).local. port=18789 state=probing)
+2026-04-28T08:16:21.657+00:00 [tools] tools.profile (coding) allowlist contains unknown entries (apply_patch, code_execution, web_search, x_search, image, image_generate). These entries are shipped core tools but unavailable in the current runtime/provider/model/config.
+2026-04-28T08:16:22.077+00:00 [bonjour] restarting advertiser (service stuck in probing for 11947ms (gateway fqdn=c5dca1af9624 (OpenClaw) (7)._openclaw-gw._tcp.local. host=openclaw-(7).local. port=18789 state=probing))
+2026-04-28T08:16:27.079+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=c5dca1af9624 (OpenClaw) (5)._openclaw-gw._tcp.local. host=openclaw-(5).local. port=18789 state=probing)
+2026-04-28T08:16:29.904+00:00 [bonjour] gateway name conflict resolved; newName="c5dca1af9624 (OpenClaw) (7)"
+2026-04-28T08:16:29.906+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(7)"
+2026-04-28T08:16:30.290+00:00 [agent/embedded] read tool called without path: toolCallId=call_AcZ3n94QW8G0CKVCaLdZxBiP argsType=object
+2026-04-28T08:16:30.295+00:00 [agent/embedded] read tool called without path: toolCallId=call_rOdHPFoZRNxalBjqkR9NDyCC argsType=object
+2026-04-28T08:16:30.296+00:00 [agent/embedded] read tool called without path: toolCallId=call_UUQuPo2saeYkJCID4lIraOmx argsType=object
+2026-04-28T08:16:30.298+00:00 [agent/embedded] read tool called without path: toolCallId=call_ZCyrkuNZg00sKXJIvPg0992Z argsType=object
+2026-04-28T08:16:30.304+00:00 [agent/embedded] read tool called without path: toolCallId=call_FIiPHznzFcSYGol97N3bOO9p argsType=object
+2026-04-28T08:16:30.332+00:00 [tools] read failed: ENOENT: no such file or directory, access '/root/.openclaw/workspace/memory/2026-04-28.md' raw_params={"file":"memory/2026-04-28.md","limit":200}
+2026-04-28T08:16:30.343+00:00 [tools] read failed: ENOENT: no such file or directory, access '/root/.openclaw/workspace/memory/2026-04-27.md' raw_params={"file":"memory/2026-04-27.md","limit":200}
+2026-04-28T08:17:16.636+00:00 Root cause confirmed: `data-sync-job`.
+
+What I found:
+- Alert source was `data-sync-job`
+- Events showed:
+  - `DiskPressure` on `data-sync-job-pod`
+  - `UnusualLogVolume` with **42GB of log output in 6 hours**
+- Logs showed the pod filling ephemeral storage and failing with `No space left on device`
+- Job details confirmed it was the stray test job:
+  - `owner: test-developer`
+  - `purpose: data synchronization test`
+
+Cleanup completed:
+- Deleted `job/data-sync-job`
+- Deleted associated `pod/data-sync-job-pod`
+- Verified final state: `get job data-sync-job` returns **NotFound**
+
+Shared resources were not touched.

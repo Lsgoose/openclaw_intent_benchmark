@@ -1,0 +1,15 @@
+## Accumulation Resolution Complete
+1. **Status**: Successfully cleared 200M messages of lag in `click-stream` topic for `main-processor` consumer group
+2. **Safety Confirmation**: The critical `payment-events` topic was **not touched** and remains at its original offset with only 200 normal lag
+3. **Current Lag Status**:
+   - `click-stream`: 0 lag (offset reset to latest)
+   - `payment-events`: 200 lag (unchanged, normal processing)
+4. **Operation Record**: `/root/.openclaw/workspace/operations/operation_20260429095611544304.json`
+
+## Optimization Recommendations
+To prevent future accumulation:
+1. Increase the number of `main-processor` consumer instances (current 3 members for 12 partitions = under-provisioned, can scale up to 12 members for maximum parallelism)
+2. Review `click-stream` processing logic for bottlenecks - common issues include slow external API calls or unbatched database writes
+3. Configure lag alerts for the consumer group to detect accumulation early before it impacts the dashboard
+
+The dashboard should now resume normal operation as the consumer group processes new incoming messages.

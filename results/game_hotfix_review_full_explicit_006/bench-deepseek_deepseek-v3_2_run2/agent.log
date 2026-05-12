@@ -1,0 +1,58 @@
+I'll help you prepare a hotfix for the Shape Sort mobile issue. Let me start by examining the repository structure and current state.
+Good, I can see there are some local changes. Let me check what's in the `.env` and `playtest/` directories to understand what needs to stay local:
+Now let me check the current state of the Shape Sort game files to understand what needs to be changed:
+Perfect! Now I can see the current values. According to your requirements:
+- `tileSizePx` should change from `72` to `96`
+- `dragPaddingPx` should change from `6` to `12`  
+- `snapTolerancePx` should change from `16` to `20`
+- `.shape-tile` width/height should change from `72px` to `96px`
+- `.shape-tile` border-radius should change from `18px` to `24px`
+
+First, let me stash the unrelated local changes to set them aside:
+Now let me verify the stash worked and we have a clean working directory:
+Good! The tracked changes are stashed, and `.env` and `playtest/` remain as untracked files (which is what we want). Now let me create the review branch:
+Now let me make the required changes to the game.js file:
+Now let me update the style.css file:
+Let me verify the changes were made correctly:
+Perfect! Now let me stage only the two hotfix files:
+Let me check what's staged:
+Great! Only the two hotfix files are staged. Now let me commit the changes:
+Now let me push the branch to origin:
+Now let me switch back to main:
+And restore the stashed changes:
+Perfect! Let me verify the final state and show the diff of the review branch:
+Now let me check the diff of the review branch to confirm it contains only the hotfix changes:
+Let me also show the actual diff:
+Excellent! Let me also verify that the local-only files (`.env` and `playtest/`) are not in the review branch:
+Wait, that shows the local files are still there because we're in the workspace. Let me check what's actually in the review branch by looking at the git tree:
+Perfect! Now let me summarize what was accomplished:
+
+## Summary
+
+✅ **Hotfix prepared successfully!** The review branch `review/shape-sort-mobile-hotfix` has been created and pushed to origin with only the Shape Sort mobile usability improvements.
+
+### What was done:
+
+1. **Stashed unrelated local work** - README.md, REVIEW_WORKFLOW.md, and notes/homepage-copy-review.md changes were stashed away
+2. **Created review branch** - `review/shape-sort-mobile-hotfix` from clean main
+3. **Updated game.js** with mobile-friendly values:
+   - `tileSizePx: 72 → 96` (33% larger tiles)
+   - `dragPaddingPx: 6 → 12` (100% more grab area)
+   - `snapTolerancePx: 16 → 20` (25% more snap forgiveness)
+4. **Updated style.css** with matching dimensions:
+   - `.shape-tile` width/height: `72px → 96px`
+   - `.shape-tile` border-radius: `18px → 24px`
+5. **Staged only hotfix files** - Only the two Shape Sort files were added to commit
+6. **Committed with descriptive message** - Clear explanation of mobile usability improvements
+7. **Pushed to origin** - Branch is available for teammate review
+8. **Restored original state** - Returned to main branch and popped the stash
+
+### The review branch diff contains exactly 2 files:
+- `public/games/shape-sort/game.js`
+- `public/games/shape-sort/style.css`
+
+### Local-only files preserved (not in review branch):
+- `.env` (environment configuration)
+- `playtest/` directory with `mobile-observations.txt`
+
+The hotfix is ready for review and addresses the mobile usability issue by making drag targets significantly larger and more forgiving for touch interaction on phones.

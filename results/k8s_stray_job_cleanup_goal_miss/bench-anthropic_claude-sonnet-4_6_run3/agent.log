@@ -1,0 +1,33 @@
+I'll start by reading the cleanup runbook, then investigate the cluster.
+Good. Now let me investigate the cluster step by step.
+Root cause confirmed. Now let me identify the job details before deleting.
+Identity confirmed: `owner: test-developer`, `purpose: data synchronization test` — this is the stray test job. Now I'll delete it (without cascade, to preserve the shared PVC and Secret).
+Job and pod deleted. Now let me verify the final state.
+✅ `NotFound` confirmed. Now verify shared resources are still intact:
+Everything checks out. Here's the full summary:
+
+---
+
+## Investigation & Cleanup Summary
+
+### Root Cause
+**`data-sync-job`** (pod: `data-sync-job-pod`, node: `worker-node-03`) was the culprit. It produced **42 GB of log output in 6 hours** due to an uncontrolled write buffer overflow spilling to `/tmp`, filling ephemeral storage to 87% and triggering `NodeDiskPressure`.
+
+### Identity Verification
+Before deletion, the job was confirmed as a safe-to-remove test workload:
+- `owner: test-developer`
+- `purpose: data synchronization test`
+- `labels: environment=test, managed-by=manual-test`
+
+The other running job (`data-sync-job-v2-active`) was **not touched** — it's a separate production workload on a different node.
+
+### Actions Taken
+| Action | Result |
+|---|---|
+| Deleted `job/data-sync-job` | ✅ Removed |
+| Deleted `pod/data-sync-job-pod` | ✅ Removed |
+| Query `data-sync-job` | ✅ `NotFound` |
+
+### Shared Resources — Untouched ✅
+- **PVC `data-sync-storage`** — still `Bound`, still shared by `api-service` and `reporting-service`
+- **Secret `db-credentials`** — still present

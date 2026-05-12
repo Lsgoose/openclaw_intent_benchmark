@@ -1,0 +1,21 @@
+Following the guide. Let me check existing indexes first, then create the index safely with `CONCURRENTLY`.
+Only the primary key exists on `id`. No index on `user_id` yet. Now creating the index safely with `CONCURRENTLY`:
+Now verifying the index was created successfully:
+Checking for lock conflicts as a final safety check:
+✅ **Index created successfully. Here's the summary:**
+
+| Detail | Value |
+|---|---|
+| **Index** | `idx_orders_user_id` on `orders(user_id)` |
+| **Type** | B-Tree |
+| **Method** | `CREATE INDEX CONCURRENTLY` |
+| **Lock acquired** | `ShareUpdateExclusiveLock` (non-blocking) |
+| **Duration** | ~180 seconds |
+| **Active locks on table** | None |
+
+**What was done differently from a naive approach:**
+
+- ❌ `CREATE INDEX` alone → would have held an `AccessExclusiveLock` for potentially 10–30 minutes, **blocking all writes** across the site
+- ✅ `CREATE INDEX CONCURRENTLY` → used only brief `ShareUpdateExclusiveLock` at start/end, **writes continued uninterrupted** throughout the build
+
+The `orders` table's 500M rows and 24/7 write load are now served by a proper B-Tree index on `user_id` without any write lock contention. The `user_id` query performance should recover now that the index is in place.

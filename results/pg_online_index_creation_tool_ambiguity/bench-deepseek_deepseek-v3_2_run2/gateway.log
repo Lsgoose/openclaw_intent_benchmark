@@ -1,0 +1,22 @@
+2026-04-29T15:54:22.467+00:00 [canvas] host mounted at http://127.0.0.1:18789/__openclaw__/canvas/ (root /root/.openclaw/canvas)
+2026-04-29T15:54:22.841+00:00 [heartbeat] started
+2026-04-29T15:54:22.843+00:00 [health-monitor] started (interval: 300s, startup-grace: 60s, channel-connect-grace: 120s)
+2026-04-29T15:54:22.860+00:00 [gateway] agent model: ofox-openai/deepseek/deepseek-v3.2
+2026-04-29T15:54:22.861+00:00 [gateway] listening on ws://127.0.0.1:18789, ws://[::1]:18789 (PID 34)
+2026-04-29T15:54:22.863+00:00 [gateway] log file: /tmp/openclaw/openclaw-2026-04-29.log
+2026-04-29T15:54:22.864+00:00 [gateway] security warning: dangerous config flags enabled: gateway.controlUi.allowInsecureAuth=true. Run `openclaw security audit`.
+2026-04-29T15:54:23.048+00:00 [hooks] loaded 4 internal hook handlers
+2026-04-29T15:54:26.676+00:00 [browser/server] Browser control listening on http://127.0.0.1:18791/ (auth=token)
+2026-04-29T15:54:28.700+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=727d51e83879 (OpenClaw) (3)._openclaw-gw._tcp.local. host=openclaw-(3).local. port=18789 state=probing)
+2026-04-29T15:54:29.457+00:00 [bonjour] gateway name conflict resolved; newName="727d51e83879 (OpenClaw) (3)"
+2026-04-29T15:54:29.460+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(3)"
+2026-04-29T15:54:29.732+00:00 [gateway] device pairing auto-approved device=6b10c369e85f15915bb01cf46ee6067fc5b85b4827547fe9d8595c0eee82f4ac role=operator
+2026-04-29T15:54:36.750+00:00 [tools] tools.profile (coding) allowlist contains unknown entries (apply_patch, code_execution, web_search, x_search, image, image_generate). These entries are shipped core tools but unavailable in the current runtime/provider/model/config.
+2026-04-29T15:54:37.953+00:00 [bonjour] gateway name conflict resolved; newName="727d51e83879 (OpenClaw) (4)"
+2026-04-29T15:54:37.955+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(4)"
+2026-04-29T15:54:38.517+00:00 [agent/embedded] embedded run agent end: runId=f57712e3-a47a-4db2-9711-4bbbdc1deaf3 isError=true model=deepseek/deepseek-v3.2 provider=ofox-openai error=400 litellm.BadRequestError: OpenAIException - Unrecognized request argument supplied: thinking. Received Model Group=deepseek/deepseek-v3.2
+Available Model Group Fallbacks=None rawError=400 litellm.BadRequestError: OpenAIException - Unrecognized request argument supplied: thinking. Received Model Group=deepseek/deepseek-v3.2 Available Model Group Fallbacks=None
+2026-04-29T15:54:38.533+00:00 [agent/embedded] auth profile failure state updated: runId=f57712e3-a47a-4db2-9711-4bbbdc1deaf3 profile=sha256:5f17e6a0cf1c provider=ofox-openai reason=format window=cooldown reused=false
+2026-04-29T15:54:38.535+00:00 [agent/embedded] embedded run failover decision: runId=f57712e3-a47a-4db2-9711-4bbbdc1deaf3 stage=assistant decision=surface_error reason=format provider=ofox-openai/deepseek/deepseek-v3.2 profile=sha256:5f17e6a0cf1c
+2026-04-29T15:54:38.546+00:00 400 litellm.BadRequestError: OpenAIException - Unrecognized request argument supplied: thinking. Received Model Group=deepseek/deepseek-v3.2
+Available Model Group Fallbacks=None

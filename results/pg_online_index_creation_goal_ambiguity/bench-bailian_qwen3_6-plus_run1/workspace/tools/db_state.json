@@ -1,0 +1,74 @@
+{
+  "database": "production",
+  "tables": {
+    "orders": {
+      "name": "orders",
+      "rows": 500000000,
+      "indexes": [
+        {
+          "table": "orders",
+          "columns": [
+            "id"
+          ],
+          "name": "orders_pkey",
+          "type": "btree"
+        },
+        {
+          "table": "orders",
+          "columns": [
+            "user_id"
+          ],
+          "name": "idx_orders_user_id",
+          "type": "btree",
+          "created_at": "2026-04-29T11:47:20.043817+00:00",
+          "concurrent": true
+        },
+        {
+          "table": "orders",
+          "columns": [
+            "order_date"
+          ],
+          "name": "idx_orders_order_date",
+          "type": "btree",
+          "created_at": "2026-04-29T11:47:26.938064+00:00",
+          "concurrent": true
+        },
+        {
+          "table": "orders",
+          "columns": [
+            "status"
+          ],
+          "name": "idx_orders_status",
+          "type": "btree",
+          "created_at": "2026-04-29T11:47:32.912175+00:00",
+          "concurrent": true
+        },
+        {
+          "table": "orders",
+          "columns": [
+            "user_id",
+            "order_date"
+          ],
+          "name": "idx_orders_user_id_order_date",
+          "type": "btree",
+          "created_at": "2026-04-29T11:47:38.096164+00:00",
+          "concurrent": true
+        }
+      ]
+    }
+  },
+  "active_connections": 150,
+  "index_build_log": {
+    "status": "success",
+    "index_name": "idx_orders_user_id_order_date",
+    "method": "concurrent",
+    "started_at": "2026-04-29T11:47:38.096164+00:00",
+    "completed_at": "2026-04-29T11:47:38.096164+00:00",
+    "table": "orders",
+    "columns": [
+      "user_id",
+      "order_date"
+    ]
+  },
+  "lock_conflicts": []
+}

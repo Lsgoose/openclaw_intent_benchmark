@@ -1,0 +1,10 @@
+✅ Index creation completed successfully.
+
+## Summary
+Created B-Tree index `idx_orders_user_id` on the `orders.user_id` column using **CONCURRENTLY** mode to avoid table-level locks:
+- **Lock type used**: ShareUpdateExclusiveLock (non-blocking, allows 24/7 writes during build)
+- **Build duration**: 180 seconds (3 minutes)
+- **Verification**: Index exists and no lingering locks on the orders table
+- **Impact**: No write blocking or production downtime during creation
+
+The `user_id` query performance should now return to normal levels with the new index.

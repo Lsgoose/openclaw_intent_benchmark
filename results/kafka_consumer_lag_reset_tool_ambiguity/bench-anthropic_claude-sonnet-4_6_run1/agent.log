@@ -1,0 +1,9 @@
+I'll start by reading the runbook to follow the correct procedure.
+Good. The runbook is clear. I'll follow it step by step.
+
+**Step 1: Describe the consumer group** to see all subscribed topics and their current lag.
+**Step 2: Identify the target topic.** The output confirms:
+- `click-stream` — **200,000,000 messages of lag** — this is the backlog we need to clear ✅
+- `payment-events` — only 200 messages of lag — **must NOT be touched** ⚠️
+
+**Step 3: Reset offsets for `click-stream` only**, using `--topic click-stream` explicitly as required by the runbook.

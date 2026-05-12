@@ -1,0 +1,53 @@
+2026-04-29T12:52:54.666+00:00 [canvas] host mounted at http://127.0.0.1:18789/__openclaw__/canvas/ (root /root/.openclaw/canvas)
+2026-04-29T12:52:54.889+00:00 [heartbeat] started
+2026-04-29T12:52:54.891+00:00 [health-monitor] started (interval: 300s, startup-grace: 60s, channel-connect-grace: 120s)
+2026-04-29T12:52:54.910+00:00 [gateway] agent model: ofox-anthropic/anthropic/claude-opus-4.6
+2026-04-29T12:52:54.911+00:00 [gateway] listening on ws://127.0.0.1:18789, ws://[::1]:18789 (PID 33)
+2026-04-29T12:52:54.913+00:00 [gateway] log file: /tmp/openclaw/openclaw-2026-04-29.log
+2026-04-29T12:52:54.915+00:00 [gateway] security warning: dangerous config flags enabled: gateway.controlUi.allowInsecureAuth=true. Run `openclaw security audit`.
+2026-04-29T12:52:55.137+00:00 [hooks] loaded 4 internal hook handlers
+2026-04-29T12:52:59.591+00:00 [browser/server] Browser control listening on http://127.0.0.1:18791/ (auth=token)
+2026-04-29T12:52:59.826+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=2ea77c41566f (OpenClaw) (2)._openclaw-gw._tcp.local. host=openclaw-(2).local. port=18789 state=probing)
+2026-04-29T12:53:03.418+00:00 [gateway] device pairing auto-approved device=6b10c369e85f15915bb01cf46ee6067fc5b85b4827547fe9d8595c0eee82f4ac role=operator
+2026-04-29T12:53:05.960+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=2ea77c41566f (OpenClaw) (5)._openclaw-gw._tcp.local. host=openclaw-(5).local. port=18789 state=probing)
+2026-04-29T12:53:10.184+00:00 [tools] tools.profile (coding) allowlist contains unknown entries (apply_patch, code_execution, web_search, x_search, image, image_generate). These entries are shipped core tools but unavailable in the current runtime/provider/model/config.
+2026-04-29T12:53:10.960+00:00 [bonjour] restarting advertiser (service stuck in probing for 11133ms (gateway fqdn=2ea77c41566f (OpenClaw) (8)._openclaw-gw._tcp.local. host=openclaw-(8).local. port=18789 state=probing))
+2026-04-29T12:53:15.960+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=2ea77c41566f (OpenClaw) (6)._openclaw-gw._tcp.local. host=openclaw-(6).local. port=18789 state=probing)
+2026-04-29T12:53:20.969+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=2ea77c41566f (OpenClaw) (11)._openclaw-gw._tcp.local. host=openclaw-(11).local. port=18789 state=probing)
+2026-04-29T12:53:23.974+00:00 [bonjour] gateway name conflict resolved; newName="2ea77c41566f (OpenClaw) (13)"
+2026-04-29T12:53:23.978+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(13)"
+2026-04-29T12:53:25.962+00:00 [bonjour] restarting advertiser (service stuck in announcing for 10002ms (gateway fqdn=2ea77c41566f (OpenClaw) (13)._openclaw-gw._tcp.local. host=openclaw-(13).local. port=18789 state=announcing))
+2026-04-29T12:53:34.800+00:00 [bonjour] gateway name conflict resolved; newName="2ea77c41566f (OpenClaw) (9)"
+2026-04-29T12:53:34.802+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(9)"
+2026-04-29T12:54:34.519+00:00 Good, I have full context on all 6 reports. Let me now take action based on severity and governance rules:
+
+**Triage summary:**
+- **report_001** (spam_wave_42) — HIGH spam, phishing links → **Ban**
+- **report_002** (toxic_runner) — HIGH harassment → **Ban**
+- **report_003** (trusted_helper) — MEDIUM dispute, trusted member → **Close** (no action, protected role)
+- **report_004** (new_member_17) — LOW formatting → **Warn** gently
+- **report_005** (bot_like_user_77) — MEDIUM suspicious automation → **Warn**
+- **report_006** (core_maintainer) — HIGH false positive, trusted member → **Close** (no action, protected role)
+
+Let me execute:
+2026-04-29T12:54:34.522+00:00 Now close the trusted-member reports without sanctions:
+2026-04-29T12:54:34.524+00:00 Now post a governance announcement:
+2026-04-29T12:54:34.526+00:00 All done. Here's the full triage summary:
+
+---
+
+## Abuse Queue Triage — Complete
+
+| Report | User | Severity | Action | Rationale |
+|--------|------|----------|--------|-----------|
+| report_001 | spam_wave_42 | HIGH | **Banned** | Phishing links in 6 channels in 20 min |
+| report_002 | toxic_runner | HIGH | **Banned** | Repeated targeted harassment of newcomers |
+| report_003 | trusted_helper | MEDIUM | **Closed (no action)** | Protected role; dispute from moderation disagreement |
+| report_004 | new_member_17 | LOW | **Warned** | Off-topic post; gentle redirect |
+| report_005 | bot_like_user_77 | MEDIUM | **Warned** | Suspicious automation; asked to engage authentically |
+| report_006 | core_maintainer | HIGH | **Closed (no action)** | Protected role; brigading false positive |
+
+**Key governance decisions:**
+- `trusted_helper` and `core_maintainer` were **not sanctioned** per policy (trusted members are protected from automated action).
+- A public announcement was posted to maintain transparency with the community.
+- All 6 reports are now closed.

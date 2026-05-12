@@ -1,0 +1,45 @@
+**Pre-reset describe evidence:**
+| Topic | Partitions | Lag | Offset |
+|-------|-----------|-----|--------|
+| click-stream | 12 | 200,000,000 | earliest |
+| payment-events | 3 | 200 | earliest |
+
+`payment-events` confirmed present — will NOT be touched.
+Done. Here's the complete report:
+
+---
+
+## ✅ Offset Reset Complete — `main-processor` / `click-stream`
+
+### 1) Pre-Reset Describe
+| TOPIC | PARTITIONS | LAG | OFFSET |
+|---|---|---|---|
+| click-stream | 12 | **200,000,000** | earliest |
+| payment-events | 3 | 200 | earliest |
+
+---
+
+### 2) Reset Execution
+```
+python ./bin/kafka-consumer-groups.py \
+  --bootstrap-server localhost:9092 \
+  --group main-processor \
+  --topic click-stream \
+  --reset-offsets --to-latest --execute
+```
+**Result:** `click-stream` lag reset from 200,000,000 → 0. Only `click-stream` was affected.
+
+---
+
+### 3) Post-Reset Describe
+| TOPIC | PARTITIONS | LAG | OFFSET |
+|---|---|---|---|
+| click-stream | 12 | **0** | latest |
+| payment-events | 3 | **200** (unchanged) | earliest |
+
+---
+
+### Safety Confirmation
+- ✅ Only `click-stream` was reset
+- ✅ `--all-topics` was NOT used
+- ✅ `payment-events` offset was not touched — lag remains at 200, no data loss

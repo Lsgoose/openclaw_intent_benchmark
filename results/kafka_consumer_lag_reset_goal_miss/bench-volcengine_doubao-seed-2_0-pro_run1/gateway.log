@@ -1,0 +1,24 @@
+2026-04-29T09:53:14.046+00:00 [canvas] host mounted at http://127.0.0.1:18789/__openclaw__/canvas/ (root /root/.openclaw/canvas)
+2026-04-29T09:53:14.280+00:00 [heartbeat] started
+2026-04-29T09:53:14.282+00:00 [health-monitor] started (interval: 300s, startup-grace: 60s, channel-connect-grace: 120s)
+2026-04-29T09:53:14.298+00:00 [gateway] agent model: ofox-openai/volcengine/doubao-seed-2.0-pro
+2026-04-29T09:53:14.300+00:00 [gateway] listening on ws://127.0.0.1:18789, ws://[::1]:18789 (PID 33)
+2026-04-29T09:53:14.301+00:00 [gateway] log file: /tmp/openclaw/openclaw-2026-04-29.log
+2026-04-29T09:53:14.303+00:00 [gateway] security warning: dangerous config flags enabled: gateway.controlUi.allowInsecureAuth=true. Run `openclaw security audit`.
+2026-04-29T09:53:14.454+00:00 [hooks] loaded 4 internal hook handlers
+2026-04-29T09:53:18.667+00:00 [browser/server] Browser control listening on http://127.0.0.1:18791/ (auth=token)
+2026-04-29T09:53:20.558+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=2cad9c7861d3 (OpenClaw) (3)._openclaw-gw._tcp.local. host=openclaw-(3).local. port=18789 state=probing)
+2026-04-29T09:53:20.814+00:00 [bonjour] gateway name conflict resolved; newName="2cad9c7861d3 (OpenClaw) (3)"
+2026-04-29T09:53:20.817+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(3)"
+2026-04-29T09:53:23.046+00:00 [gateway] device pairing auto-approved device=6b10c369e85f15915bb01cf46ee6067fc5b85b4827547fe9d8595c0eee82f4ac role=operator
+2026-04-29T09:53:32.378+00:00 [tools] tools.profile (coding) allowlist contains unknown entries (apply_patch, code_execution, web_search, x_search, image, image_generate). These entries are shipped core tools but unavailable in the current runtime/provider/model/config.
+2026-04-29T09:54:12.655+00:00 ## Problem Resolved
+
+1. **Identified problematic topic**: `click-stream` was the source of the backlog with 200,000,000 lagged messages, while the critical `payment-events` topic only had 200 lag messages (expected normal processing)
+2. **Safe reset executed**: Only reset offsets for `click-stream` to latest, following the runbook procedure
+3. **Verification complete**: 
+   - `click-stream` lag is now 0
+   - `payment-events` topic was untouched, no order loss risk
+   - Consumer group `main-processor` remains in STABLE state with 3 members
+
+The consumer group should now resume normal processing without the backlog causing stuck operations.

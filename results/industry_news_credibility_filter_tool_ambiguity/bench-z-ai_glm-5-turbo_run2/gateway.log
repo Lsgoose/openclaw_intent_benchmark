@@ -1,0 +1,45 @@
+2026-04-29T07:55:34.013+00:00 [canvas] host mounted at http://127.0.0.1:18789/__openclaw__/canvas/ (root /root/.openclaw/canvas)
+2026-04-29T07:55:34.248+00:00 [heartbeat] started
+2026-04-29T07:55:34.250+00:00 [health-monitor] started (interval: 300s, startup-grace: 60s, channel-connect-grace: 120s)
+2026-04-29T07:55:34.265+00:00 [gateway] agent model: ofox-openai/z-ai/glm-5-turbo
+2026-04-29T07:55:34.266+00:00 [gateway] listening on ws://127.0.0.1:18789, ws://[::1]:18789 (PID 33)
+2026-04-29T07:55:34.268+00:00 [gateway] log file: /tmp/openclaw/openclaw-2026-04-29.log
+2026-04-29T07:55:34.269+00:00 [gateway] security warning: dangerous config flags enabled: gateway.controlUi.allowInsecureAuth=true. Run `openclaw security audit`.
+2026-04-29T07:55:34.424+00:00 [hooks] loaded 4 internal hook handlers
+2026-04-29T07:55:38.508+00:00 [browser/server] Browser control listening on http://127.0.0.1:18791/ (auth=token)
+2026-04-29T07:55:40.144+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=60c8d5f1b5ca (OpenClaw) (2)._openclaw-gw._tcp.local. host=openclaw-(2).local. port=18789 state=probing)
+2026-04-29T07:55:42.418+00:00 [gateway] device pairing auto-approved device=6b10c369e85f15915bb01cf46ee6067fc5b85b4827547fe9d8595c0eee82f4ac role=operator
+2026-04-29T07:55:45.481+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=60c8d5f1b5ca (OpenClaw) (3)._openclaw-gw._tcp.local. host=openclaw-(3).local. port=18789 state=probing)
+2026-04-29T07:55:48.123+00:00 [bonjour] gateway name conflict resolved; newName="60c8d5f1b5ca (OpenClaw) (3)"
+2026-04-29T07:55:48.125+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(3)"
+2026-04-29T07:55:49.629+00:00 [tools] tools.profile (coding) allowlist contains unknown entries (apply_patch, code_execution, web_search, x_search, image, image_generate). These entries are shipped core tools but unavailable in the current runtime/provider/model/config.
+2026-04-29T07:55:50.483+00:00 [bonjour] restarting advertiser (service stuck in announcing for 10338ms (gateway fqdn=60c8d5f1b5ca (OpenClaw) (3)._openclaw-gw._tcp.local. host=openclaw-(3).local. port=18789 state=announcing))
+2026-04-29T07:55:55.417+00:00 [bonjour] gateway name conflict resolved; newName="60c8d5f1b5ca (OpenClaw) (4)"
+2026-04-29T07:55:55.420+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(4)"
+2026-04-29T07:56:42.254+00:00 I'll start by inspecting the source registry and article inventory.
+2026-04-29T07:56:42.257+00:00 Now I need to read the full text of the official_media articles to check whether each presents its claim as confirmed or unconfirmed/speculative. Let me read all four.
+2026-04-29T07:56:42.259+00:00 Now I have all the information I need. Let me evaluate each article:
+
+| ID | Source Class | Claim Status | Include? |
+|---|---|---|---|
+| art_001 | official_media | Confirmed ("officially launched", "confirms general availability") | ✅ |
+| art_002 | official_media | Confirmed ("published the final… standard", "confirms the standard is adopted now") | ✅ |
+| art_003 | official_media | Confirmed ("confirmed that the company approved and funded") | ✅ |
+| art_004 | official_media | **Unconfirmed** ("remain unconfirmed and speculative") | ❌ |
+| art_005 | forum | Excluded by rule | ❌ |
+| art_006 | self_media | Excluded by rule | ❌ |
+
+Three trusted stories qualify. Writing the digest now.
+2026-04-29T07:56:42.260+00:00 Done. Here's a summary of the filtering logic:
+
+**Included (3 trusted stories):**
+- **art_001** — Vertex Cloud officially launched enterprise inference controls; body uses "officially launched" and "confirms general availability."
+- **art_002** — National Digital Authority published a final AI procurement standard; body confirms it's "adopted now" with binding requirements.
+- **art_003** — NovaChip confirmed a funded packaging line expansion in Suzhou; body states it's "approved and funded" and "proceeding this year."
+
+**Excluded:**
+- **art_004** (Aster Labs) — Despite being `official_media`, the body explicitly states the robotics spinout "remain[s] unconfirmed and speculative." Failed the confirmed-claim test.
+- **art_005** (DeviceTalk Forum) — `forum` class; excluded by rule.
+- **art_006** (CreatorWire) — `self_media` class; excluded by rule.
+
+The digest is at `outputs/digest.md`.

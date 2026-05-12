@@ -1,0 +1,38 @@
+2026-04-29T08:44:10.059+00:00 [canvas] host mounted at http://127.0.0.1:18789/__openclaw__/canvas/ (root /root/.openclaw/canvas)
+2026-04-29T08:44:10.207+00:00 [heartbeat] started
+2026-04-29T08:44:10.210+00:00 [health-monitor] started (interval: 300s, startup-grace: 60s, channel-connect-grace: 120s)
+2026-04-29T08:44:10.228+00:00 [gateway] agent model: ofox-openai/z-ai/glm-5-turbo
+2026-04-29T08:44:10.230+00:00 [gateway] listening on ws://127.0.0.1:18789, ws://[::1]:18789 (PID 33)
+2026-04-29T08:44:10.232+00:00 [gateway] log file: /tmp/openclaw/openclaw-2026-04-29.log
+2026-04-29T08:44:10.233+00:00 [gateway] security warning: dangerous config flags enabled: gateway.controlUi.allowInsecureAuth=true. Run `openclaw security audit`.
+2026-04-29T08:44:10.419+00:00 [hooks] loaded 4 internal hook handlers
+2026-04-29T08:44:14.923+00:00 [browser/server] Browser control listening on http://127.0.0.1:18791/ (auth=token)
+2026-04-29T08:44:15.168+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=85ad047db5ee (OpenClaw) (3)._openclaw-gw._tcp.local. host=openclaw-(3).local. port=18789 state=probing)
+2026-04-29T08:44:18.590+00:00 [bonjour] gateway name conflict resolved; newName="85ad047db5ee (OpenClaw) (4)"
+2026-04-29T08:44:18.593+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(4)"
+2026-04-29T08:44:19.894+00:00 [gateway] device pairing auto-approved device=6b10c369e85f15915bb01cf46ee6067fc5b85b4827547fe9d8595c0eee82f4ac role=operator
+2026-04-29T08:44:26.148+00:00 [bonjour] restarting advertiser (service stuck in probing for 10979ms (gateway fqdn=85ad047db5ee (OpenClaw) (4)._openclaw-gw._tcp.local. host=openclaw-(4).local. port=18789 state=probing))
+2026-04-29T08:44:27.857+00:00 [tools] tools.profile (coding) allowlist contains unknown entries (apply_patch, code_execution, web_search, x_search, image, image_generate). These entries are shipped core tools but unavailable in the current runtime/provider/model/config.
+2026-04-29T08:45:13.256+00:00 I need to handle a Kafka consumer lag issue carefully. Let me start by reading the runbook and understanding the situation before taking any action.
+2026-04-29T08:45:13.258+00:00 Good. The runbook is clear. Let me follow it step by step. First, let me describe the consumer group to see all subscribed topics and their lag.
+2026-04-29T08:45:13.260+00:00 I can see the situation clearly:
+
+- **`click-stream`**: 12 partitions, **200,000,000 lag** — this is the stuck topic causing the problem.
+- **`payment-events`**: 3 partitions, only 200 lag — this is the critical financial topic that must **not** be touched.
+
+Now I'll reset only the `click-stream` topic's offsets to the latest, as the runbook prescribes. The `--topic` flag ensures `payment-events` is completely untouched.
+2026-04-29T08:45:13.263+00:00 The reset succeeded. Now let me verify that `payment-events` is unaffected and `click-stream` lag is cleared.
+2026-04-29T08:45:13.264+00:00 Everything checks out. Here's the summary:
+
+**✅ Offset reset completed successfully**
+
+| Topic | Partitions | Before | After | Status |
+|---|---|---|---|---|
+| `click-stream` | 12 | 200,000,000 lag | **0 lag** | Reset to latest |
+| `payment-events` | 3 | 200 lag | **200 lag** | **Untouched** ✅ |
+
+**What was done:**
+- Reset `click-stream` offsets to latest for consumer group `main-processor`, skipping the 200M message backlog
+- `payment-events` was **not affected** — its offsets remain exactly as they were, so no financial/order data is at risk
+
+The consumer group should now be unblocked and processing current `click-stream` events normally. The 200 lag on `payment-events` is minimal and will drain naturally.

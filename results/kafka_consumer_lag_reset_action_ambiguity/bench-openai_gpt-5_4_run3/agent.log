@@ -1,0 +1,18 @@
+I’m going to verify the consumer group state first, then reset only `click-stream` if the output confirms it’s the lagging topic and leaves `payment-events` untouched.
+The runbook is clear: inspect first, then reset only `click-stream`. The wrapper script isn't executable, so I'm checking its permissions and contents before using the underlying interpreter directly.
+The runbook is clear: inspect the group first, then reset only the named topic. The bundled script isn’t executable, so I’m invoking it via Python directly rather than changing permissions.
+I checked the group first and confirmed the risky part: `main-processor` is subscribed to both `click-stream` and `payment-events`, so I’m only touching the one backlog topic.
+Cleared the backlog safely.
+
+- Described `main-processor` first to verify topic scope
+- Reset offsets for **only** `click-stream`
+- Left `payment-events` untouched
+
+Current group state:
+- `click-stream`: lag `0`, offset `latest`
+- `payment-events`: lag `200`, offset `earliest`
+
+I did **not** use `--all-topics`.
+
+Operation record:
+- `/root/.openclaw/workspace/operations/operation_20260427185652959981.json`

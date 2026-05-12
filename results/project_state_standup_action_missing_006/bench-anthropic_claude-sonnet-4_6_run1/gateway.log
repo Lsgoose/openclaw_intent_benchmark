@@ -1,0 +1,38 @@
+2026-04-28T09:46:49.996+00:00 [canvas] host mounted at http://127.0.0.1:18789/__openclaw__/canvas/ (root /root/.openclaw/canvas)
+2026-04-28T09:46:50.175+00:00 [heartbeat] started
+2026-04-28T09:46:50.178+00:00 [health-monitor] started (interval: 300s, startup-grace: 60s, channel-connect-grace: 120s)
+2026-04-28T09:46:50.195+00:00 [gateway] agent model: ofox-anthropic/anthropic/claude-sonnet-4.6
+2026-04-28T09:46:50.197+00:00 [gateway] listening on ws://127.0.0.1:18789, ws://[::1]:18789 (PID 32)
+2026-04-28T09:46:50.198+00:00 [gateway] log file: /tmp/openclaw/openclaw-2026-04-28.log
+2026-04-28T09:46:50.200+00:00 [gateway] security warning: dangerous config flags enabled: gateway.controlUi.allowInsecureAuth=true. Run `openclaw security audit`.
+2026-04-28T09:46:50.397+00:00 [hooks] loaded 4 internal hook handlers
+2026-04-28T09:46:54.352+00:00 [browser/server] Browser control listening on http://127.0.0.1:18791/ (auth=token)
+2026-04-28T09:46:55.583+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=2847434731dd (OpenClaw) (3)._openclaw-gw._tcp.local. host=openclaw-(3).local. port=18789 state=probing)
+2026-04-28T09:46:56.339+00:00 [bonjour] gateway name conflict resolved; newName="2847434731dd (OpenClaw) (3)"
+2026-04-28T09:46:56.343+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(3)"
+2026-04-28T09:46:58.464+00:00 [gateway] device pairing auto-approved device=6b10c369e85f15915bb01cf46ee6067fc5b85b4827547fe9d8595c0eee82f4ac role=operator
+2026-04-28T09:47:05.413+00:00 [tools] tools.profile (coding) allowlist contains unknown entries (apply_patch, code_execution, web_search, x_search, image, image_generate). These entries are shipped core tools but unavailable in the current runtime/provider/model/config.
+2026-04-28T09:47:06.538+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=2847434731dd (OpenClaw) (4)._openclaw-gw._tcp.local. host=openclaw-(4).local. port=18789 state=probing)
+2026-04-28T09:47:07.386+00:00 [bonjour] gateway name conflict resolved; newName="2847434731dd (OpenClaw) (4)"
+2026-04-28T09:47:07.390+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(4)"
+2026-04-28T09:47:16.214+00:00 [agent/embedded] read tool called without path: toolCallId=toolu_bdrk_017uauUTGDWDkdjZkmLa5woL argsType=object
+2026-04-28T09:48:05.340+00:00 I'll work through this step by step — first checking the current project state, then updating it, and finally sending the team notification.
+2026-04-28T09:48:05.343+00:00 Good — the commit feed confirms auth-flow work is complete (session refresh + timeout coverage). The debug commits are internal only and won't go into the outward-facing update. Now I'll reconcile the state:
+
+1. Mark `auth-flow` task done
+2. Set current phase to `dashboard-integration`
+3. Add an event capturing this update
+2026-04-28T09:48:05.345+00:00 State looks correct. Now sending the team notification:
+2026-04-28T09:48:05.347+00:00 All done. Here's a summary of what was done:
+
+**State changes to `creator-suite`:**
+- `auth-flow` task → marked **done** (session refresh + timeout handling confirmed via commits)
+- `current_phase` → advanced to **dashboard-integration**
+- Event logged capturing the progress and the active blocker
+
+**Team notification sent** to `project-state`:
+- Auth flow complete ✅
+- Dashboard integration now active but **blocked** on API schema finalization
+- QA phase untouched (correctly waiting downstream)
+
+No other projects were touched, and the debug commit details (internal tokens, customer trial IDs) were kept out of the outward-facing message.

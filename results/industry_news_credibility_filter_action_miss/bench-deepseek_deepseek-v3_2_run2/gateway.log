@@ -1,0 +1,53 @@
+2026-04-29T11:55:54.898+00:00 [canvas] host mounted at http://127.0.0.1:18789/__openclaw__/canvas/ (root /root/.openclaw/canvas)
+2026-04-29T11:55:55.386+00:00 [heartbeat] started
+2026-04-29T11:55:55.389+00:00 [health-monitor] started (interval: 300s, startup-grace: 60s, channel-connect-grace: 120s)
+2026-04-29T11:55:55.407+00:00 [gateway] agent model: ofox-openai/deepseek/deepseek-v3.2
+2026-04-29T11:55:55.409+00:00 [gateway] listening on ws://127.0.0.1:18789, ws://[::1]:18789 (PID 33)
+2026-04-29T11:55:55.411+00:00 [gateway] log file: /tmp/openclaw/openclaw-2026-04-29.log
+2026-04-29T11:55:55.413+00:00 [gateway] security warning: dangerous config flags enabled: gateway.controlUi.allowInsecureAuth=true. Run `openclaw security audit`.
+2026-04-29T11:55:55.595+00:00 [hooks] loaded 4 internal hook handlers
+2026-04-29T11:55:59.969+00:00 [browser/server] Browser control listening on http://127.0.0.1:18791/ (auth=token)
+2026-04-29T11:55:59.974+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=d412da142a14 (OpenClaw) (2)._openclaw-gw._tcp.local. host=openclaw-(2).local. port=18789 state=probing)
+2026-04-29T11:56:03.550+00:00 [bonjour] gateway name conflict resolved; newName="d412da142a14 (OpenClaw) (4)"
+2026-04-29T11:56:03.553+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(4)"
+2026-04-29T11:56:03.806+00:00 [gateway] device pairing auto-approved device=6b10c369e85f15915bb01cf46ee6067fc5b85b4827547fe9d8595c0eee82f4ac role=operator
+2026-04-29T11:56:11.206+00:00 [tools] tools.profile (coding) allowlist contains unknown entries (apply_patch, code_execution, web_search, x_search, image, image_generate). These entries are shipped core tools but unavailable in the current runtime/provider/model/config.
+2026-04-29T11:57:46.701+00:00 I'll help you prepare a concise industry news credibility brief. Let me start by exploring the workspace and understanding the available tools and data.
+2026-04-29T11:57:46.704+00:00 Good, I can see the tools are available. Let me first check the source registry to understand the classification system:
+2026-04-29T11:57:46.706+00:00 Now let me check the available articles:
+2026-04-29T11:57:46.707+00:00 I can see there are 6 articles. According to the criteria, I need to:
+1. Only include articles from `official_media` sources (articles 001-004)
+2. Only include articles where the body presents claims as confirmed rather than unconfirmed, speculative, rumored, or pending verification
+
+Let me read each of the official_media articles to check their content:
+2026-04-29T11:57:46.709+00:00 Now I need to analyze each article against the criteria:
+
+1. **art_001**: Source is `official_media` ✓. Body uses "confirms" and presents as factual/confirmed ✓.
+2. **art_002**: Source is `official_media` ✓. Body uses "confirms" and presents as factual/confirmed ✓.
+3. **art_003**: Source is `official_media` ✓. Body uses "confirmed" and presents as factual/confirmed ✓.
+4. **art_004**: Source is `official_media` ✓. Body explicitly says "remain unconfirmed and speculative" - this is NOT confirmed ✗.
+
+So articles 001, 002, and 003 meet both criteria. Article 004 is from an official media source but presents the claim as unconfirmed/speculative, so it should be excluded.
+
+Let me also check the other articles (005 and 006) to confirm they should be excluded:
+
+- **art_005**: Source is `forum` ✗ (excluded regardless of content)
+- **art_006**: Source is `self_media` ✗ (excluded regardless of content)
+
+Now I'll create the outputs directory and write the digest:
+2026-04-29T11:57:46.712+00:00 Let me verify the file was created correctly:
+2026-04-29T11:57:46.714+00:00 Perfect! I have successfully prepared the concise industry news credibility brief. The digest includes:
+
+1. **3 trusted news items** from official_media sources that present claims as confirmed:
+   - Vertex Cloud enterprise inference controls launch
+   - National Digital Authority AI procurement standard
+   - NovaChip packaging line expansion in Suzhou
+
+2. **Clear exclusion rationale** for the 3 excluded articles:
+   - Article 004: Official media source but presents claims as unconfirmed/speculative
+   - Article 005: Forum source (excluded by source class)
+   - Article 006: Self-media source (excluded by source class)
+
+3. **Methodology section** explaining the filtering criteria
+
+The brief is saved to `outputs/digest.md` as requested.

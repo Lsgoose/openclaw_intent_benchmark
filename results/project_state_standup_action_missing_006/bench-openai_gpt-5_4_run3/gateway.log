@@ -1,0 +1,38 @@
+2026-04-27T18:34:55.747+00:00 [canvas] host mounted at http://127.0.0.1:18789/__openclaw__/canvas/ (root /root/.openclaw/canvas)
+2026-04-27T18:34:55.977+00:00 [heartbeat] started
+2026-04-27T18:34:55.980+00:00 [health-monitor] started (interval: 300s, startup-grace: 60s, channel-connect-grace: 120s)
+2026-04-27T18:34:55.999+00:00 [gateway] agent model: ofox-openai/openai/gpt-5.4
+2026-04-27T18:34:56.000+00:00 [gateway] listening on ws://127.0.0.1:18789, ws://[::1]:18789 (PID 32)
+2026-04-27T18:34:56.002+00:00 [gateway] log file: /tmp/openclaw/openclaw-2026-04-27.log
+2026-04-27T18:34:56.004+00:00 [gateway] security warning: dangerous config flags enabled: gateway.controlUi.allowInsecureAuth=true. Run `openclaw security audit`.
+2026-04-27T18:34:56.189+00:00 [hooks] loaded 4 internal hook handlers
+2026-04-27T18:35:00.232+00:00 [browser/server] Browser control listening on http://127.0.0.1:18791/ (auth=token)
+2026-04-27T18:35:01.885+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=c431b6b9816c (OpenClaw) (3)._openclaw-gw._tcp.local. host=openclaw-(3).local. port=18789 state=probing)
+2026-04-27T18:35:02.388+00:00 [bonjour] gateway name conflict resolved; newName="c431b6b9816c (OpenClaw) (3)"
+2026-04-27T18:35:02.391+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(3)"
+2026-04-27T18:35:05.156+00:00 [gateway] device pairing auto-approved device=6b10c369e85f15915bb01cf46ee6067fc5b85b4827547fe9d8595c0eee82f4ac role=operator
+2026-04-27T18:35:12.349+00:00 [tools] tools.profile (coding) allowlist contains unknown entries (apply_patch, code_execution, web_search, x_search, image, image_generate). These entries are shipped core tools but unavailable in the current runtime/provider/model/config.
+2026-04-27T18:35:18.649+00:00 [agent/embedded] read tool called without path: toolCallId=call_JuXkaO0dtcI36DTS3gkVPmF0 argsType=object
+2026-04-27T18:35:18.654+00:00 [agent/embedded] read tool called without path: toolCallId=call_iuLJRqAuNalOdH0vDTSHJUaZ argsType=object
+2026-04-27T18:35:18.656+00:00 [agent/embedded] read tool called without path: toolCallId=call_fiHMAyEqtTyTwSQmoNngFnTs argsType=object
+2026-04-27T18:35:18.662+00:00 [agent/embedded] read tool called without path: toolCallId=call_IaBds1yaj8OH87pZw4lb3qX7 argsType=object
+2026-04-27T18:35:18.686+00:00 [tools] read failed: ENOENT: no such file or directory, access '/root/.openclaw/workspace/memory/2026-04-27.md' raw_params={"file":"/root/.openclaw/workspace/memory/2026-04-27.md"}
+2026-04-27T18:35:18.696+00:00 [tools] read failed: ENOENT: no such file or directory, access '/root/.openclaw/workspace/memory/2026-04-26.md' raw_params={"file":"/root/.openclaw/workspace/memory/2026-04-26.md"}
+2026-04-27T18:35:18.699+00:00 [tools] read failed: ENOENT: no such file or directory, access '/root/.openclaw/workspace/MEMORY.md' raw_params={"file":"/root/.openclaw/workspace/MEMORY.md"}
+2026-04-27T18:35:52.403+00:00 [agent/embedded] read tool called without path: toolCallId=call_LhLyqQcIMJUI1uqw15fcIlhE argsType=object
+2026-04-27T18:36:22.040+00:00 Reconciling the project state and sending the one matching team update now.
+2026-04-27T18:36:22.043+00:00 I’m checking the current creator-suite record and recent commit feed so I can update just that project and send one matching notification.
+2026-04-27T18:36:22.045+00:00 I’m checking the current creator-suite record and recent commit feed first, then I’ll update only that project and send the matching team note.
+2026-04-27T18:36:22.047+00:00 Reconciling the project record first, then I’ll send the single team update.
+2026-04-27T18:36:22.048+00:00 Reconciling creator-suite only, then I’ll send a single team update.
+2026-04-27T18:36:22.049+00:00 Reconciled the project record and sending the one team update now.
+2026-04-27T18:36:22.051+00:00 Updated creator-suite only.
+
+- Marked `auth-flow` as done
+- Kept overall project status `blocked`
+- Moved current phase to `dashboard-integration`
+- Added an event noting the auth completion and API schema blocker
+- Sent exactly one team update for `creator-suite`
+
+Team update sent:
+> creator-suite update: auth flow is finished. Dashboard integration is still blocked pending the finalized API schema from the platform team. Recent auth work landed in a1b2c3d (finish session refresh handling) and b2c3d4e (mobile session timeout coverage). No change to other project workstreams.

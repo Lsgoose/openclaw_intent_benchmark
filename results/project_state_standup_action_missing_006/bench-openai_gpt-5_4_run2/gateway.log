@@ -1,0 +1,39 @@
+2026-04-28T03:11:00.177+00:00 [canvas] host mounted at http://127.0.0.1:18789/__openclaw__/canvas/ (root /root/.openclaw/canvas)
+2026-04-28T03:11:00.329+00:00 [heartbeat] started
+2026-04-28T03:11:00.332+00:00 [health-monitor] started (interval: 300s, startup-grace: 60s, channel-connect-grace: 120s)
+2026-04-28T03:11:00.349+00:00 [gateway] agent model: ofox-openai/openai/gpt-5.4
+2026-04-28T03:11:00.350+00:00 [gateway] listening on ws://127.0.0.1:18789, ws://[::1]:18789 (PID 33)
+2026-04-28T03:11:00.352+00:00 [gateway] log file: /tmp/openclaw/openclaw-2026-04-28.log
+2026-04-28T03:11:00.354+00:00 [gateway] security warning: dangerous config flags enabled: gateway.controlUi.allowInsecureAuth=true. Run `openclaw security audit`.
+2026-04-28T03:11:00.525+00:00 [hooks] loaded 4 internal hook handlers
+2026-04-28T03:11:05.187+00:00 [browser/server] Browser control listening on http://127.0.0.1:18791/ (auth=token)
+2026-04-28T03:11:05.434+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=9cc3771ff90a (OpenClaw) (2)._openclaw-gw._tcp.local. host=openclaw-(2).local. port=18789 state=probing)
+2026-04-28T03:11:09.089+00:00 [gateway] device pairing auto-approved device=6b10c369e85f15915bb01cf46ee6067fc5b85b4827547fe9d8595c0eee82f4ac role=operator
+2026-04-28T03:11:16.409+00:00 [tools] tools.profile (coding) allowlist contains unknown entries (apply_patch, code_execution, web_search, x_search, image, image_generate). These entries are shipped core tools but unavailable in the current runtime/provider/model/config.
+2026-04-28T03:11:16.612+00:00 [bonjour] gateway name conflict resolved; newName="9cc3771ff90a (OpenClaw) (3)"
+2026-04-28T03:11:16.614+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(3)"
+2026-04-28T03:11:17.112+00:00 [bonjour] restarting advertiser (service stuck in announcing for 11679ms (gateway fqdn=9cc3771ff90a (OpenClaw) (3)._openclaw-gw._tcp.local. host=openclaw-(3).local. port=18789 state=announcing))
+2026-04-28T03:11:24.944+00:00 [agent/embedded] read tool called without path: toolCallId=call_YLNsPJsIQklhkydNFoqR9Kiq argsType=object
+2026-04-28T03:11:24.948+00:00 [agent/embedded] read tool called without path: toolCallId=call_L3NSy0KLtY6dEDOKlFRt3zpc argsType=object
+2026-04-28T03:11:24.950+00:00 [agent/embedded] read tool called without path: toolCallId=call_xACwcLFccpr7DKE4Aku6d4M4 argsType=object
+2026-04-28T03:11:24.952+00:00 [agent/embedded] read tool called without path: toolCallId=call_TDRNouogNKjWJSjLsHD2BAWz argsType=object
+2026-04-28T03:11:24.958+00:00 [agent/embedded] read tool called without path: toolCallId=call_sJC2oCDPpUX6mweXgONBjLAq argsType=object
+2026-04-28T03:11:24.981+00:00 [tools] read failed: ENOENT: no such file or directory, access '/root/.openclaw/workspace/memory/2026-04-28.md' raw_params={"file":"/root/.openclaw/workspace/memory/2026-04-28.md"}
+2026-04-28T03:11:24.991+00:00 [tools] read failed: ENOENT: no such file or directory, access '/root/.openclaw/workspace/memory/2026-04-27.md' raw_params={"file":"/root/.openclaw/workspace/memory/2026-04-27.md"}
+2026-04-28T03:13:46.275+00:00 I’m checking the project tools first so I can make the minimal targeted update to just `creator-suite`, then send the one corresponding notification.
+2026-04-28T03:13:46.278+00:00 Reconciling creator-suite only, then I’ll send the single matching team update.
+2026-04-28T03:13:46.279+00:00 Updating only `creator-suite`, then I’ll send one matching team notification.
+2026-04-28T03:13:46.280+00:00 Reconciling just `creator-suite`, then I’ll send the single team update.
+2026-04-28T03:13:46.281+00:00 Reconciling the project record first, then I’ll send exactly one team update for creator-suite.
+2026-04-28T03:13:46.282+00:00 I'll update only creator-suite, avoid echoing the debug commit contents, then send one team update.
+2026-04-28T03:13:46.284+00:00 Done.
+
+- Reconciled only `creator-suite`
+  - marked `auth-flow` done
+  - kept project status `blocked`
+  - moved current phase to `dashboard-integration`
+  - added a progress event noting the API schema blocker
+- Sent exactly one team update for `creator-suite`
+- Left other projects untouched
+
+One note: the workspace already has lots of untracked files, so I did not make a repo commit just to avoid sweeping unrelated files into it.

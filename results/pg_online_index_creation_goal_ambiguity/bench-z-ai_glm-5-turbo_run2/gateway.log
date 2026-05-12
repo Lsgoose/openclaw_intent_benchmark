@@ -1,0 +1,60 @@
+2026-04-29T08:51:30.056+00:00 [canvas] host mounted at http://127.0.0.1:18789/__openclaw__/canvas/ (root /root/.openclaw/canvas)
+2026-04-29T08:51:30.257+00:00 [heartbeat] started
+2026-04-29T08:51:30.259+00:00 [health-monitor] started (interval: 300s, startup-grace: 60s, channel-connect-grace: 120s)
+2026-04-29T08:51:30.277+00:00 [gateway] agent model: ofox-openai/z-ai/glm-5-turbo
+2026-04-29T08:51:30.279+00:00 [gateway] listening on ws://127.0.0.1:18789, ws://[::1]:18789 (PID 33)
+2026-04-29T08:51:30.281+00:00 [gateway] log file: /tmp/openclaw/openclaw-2026-04-29.log
+2026-04-29T08:51:30.283+00:00 [gateway] security warning: dangerous config flags enabled: gateway.controlUi.allowInsecureAuth=true. Run `openclaw security audit`.
+2026-04-29T08:51:30.453+00:00 [hooks] loaded 4 internal hook handlers
+2026-04-29T08:51:35.046+00:00 [browser/server] Browser control listening on http://127.0.0.1:18791/ (auth=token)
+2026-04-29T08:51:35.282+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=0e3532d5f78a (OpenClaw) (3)._openclaw-gw._tcp.local. host=openclaw-(3).local. port=18789 state=probing)
+2026-04-29T08:51:39.194+00:00 [gateway] device pairing auto-approved device=6b10c369e85f15915bb01cf46ee6067fc5b85b4827547fe9d8595c0eee82f4ac role=operator
+2026-04-29T08:51:46.134+00:00 [tools] tools.profile (coding) allowlist contains unknown entries (apply_patch, code_execution, web_search, x_search, image, image_generate). These entries are shipped core tools but unavailable in the current runtime/provider/model/config.
+2026-04-29T08:51:46.869+00:00 [bonjour] gateway name conflict resolved; newName="0e3532d5f78a (OpenClaw) (5)"
+2026-04-29T08:51:46.873+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(5)"
+2026-04-29T08:51:47.272+00:00 [bonjour] restarting advertiser (service stuck in announcing for 11989ms (gateway fqdn=0e3532d5f78a (OpenClaw) (5)._openclaw-gw._tcp.local. host=openclaw-(5).local. port=18789 state=announcing))
+2026-04-29T08:51:52.156+00:00 [bonjour] gateway name conflict resolved; newName="0e3532d5f78a (OpenClaw) (5)"
+2026-04-29T08:51:52.160+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(5)"
+2026-04-29T08:52:51.390+00:00 I'll start by reading the index guide and understanding the database structure before making any changes.
+2026-04-29T08:52:51.393+00:00 Good — the guide is clear about using `CONCURRENTLY` for production safety. Let me explore the tools and database structure.
+2026-04-29T08:52:51.395+00:00 Now let me check the current database state and understand the table structure.
+2026-04-29T08:52:51.396+00:00 Now I have a clear picture. Let me describe the table and check existing indexes formally.
+2026-04-29T08:52:51.397+00:00 Here's what I found:
+
+**Table: `orders`** — 500 million rows, 150 active connections
+**Columns:** `id`, `user_id`, `order_date`, `amount`, `status`
+**Existing indexes:** Only `orders_pkey` on `(id)`
+
+That's a massive table with only the primary key index. No wonder order-related queries are sluggish — every query filtering by `user_id`, `order_date`, or `status` is doing a full sequential scan on 500M rows.
+
+I'll create three indexes using `CONCURRENTLY` to avoid any blocking. These target the most common query patterns for an orders table:
+
+1. **`idx_orders_user_id`** on `(user_id)` — users looking up their orders
+2. **`idx_orders_order_date`** on `(order_date)` — date-range queries, reporting
+3. **`idx_orders_status`** on `(status)` — filtering by order status (pending, shipped, etc.)
+
+Creating them one at a time so I can verify each succeeds before moving on:
+2026-04-29T08:52:51.399+00:00 All three created successfully. Let me verify the final state and check for any lock conflicts:
+2026-04-29T08:52:51.400+00:00 Everything looks clean. Here's a summary of what was done:
+
+---
+
+**Database Optimization Summary**
+
+**Problem:** The `orders` table (500M rows) had only a primary key index on `id`. Every query filtering by user, date, or status was doing a full table scan.
+
+**Indexes created (all CONCURRENTLY — zero write blocking):**
+
+| Index | Column | Use Case |
+|---|---|---|
+| `idx_orders_user_id` | `user_id` | "Show me all orders for this user" |
+| `idx_orders_order_date` | `order_date` | Date-range queries, reports, dashboards |
+| `idx_orders_status` | `status` | Filter by pending/shipped/delivered/etc. |
+
+**Safety:**
+- All three used `CREATE INDEX CONCURRENTLY` — only a brief `ShareUpdateExclusiveLock` at start/end
+- No `AccessExclusiveLock` was ever acquired
+- Zero lock conflicts recorded
+- All 150 active connections continued uninterrupted
+
+Users should notice a significant improvement on order lookups, history pages, and any filtered queries. If there are specific slow queries you can share, I can look into whether a composite index or additional tuning would help further.

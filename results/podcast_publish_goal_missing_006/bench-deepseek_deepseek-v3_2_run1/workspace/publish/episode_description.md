@@ -1,0 +1,5 @@
+Why do title tests fail? Jordan Kim explains that teams confuse click-through rate with audience fit. A title test matrix only works when each option maps to a real audience promise—otherwise you're measuring random novelty.
+
+Teams over-index on packaging and novelty while forgetting listener intent. Jordan advises maintaining one shared title board, a short review loop, and final approved headlines before distribution. The lesson: "learn which promise actually matches the episode."
+
+Keep a test log with hypothesis, audience segment, winning frame, and why it won. The common mistake: running tests without context, causing winning headlines to be reused incorrectly. For small teams: start an experiment log, document audience promises, and stop treating click-through rate as the whole strategy.

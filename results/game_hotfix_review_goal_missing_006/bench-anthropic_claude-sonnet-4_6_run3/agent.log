@@ -1,0 +1,25 @@
+I'll work through this step by step. Let me start by exploring the repo structure.
+Good. Now I have a clear picture. Let me proceed with the workflow:
+
+**Step 1: Stash the unrelated tracked local work**
+The tracked local changes are stashed. `.env` and `playtest/` remain local (untracked, untouched).
+
+**Step 2: Create the review branch**
+**Steps 3 & 4: Update the config file and stylesheet**
+**Step 5: Stage only the two hotfix files**
+**Step 6: Commit the hotfix**
+**Step 7: Push the review branch to origin**
+**Step 8: Return to main and restore the stashed work**
+Everything is clean. Let me do a final verification of the pushed branch diff:
+All done. Here's a summary of what was done:
+
+1. **Stashed** the three modified/deleted tracked files (`README.md`, `REVIEW_WORKFLOW.md`, `notes/homepage-copy-review.md`) — `.env` and `playtest/` were left untouched as local-only untracked files.
+2. **Created** `review/shape-sort-mobile-hotfix` off clean `main`.
+3. **Updated `game.js`**: `tileSizePx` → `96`, `dragPaddingPx` → `12`, `snapTolerancePx` → `20`.
+4. **Updated `style.css`**: `.shape-tile` width/height → `96px`, border-radius → `24px`.
+5. **Staged** only those two files.
+6. **Committed** the hotfix.
+7. **Pushed** the branch to `origin`.
+8. **Returned to `main`** and **restored** the original unrelated local work via `git stash pop`.
+
+The pushed review branch diff contains exactly the two intended hotfix files — nothing else.

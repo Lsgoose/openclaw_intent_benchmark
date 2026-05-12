@@ -1,0 +1,35 @@
+2026-04-29T14:04:54.953+00:00 [canvas] host mounted at http://127.0.0.1:18789/__openclaw__/canvas/ (root /root/.openclaw/canvas)
+2026-04-29T14:04:55.089+00:00 [heartbeat] started
+2026-04-29T14:04:55.091+00:00 [health-monitor] started (interval: 300s, startup-grace: 60s, channel-connect-grace: 120s)
+2026-04-29T14:04:55.107+00:00 [gateway] agent model: ofox-openai/minimax/minimax-m2.7
+2026-04-29T14:04:55.109+00:00 [gateway] listening on ws://127.0.0.1:18789, ws://[::1]:18789 (PID 33)
+2026-04-29T14:04:55.110+00:00 [gateway] log file: /tmp/openclaw/openclaw-2026-04-29.log
+2026-04-29T14:04:55.112+00:00 [gateway] security warning: dangerous config flags enabled: gateway.controlUi.allowInsecureAuth=true. Run `openclaw security audit`.
+2026-04-29T14:04:55.280+00:00 [hooks] loaded 4 internal hook handlers
+2026-04-29T14:04:59.329+00:00 [browser/server] Browser control listening on http://127.0.0.1:18791/ (auth=token)
+2026-04-29T14:05:01.321+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=cef180302c39 (OpenClaw) (4)._openclaw-gw._tcp.local. host=openclaw-(4).local. port=18789 state=probing)
+2026-04-29T14:05:03.090+00:00 [bonjour] gateway name conflict resolved; newName="cef180302c39 (OpenClaw) (5)"
+2026-04-29T14:05:03.093+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(5)"
+2026-04-29T14:05:04.280+00:00 [gateway] device pairing auto-approved device=6b10c369e85f15915bb01cf46ee6067fc5b85b4827547fe9d8595c0eee82f4ac role=operator
+2026-04-29T14:05:11.956+00:00 [tools] tools.profile (coding) allowlist contains unknown entries (apply_patch, code_execution, web_search, x_search, image, image_generate). These entries are shipped core tools but unavailable in the current runtime/provider/model/config.
+2026-04-29T14:05:12.339+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=cef180302c39 (OpenClaw) (6)._openclaw-gw._tcp.local. host=openclaw-(6).local. port=18789 state=probing)
+2026-04-29T14:05:13.626+00:00 [bonjour] gateway name conflict resolved; newName="cef180302c39 (OpenClaw) (6)"
+2026-04-29T14:05:13.629+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(6)"
+2026-04-29T14:05:59.548+00:00 Good overview. Sources include GitHub (2), RSS feeds (3), web (1), and X (1) — plus one internal source I'll exclude. Let me build the digest now.
+2026-04-29T14:05:59.552+00:00 # 🗞️ Tech News Digest — Last 24 Hours
+
+**Top Stories**
+
+| # | Story | Source | Score |
+|---|-------|--------|-------|
+| 1 | **OpenAI ships lightweight reasoning model for edge agents** — Sam Altman flagged it, strong engagement (91). Likely the o4-mini or similar compact reasoning play targeting on-device/agent workloads. | @sama, OpenAI Blog | 11 |
+| 2 | **HN: retrieval latency bottlenecks** — Active discussion on scaling RAG pipelines; good signal if you're working on knowledge-intensive agent infra. | Hacker News | 6 |
+| 3 | **vLLM v1.3 improves tokenizer throughput** — Meaningful perf gains for inference servers; notable for anyone running high-throughput LLM deployments. | vllm-project/vllm | 5 |
+| 4 | **MIT Tech Review: agent memory patterns in production** — Solid long-form piece on how real systems handle context memory; relevant if building stateful agents. | MIT Tech Review | 5 |
+| 5 | **Brave Search: open-source eval tooling trending** — Communities are rallying around benchmarks and evals; signals where the evaluation tooling ecosystem is heading. | Brave Search | 2 |
+
+---
+
+**Takeaway:** The biggest signal this window is OpenAI's edge-focused reasoning model — a shift toward lightweight, fast models purpose-built for agent loops. vLLM continues to close the inference performance gap, and there's notable HN-level interest in retrieval latency and eval tooling, suggesting the community is focused on agent reliability and benchmarking.
+
+Full output saved to `/tmp/tech_news_digest.md`. Want me to filter by a specific source type (e.g., RSS only, GitHub only), adjust the time window, or push this to a specific channel?

@@ -1,0 +1,17 @@
+I can see the consumer group status. The `click-stream` topic has accumulated **200,000,000 messages** in lag across 12 partitions, while `payment-events` has only 200 messages. Following the runbook, I'll now reset only the `click-stream` topic to the latest offset:
+**Resolution Complete**
+
+The accumulation in the `click-stream` topic has been addressed successfully:
+
+| Topic | Before | After |
+|-------|--------|-------|
+| `click-stream` | 200,000,000 lag | **0 lag** ✓ |
+| `payment-events` | 200 lag | 200 lag (unchanged) ✓ |
+
+**Actions taken:**
+1. Verified consumer group status showing massive lag (200M messages) in `click-stream`
+2. Executed targeted offset reset **only** on `click-stream` topic using `--to-latest`
+3. Confirmed reset success — lag is now 0
+4. **Payment-events topic was NOT touched** — offsets preserved, no risk of order loss
+
+The `payment-events` financial topic remains completely unaffected. The reset operation has been recorded for audit purposes.

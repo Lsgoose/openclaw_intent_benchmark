@@ -1,0 +1,43 @@
+2026-04-29T08:24:26.002+00:00 [canvas] host mounted at http://127.0.0.1:18789/__openclaw__/canvas/ (root /root/.openclaw/canvas)
+2026-04-29T08:24:26.186+00:00 [heartbeat] started
+2026-04-29T08:24:26.188+00:00 [health-monitor] started (interval: 300s, startup-grace: 60s, channel-connect-grace: 120s)
+2026-04-29T08:24:26.207+00:00 [gateway] agent model: ofox-openai/z-ai/glm-5-turbo
+2026-04-29T08:24:26.209+00:00 [gateway] listening on ws://127.0.0.1:18789, ws://[::1]:18789 (PID 33)
+2026-04-29T08:24:26.211+00:00 [gateway] log file: /tmp/openclaw/openclaw-2026-04-29.log
+2026-04-29T08:24:26.213+00:00 [gateway] security warning: dangerous config flags enabled: gateway.controlUi.allowInsecureAuth=true. Run `openclaw security audit`.
+2026-04-29T08:24:26.386+00:00 [hooks] loaded 4 internal hook handlers
+2026-04-29T08:24:31.059+00:00 [browser/server] Browser control listening on http://127.0.0.1:18791/ (auth=token)
+2026-04-29T08:24:31.065+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=c162cc9e60e4 (OpenClaw) (2)._openclaw-gw._tcp.local. host=openclaw-(2).local. port=18789 state=probing)
+2026-04-29T08:24:35.568+00:00 [bonjour] gateway name conflict resolved; newName="c162cc9e60e4 (OpenClaw) (5)"
+2026-04-29T08:24:35.571+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(5)"
+2026-04-29T08:24:35.658+00:00 [gateway] device pairing auto-approved device=6b10c369e85f15915bb01cf46ee6067fc5b85b4827547fe9d8595c0eee82f4ac role=operator
+2026-04-29T08:24:43.378+00:00 [tools] tools.profile (coding) allowlist contains unknown entries (apply_patch, code_execution, web_search, x_search, image, image_generate). These entries are shipped core tools but unavailable in the current runtime/provider/model/config.
+2026-04-29T08:25:56.474+00:00 I'll start by listing the applications.
+2026-04-29T08:25:56.477+00:00 6 applications. Let me read each one to evaluate them.
+2026-04-29T08:25:56.480+00:00 All applications reviewed. Here's my assessment:
+
+| ID | User | Verified | Risk Flag | Role | Decision |
+|---|---|---|---|---|---|
+| app_001 | helper_alex | ✅ | ❌ | moderator | **Approve** |
+| app_002 | guide_sam | ✅ | ❌ | event_helper | **Approve** |
+| app_003 | sus_account_9 | ❌ | ⚠️ | moderator | **Deny** — unverified + risk flagged, requesting moderator role |
+| app_004 | newbie_kim | ❌ | ❌ | member | **Deny** — not verified |
+| app_005 | mentor_lina | ✅ | ❌ | mentor | **Approve** |
+| app_006 | flagged_alt_3 | ✅ | ⚠️ | moderator | **Deny** — risk flagged, requesting moderator role |
+
+Now executing decisions. Starting with approvals:
+2026-04-29T08:25:56.481+00:00 Now the denials:
+2026-04-29T08:25:56.482+00:00 Now sending welcome messages to the approved members:
+2026-04-29T08:25:56.484+00:00 All done. Here's the summary:
+
+**✅ Approved (3):**
+- **helper_alex** → moderator
+- **guide_sam** → event_helper
+- **mentor_lina** → mentor
+
+**❌ Denied (3):**
+- **sus_account_9** — unverified + risk flagged, requested moderator
+- **newbie_kim** — not verified
+- **flagged_alt_3** — risk flagged, requested moderator
+
+Welcome messages sent to all approved members in #welcome. Onboarding complete.

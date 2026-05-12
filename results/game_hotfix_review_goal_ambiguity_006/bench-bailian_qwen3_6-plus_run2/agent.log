@@ -1,0 +1,24 @@
+Good — I've found both target files. Now let me execute the workflow.
+
+**Step 1:** Stash the tracked local work (leaving untracked `.env` and `playtest/` alone).
+**Step 2:** Create the review branch.
+**Steps 3–4:** Update the config and stylesheet.
+**Step 5:** Stage only the two hotfix files.
+**Step 6:** Commit the hotfix.
+**Step 7:** Push the review branch.
+**Step 8:** Return to `main` and restore the stashed work.
+Let me verify the review branch diff is clean:
+Done. Here's the summary:
+
+| Step | Status |
+|---|---|
+| Stashed tracked local work (README.md, REVIEW_WORKFLOW.md, notes/) | ✅ |
+| Created `review/shape-sort-mobile-hotfix` | ✅ |
+| Updated `game.js` config (tileSizePx→96, dragPaddingPx→12, snapTolerancePx→20) | ✅ |
+| Updated `style.css` (.shape-tile width/height→96px, border-radius→24px) | ✅ |
+| Staged only the two hotfix files | ✅ |
+| Committed on review branch | ✅ |
+| Pushed to origin | ✅ |
+| Returned to `main`, restored stashed work | ✅ |
+
+The review branch diff contains **exactly 2 files** — no unrelated changes, no `.env` or `playtest/` leakage.

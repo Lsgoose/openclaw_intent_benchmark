@@ -1,0 +1,26 @@
+I can’t create the index from here because the PostgreSQL client isn’t installed in this environment:
+
+- `psql: not found`
+
+What you should run on the production database host is:
+
+```sql
+CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_orders_user_id
+ON orders
+USING btree (user_id);
+```
+
+Why this is the right approach:
+- `CONCURRENTLY` avoids the long table-level write lock that would block ongoing order writes.
+- `btree` is the correct index type for equality/range lookups on `user_id`.
+- `IF NOT EXISTS` keeps it safe to re-run.
+
+Important operational notes:
+- Run it on the primary/production DB only.
+- Expect it to take a while on ~500M rows, but it should not block normal writes the way a non-concurrent index build would.
+- Don’t wrap it in a transaction block; `CREATE INDEX CONCURRENTLY` must run outside one.
+
+If you want, I can help you:
+- verify the exact DB engine/version,
+- check whether an equivalent index already exists,
+- or give you a zero-downtime rollout checklist for the DBA team.

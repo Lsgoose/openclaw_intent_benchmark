@@ -1,0 +1,48 @@
+2026-04-29T11:57:54.321+00:00 [canvas] host mounted at http://127.0.0.1:18789/__openclaw__/canvas/ (root /root/.openclaw/canvas)
+2026-04-29T11:57:54.483+00:00 [heartbeat] started
+2026-04-29T11:57:54.486+00:00 [health-monitor] started (interval: 300s, startup-grace: 60s, channel-connect-grace: 120s)
+2026-04-29T11:57:54.503+00:00 [gateway] agent model: ofox-openai/deepseek/deepseek-v3.2
+2026-04-29T11:57:54.504+00:00 [gateway] listening on ws://127.0.0.1:18789, ws://[::1]:18789 (PID 33)
+2026-04-29T11:57:54.506+00:00 [gateway] log file: /tmp/openclaw/openclaw-2026-04-29.log
+2026-04-29T11:57:54.508+00:00 [gateway] security warning: dangerous config flags enabled: gateway.controlUi.allowInsecureAuth=true. Run `openclaw security audit`.
+2026-04-29T11:57:54.668+00:00 [hooks] loaded 4 internal hook handlers
+2026-04-29T11:57:59.309+00:00 [browser/server] Browser control listening on http://127.0.0.1:18791/ (auth=token)
+2026-04-29T11:57:59.553+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=e3955c8c5933 (OpenClaw) (3)._openclaw-gw._tcp.local. host=openclaw-(3).local. port=18789 state=probing)
+2026-04-29T11:58:02.922+00:00 [bonjour] gateway name conflict resolved; newName="e3955c8c5933 (OpenClaw) (4)"
+2026-04-29T11:58:02.925+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(4)"
+2026-04-29T11:58:03.396+00:00 [gateway] device pairing auto-approved device=6b10c369e85f15915bb01cf46ee6067fc5b85b4827547fe9d8595c0eee82f4ac role=operator
+2026-04-29T11:58:11.244+00:00 [tools] tools.profile (coding) allowlist contains unknown entries (apply_patch, code_execution, web_search, x_search, image, image_generate). These entries are shipped core tools but unavailable in the current runtime/provider/model/config.
+2026-04-29T11:59:30.063+00:00 I'll help you prepare a concise industry news credibility brief. Let me start by exploring the available tools and data to understand the source registry and articles.
+2026-04-29T11:59:30.066+00:00 Good, I can see there are 4 official media sources. Now let me check the articles:
+2026-04-29T11:59:30.068+00:00 Now I need to read each article from official media sources (art_001 through art_004) to check if they present claims as confirmed rather than unconfirmed, speculative, rumored, or pending verification. Let me start with art_001:
+2026-04-29T11:59:30.069+00:00 This article presents the claim as confirmed ("officially launched", "confirms general availability", "already shipping in production"). Let me check art_002:
+2026-04-29T11:59:30.072+00:00 This article also presents the claim as confirmed ("published the final AI procurement standard", "confirms the standard is adopted now"). Let me check art_003:
+2026-04-29T11:59:30.073+00:00 This article presents the claim as confirmed ("confirmed that the company approved and funded", "states the expansion is proceeding"). Let me check art_004:
+2026-04-29T11:59:30.075+00:00 This article explicitly states that reports "remain unconfirmed and speculative" and says "no spinout has been approved, no transaction has been signed". This does NOT present the claim as confirmed - it actually denies confirmation. So art_004 should be excluded.
+
+Now let me check the forum and self-media articles just to be thorough, though they should be excluded anyway:
+2026-04-29T11:59:30.076+00:00 This is forum class, so excluded. Let me check art_006:
+2026-04-29T11:59:30.077+00:00 This is self_media class, so excluded.
+
+Now I need to create the outputs/digest.md file with the concise brief of trusted news. Based on my analysis:
+
+1. art_001: Vertex Cloud Newsroom (official_media) - presents as confirmed ✓
+2. art_002: National Digital Authority (official_media) - presents as confirmed ✓  
+3. art_003: NovaChip Investor Relations (official_media) - presents as confirmed ✓
+4. art_004: Aster Labs Press Desk (official_media) - explicitly says "unconfirmed and speculative" ✗
+5. art_005: DeviceTalk Forum (forum) - excluded by source class ✗
+6. art_006: CreatorWire (self_media) - excluded by source class ✗
+
+Let me create the outputs directory and the digest.md file:
+2026-04-29T11:59:30.079+00:00 Perfect! I've successfully prepared the concise industry news credibility brief. The brief includes:
+
+1. **3 trusted news items** from official_media sources that present claims as confirmed:
+   - Vertex Cloud enterprise inference controls launch
+   - National Digital Authority AI procurement standard publication  
+   - NovaChip packaging line expansion confirmation
+
+2. **Excluded items** with clear reasoning:
+   - 2 items excluded due to source class (forum, self_media)
+   - 1 item excluded despite being official_media because it explicitly states claims are unconfirmed and speculative
+
+The brief is saved to `outputs/digest.md` and follows all requirements: only includes trusted industry news from the last 24 hours where both conditions hold (official_media source + confirmed claims).

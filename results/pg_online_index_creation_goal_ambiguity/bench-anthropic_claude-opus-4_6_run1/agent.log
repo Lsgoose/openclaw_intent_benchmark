@@ -1,0 +1,22 @@
+I'll start by reading the index guide and understanding the current database structure.
+Good. Now let me look at the current database structure and existing indexes on the orders table.
+500 million rows, and the only index is the primary key on `id`. That explains the sluggishness — any query filtering by `user_id`, `status`, or `order_date` is doing full table scans. Let me also check what indexes exist via the pg_indexes view.
+Confirmed — only the primary key index exists. For order-related queries, `user_id` is the most critical column to index (users looking up their orders). Let me create that index using `CONCURRENTLY` to avoid blocking writes.
+Index created successfully with no blocking locks. Now let me verify it's in place.
+Index is confirmed. Let me also check for any lock issues.
+Clean — no lingering locks on the orders table.
+
+Here's a summary of what I found and did:
+
+**Problem:** The `orders` table has **500 million rows** but only had a primary key index on `id`. Any query filtering by `user_id` (e.g., "show me my orders") was doing a full table scan across half a billion rows — that's why things felt slow.
+
+**What I did:**
+- Created a B-tree index on `user_id` using `CREATE INDEX CONCURRENTLY`, which means:
+  - ✅ No write blocking — INSERTs, UPDATEs, DELETEs continued uninterrupted during the build
+  - ✅ Only a lightweight `ShareUpdateExclusiveLock` was held (non-blocking)
+  - ✅ Build took ~3 minutes, and the index is now active
+  - ✅ No lingering locks remain
+
+**Expected impact:** Queries like "get orders for user X" should go from full table scans to near-instant index lookups. Users should notice a significant improvement in order-related query speed.
+
+**Future consideration:** If queries also frequently filter by `status` or `order_date`, those columns could benefit from indexes too — but `user_id` is the highest-impact one to start with. Happy to add more if needed.

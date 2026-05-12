@@ -1,0 +1,1 @@
+# Shared Travel Package\n\n## Shareable Trips Included\n\n### tokyo_spring_2026 (Tokyo Conference Spring 2026)\n- Files: itinerary.md, hotel_booking.txt\n- No private trip data included per policy\n

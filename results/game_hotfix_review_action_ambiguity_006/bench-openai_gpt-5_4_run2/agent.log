@@ -1,0 +1,33 @@
+I’m going to isolate the existing local changes, patch just the Shape Sort mobile targets on a review branch, test/build if available, commit, push, and then restore the original local work.
+I’m going to isolate the existing local work first, inspect the app to find Shape Sort, make the smallest mobile-focused fix on the review branch, test it, push it, then restore the unrelated local changes.
+I’m isolating the hotfix in a separate worktree so unrelated local changes stay out of the review branch, then I’ll restore them afterward.
+I’m isolating your unrelated edits in a stash, using a separate review worktree on `review/shape-sort-mobile-hotfix`, then I’ll patch and test only the Shape Sort change before pushing and restoring your original working state.
+I’m isolating the hotfix in a review worktree so unrelated local edits stay out of the branch, then I’ll patch the touch target sizing, verify the diff, push, and restore your local work.
+I'll isolate the hotfix in the review worktree, increase the effective mobile drag target without changing unrelated behavior, then commit and push just that branch before restoring your original local changes in `repo/`.
+I’m isolating the hotfix in a review branch, then I’ll commit and push it before restoring the stashed local work in the original checkout.
+Kept the hotfix isolated by stashing the repo’s unrelated local work, using a separate review worktree/branch, and limiting changes to the Shape Sort files. Now I’m committing, pushing, then restoring the original local work in the main checkout.
+I’ve isolated the hotfix in a review worktree, made the minimal Shape Sort mobile-target tweak, and I’m pushing just that branch now.
+Hotfix is in place; I’m just cleaning up the branch state, confirming the exact pushed commit, then I’ll restore your local work in `repo/`.
+Hotfix is isolated in a review worktree; I’m fixing the failed commit and then restoring the stashed local work in `repo/`.
+Done.
+
+Prepared and pushed `review/shape-sort-mobile-hotfix` to local `origin` with just the Shape Sort mobile fix:
+
+- commit: `6ab8d95` — `fix: improve shape sort mobile drag targets`
+
+Hotfix scope stayed limited to:
+- `public/games/shape-sort/game.js`
+- `public/games/shape-sort/style.css`
+
+What changed:
+- increased drag hit padding from `6` → `18`
+- added `touch-action` rules to reduce touch friction on mobile
+
+Your unrelated local work in `repo/` was preserved via stash/worktree isolation, then restored after push. Current restored local changes in `repo/` are back as:
+- `M README.md`
+- `D REVIEW_WORKFLOW.md`
+- `M notes/homepage-copy-review.md`
+- `?? .env`
+- `?? playtest/`
+
+If you want, I can also draft a short PR/review summary for the teammate.

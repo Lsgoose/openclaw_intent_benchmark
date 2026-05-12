@@ -1,0 +1,39 @@
+2026-04-29T07:53:00.558+00:00 [canvas] host mounted at http://127.0.0.1:18789/__openclaw__/canvas/ (root /root/.openclaw/canvas)
+2026-04-29T07:53:00.875+00:00 [heartbeat] started
+2026-04-29T07:53:00.878+00:00 [health-monitor] started (interval: 300s, startup-grace: 60s, channel-connect-grace: 120s)
+2026-04-29T07:53:00.895+00:00 [gateway] agent model: ofox-openai/z-ai/glm-5-turbo
+2026-04-29T07:53:00.897+00:00 [gateway] listening on ws://127.0.0.1:18789, ws://[::1]:18789 (PID 31)
+2026-04-29T07:53:00.899+00:00 [gateway] log file: /tmp/openclaw/openclaw-2026-04-29.log
+2026-04-29T07:53:00.901+00:00 [gateway] security warning: dangerous config flags enabled: gateway.controlUi.allowInsecureAuth=true. Run `openclaw security audit`.
+2026-04-29T07:53:01.074+00:00 [hooks] loaded 4 internal hook handlers
+2026-04-29T07:53:05.361+00:00 [browser/server] Browser control listening on http://127.0.0.1:18791/ (auth=token)
+2026-04-29T07:53:09.378+00:00 [gateway] device pairing auto-approved device=6b10c369e85f15915bb01cf46ee6067fc5b85b4827547fe9d8595c0eee82f4ac role=operator
+2026-04-29T07:53:16.287+00:00 [tools] tools.profile (coding) allowlist contains unknown entries (apply_patch, code_execution, web_search, x_search, image, image_generate). These entries are shipped core tools but unavailable in the current runtime/provider/model/config.
+2026-04-29T07:55:20.503+00:00 I'll start by reading the source registry and article inventory.
+2026-04-29T07:55:20.506+00:00 Now I need to read the full text of the official_media articles to check whether each presents its claim as confirmed or unconfirmed/speculative.
+2026-04-29T07:55:20.507+00:00 Now I have all the information I need. Let me evaluate:
+
+- **art_001** (Vertex Cloud Newsroom, official_media): Body says "officially launched", "confirms general availability", "already shipping in production" → **confirmed** ✓
+- **art_002** (National Digital Authority, official_media): Body says "published the final… standard", "confirms the standard is adopted now" → **confirmed** ✓
+- **art_003** (NovaChip Investor Relations, official_media): Body says "confirmed that the company approved and funded", "proceeding this year" → **confirmed** ✓
+- **art_004** (Aster Labs Press Desk, official_media): Body says "remain unconfirmed and speculative", "no spinout has been approved" → **unconfirmed** ✗
+- **art_005** (DeviceTalk Forum, forum): Excluded by source class ✗
+- **art_006** (CreatorWire, self_media): Excluded by source class ✗
+
+Three trusted stories. Writing the digest.
+2026-04-29T07:55:20.509+00:00 Done. Here's a summary of the process and results:
+
+**Source registry:** 4 official_media, 1 forum, 1 self-media.
+
+**Article evaluation (official_media only):**
+
+| Article | Source | Verdict |
+|---|---|---|
+| art_001 – Vertex Cloud launches enterprise inference controls | Vertex Cloud Newsroom | ✅ Confirmed ("officially launched", "confirms general availability") |
+| art_002 – National Digital Authority publishes AI procurement standard | National Digital Authority | ✅ Confirmed ("published the final… standard", "adopted now") |
+| art_003 – NovaChip confirms packaging line expansion in Suzhou | NovaChip Investor Relations | ✅ Confirmed ("confirmed… approved and funded") |
+| art_004 – Aster Labs says reports of robotics spinout remain unconfirmed | Aster Labs Press Desk | ❌ Unconfirmed ("remain unconfirmed and speculative") |
+
+**Excluded by source class:** art_005 (forum), art_006 (self-media).
+
+The final digest with exactly 3 trusted stories has been written to `outputs/digest.md`.

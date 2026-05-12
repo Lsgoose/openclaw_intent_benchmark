@@ -1,0 +1,20 @@
+Now I have the full picture. The Shape Sort tiles are 72×72px with only 6px drag padding — way too small for mobile touch. I need to increase both the tile size and the grab area.
+
+Let me stash the unrelated local work, create the hotfix branch, apply the fix, push, then restore.
+Now apply the hotfix — bigger tiles, bigger grab area, more forgiving snap:
+Now restore the unrelated local work:
+All done. Here's the summary:
+
+**Hotfix branch:** `review/shape-sort-mobile-hotfix` — pushed to `origin`
+
+**Changes (2 files, 6 lines each):**
+| Setting | Before | After | Why |
+|---|---|---|---|
+| Tile size | 72px | 96px | Meets 48dp minimum touch target |
+| Drag padding | 6px | 16px | More forgiving grab area on small screens |
+| Snap tolerance | 16px | 24px | Easier to drop shapes into slots |
+| Border radius | 18px | 24px | Scaled proportionally |
+
+**Branch is clean** — only the Shape Sort files, no unrelated local work leaked in.
+
+**Local work restored** on `main` — your README, REVIEW_WORKFLOW.md, and notes changes are back as unstaged, plus `.env` and `playtest/` untracked.

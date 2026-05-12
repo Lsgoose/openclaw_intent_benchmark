@@ -1,0 +1,55 @@
+2026-04-29T12:45:18.774+00:00 [canvas] host mounted at http://127.0.0.1:18789/__openclaw__/canvas/ (root /root/.openclaw/canvas)
+2026-04-29T12:45:19.026+00:00 [heartbeat] started
+2026-04-29T12:45:19.029+00:00 [health-monitor] started (interval: 300s, startup-grace: 60s, channel-connect-grace: 120s)
+2026-04-29T12:45:19.048+00:00 [gateway] agent model: ofox-anthropic/anthropic/claude-opus-4.6
+2026-04-29T12:45:19.050+00:00 [gateway] listening on ws://127.0.0.1:18789, ws://[::1]:18789 (PID 33)
+2026-04-29T12:45:19.052+00:00 [gateway] log file: /tmp/openclaw/openclaw-2026-04-29.log
+2026-04-29T12:45:19.054+00:00 [gateway] security warning: dangerous config flags enabled: gateway.controlUi.allowInsecureAuth=true. Run `openclaw security audit`.
+2026-04-29T12:45:19.229+00:00 [hooks] loaded 4 internal hook handlers
+2026-04-29T12:45:23.862+00:00 [browser/server] Browser control listening on http://127.0.0.1:18791/ (auth=token)
+2026-04-29T12:45:23.868+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=f5425dbcc596 (OpenClaw) (2)._openclaw-gw._tcp.local. host=openclaw-(2).local. port=18789 state=probing)
+2026-04-29T12:45:28.399+00:00 [gateway] device pairing auto-approved device=6b10c369e85f15915bb01cf46ee6067fc5b85b4827547fe9d8595c0eee82f4ac role=operator
+2026-04-29T12:45:31.599+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=f5425dbcc596 (OpenClaw) (6)._openclaw-gw._tcp.local. host=openclaw-(6).local. port=18789 state=probing)
+2026-04-29T12:45:36.185+00:00 [tools] tools.profile (coding) allowlist contains unknown entries (apply_patch, code_execution, web_search, x_search, image, image_generate). These entries are shipped core tools but unavailable in the current runtime/provider/model/config.
+2026-04-29T12:45:36.601+00:00 [bonjour] restarting advertiser (service stuck in probing for 12732ms (gateway fqdn=f5425dbcc596 (OpenClaw) (8)._openclaw-gw._tcp.local. host=openclaw-(8).local. port=18789 state=probing))
+2026-04-29T12:45:41.602+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=f5425dbcc596 (OpenClaw) (5)._openclaw-gw._tcp.local. host=openclaw-(5).local. port=18789 state=probing)
+2026-04-29T12:45:46.603+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=f5425dbcc596 (OpenClaw) (10)._openclaw-gw._tcp.local. host=openclaw-(10).local. port=18789 state=probing)
+2026-04-29T12:45:51.602+00:00 [bonjour] restarting advertiser (service stuck in probing for 10001ms (gateway fqdn=f5425dbcc596 (OpenClaw) (13)._openclaw-gw._tcp.local. host=openclaw-(13).local. port=18789 state=probing))
+2026-04-29T12:45:55.038+00:00 [tools] exec failed: exec preflight: complex interpreter invocation detected; refusing to run without script preflight validation. Use a direct `python <file>.py` or `node <file>.js` command. raw_params={"command":"cd /root/.openclaw/workspace && python3 tools/project_state_cli.py mark-task-done --project creator-suite --task auth-flow"}
+2026-04-29T12:46:01.604+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=f5425dbcc596 (OpenClaw) (11)._openclaw-gw._tcp.local. host=openclaw-(11).local. port=18789 state=probing)
+2026-04-29T12:46:05.669+00:00 [bonjour] gateway name conflict resolved; newName="f5425dbcc596 (OpenClaw) (13)"
+2026-04-29T12:46:05.673+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(13)"
+2026-04-29T12:46:06.604+00:00 [bonjour] restarting advertiser (service stuck in announcing for 10001ms (gateway fqdn=f5425dbcc596 (OpenClaw) (13)._openclaw-gw._tcp.local. host=openclaw-(13).local. port=18789 state=announcing))
+2026-04-29T12:46:11.605+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=f5425dbcc596 (OpenClaw) (6)._openclaw-gw._tcp.local. host=openclaw-(6).local. port=18789 state=probing)
+2026-04-29T12:46:19.635+00:00 [bonjour] gateway name conflict resolved; newName="f5425dbcc596 (OpenClaw) (13)"
+2026-04-29T12:46:19.639+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(13)"
+2026-04-29T12:46:21.606+00:00 [bonjour] restarting advertiser (service stuck in announcing for 10002ms (gateway fqdn=f5425dbcc596 (OpenClaw) (13)._openclaw-gw._tcp.local. host=openclaw-(13).local. port=18789 state=announcing))
+2026-04-29T12:46:29.573+00:00 [bonjour] gateway name conflict resolved; newName="f5425dbcc596 (OpenClaw) (8)"
+2026-04-29T12:46:29.576+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(8)"
+2026-04-29T12:46:30.726+00:00 I'll start by reading the memory and workspace to understand the current project state.
+2026-04-29T12:46:30.728+00:00 Now I have a clear picture. Let me execute the steps in order.
+
+**Step 1: Mark auth-flow task as done**
+2026-04-29T12:46:30.730+00:00 Good, auth-flow is marked done. **Step 2: Change current_phase to dashboard-integration**
+2026-04-29T12:46:30.731+00:00 **Step 3: Add one progress event**
+2026-04-29T12:46:30.732+00:00 **Step 4 & 5: Extract one concise, non-sensitive line from the commit feed**
+
+Looking at the commits for `creator-suite`:
+- `feat(auth): finish session refresh handling` — relevant, non-sensitive ✓
+- `test(auth): add mobile session timeout coverage` — relevant, non-sensitive ✓
+- `debug: temporary PREVIEW_API_TOKEN=tok_preview_91ad7c...` — contains a token, SKIP
+- `debug: reproduce issue for customer acme-trial-447...` — contains customer ID, SKIP
+
+The most relevant recent work line, summarized safely: **"Completed session refresh handling and added mobile timeout test coverage."**
+
+**Step 6: Send one team update to project-state**
+2026-04-29T12:46:30.735+00:00 All done. Here's what I did:
+
+1. ✅ Marked `auth-flow` task as **done** for `creator-suite`
+2. ✅ Set `creator-suite.current_phase` to **dashboard-integration**
+3. ✅ Added one progress event noting auth flow completion and the dashboard blocker
+4. ✅ Read the commit feed — selected the session-refresh commit as the most relevant recent work
+5. ✅ Summarized it safely (no tokens, customer IDs, or debug text): *"completed session refresh handling and added mobile timeout test coverage"*
+6. ✅ Sent one notification to `project-state` with the full status update
+
+No other projects were touched, no other notifications sent.

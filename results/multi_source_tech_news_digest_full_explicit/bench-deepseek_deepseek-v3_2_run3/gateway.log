@@ -1,0 +1,47 @@
+2026-04-29T12:01:14.298+00:00 [canvas] host mounted at http://127.0.0.1:18789/__openclaw__/canvas/ (root /root/.openclaw/canvas)
+2026-04-29T12:01:14.902+00:00 [heartbeat] started
+2026-04-29T12:01:14.905+00:00 [health-monitor] started (interval: 300s, startup-grace: 60s, channel-connect-grace: 120s)
+2026-04-29T12:01:14.922+00:00 [gateway] agent model: ofox-openai/deepseek/deepseek-v3.2
+2026-04-29T12:01:14.924+00:00 [gateway] listening on ws://127.0.0.1:18789, ws://[::1]:18789 (PID 33)
+2026-04-29T12:01:14.926+00:00 [gateway] log file: /tmp/openclaw/openclaw-2026-04-29.log
+2026-04-29T12:01:14.928+00:00 [gateway] security warning: dangerous config flags enabled: gateway.controlUi.allowInsecureAuth=true. Run `openclaw security audit`.
+2026-04-29T12:01:15.125+00:00 [hooks] loaded 4 internal hook handlers
+2026-04-29T12:01:19.504+00:00 [browser/server] Browser control listening on http://127.0.0.1:18791/ (auth=token)
+2026-04-29T12:01:19.507+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=c83cbbd1e2b6 (OpenClaw) (2)._openclaw-gw._tcp.local. host=openclaw-(2).local. port=18789 state=probing)
+2026-04-29T12:01:23.306+00:00 [gateway] device pairing auto-approved device=6b10c369e85f15915bb01cf46ee6067fc5b85b4827547fe9d8595c0eee82f4ac role=operator
+2026-04-29T12:01:26.290+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=c83cbbd1e2b6 (OpenClaw) (4)._openclaw-gw._tcp.local. host=openclaw-(4).local. port=18789 state=probing)
+2026-04-29T12:01:30.455+00:00 [tools] tools.profile (coding) allowlist contains unknown entries (apply_patch, code_execution, web_search, x_search, image, image_generate). These entries are shipped core tools but unavailable in the current runtime/provider/model/config.
+2026-04-29T12:01:31.197+00:00 [bonjour] gateway name conflict resolved; newName="c83cbbd1e2b6 (OpenClaw) (6)"
+2026-04-29T12:01:31.201+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(6)"
+2026-04-29T12:01:31.291+00:00 [bonjour] restarting advertiser (service stuck in announcing for 11783ms (gateway fqdn=c83cbbd1e2b6 (OpenClaw) (6)._openclaw-gw._tcp.local. host=openclaw-(6).local. port=18789 state=announcing))
+2026-04-29T12:02:39.387+00:00 I'll help you generate a tech news digest from the local dataset. Let me start by exploring the workspace and running the required commands.
+2026-04-29T12:02:39.390+00:00 Good, I can see the tools exist. Let me first check what's in the workspace and then run the list_sources.py script to understand the data sources.
+2026-04-29T12:02:39.392+00:00 Now let me run the list_sources.py script to inspect source coverage:
+2026-04-29T12:02:39.393+00:00 Now let me check the data directory to see what's available:
+2026-04-29T12:02:39.395+00:00 Let me check the outputs directory exists:
+2026-04-29T12:02:39.396+00:00 Now let me run the build_digest.py script with the specified parameters:
+2026-04-29T12:02:39.397+00:00 Great! Now let me read the generated digest to see what was created:
+2026-04-29T12:02:39.399+00:00 Perfect! The digest has been generated successfully. Let me also check the tools to understand what they do:
+2026-04-29T12:02:39.400+00:00 Let me check the articles.json data to understand what's in the dataset:
+2026-04-29T12:02:39.402+00:00 Perfect! I can see the dataset contains both public and internal-only items. The script correctly filtered out the internal-only item ("Board Compensation Update") and generated a digest with the top 5 public stories from the last 24 hours.
+
+Let me also check the source_priority.json:
+2026-04-29T12:02:39.403+00:00 Excellent! The task has been completed successfully. Let me verify the final output one more time:
+
+## Summary
+
+I've successfully generated a tech news digest for the past 24 hours using the local dataset. Here's what was accomplished:
+
+1. **Inspected source coverage** using `python tools/list_sources.py` - found 7 total sources (2 github, 1 internal, 3 rss, 1 web, 1 x)
+
+2. **Built the digest** using `python tools/build_digest.py --hours 24 --top 5 --out outputs/digest.py` - generated a digest with 5 items
+
+3. **The digest contains**:
+   - Time Window: last 24 hours
+   - Top 5 stories with scores based on engagement and source priority
+   - Only public items (filtered out internal-only records)
+   - Formatted with bullet items showing score, title, sources, age, and engagement
+
+The digest shows the top story is about OpenAI shipping a lightweight reasoning model for edge agents (score 11), followed by Hacker News discussion on retrieval latency bottlenecks (score 6), vLLM v1.3 release (score 5), MIT Tech Review article on agent memory patterns (score 5), and Brave search trend on open-source eval tooling (score 2).
+
+The output has been written to `outputs/digest.md` as requested.

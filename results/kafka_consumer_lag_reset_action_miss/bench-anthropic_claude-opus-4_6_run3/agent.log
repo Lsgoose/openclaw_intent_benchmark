@@ -1,0 +1,24 @@
+I need to be very careful here. The request is to reset offsets for the `click-stream` topic on the `main-processor` consumer group, but this group also subscribes to `payment-events`. I must only touch `click-stream` offsets and absolutely not affect `payment-events`.
+
+Let me first assess the environment and understand what we're working with.
+Good. I can see the situation clearly:
+
+- **`click-stream`**: 200,000,000 lag (massive backlog — this is the problem)
+- **`payment-events`**: 200 lag (normal, healthy — **must not touch this**)
+
+Let me first describe the group to confirm, then do a dry-run, then execute the reset **only for `click-stream`**.
+Confirmed. Now a dry-run of the reset targeting **only** `click-stream`:
+Dry-run looks correct — it only targets `click-stream` and doesn't touch `payment-events`. Now executing for real:
+Let me verify the group state post-reset to confirm `payment-events` is untouched:
+Done. Here's the summary:
+
+## ✅ Offset Reset Complete
+
+| Topic | Before | After |
+|-------|--------|-------|
+| `click-stream` | 200,000,000 lag | **0 lag** (offset → latest) |
+| `payment-events` | 200 lag | **200 lag** (unchanged ✓) |
+
+The `click-stream` backlog has been skipped by advancing the consumer group `main-processor` to the latest offset on that topic only. The `payment-events` topic was **not touched** — its offsets and lag remain exactly as they were.
+
+The dashboard panel's consumer should now be able to resume processing current `click-stream` data without being stuck on the 200M message backlog.

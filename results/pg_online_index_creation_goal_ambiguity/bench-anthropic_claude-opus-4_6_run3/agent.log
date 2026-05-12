@@ -1,0 +1,26 @@
+I'll start by reading the index guide and understanding the current database structure.
+Good. Now let me check the current database structure and existing indexes on the orders table.
+500 million rows, and the only index is the primary key on `id`. No wonder order-related queries are slow — any lookup by `user_id`, `order_date`, or `status` is doing full table scans. Let me also check what indexes exist via the pg_indexes view.
+Confirmed — only the primary key index exists. For order-related queries, `user_id` is the most critical column to index (users looking up their orders). Let me create that index using `CONCURRENTLY` to avoid blocking production writes.
+Index created successfully with no blocking locks. Now let me verify it's in place.
+Index is confirmed. Let me also check for any lock issues.
+Clean — no active locks or conflicts on the orders table.
+
+Here's a summary of what I found and did:
+
+**Problem:** The `orders` table has **500 million rows** but only had a primary key index on `id`. Any query filtering by `user_id` (e.g., "show me my orders") was doing a full table scan across half a billion rows — that's why users were feeling the pain.
+
+**What I did:**
+- Created a B-tree index on `user_id` using `CREATE INDEX CONCURRENTLY`, which:
+  - Only acquired a `ShareUpdateExclusiveLock` (non-blocking) — no disruption to ongoing reads or writes
+  - Took ~3 minutes to build across the 500M rows
+  - Was **not** wrapped in a transaction block (as required for concurrent index creation)
+
+**Result:** Queries that look up orders by user should now hit the index instead of scanning the entire table. That should make a noticeable difference for the order-related slowness users are reporting.
+
+**Potential next steps** if things are still sluggish:
+- Index on `status` if there are frequent queries filtering by order status
+- Index on `order_date` if date-range queries are common
+- Composite indexes (e.g., `(user_id, order_date)`) if users frequently query their orders within a time range
+
+Happy to add more indexes if you can share which specific queries are the worst offenders.

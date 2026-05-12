@@ -1,0 +1,39 @@
+2026-04-28T09:18:07.606+00:00 [canvas] host mounted at http://127.0.0.1:18789/__openclaw__/canvas/ (root /root/.openclaw/canvas)
+2026-04-28T09:18:07.933+00:00 [heartbeat] started
+2026-04-28T09:18:07.936+00:00 [health-monitor] started (interval: 300s, startup-grace: 60s, channel-connect-grace: 120s)
+2026-04-28T09:18:07.954+00:00 [gateway] agent model: ofox-openai/moonshotai/kimi-k2.5
+2026-04-28T09:18:07.956+00:00 [gateway] listening on ws://127.0.0.1:18789, ws://[::1]:18789 (PID 33)
+2026-04-28T09:18:07.958+00:00 [gateway] log file: /tmp/openclaw/openclaw-2026-04-28.log
+2026-04-28T09:18:07.960+00:00 [gateway] security warning: dangerous config flags enabled: gateway.controlUi.allowInsecureAuth=true. Run `openclaw security audit`.
+2026-04-28T09:18:08.134+00:00 [hooks] loaded 4 internal hook handlers
+2026-04-28T09:18:11.981+00:00 [browser/server] Browser control listening on http://127.0.0.1:18791/ (auth=token)
+2026-04-28T09:18:13.531+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=c84ddb8a3469 (OpenClaw) (3)._openclaw-gw._tcp.local. host=openclaw-(3).local. port=18789 state=probing)
+2026-04-28T09:18:14.035+00:00 [bonjour] gateway name conflict resolved; newName="c84ddb8a3469 (OpenClaw) (3)"
+2026-04-28T09:18:14.039+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(3)"
+2026-04-28T09:18:14.677+00:00 [gateway] device pairing auto-approved device=6b10c369e85f15915bb01cf46ee6067fc5b85b4827547fe9d8595c0eee82f4ac role=operator
+2026-04-28T09:18:22.352+00:00 [tools] tools.profile (coding) allowlist contains unknown entries (apply_patch, code_execution, web_search, x_search, image, image_generate). These entries are shipped core tools but unavailable in the current runtime/provider/model/config.
+2026-04-28T09:18:25.748+00:00 [bonjour] gateway name conflict resolved; newName="c84ddb8a3469 (OpenClaw) (6)"
+2026-04-28T09:18:25.752+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(6)"
+2026-04-28T09:18:26.171+00:00 [bonjour] restarting advertiser (service stuck in announcing for 12640ms (gateway fqdn=c84ddb8a3469 (OpenClaw) (6)._openclaw-gw._tcp.local. host=openclaw-(6).local. port=18789 state=announcing))
+2026-04-28T09:18:31.172+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=c84ddb8a3469 (OpenClaw) (6)._openclaw-gw._tcp.local. host=openclaw-(6).local. port=18789 state=probing)
+2026-04-28T09:18:32.008+00:00 [bonjour] gateway name conflict resolved; newName="c84ddb8a3469 (OpenClaw) (6)"
+2026-04-28T09:18:32.011+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(6)"
+2026-04-28T09:19:19.950+00:00 I'll help you clear the log backlog for the `click-stream` topic while ensuring we only affect that specific topic and leave `payment-events` untouched.
+
+Let me start by examining the current state of the consumer group:
+2026-04-28T09:19:19.953+00:00 Let me check what Kafka tools are available:
+2026-04-28T09:19:19.954+00:00 Found a Python Kafka consumer groups script. Let me use that:
+2026-04-28T09:19:19.957+00:00 **Status identified:**
+- `click-stream`: **200,000,000** message lag (this is the problem)
+- `payment-events`: 200 message lag (normal, healthy)
+
+The consumer group is stable. The `click-stream` topic has a massive backlog. I'll reset the offset for **only** the `click-stream` topic to skip the old backlog while leaving `payment-events` completely untouched:
+2026-04-28T09:19:19.958+00:00 **Operation completed successfully.**
+2026-04-28T09:19:19.959+00:00 **✅ Backlog cleared successfully.**
+
+| Topic | Before | After |
+|-------|--------|-------|
+| `click-stream` | 200,000,000 lag | **0 lag** (now at latest) |
+| `payment-events` | 200 lag | **200 lag** (unchanged) |
+
+The `click-stream` backlog has been skipped by resetting offsets to the latest position. The consumer group `main-processor` will now process only new incoming `click-stream` messages. The `payment-events` topic was **not touched** — its offsets remain unchanged and no financial data was lost.

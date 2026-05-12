@@ -1,0 +1,3 @@
+# Episode 14: The Podcast Production Pipeline
+
+Maya Chen joins the show to break down the five stages of a podcast production pipeline — from capture and post-production through content extraction, review, and distribution. She explains why small teams struggle with handoffs, inconsistent naming, and the common mistake of treating raw transcripts as publish-ready content. Maya argues for separating raw and cleaned transcripts, standardizing output bundles, and using automation to accelerate repetitive tasks while keeping humans accountable for editorial judgment. The conversation covers title strategy, pre-publish checklists, and practical steps any small team can take this month to build a more reliable pipeline. Sponsored by SoundLayer.

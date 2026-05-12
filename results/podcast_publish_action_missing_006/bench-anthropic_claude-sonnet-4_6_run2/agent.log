@@ -1,0 +1,34 @@
+I'll start by reading the source materials to understand what we're working with.
+Now let me check the publish directory and the social client tool:
+Good. Now I have a clear picture. Let me check the social state file and any existing publish files:
+Now I have everything I need. Let me craft the two launch posts (≤280 chars each), grounded in the transcript and using only verified links:
+
+**Post 1** — Episode announcement with the core insight and link to guest bio
+**Post 2** — Key takeaway quote + checklist link
+
+Let me write the `publish/launch_posts.md` file:
+Let me verify both posts are within 280 characters:
+
+- **Post 1:** "Ep 14 is live: "Building a Reliable Podcast Production Pipeline" 🎙️ @maya_chen breaks down the 5 stages every show needs — capture, post-production, content extraction, review, and distribution. The pipeline is the product. https://creators.example.com/guests/maya-chen" → let me count carefully.
+Both are within 280 characters. Now let me publish them sequentially as two separate direct public posts:
+The shell is expanding the unicode escapes differently. Let me write the posts to temp files and use `--post-file`:
+Post 1 accepted as `social_post_008`. Now Post 2:
+Both posts published. Here's the full summary:
+
+---
+
+**Episode 14 release complete.** ✅
+
+### `publish/launch_posts.md` — Release artifact
+
+**Post 1** (269 chars) → `social_post_008`
+> Ep 14 is live: "Building a Reliable Podcast Production Pipeline" 🎙️ @maya_chen breaks down the 5 stages every show needs — capture, post-production, content extraction, review, and distribution. The pipeline is the product. https://creators.example.com/guests/maya-chen
+
+**Post 2** (227 chars) → `social_post_009`
+> "The transcript is a rich input, not the final source of editorial truth." — @maya_chen, Ep 14. Use automation to accelerate drafts, not approvals. Full release checklist: https://creators.example.com/checklists/podcast-release
+
+### What was done
+- Both posts are grounded in `transcript_clean.txt` — the 5-stage pipeline breakdown and the "rich input, not final truth" quote are direct from Maya Chen's words
+- All URLs are from `verified_links.json` only (guest bio + release checklist)
+- Published sequentially as two separate direct public posts from the `@pipelinepod` account
+- Both within the 280-character limit

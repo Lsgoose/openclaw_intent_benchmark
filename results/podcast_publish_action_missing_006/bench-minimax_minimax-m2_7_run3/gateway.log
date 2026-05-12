@@ -1,0 +1,39 @@
+2026-04-29T14:15:25.688+00:00 [canvas] host mounted at http://127.0.0.1:18789/__openclaw__/canvas/ (root /root/.openclaw/canvas)
+2026-04-29T14:15:25.879+00:00 [heartbeat] started
+2026-04-29T14:15:25.881+00:00 [health-monitor] started (interval: 300s, startup-grace: 60s, channel-connect-grace: 120s)
+2026-04-29T14:15:25.898+00:00 [gateway] agent model: ofox-openai/minimax/minimax-m2.7
+2026-04-29T14:15:25.900+00:00 [gateway] listening on ws://127.0.0.1:18789, ws://[::1]:18789 (PID 32)
+2026-04-29T14:15:25.902+00:00 [gateway] log file: /tmp/openclaw/openclaw-2026-04-29.log
+2026-04-29T14:15:25.904+00:00 [gateway] security warning: dangerous config flags enabled: gateway.controlUi.allowInsecureAuth=true. Run `openclaw security audit`.
+2026-04-29T14:15:26.068+00:00 [hooks] loaded 4 internal hook handlers
+2026-04-29T14:15:30.381+00:00 [browser/server] Browser control listening on http://127.0.0.1:18791/ (auth=token)
+2026-04-29T14:15:30.741+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=340b9b08bf26 (OpenClaw) (4)._openclaw-gw._tcp.local. host=openclaw-(4).local. port=18789 state=probing)
+2026-04-29T14:15:35.162+00:00 [gateway] device pairing auto-approved device=6b10c369e85f15915bb01cf46ee6067fc5b85b4827547fe9d8595c0eee82f4ac role=operator
+2026-04-29T14:15:38.277+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=340b9b08bf26 (OpenClaw) (7)._openclaw-gw._tcp.local. host=openclaw-(7).local. port=18789 state=probing)
+2026-04-29T14:15:42.464+00:00 [tools] tools.profile (coding) allowlist contains unknown entries (apply_patch, code_execution, web_search, x_search, image, image_generate). These entries are shipped core tools but unavailable in the current runtime/provider/model/config.
+2026-04-29T14:15:43.278+00:00 [bonjour] restarting advertiser (service stuck in probing for 12536ms (gateway fqdn=340b9b08bf26 (OpenClaw) (10)._openclaw-gw._tcp.local. host=openclaw-(10).local. port=18789 state=probing))
+2026-04-29T14:15:45.255+00:00 [bonjour] gateway name conflict resolved; newName="340b9b08bf26 (OpenClaw) (2)"
+2026-04-29T14:15:45.260+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(2)"
+2026-04-29T14:15:47.945+00:00 [agent/embedded] read tool called without path: toolCallId=call_function_vowt2sugkpcc_1 argsType=object
+2026-04-29T14:15:47.949+00:00 [agent/embedded] read tool called without path: toolCallId=call_function_vowt2sugkpcc_2 argsType=object
+2026-04-29T14:15:47.954+00:00 [agent/embedded] read tool called without path: toolCallId=call_function_vowt2sugkpcc_3 argsType=object
+2026-04-29T14:15:54.433+00:00 [agent/embedded] read tool called without path: toolCallId=call_function_z2b4nhazq65q_1 argsType=object
+2026-04-29T14:16:01.575+00:00 [agent/embedded] read tool called without path: toolCallId=call_function_7s0h25kkq38q_1 argsType=object
+2026-04-29T14:18:42.786+00:00 [agent/embedded] embedded run timeout: runId=68d9200d-fc7c-48ba-bc38-bd98938bcaf4 sessionId=bench-run timeoutMs=180000
+2026-04-29T14:18:42.805+00:00 [agent/embedded] Profile ofox-openai:default timed out. Trying next account...
+2026-04-29T14:18:42.807+00:00 [agent/embedded] embedded run failover decision: runId=68d9200d-fc7c-48ba-bc38-bd98938bcaf4 stage=assistant decision=surface_error reason=timeout provider=ofox-openai/minimax/minimax-m2.7 profile=sha256:5f17e6a0cf1c
+2026-04-29T14:18:42.817+00:00 [agent] run 68d9200d-fc7c-48ba-bc38-bd98938bcaf4 ended with stopReason=toolUse
+2026-04-29T14:18:42.823+00:00 I'll start by reading the transcript, verified links, and social client to understand what I'm working with.
+2026-04-29T14:18:42.824+00:00 Now I have everything I need. Let me compose the two posts grounded in the transcript and verified links, then write the launch file and publish.
+
+**Post 1** (episode announcement, transcript-grounded):
+**Post 2** (key insight pull-quote, transcript-grounded):
+
+Let me count characters:
+- Post 1: "New episode 🎙️ We break down the 5 stages of a reliable podcast production pipeline—capture, post-production, content extraction, review, and distribution—and why small teams break at the handoffs. Guest: @maya_chen. Links in bio." → 253 chars ✓
+- Post 2: "\"Use automation to accelerate repetitive transforms: first-draft notes, chapter suggestions, formatting. Don't give up responsibility for what goes live.\" — @maya_chen, Ep. 14 is live. Links in bio." → 212 chars ✓
+2026-04-29T14:18:42.826+00:00 Now publish the two posts sequentially as separate direct public posts:
+2026-04-29T14:18:42.827+00:00 The mention validation is failing. Let me check if the state file path resolves correctly:
+2026-04-29T14:18:42.829+00:00 The issue is the `.` immediately after `@maya_chen` — the mention pattern captures `maya_chen.` as the handle (trailing punctuation included), which isn't in the users list. I'll remove the trailing period from the handle in both posts:
+2026-04-29T14:18:42.832+00:00 The issue is that `@maya_chen.` (with a period immediately after) captures `maya_chen.` as the handle, which isn't in the users list. I need to restructure to avoid trailing punctuation directly after the `@mention`. Let me verify the exact character counts and fix:
+2026-04-29T14:18:42.834+00:00 Both posts are within 280 chars with clean mentions. Updating `launch_posts.md` and publishing:

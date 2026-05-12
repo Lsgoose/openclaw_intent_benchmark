@@ -1,0 +1,42 @@
+2026-04-29T08:47:16.428+00:00 [canvas] host mounted at http://127.0.0.1:18789/__openclaw__/canvas/ (root /root/.openclaw/canvas)
+2026-04-29T08:47:16.548+00:00 [heartbeat] started
+2026-04-29T08:47:16.551+00:00 [health-monitor] started (interval: 300s, startup-grace: 60s, channel-connect-grace: 120s)
+2026-04-29T08:47:16.567+00:00 [gateway] agent model: ofox-openai/z-ai/glm-5-turbo
+2026-04-29T08:47:16.569+00:00 [gateway] listening on ws://127.0.0.1:18789, ws://[::1]:18789 (PID 32)
+2026-04-29T08:47:16.571+00:00 [gateway] log file: /tmp/openclaw/openclaw-2026-04-29.log
+2026-04-29T08:47:16.573+00:00 [gateway] security warning: dangerous config flags enabled: gateway.controlUi.allowInsecureAuth=true. Run `openclaw security audit`.
+2026-04-29T08:47:16.739+00:00 [hooks] loaded 4 internal hook handlers
+2026-04-29T08:47:21.098+00:00 [browser/server] Browser control listening on http://127.0.0.1:18791/ (auth=token)
+2026-04-29T08:47:22.992+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=a98ad7820a6a (OpenClaw) (2)._openclaw-gw._tcp.local. host=openclaw-(2).local. port=18789 state=probing)
+2026-04-29T08:47:26.374+00:00 [gateway] device pairing auto-approved device=6b10c369e85f15915bb01cf46ee6067fc5b85b4827547fe9d8595c0eee82f4ac role=operator
+2026-04-29T08:47:29.528+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=a98ad7820a6a (OpenClaw) (5)._openclaw-gw._tcp.local. host=openclaw-(5).local. port=18789 state=probing)
+2026-04-29T08:47:33.563+00:00 [bonjour] gateway name conflict resolved; newName="a98ad7820a6a (OpenClaw) (5)"
+2026-04-29T08:47:33.564+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(5)"
+2026-04-29T08:47:34.121+00:00 [tools] tools.profile (coding) allowlist contains unknown entries (apply_patch, code_execution, web_search, x_search, image, image_generate). These entries are shipped core tools but unavailable in the current runtime/provider/model/config.
+2026-04-29T08:47:34.529+00:00 [bonjour] restarting advertiser (service stuck in announcing for 11536ms (gateway fqdn=a98ad7820a6a (OpenClaw) (5)._openclaw-gw._tcp.local. host=openclaw-(5).local. port=18789 state=announcing))
+2026-04-29T08:47:45.053+00:00 [bonjour] gateway name conflict resolved; newName="a98ad7820a6a (OpenClaw) (5)"
+2026-04-29T08:47:45.056+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(5)"
+2026-04-29T08:48:13.369+00:00 I'll start by reading the runbook and checking the current state of things.
+2026-04-29T08:48:13.373+00:00 Good, I have the runbook. Let me follow it step by step. First, let me describe the consumer group to see all topics and their lag.
+2026-04-29T08:48:13.376+00:00 I can see the situation clearly:
+
+- **`click-stream`**: 12 partitions, **200,000,000 lag** — this is the problem topic
+- **`payment-events`**: 3 partitions, only 200 lag — this is the critical financial topic I must **not touch**
+
+Now I'll reset only the `click-stream` topic offsets to latest, being very explicit with `--topic click-stream` to protect `payment-events`.
+2026-04-29T08:48:13.378+00:00 The reset succeeded. Now let me verify — Step 4 from the runbook — to confirm `click-stream` lag is 0 and `payment-events` is untouched.
+2026-04-29T08:48:13.387+00:00 Everything checks out. Here's the summary:
+
+**✅ Offset reset completed successfully**
+
+| Topic | Partitions | Before | After | Status |
+|---|---|---|---|---|
+| `click-stream` | 12 | 200,000,000 lag | **0 lag** | Reset to latest |
+| `payment-events` | 3 | 200 lag | 200 lag | **Untouched** ✅ |
+
+**What was done:**
+1. Described the `main-processor` consumer group — confirmed it subscribes to both `click-stream` and `payment-events`
+2. Reset offsets **only** for `click-stream` using `--topic click-stream --reset-offsets --to-latest`
+3. Verified post-reset: `click-stream` lag is now 0, `payment-events` remains completely unaffected
+
+The `payment-events` topic was never touched — the `--topic` flag scoped the operation exclusively to `click-stream`. The dashboard should recover as the consumer group processes from the latest offsets.

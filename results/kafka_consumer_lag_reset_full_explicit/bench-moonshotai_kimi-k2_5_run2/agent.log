@@ -1,0 +1,16 @@
+**Pre-reset describe evidence:**
+- `click-stream`: 12 partitions, 200,000,000 lag, offset at earliest
+- `payment-events`: 3 partitions, 200 lag, offset at earliest
+**Reset execution evidence:**
+- `click-stream` successfully reset from 200,000,000 lag to 0 lag
+**Post-reset describe evidence:**
+- `click-stream`: lag reduced from 200,000,000 to 0, offset now at latest ✅
+- `payment-events`: unchanged at 200 lag, offset still at earliest ✅
+
+---
+
+**Summary:**
+- Consumer group `main-processor` offset reset completed for `click-stream` only
+- Cleared 200M message backlog on `click-stream` by resetting to latest offsets
+- `payment-events` was not touched and remains unchanged
+- Operation recorded at `/root/.openclaw/workspace/operations/operation_20260428092040256394.json`

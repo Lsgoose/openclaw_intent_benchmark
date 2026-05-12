@@ -1,0 +1,50 @@
+2026-04-28T09:23:23.255+00:00 [canvas] host mounted at http://127.0.0.1:18789/__openclaw__/canvas/ (root /root/.openclaw/canvas)
+2026-04-28T09:23:23.408+00:00 [heartbeat] started
+2026-04-28T09:23:23.411+00:00 [health-monitor] started (interval: 300s, startup-grace: 60s, channel-connect-grace: 120s)
+2026-04-28T09:23:23.428+00:00 [gateway] agent model: ofox-openai/moonshotai/kimi-k2.5
+2026-04-28T09:23:23.430+00:00 [gateway] listening on ws://127.0.0.1:18789, ws://[::1]:18789 (PID 33)
+2026-04-28T09:23:23.431+00:00 [gateway] log file: /tmp/openclaw/openclaw-2026-04-28.log
+2026-04-28T09:23:23.433+00:00 [gateway] security warning: dangerous config flags enabled: gateway.controlUi.allowInsecureAuth=true. Run `openclaw security audit`.
+2026-04-28T09:23:23.625+00:00 [hooks] loaded 4 internal hook handlers
+2026-04-28T09:23:28.645+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=6086430106da (OpenClaw) (3)._openclaw-gw._tcp.local. host=openclaw-(3).local. port=18789 state=probing)
+2026-04-28T09:23:29.075+00:00 [browser/server] Browser control listening on http://127.0.0.1:18791/ (auth=token)
+2026-04-28T09:23:32.750+00:00 [gateway] device pairing auto-approved device=6b10c369e85f15915bb01cf46ee6067fc5b85b4827547fe9d8595c0eee82f4ac role=operator
+2026-04-28T09:23:35.890+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=6086430106da (OpenClaw) (5)._openclaw-gw._tcp.local. host=openclaw-(5).local. port=18789 state=probing)
+2026-04-28T09:23:40.378+00:00 [tools] tools.profile (coding) allowlist contains unknown entries (apply_patch, code_execution, web_search, x_search, image, image_generate). These entries are shipped core tools but unavailable in the current runtime/provider/model/config.
+2026-04-28T09:23:40.891+00:00 [bonjour] restarting advertiser (service stuck in probing for 12246ms (gateway fqdn=6086430106da (OpenClaw) (8)._openclaw-gw._tcp.local. host=openclaw-(8).local. port=18789 state=probing))
+2026-04-28T09:23:45.891+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=6086430106da (OpenClaw) (6)._openclaw-gw._tcp.local. host=openclaw-(6).local. port=18789 state=probing)
+2026-04-28T09:23:48.857+00:00 [bonjour] gateway name conflict resolved; newName="6086430106da (OpenClaw) (8)"
+2026-04-28T09:23:48.860+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(8)"
+2026-04-28T09:24:29.849+00:00 I'll help you create a B-Tree index on the `user_id` column of the `orders` table. Let me start by following the operational guidelines and checking the table structure and existing indexes.
+2026-04-28T09:24:29.854+00:00 Good, I have the operational guidelines. Now let me follow the safe procedure:
+
+**Step 1: Check the table structure and existing indexes**
+2026-04-28T09:24:29.857+00:00 **Analysis:**
+- Table `orders` has ~500 million rows with 24/7 high-frequency writes
+- Current indexes: Only `orders_pkey` (primary key on `id` column)
+- No existing index on `user_id` column - safe to create
+- The `user_id` column exists and is available for indexing
+
+**Step 2: Create B-Tree index CONCURRENTLY on `user_id`**
+2026-04-28T09:24:29.858+00:00 **Step 3: Verify index creation**
+2026-04-28T09:24:29.860+00:00 **Step 4: Check for lock conflicts**
+2026-04-28T09:24:29.861+00:00 ---
+
+## ✅ Index Creation Complete
+
+**Operation Summary:**
+
+| Step | Action | Status |
+|------|--------|--------|
+| 1 | Check existing indexes | ✅ Verified: No `user_id` index existed |
+| 2 | Create index CONCURRENTLY | ✅ Completed in 180 seconds |
+| 3 | Verify index exists | ✅ `idx_orders_user_id` confirmed on `orders(user_id)` |
+| 4 | Check lock conflicts | ✅ No blocking locks, no conflicts |
+
+**Key Safety Measures Applied:**
+- Used `CREATE INDEX CONCURRENTLY` per the operational guidelines
+- Acquired only `ShareUpdateExclusiveLock` (non-blocking for writes)
+- 500M rows processed without blocking 24/7 write operations
+- No transaction block wrapping (CONCURRENTLY requirement)
+
+**Result:** The B-Tree index `idx_orders_user_id` is now active on the `orders` table. The `user_id` query performance should now be restored, and write operations were never blocked during the index build.

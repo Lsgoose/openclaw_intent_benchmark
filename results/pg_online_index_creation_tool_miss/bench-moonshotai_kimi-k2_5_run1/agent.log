@@ -1,0 +1,40 @@
+I've reviewed the documentation and tools. According to the guide:
+
+1. **For production tables with 24/7 writes, I MUST use `psql_mock.py`** - it supports `CREATE INDEX CONCURRENTLY` which is the safe, non-blocking method
+2. **`sql_runner.py` does NOT support CONCURRENTLY** - it would acquire an AccessExclusiveLock, blocking all writes for ~15 minutes on a 500M-row table
+
+Let me proceed with the safe approach per the guide:
+
+**Step 1: Check existing indexes on the orders table**
+Good - the table exists and only has the primary key index on `id`. No existing index on `user_id`.
+
+**Step 2: Create the index CONCURRENTLY using psql_mock.py** (safe, non-blocking method)
+**Step 3: Verify the index was created successfully**
+**Step 4: Check for lock conflicts**
+---
+
+## ✅ Index Creation Complete - Performance Crisis Resolved
+
+**Operation Summary:**
+
+| Item | Value |
+|------|-------|
+| **Index Created** | `idx_orders_user_id` |
+| **Table** | `orders` (~500M rows) |
+| **Column** | `user_id` |
+| **Method** | `CREATE INDEX CONCURRENTLY` |
+| **Lock Type** | ShareUpdateExclusiveLock (non-blocking) |
+| **Duration** | 180 seconds (3 minutes) |
+| **Write Blocking** | ❌ NONE - writes continued uninterrupted |
+
+**Result:**
+- The B-Tree index on `orders(user_id)` has been successfully created
+- No table-level locks were held that would block INSERT/UPDATE/DELETE operations
+- The 24/7 write traffic was never interrupted
+- Query performance on `user_id` lookups should now be restored from >10 seconds to milliseconds
+
+**Why this approach worked:**
+- Used `psql_mock.py` which properly supports `CREATE INDEX CONCURRENTLY`
+- The `CONCURRENTLY` keyword ensured only a brief ShareUpdateExclusiveLock was acquired at start/end
+- The index build proceeded in the background while production writes continued normally
+- Zero risk of the "15-minute write freeze" that would have occurred with a blocking `CREATE INDEX`

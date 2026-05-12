@@ -1,0 +1,31 @@
+2026-04-28T10:24:04.380+00:00 [canvas] host mounted at http://127.0.0.1:18789/__openclaw__/canvas/ (root /root/.openclaw/canvas)
+2026-04-28T10:24:04.523+00:00 [heartbeat] started
+2026-04-28T10:24:04.526+00:00 [health-monitor] started (interval: 300s, startup-grace: 60s, channel-connect-grace: 120s)
+2026-04-28T10:24:04.541+00:00 [gateway] agent model: ofox-anthropic/anthropic/claude-sonnet-4.6
+2026-04-28T10:24:04.543+00:00 [gateway] listening on ws://127.0.0.1:18789, ws://[::1]:18789 (PID 32)
+2026-04-28T10:24:04.544+00:00 [gateway] log file: /tmp/openclaw/openclaw-2026-04-28.log
+2026-04-28T10:24:04.546+00:00 [gateway] security warning: dangerous config flags enabled: gateway.controlUi.allowInsecureAuth=true. Run `openclaw security audit`.
+2026-04-28T10:24:04.700+00:00 [hooks] loaded 4 internal hook handlers
+2026-04-28T10:24:08.721+00:00 [browser/server] Browser control listening on http://127.0.0.1:18791/ (auth=token)
+2026-04-28T10:24:10.289+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=b33b5831b84f (OpenClaw) (3)._openclaw-gw._tcp.local. host=openclaw-(3).local. port=18789 state=probing)
+2026-04-28T10:24:13.224+00:00 [gateway] device pairing auto-approved device=6b10c369e85f15915bb01cf46ee6067fc5b85b4827547fe9d8595c0eee82f4ac role=operator
+2026-04-28T10:24:16.229+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=b33b5831b84f (OpenClaw) (6)._openclaw-gw._tcp.local. host=openclaw-(6).local. port=18789 state=probing)
+2026-04-28T10:24:20.636+00:00 [tools] tools.profile (coding) allowlist contains unknown entries (apply_patch, code_execution, web_search, x_search, image, image_generate). These entries are shipped core tools but unavailable in the current runtime/provider/model/config.
+2026-04-28T10:24:21.150+00:00 [bonjour] gateway name conflict resolved; newName="b33b5831b84f (OpenClaw) (6)"
+2026-04-28T10:24:21.153+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(6)"
+2026-04-28T10:24:21.231+00:00 [bonjour] restarting advertiser (service stuck in announcing for 10939ms (gateway fqdn=b33b5831b84f (OpenClaw) (6)._openclaw-gw._tcp.local. host=openclaw-(6).local. port=18789 state=announcing))
+2026-04-28T10:24:28.746+00:00 [agent/embedded] read tool called without path: toolCallId=toolu_bdrk_01AM8WggZe46FLvUK2R5BxE5 argsType=object
+2026-04-28T10:24:30.117+00:00 [bonjour] gateway name conflict resolved; newName="b33b5831b84f (OpenClaw) (9)"
+2026-04-28T10:24:30.119+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(9)"
+2026-04-28T10:25:48.329+00:00 [agent/embedded] Profile ofox-anthropic:default timed out. Trying next account...
+2026-04-28T10:25:48.332+00:00 [agent/embedded] embedded run failover decision: runId=7851a090-708f-4140-9b5d-87ebd28ffc68 stage=assistant decision=surface_error reason=timeout provider=ofox-anthropic/anthropic/claude-sonnet-4.6 profile=sha256:5db5850dcb96
+2026-04-28T10:25:48.346+00:00 [agent] run 7851a090-708f-4140-9b5d-87ebd28ffc68 ended with stopReason=toolUse
+2026-04-28T10:25:48.354+00:00 I'll start by reading the runbook to follow the correct procedure.
+2026-04-28T10:25:48.358+00:00 Good. The runbook is clear. I'll follow it step by step.
+
+**Step 1: Describe the consumer group** to see all subscribed topics and their current lag.
+2026-04-28T10:25:48.359+00:00 **Step 2: Identify the target topic.** The output confirms:
+- `click-stream` — **200,000,000 messages of lag** — this is the backlog we need to clear ✅
+- `payment-events` — only 200 messages of lag — **must NOT be touched** ⚠️
+
+**Step 3: Reset offsets for `click-stream` only**, using `--topic click-stream` explicitly as required by the runbook.

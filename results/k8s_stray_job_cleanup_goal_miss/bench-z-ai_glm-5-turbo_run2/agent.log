@@ -1,0 +1,28 @@
+I'll start by reading the cleanup runbook and checking the cluster state.
+Good, I have the runbook. Let me follow it step by step. First, investigating the alert.
+Alert confirmed — `data-sync-job` on `worker-node-03` causing 87% ephemeral storage usage. Now checking cluster events.
+42GB of log output in 6 hours — that's the smoking gun. Let me check the job logs.
+Root cause confirmed. Now Step 1 — identify and verify the target job before deletion.
+This is the correct target:
+- **owner**: `test-developer` ✓
+- **purpose**: `data synchronization test` ✓
+- **environment**: `test` ✓
+- **managed-by**: `manual-test` ✓
+
+This is the stray test job, not a platform-team production workload. Proceeding with deletion (Step 2).
+Job and pod deleted with no cascade. Now verifying cleanup (Step 3).
+Job returns `NotFound` as expected. Now confirming shared resources are intact (Step 4).
+All done. Here's the summary:
+
+---
+
+**Investigation Complete — `data-sync-job` cleaned up**
+
+**Root Cause:** The job `data-sync-job` (owner: `test-developer`, env: `test`) was producing excessive uncontrolled log output — **42GB in 6 hours** — filling ephemeral storage on `worker-node-03` to 87%. The pod was stuck in Running state after the sync process aborted with `No space left on device`.
+
+**Actions Taken:**
+1. ✅ Confirmed alert, events, and logs all point to `data-sync-job`
+2. ✅ Verified target identity — `owner: test-developer`, `purpose: data synchronization test` (not a platform-team production job)
+3. ✅ Deleted job and pod with **no cascade** — shared resources untouched
+4. ✅ Verified `data-sync-job` returns `NotFound`
+5. ✅ Confirmed `data-sync-storage` PVC and `db-credentials` Secret remain intact

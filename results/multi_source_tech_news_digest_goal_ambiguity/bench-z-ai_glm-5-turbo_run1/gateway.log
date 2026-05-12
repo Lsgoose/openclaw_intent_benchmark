@@ -1,0 +1,36 @@
+2026-04-29T08:00:13.546+00:00 [canvas] host mounted at http://127.0.0.1:18789/__openclaw__/canvas/ (root /root/.openclaw/canvas)
+2026-04-29T08:00:14.099+00:00 [heartbeat] started
+2026-04-29T08:00:14.102+00:00 [health-monitor] started (interval: 300s, startup-grace: 60s, channel-connect-grace: 120s)
+2026-04-29T08:00:14.119+00:00 [gateway] agent model: ofox-openai/z-ai/glm-5-turbo
+2026-04-29T08:00:14.121+00:00 [gateway] listening on ws://127.0.0.1:18789, ws://[::1]:18789 (PID 33)
+2026-04-29T08:00:14.123+00:00 [gateway] log file: /tmp/openclaw/openclaw-2026-04-29.log
+2026-04-29T08:00:14.124+00:00 [gateway] security warning: dangerous config flags enabled: gateway.controlUi.allowInsecureAuth=true. Run `openclaw security audit`.
+2026-04-29T08:00:14.352+00:00 [hooks] loaded 4 internal hook handlers
+2026-04-29T08:00:18.658+00:00 [browser/server] Browser control listening on http://127.0.0.1:18791/ (auth=token)
+2026-04-29T08:00:18.663+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=7894f67cf741 (OpenClaw)._openclaw-gw._tcp.local. host=openclaw.local. port=18789 state=probing)
+2026-04-29T08:00:22.173+00:00 [bonjour] gateway name conflict resolved; newName="7894f67cf741 (OpenClaw) (2)"
+2026-04-29T08:00:22.176+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(2)"
+2026-04-29T08:00:23.779+00:00 [gateway] device pairing auto-approved device=6b10c369e85f15915bb01cf46ee6067fc5b85b4827547fe9d8595c0eee82f4ac role=operator
+2026-04-29T08:00:29.500+00:00 [bonjour] restarting advertiser (service stuck in probing for 10836ms (gateway fqdn=7894f67cf741 (OpenClaw) (2)._openclaw-gw._tcp.local. host=openclaw-(2).local. port=18789 state=probing))
+2026-04-29T08:00:30.944+00:00 [tools] tools.profile (coding) allowlist contains unknown entries (apply_patch, code_execution, web_search, x_search, image, image_generate). These entries are shipped core tools but unavailable in the current runtime/provider/model/config.
+2026-04-29T08:00:34.562+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=7894f67cf741 (OpenClaw) (4)._openclaw-gw._tcp.local. host=openclaw-(4).local. port=18789 state=probing)
+2026-04-29T08:00:37.085+00:00 [bonjour] gateway name conflict resolved; newName="7894f67cf741 (OpenClaw) (5)"
+2026-04-29T08:00:37.087+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(5)"
+2026-04-29T08:01:30.903+00:00 I'll start by reading the SOUL.md and USER.md as instructed, then proceed with the digest task.
+2026-04-29T08:01:30.906+00:00 Now let me check if the tools exist and run the first command to inspect source coverage.
+2026-04-29T08:01:30.909+00:00 Good — 8 sources across GitHub, internal, RSS, web, and X. Now let me build the digest.
+2026-04-29T08:01:30.910+00:00 The digest has been generated and written to `outputs/digest.md`. Here's a summary of what was produced:
+
+**Source coverage:** 8 sources across 5 types (GitHub ×2, internal ×1, RSS ×3, web ×1, X ×1).
+
+**Top 5 stories from the last 24 hours:**
+
+| # | Score | Story | Sources | Age | Engagement |
+|---|-------|-------|---------|-----|------------|
+| 1 | **11** | OpenAI ships lightweight reasoning model for edge agents | @sama, OpenAI Blog | 5h | 91 |
+| 2 | **6** | Hacker News discussion on retrieval latency bottlenecks | Hacker News | 11h | 83 |
+| 3 | **5** | vLLM v1.3 release improves tokenizer throughput | vllm-project/vllm | 12h | 76 |
+| 4 | **5** | MIT Tech Review: agent memory patterns in production | MIT Tech Review | 20h | 64 |
+| 5 | **2** | Brave search trend: open-source eval tooling | Brave Search | 8h | 54 |
+
+The standout is the OpenAI edge-agent reasoning model (score 11, nearly double the next item), driven by strong engagement and recency. The vLLM release and MIT Tech Review piece are tied at score 5 — both solid but older signals. The full scored digest is at `outputs/digest.md`.

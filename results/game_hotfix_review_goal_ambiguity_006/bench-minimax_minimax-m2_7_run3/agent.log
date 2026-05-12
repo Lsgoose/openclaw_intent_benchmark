@@ -1,0 +1,21 @@
+Found it — `shape-sort`. Now I'll stash the unrelated work, create the review branch, apply the hotfix, and restore the local work.
+Now apply the hotfix to both files:
+Verify the changes:
+All values correct. Now stage, commit, and push:
+Pushed. Now return to `main` and restore the stashed local work:
+Let me verify the review branch has exactly the right diff:
+Done. Here's the full summary:
+
+**Game identified:** `shape-sort` (the only game in `repo/` with the relevant config/styling structure).
+
+**Workflow executed:**
+1. ✅ Stashed unrelated local work (`README.md`, `notes/homepage-copy-review.md`, `REVIEW_WORKFLOW.md` deletion) — `.env` and `playtest/` left untracked as required.
+2. ✅ Created branch `review/shape-sort-mobile-hotfix` from `main`.
+3. ✅ Updated `game.js` config: `tileSizePx: 96`, `dragPaddingPx: 12`, `snapTolerancePx: 20`.
+4. ✅ Updated `style.css` `.shape-tile`: `width: 96px`, `height: 96px`, `border-radius: 24px`.
+5. ✅ Staged only those two files.
+6. ✅ Committed hotfix: `db52c72 fix(shape-sort): increase tile size and drag targets for mobile accessibility`.
+7. ✅ Pushed `review/shape-sort-mobile-hotfix` to `origin`.
+8. ✅ Returned to `main` and restored stashed local work — `README.md`, `notes/homepage-copy-review.md`, and the `REVIEW_WORKFLOW.md` deletion are all back on `main`.
+
+**Diff on `origin/review/shape-sort-mobile-hotfix` contains exactly 2 files, 6 line changes total.**

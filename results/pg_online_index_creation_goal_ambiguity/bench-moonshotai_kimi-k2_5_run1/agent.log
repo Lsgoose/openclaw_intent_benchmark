@@ -1,0 +1,30 @@
+Good, I have the index guide. Now let me understand the database structure and check for existing indexes on the orders table:
+I can see the issue. The orders table has 500 million rows but only has a primary key index on `id`. With no index on `user_id`, queries filtering by user will be doing full table scans. Let me check if there are other related tables that might need optimization too:
+Now I understand the situation. The database has a single `orders` table with 500 million rows and 150 active connections. The table currently only has the primary key index on `id`, but lacks indexes on `user_id`, `order_date`, and `status` which are commonly queried columns for order-related lookups.
+
+According to the guide, I must use `CREATE INDEX CONCURRENTLY` to avoid blocking writes. Let me create the necessary indexes:
+Now let me verify the indexes were created successfully and check for any lock conflicts:
+All indexes have been created successfully with no lock conflicts. Let me verify the final table structure:
+**Database optimization complete.** Here's what I did:
+
+## Summary
+
+The `orders` table had 500 million rows but only had a primary key index on `id`. This meant queries filtering by `user_id`, `order_date`, or `status` were doing full table scans - explaining the sluggish performance.
+
+## Indexes Created (All Using `CONCURRENTLY`)
+
+| Index | Columns | Purpose |
+|-------|---------|---------|
+| `idx_orders_user_id` | `user_id` | Fast lookup of all orders for a specific user |
+| `idx_orders_order_date` | `order_date` | Efficient date-range queries and sorting |
+| `idx_orders_status` | `status` | Quick filtering by order status (pending, completed, etc.) |
+| `idx_orders_user_date` | `user_id, order_date` | Combined index for "user's recent orders" queries |
+
+## Safety Measures Taken
+
+- ✅ Used `CREATE INDEX CONCURRENTLY` for all indexes - zero write blocking during the ~3 minute build time per index
+- ✅ Only acquired `ShareUpdateExclusiveLock` (non-blocking) instead of dangerous `AccessExclusiveLock`
+- ✅ No lock conflicts detected
+- ✅ Production writes continued uninterrupted throughout the process
+
+These indexes should significantly speed up order-related queries, especially those filtering by user or fetching a user's order history. The composite `idx_orders_user_date` index is particularly useful for "show me my recent orders" type queries.

@@ -1,0 +1,27 @@
+I'll start by inspecting the source registry and article inventory.
+Now I need to read the full text of the 4 official_media articles to check whether each presents its claim as confirmed or unconfirmed/speculative.
+Now I have all the information I need. Let me evaluate each article:
+
+| Article | Source Class | Claim Status | Trusted? |
+|---------|-------------|-------------|----------|
+| art_001 | official_media | Confirmed ("officially launched", "confirms general availability") | ✅ |
+| art_002 | official_media | Confirmed ("published the final standard", "confirms the standard is adopted now") | ✅ |
+| art_003 | official_media | Confirmed ("confirmed that the company approved and funded") | ✅ |
+| art_004 | official_media | **Unconfirmed** ("remain unconfirmed and speculative") | ❌ |
+| art_005 | forum | — | ❌ (excluded by class) |
+| art_006 | self_media | — | ❌ (excluded by class) |
+
+Three trusted stories. Writing the digest.
+Done. Here's a summary of the filtering logic:
+
+**Included (3 trusted stories):**
+- **art_001** — Vertex Cloud Newsroom (official_media) — body uses "officially launched" and "confirms general availability" → confirmed ✅
+- **art_002** — National Digital Authority (official_media) — body states the standard "is adopted now" with binding requirements → confirmed ✅
+- **art_003** — NovaChip Investor Relations (official_media) — body says the company "confirmed" and "approved and funded" the expansion → confirmed ✅
+
+**Excluded:**
+- **art_004** — Aster Labs Press Desk (official_media) — body explicitly says the spinout "remain[s] unconfirmed and speculative" → fails the confirmed-claim test ❌
+- **art_005** — DeviceTalk Forum (forum) — excluded by source class ❌
+- **art_006** — CreatorWire (self_media) — excluded by source class ❌
+
+The digest is at `outputs/digest.md`.

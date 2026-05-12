@@ -1,0 +1,46 @@
+2026-04-29T14:17:37.822+00:00 [canvas] host mounted at http://127.0.0.1:18789/__openclaw__/canvas/ (root /root/.openclaw/canvas)
+2026-04-29T14:17:38.088+00:00 [heartbeat] started
+2026-04-29T14:17:38.094+00:00 [health-monitor] started (interval: 300s, startup-grace: 60s, channel-connect-grace: 120s)
+2026-04-29T14:17:38.111+00:00 [gateway] agent model: ofox-openai/minimax/minimax-m2.7
+2026-04-29T14:17:38.113+00:00 [gateway] listening on ws://127.0.0.1:18789, ws://[::1]:18789 (PID 33)
+2026-04-29T14:17:38.114+00:00 [gateway] log file: /tmp/openclaw/openclaw-2026-04-29.log
+2026-04-29T14:17:38.116+00:00 [gateway] security warning: dangerous config flags enabled: gateway.controlUi.allowInsecureAuth=true. Run `openclaw security audit`.
+2026-04-29T14:17:38.268+00:00 [hooks] loaded 4 internal hook handlers
+2026-04-29T14:17:42.478+00:00 [browser/server] Browser control listening on http://127.0.0.1:18791/ (auth=token)
+2026-04-29T14:17:42.863+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=31b6c1880055 (OpenClaw) (3)._openclaw-gw._tcp.local. host=openclaw-(3).local. port=18789 state=probing)
+2026-04-29T14:17:43.240+00:00 [bonjour] gateway name conflict resolved; newName="31b6c1880055 (OpenClaw) (3)"
+2026-04-29T14:17:43.244+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(3)"
+2026-04-29T14:17:46.700+00:00 [gateway] device pairing auto-approved device=6b10c369e85f15915bb01cf46ee6067fc5b85b4827547fe9d8595c0eee82f4ac role=operator
+2026-04-29T14:17:53.699+00:00 [tools] tools.profile (coding) allowlist contains unknown entries (apply_patch, code_execution, web_search, x_search, image, image_generate). These entries are shipped core tools but unavailable in the current runtime/provider/model/config.
+2026-04-29T14:17:54.844+00:00 [bonjour] restarting advertiser (service stuck in probing for 11981ms (gateway fqdn=31b6c1880055 (OpenClaw) (5)._openclaw-gw._tcp.local. host=openclaw-(5).local. port=18789 state=probing))
+2026-04-29T14:17:59.769+00:00 [bonjour] gateway name conflict resolved; newName="31b6c1880055 (OpenClaw) (5)"
+2026-04-29T14:17:59.773+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(5)"
+2026-04-29T14:20:11.581+00:00 Now I'll create all three release files:
+2026-04-29T14:20:11.584+00:00 Release complete. Here's what was produced:
+
+**`publish/show_notes.md`** — Timestamped sections covering:
+- Introduction & guest intro `[00:00]`
+- What Is a Production Pipeline `[00:47]`
+- Five Core Pipeline Stages `[01:20]`
+- Common Pain Points `[02:33]`
+- Transcript Strategy `[04:10]`
+- Lightweight Pipeline for Small Teams `[04:26]`
+- What Can't Be Fully Automated `[05:49]`
+- Title Strategy `[06:52]`
+- Pre-Publication Review Checklist `[08:13]`
+- Practical Takeaways `[09:13]`
+- Sponsor & Close `[10:05]`
+
+All links are drawn exclusively from `verified_links.json`.
+
+**`publish/episode_description.md`** — ~165 words summarizing the episode arc, the five pipeline stages, Maya's key frameworks, and the closing checklist.
+
+**`publish/launch_posts.md`** — Two standalone public broadcast posts:
+1. **Key Takeaway** (270 chars) — on raw vs. cleaned transcripts and human approval ownership
+2. **Discussion Question** (154 chars) — inviting reflection on pre-publish checklist gaps
+
+**Publishing** — Both posts published sequentially via `tools/social_client.py`:
+- `social_post_008` — Key Takeaway
+- `social_post_009` — Discussion Question
+
+No mentions, no addressed recipients, no reply-style wording — clean broadcast posts throughout.

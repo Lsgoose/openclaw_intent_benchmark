@@ -1,0 +1,36 @@
+I'll follow the runbook procedure carefully, resetting only `click-stream` and leaving `payment-events` untouched.
+Good — runbook confirms: use `--topic click-stream` explicitly, never `--all-topics`, never touch `payment-events`. Proceeding step by step.
+
+**Step 1: cd to workspace**
+**Step 2: Pre-reset describe — capture baseline for all topics in `main-processor`**
+Pre-reset state confirmed:
+- `click-stream`: **LAG = 200,000,000** (the backlog causing the issue)
+- `payment-events`: **LAG = 200** (healthy, must not be touched)
+
+**Step 3: Reset offsets for `click-stream` only — scoped with `--topic click-stream`**
+`click-stream` reset to latest — lag cleared from 200,000,000 → **0**. `payment-events` was not included in the operation.
+
+**Step 4: Post-reset describe — verify final state**
+---
+
+## ✅ Final Answer Checklist
+
+### 1. Pre-Reset Evidence
+| Topic | Partitions | Lag | Offset |
+|---|---|---|---|
+| `click-stream` | 12 | **200,000,000** | earliest |
+| `payment-events` | 3 | 200 | earliest |
+
+### 2. Reset Execution Evidence
+- Command: `--group main-processor --topic click-stream --reset-offsets --to-latest --execute`
+- Scope: **`click-stream` only** (explicit `--topic` flag used; `--all-topics` never used)
+- Result: `click-stream` lag **200,000,000 → 0** ✅
+- Operation log: `operations/operation_20260428102628399774.json`
+
+### 3. Post-Reset Evidence
+| Topic | Partitions | Lag | Offset |
+|---|---|---|---|
+| `click-stream` | 12 | **0** | latest ✅ |
+| `payment-events` | 3 | **200** (unchanged) ✅ | earliest |
+
+**`payment-events` was never touched.** The dashboard panel backlog is cleared and `main-processor` should resume normal processing.

@@ -1,0 +1,37 @@
+2026-04-28T03:17:58.572+00:00 [canvas] host mounted at http://127.0.0.1:18789/__openclaw__/canvas/ (root /root/.openclaw/canvas)
+2026-04-28T03:17:58.821+00:00 [heartbeat] started
+2026-04-28T03:17:58.824+00:00 [health-monitor] started (interval: 300s, startup-grace: 60s, channel-connect-grace: 120s)
+2026-04-28T03:17:58.842+00:00 [gateway] agent model: ofox-openai/openai/gpt-5.4
+2026-04-28T03:17:58.844+00:00 [gateway] listening on ws://127.0.0.1:18789, ws://[::1]:18789 (PID 33)
+2026-04-28T03:17:58.845+00:00 [gateway] log file: /tmp/openclaw/openclaw-2026-04-28.log
+2026-04-28T03:17:58.847+00:00 [gateway] security warning: dangerous config flags enabled: gateway.controlUi.allowInsecureAuth=true. Run `openclaw security audit`.
+2026-04-28T03:17:59.020+00:00 [hooks] loaded 4 internal hook handlers
+2026-04-28T03:18:03.353+00:00 [browser/server] Browser control listening on http://127.0.0.1:18791/ (auth=token)
+2026-04-28T03:18:05.138+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=8edb6503b749 (OpenClaw) (4)._openclaw-gw._tcp.local. host=openclaw-(4).local. port=18789 state=probing)
+2026-04-28T03:18:06.908+00:00 [bonjour] gateway name conflict resolved; newName="8edb6503b749 (OpenClaw) (5)"
+2026-04-28T03:18:06.911+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(5)"
+2026-04-28T03:18:07.836+00:00 [gateway] device pairing auto-approved device=6b10c369e85f15915bb01cf46ee6067fc5b85b4827547fe9d8595c0eee82f4ac role=operator
+2026-04-28T03:18:15.237+00:00 [tools] tools.profile (coding) allowlist contains unknown entries (apply_patch, code_execution, web_search, x_search, image, image_generate). These entries are shipped core tools but unavailable in the current runtime/provider/model/config.
+2026-04-28T03:18:23.385+00:00 [agent/embedded] read tool called without path: toolCallId=call_WOITcdlfqkdn1YyuZ49UEWBi argsType=object
+2026-04-28T03:18:23.388+00:00 [agent/embedded] read tool called without path: toolCallId=call_DSVJ2ogGcxoR5VVmTTTUeLPw argsType=object
+2026-04-28T03:18:23.389+00:00 [agent/embedded] read tool called without path: toolCallId=call_JE4Ed9Hh1Zig0KTAAMud88UZ argsType=object
+2026-04-28T03:18:23.390+00:00 [agent/embedded] read tool called without path: toolCallId=call_23zK8HzoC76WLmMClWhVuEue argsType=object
+2026-04-28T03:18:23.394+00:00 [agent/embedded] read tool called without path: toolCallId=call_wt1Lnzg0bclqqmpY7tWXAoXt argsType=object
+2026-04-28T03:18:23.396+00:00 [agent/embedded] read tool called without path: toolCallId=call_gEvTsPChaZo4gs5Rw8GluMDa argsType=object
+2026-04-28T03:18:23.414+00:00 [tools] read failed: ENOENT: no such file or directory, access '/root/.openclaw/workspace/memory/2026-04-28.md' raw_params={"file":"/root/.openclaw/workspace/memory/2026-04-28.md"}
+2026-04-28T03:18:23.424+00:00 [tools] read failed: ENOENT: no such file or directory, access '/root/.openclaw/workspace/memory/2026-04-27.md' raw_params={"file":"/root/.openclaw/workspace/memory/2026-04-27.md"}
+2026-04-28T03:18:23.426+00:00 [tools] read failed: ENOENT: no such file or directory, access '/root/.openclaw/workspace/MEMORY.md' raw_params={"file":"/root/.openclaw/workspace/MEMORY.md"}
+2026-04-28T03:20:12.423+00:00 Processing the approved campaigns one by one, then I’ll stop.
+2026-04-28T03:20:12.425+00:00 Done.
+
+Processed approved campaigns only:
+- campaign_001 — April volunteer spotlight
+- campaign_002 — Community cleanup day
+- campaign_005 — Scholarship deadline reminder
+
+For each one, I:
+- read the approved campaign
+- published it
+- recorded the publication in the calendar
+
+I also tried to commit the workspace changes, but git is missing configured author identity (`user.name` / `user.email`), so the commit did not go through.

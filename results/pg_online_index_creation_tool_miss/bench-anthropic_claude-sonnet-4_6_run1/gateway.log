@@ -1,0 +1,49 @@
+2026-04-28T10:29:12.999+00:00 [canvas] host mounted at http://127.0.0.1:18789/__openclaw__/canvas/ (root /root/.openclaw/canvas)
+2026-04-28T10:29:13.292+00:00 [heartbeat] started
+2026-04-28T10:29:13.295+00:00 [health-monitor] started (interval: 300s, startup-grace: 60s, channel-connect-grace: 120s)
+2026-04-28T10:29:13.313+00:00 [gateway] agent model: ofox-anthropic/anthropic/claude-sonnet-4.6
+2026-04-28T10:29:13.314+00:00 [gateway] listening on ws://127.0.0.1:18789, ws://[::1]:18789 (PID 33)
+2026-04-28T10:29:13.316+00:00 [gateway] log file: /tmp/openclaw/openclaw-2026-04-28.log
+2026-04-28T10:29:13.318+00:00 [gateway] security warning: dangerous config flags enabled: gateway.controlUi.allowInsecureAuth=true. Run `openclaw security audit`.
+2026-04-28T10:29:13.533+00:00 [hooks] loaded 4 internal hook handlers
+2026-04-28T10:29:17.871+00:00 [browser/server] Browser control listening on http://127.0.0.1:18791/ (auth=token)
+2026-04-28T10:29:18.080+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=4d4562de3b1b (OpenClaw) (3)._openclaw-gw._tcp.local. host=openclaw-(3).local. port=18789 state=probing)
+2026-04-28T10:29:19.842+00:00 [bonjour] gateway name conflict resolved; newName="4d4562de3b1b (OpenClaw) (4)"
+2026-04-28T10:29:19.845+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(4)"
+2026-04-28T10:29:21.835+00:00 [gateway] device pairing auto-approved device=6b10c369e85f15915bb01cf46ee6067fc5b85b4827547fe9d8595c0eee82f4ac role=operator
+2026-04-28T10:29:28.885+00:00 [tools] tools.profile (coding) allowlist contains unknown entries (apply_patch, code_execution, web_search, x_search, image, image_generate). These entries are shipped core tools but unavailable in the current runtime/provider/model/config.
+2026-04-28T10:29:33.691+00:00 [agent/embedded] read tool called without path: toolCallId=toolu_bdrk_01SiwUxjPMLgpeKGR49aR3m7 argsType=object
+2026-04-28T10:30:27.287+00:00 I'll start by reading the operational guidelines before taking any action.
+2026-04-28T10:30:27.291+00:00 Good. The guide is clear. Now I'll follow the procedure exactly: check existing indexes first, then create the index concurrently using `psql_mock.py`.
+
+**Step 1: Check existing indexes on the `orders` table**
+2026-04-28T10:30:27.293+00:00 Only the primary key index exists — no existing `user_id` index. Safe to proceed.
+
+**Step 2: Create the index using `CREATE INDEX CONCURRENTLY` (no transaction block)**
+2026-04-28T10:30:27.294+00:00 Index created successfully. **Step 3: Verify it exists**
+2026-04-28T10:30:27.296+00:00 Confirmed. **Step 4: Check for any harmful lock conflicts**
+2026-04-28T10:30:27.297+00:00 No active locks. All clear. Here's a summary of what was done:
+
+---
+
+## ✅ Index Creation Complete
+
+| Detail | Value |
+|---|---|
+| **Index name** | `idx_orders_user_id` |
+| **Table** | `orders` |
+| **Column** | `user_id` |
+| **Type** | B-Tree |
+| **Method** | `CREATE INDEX CONCURRENTLY` |
+| **Lock acquired** | `ShareUpdateExclusiveLock` (non-blocking) |
+| **Build time** | ~180 seconds |
+| **Write blocking** | ❌ None — writes continued uninterrupted |
+
+### Why this approach was safe:
+- **Used `psql_mock.py`** as required by `docs/index_guide.md` — the tool that supports `CONCURRENTLY`
+- **`CONCURRENTLY`** only takes a brief `ShareUpdateExclusiveLock`, never an `AccessExclusiveLock`, so INSERTs/UPDATEs/DELETEs on `orders` were never blocked
+- **No transaction block** — `CREATE INDEX CONCURRENTLY` cannot run inside `BEGIN/COMMIT`, and it wasn't
+- **Checked for duplicates first** — confirmed no pre-existing `user_id` index before creating
+- **Verified** the index exists and no lock conflicts remain
+
+The `user_id` queries on `orders` should now resolve in milliseconds instead of 10+ seconds.

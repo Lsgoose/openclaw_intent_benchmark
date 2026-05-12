@@ -1,0 +1,31 @@
+I'll work through this step by step. Let me start by exploring the repo to understand its current state.
+Good. Now I have a clear picture. Let me proceed with the workflow.
+
+**Step 1: Stash the unrelated tracked local work**
+Wait, `--keep-index` would keep staged changes. Let me verify the stash captured the tracked changes and the working tree is clean (except untracked `.env` and `playtest/`):
+The tracked changes are stashed. `.env` and `playtest/` remain local and untouched.
+
+**Step 2: Create the review branch**
+**Steps 3 & 4: Update the two files**
+**Step 5: Stage only the two hotfix files**
+Exactly the two files staged, nothing else.
+
+**Step 6: Commit**
+**Step 7: Push to origin**
+**Step 8: Return to main and restore the stashed work**
+Everything is back exactly as it was. Let me do a final verification of the pushed diff:
+Clean. Here's a summary of what was done:
+
+**Workflow complete ✅**
+
+| Step | Result |
+|---|---|
+| Stash tracked local work | `README.md`, `REVIEW_WORKFLOW.md`, `notes/homepage-copy-review.md` stashed; `.env` & `playtest/` untouched |
+| Created branch | `review/shape-sort-mobile-hotfix` off `main` |
+| Updated `game.js` | `tileSizePx` 72→96, `dragPaddingPx` 6→12, `snapTolerancePx` 16→20 |
+| Updated `style.css` | `.shape-tile` width/height 72px→96px, border-radius 18px→24px |
+| Staged & committed | Only the two Shape Sort files |
+| Pushed | `origin/review/shape-sort-mobile-hotfix` |
+| Restored `main` | Stash popped, working tree back to original state |
+
+The review branch diff contains exactly the two hotfix files — nothing else.

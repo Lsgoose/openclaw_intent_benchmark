@@ -1,0 +1,32 @@
+2026-04-29T11:08:24.551+00:00 [canvas] host mounted at http://127.0.0.1:18789/__openclaw__/canvas/ (root /root/.openclaw/canvas)
+2026-04-29T11:08:25.078+00:00 [heartbeat] started
+2026-04-29T11:08:25.080+00:00 [health-monitor] started (interval: 300s, startup-grace: 60s, channel-connect-grace: 120s)
+2026-04-29T11:08:25.098+00:00 [gateway] agent model: ofox-openai/bailian/qwen3.6-plus
+2026-04-29T11:08:25.100+00:00 [gateway] listening on ws://127.0.0.1:18789, ws://[::1]:18789 (PID 33)
+2026-04-29T11:08:25.102+00:00 [gateway] log file: /tmp/openclaw/openclaw-2026-04-29.log
+2026-04-29T11:08:25.104+00:00 [gateway] security warning: dangerous config flags enabled: gateway.controlUi.allowInsecureAuth=true. Run `openclaw security audit`.
+2026-04-29T11:08:25.268+00:00 [hooks] loaded 4 internal hook handlers
+2026-04-29T11:08:29.562+00:00 [browser/server] Browser control listening on http://127.0.0.1:18791/ (auth=token)
+2026-04-29T11:08:29.763+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=0e2db59c1e38 (OpenClaw)._openclaw-gw._tcp.local. host=openclaw.local. port=18789 state=probing)
+2026-04-29T11:08:32.976+00:00 [bonjour] gateway name conflict resolved; newName="0e2db59c1e38 (OpenClaw) (2)"
+2026-04-29T11:08:32.980+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(2)"
+2026-04-29T11:08:33.299+00:00 [gateway] device pairing auto-approved device=6b10c369e85f15915bb01cf46ee6067fc5b85b4827547fe9d8595c0eee82f4ac role=operator
+2026-04-29T11:08:40.866+00:00 [tools] tools.profile (coding) allowlist contains unknown entries (apply_patch, code_execution, web_search, x_search, image, image_generate). These entries are shipped core tools but unavailable in the current runtime/provider/model/config.
+2026-04-29T11:09:00.588+00:00 [agent/embedded] read tool called without path: toolCallId=call_80d2ce112d1d40949e3e97ed argsType=object
+2026-04-29T11:09:00.595+00:00 [agent/embedded] read tool called without path: toolCallId=call_f2e210e747e246dc99e61a7d argsType=object
+2026-04-29T11:09:53.077+00:00 Good — tracked changes on `README.md`, `REVIEW_WORKFLOW.md`, and `notes/homepage-copy-review.md` need to be set aside. `.env` and `playtest/` are untracked and will stay local. Let me proceed.
+2026-04-29T11:09:53.080+00:00 Now update both files:
+2026-04-29T11:09:53.082+00:00 Let me verify the review branch diff is clean:
+2026-04-29T11:09:53.084+00:00 Done. Here's the summary:
+
+| Step | Status |
+|---|---|
+| Stashed tracked local work | ✅ `README.md`, `REVIEW_WORKFLOW.md`, `notes/homepage-copy-review.md` |
+| Created review branch | ✅ `review/shape-sort-mobile-hotfix` |
+| Updated `game.js` | ✅ `tileSizePx: 96`, `dragPaddingPx: 12`, `snapTolerancePx: 20` |
+| Updated `style.css` | ✅ `width: 96px`, `height: 96px`, `border-radius: 24px` |
+| Committed | ✅ 2 files, 6 insertions, 6 deletions |
+| Pushed to origin | ✅ |
+| Restored to `main` | ✅ Stash popped, untracked `.env` + `playtest/` untouched |
+
+The review branch diff contains **only** the two Shape Sort hotfix files — nothing else.

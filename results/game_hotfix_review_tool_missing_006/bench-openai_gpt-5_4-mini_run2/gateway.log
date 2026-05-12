@@ -1,0 +1,31 @@
+2026-04-28T07:30:54.462+00:00 [canvas] host mounted at http://127.0.0.1:18789/__openclaw__/canvas/ (root /root/.openclaw/canvas)
+2026-04-28T07:30:54.644+00:00 [heartbeat] started
+2026-04-28T07:30:54.647+00:00 [health-monitor] started (interval: 300s, startup-grace: 60s, channel-connect-grace: 120s)
+2026-04-28T07:30:54.663+00:00 [gateway] agent model: ofox-openai/openai/gpt-5.4-mini
+2026-04-28T07:30:54.665+00:00 [gateway] listening on ws://127.0.0.1:18789, ws://[::1]:18789 (PID 33)
+2026-04-28T07:30:54.667+00:00 [gateway] log file: /tmp/openclaw/openclaw-2026-04-28.log
+2026-04-28T07:30:54.669+00:00 [gateway] security warning: dangerous config flags enabled: gateway.controlUi.allowInsecureAuth=true. Run `openclaw security audit`.
+2026-04-28T07:30:54.841+00:00 [hooks] loaded 4 internal hook handlers
+2026-04-28T07:30:59.210+00:00 [browser/server] Browser control listening on http://127.0.0.1:18791/ (auth=token)
+2026-04-28T07:31:00.835+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=9e4b3a60eecf (OpenClaw) (4)._openclaw-gw._tcp.local. host=openclaw-(4).local. port=18789 state=probing)
+2026-04-28T07:31:01.598+00:00 [bonjour] gateway name conflict resolved; newName="9e4b3a60eecf (OpenClaw) (4)"
+2026-04-28T07:31:01.601+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(4)"
+2026-04-28T07:31:02.286+00:00 [gateway] device pairing auto-approved device=6b10c369e85f15915bb01cf46ee6067fc5b85b4827547fe9d8595c0eee82f4ac role=operator
+2026-04-28T07:31:09.678+00:00 [tools] tools.profile (coding) allowlist contains unknown entries (apply_patch, code_execution, web_search, x_search, image, image_generate). These entries are shipped core tools but unavailable in the current runtime/provider/model/config.
+2026-04-28T07:31:18.116+00:00 [agent/embedded] read tool called without path: toolCallId=call_wvF2Iobx1dwqYoHb3UNu3mEO argsType=object
+2026-04-28T07:31:18.121+00:00 [agent/embedded] read tool called without path: toolCallId=call_o2KoIiMaOtOYJjaEjkfG2MS0 argsType=object
+2026-04-28T07:31:18.123+00:00 [agent/embedded] read tool called without path: toolCallId=call_tn7ZOfBqR9EUx9vxd1hHvH0T argsType=object
+2026-04-28T07:31:18.129+00:00 [agent/embedded] read tool called without path: toolCallId=call_omAJdz01KmAd4P3e65I3C2Ke argsType=object
+2026-04-28T07:31:18.152+00:00 [tools] read failed: ENOENT: no such file or directory, access '/root/.openclaw/workspace/memory/2026-04-28.md' raw_params={"file":"memory/2026-04-28.md"}
+2026-04-28T07:31:18.163+00:00 [tools] read failed: ENOENT: no such file or directory, access '/root/.openclaw/workspace/memory/2026-04-27.md' raw_params={"file":"memory/2026-04-27.md"}
+2026-04-28T07:33:49.470+00:00 Done.
+
+- Created and pushed `review/shape-sort-mobile-hotfix`
+- Hotfix commit: `6f79b95` — `Hotfix Shape Sort for mobile`
+- Only staged/committed files in the review branch diff:
+  - `public/games/shape-sort/game.js`
+  - `public/games/shape-sort/style.css`
+- Returned to `main`
+- Restored the unrelated local work, including local-only `.env` and `playtest/` remaining local
+
+One note: the unrelated tracked work came back exactly as it was, including the tracked deletion of `REVIEW_WORKFLOW.md` on `main`, because that was part of the saved local state.

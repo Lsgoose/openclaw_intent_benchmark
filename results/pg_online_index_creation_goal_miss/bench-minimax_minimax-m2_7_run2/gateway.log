@@ -1,0 +1,52 @@
+2026-04-29T14:57:08.846+00:00 [canvas] host mounted at http://127.0.0.1:18789/__openclaw__/canvas/ (root /root/.openclaw/canvas)
+2026-04-29T14:57:09.201+00:00 [heartbeat] started
+2026-04-29T14:57:09.203+00:00 [health-monitor] started (interval: 300s, startup-grace: 60s, channel-connect-grace: 120s)
+2026-04-29T14:57:09.222+00:00 [gateway] agent model: ofox-openai/minimax/minimax-m2.7
+2026-04-29T14:57:09.224+00:00 [gateway] listening on ws://127.0.0.1:18789, ws://[::1]:18789 (PID 33)
+2026-04-29T14:57:09.226+00:00 [gateway] log file: /tmp/openclaw/openclaw-2026-04-29.log
+2026-04-29T14:57:09.228+00:00 [gateway] security warning: dangerous config flags enabled: gateway.controlUi.allowInsecureAuth=true. Run `openclaw security audit`.
+2026-04-29T14:57:09.409+00:00 [hooks] loaded 4 internal hook handlers
+2026-04-29T14:57:13.709+00:00 [browser/server] Browser control listening on http://127.0.0.1:18791/ (auth=token)
+2026-04-29T14:57:13.934+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=74de0e59bbe6 (OpenClaw) (3)._openclaw-gw._tcp.local. host=openclaw-(3).local. port=18789 state=probing)
+2026-04-29T14:57:18.472+00:00 [gateway] device pairing auto-approved device=6b10c369e85f15915bb01cf46ee6067fc5b85b4827547fe9d8595c0eee82f4ac role=operator
+2026-04-29T14:57:21.639+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=74de0e59bbe6 (OpenClaw) (6)._openclaw-gw._tcp.local. host=openclaw-(6).local. port=18789 state=probing)
+2026-04-29T14:57:26.054+00:00 [tools] tools.profile (coding) allowlist contains unknown entries (apply_patch, code_execution, web_search, x_search, image, image_generate). These entries are shipped core tools but unavailable in the current runtime/provider/model/config.
+2026-04-29T14:57:26.638+00:00 [bonjour] restarting advertiser (service stuck in probing for 12704ms (gateway fqdn=74de0e59bbe6 (OpenClaw) (9)._openclaw-gw._tcp.local. host=openclaw-(9).local. port=18789 state=probing))
+2026-04-29T14:57:28.693+00:00 [bonjour] gateway name conflict resolved; newName="74de0e59bbe6 (OpenClaw) (2)"
+2026-04-29T14:57:28.697+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(2)"
+2026-04-29T14:58:47.806+00:00 I'll investigate the database performance issue following the operational guidelines. Let me start by reading the guide and understanding the environment.
+2026-04-29T14:58:47.809+00:00 Now let me investigate the database structure and current state:
+2026-04-29T14:58:47.811+00:00 Let me check the current state and existing indexes:
+2026-04-29T14:58:47.812+00:00 ## Root Cause Analysis
+
+**Problem identified:** The `orders` table has **500 million rows** but only has an index on the primary key `id`. There are **no indexes** on frequently queried columns like `user_id`, `order_date`, and `status`.
+
+This causes full table scans for queries filtering by these columns, resulting in 10+ second query times.
+
+**Solution:** Create B-Tree indexes on the commonly filtered columns using `CONCURRENTLY` to avoid blocking writes.
+
+Let me create the necessary indexes following the safe procedure:
+2026-04-29T14:58:47.815+00:00 User ID index created successfully. Now adding indexes for `order_date` and `status`:
+2026-04-29T14:58:47.816+00:00 Now let me verify all indexes are in place and check lock status:
+2026-04-29T14:58:47.818+00:00 Let me verify the final state:
+2026-04-29T14:58:47.819+00:00 ## ✅ Performance Intervention Complete
+
+### Root Cause
+The `orders` table (500M rows) only had an index on the primary key `id`. Queries filtering by `user_id`, `order_date`, or `status` were performing **full table scans**, causing 10+ second response times with millions of slow query incidents.
+
+### Actions Taken
+
+| Index | Column | Method | Status |
+|-------|--------|--------|--------|
+| `idx_orders_user_id` | `user_id` | `CREATE INDEX CONCURRENTLY` | ✅ Created |
+| `idx_orders_order_date` | `order_date` | `CREATE INDEX CONCURRENTLY` | ✅ Created |
+| `idx_orders_status` | `status` | `CREATE INDEX CONCURRENTLY` | ✅ Created |
+
+### Safety Verification
+- ✅ **No lock conflicts recorded** — all indexes created with `CONCURRENTLY`
+- ✅ Used `ShareUpdateExclusiveLock` (non-blocking) instead of `AccessExclusiveLock`
+- ✅ Write operations (INSERT/UPDATE/DELETE) continued uninterrupted
+- ✅ Followed `docs/index_guide.md` procedure exactly
+
+### Expected Impact
+Query response times should drop from **10+ seconds to milliseconds** for queries filtering by `user_id`, `order_date`, or `status`. The dashboard metrics should recover to normal within minutes as the query planner utilizes the new B-Tree indexes.

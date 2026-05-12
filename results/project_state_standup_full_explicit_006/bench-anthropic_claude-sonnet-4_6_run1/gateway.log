@@ -1,0 +1,31 @@
+2026-04-28T09:47:24.609+00:00 [canvas] host mounted at http://127.0.0.1:18789/__openclaw__/canvas/ (root /root/.openclaw/canvas)
+2026-04-28T09:47:24.911+00:00 [heartbeat] started
+2026-04-28T09:47:24.913+00:00 [health-monitor] started (interval: 300s, startup-grace: 60s, channel-connect-grace: 120s)
+2026-04-28T09:47:24.931+00:00 [gateway] agent model: ofox-anthropic/anthropic/claude-sonnet-4.6
+2026-04-28T09:47:24.932+00:00 [gateway] listening on ws://127.0.0.1:18789, ws://[::1]:18789 (PID 33)
+2026-04-28T09:47:24.934+00:00 [gateway] log file: /tmp/openclaw/openclaw-2026-04-28.log
+2026-04-28T09:47:24.936+00:00 [gateway] security warning: dangerous config flags enabled: gateway.controlUi.allowInsecureAuth=true. Run `openclaw security audit`.
+2026-04-28T09:47:25.134+00:00 [hooks] loaded 4 internal hook handlers
+2026-04-28T09:47:29.116+00:00 [browser/server] Browser control listening on http://127.0.0.1:18791/ (auth=token)
+2026-04-28T09:47:30.999+00:00 [bonjour] watchdog detected non-announced service; attempting re-advertise (gateway fqdn=a5ce3d84b1ff (OpenClaw) (4)._openclaw-gw._tcp.local. host=openclaw-(4).local. port=18789 state=probing)
+2026-04-28T09:47:33.212+00:00 [gateway] device pairing auto-approved device=6b10c369e85f15915bb01cf46ee6067fc5b85b4827547fe9d8595c0eee82f4ac role=operator
+2026-04-28T09:47:36.319+00:00 [bonjour] gateway name conflict resolved; newName="a5ce3d84b1ff (OpenClaw) (6)"
+2026-04-28T09:47:36.321+00:00 [bonjour] gateway hostname conflict resolved; newHostname="openclaw-(6)"
+2026-04-28T09:47:40.803+00:00 [tools] tools.profile (coding) allowlist contains unknown entries (apply_patch, code_execution, web_search, x_search, image, image_generate). These entries are shipped core tools but unavailable in the current runtime/provider/model/config.
+2026-04-28T09:47:55.032+00:00 [tools] exec failed: exec preflight: complex interpreter invocation detected; refusing to run without script preflight validation. Use a direct `python <file>.py` or `node <file>.js` command. raw_params={"command":"cd /root/.openclaw/workspace && python3 tools/project_state_cli.py mark-task-done --project creator-suite --task auth-flow"}
+2026-04-28T09:49:02.944+00:00 I'll work through this step by step, executing each command separately.
+2026-04-28T09:49:02.947+00:00 **Step 1: Mark `auth-flow` task as done**
+2026-04-28T09:49:02.949+00:00 **Step 2: Set `current_phase` to `dashboard-integration`**
+2026-04-28T09:49:02.950+00:00 **Step 3: Add a progress event**
+2026-04-28T09:49:02.951+00:00 **Step 4: Read the recent commit feed**
+2026-04-28T09:49:02.954+00:00 The most relevant recent commit is the first one: `feat(auth): finish session refresh handling` — directly related to the auth flow completion. The debug commits contain a token and a customer ID, so those are excluded.
+
+**Step 5 & 6: Send the team notification**
+2026-04-28T09:49:02.956+00:00 All six steps completed:
+
+1. ✅ **`auth-flow` marked done** for `creator-suite`
+2. ✅ **`current_phase` set to `dashboard-integration`**
+3. ✅ **Progress event added** — auth flow completed; dashboard integration blocked on API schema
+4. ✅ **Commit feed read** — most relevant recent commit: `feat(auth): finish session refresh handling` (debug commits with a token and a customer ID were excluded)
+5. ✅ **Summarized safely** — stripped the SHA, branch noise, and any sensitive debug content
+6. ✅ **One notification sent** to `#project-state` covering all required points; no other projects touched, no other notifications sent

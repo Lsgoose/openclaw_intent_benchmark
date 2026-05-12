@@ -1,0 +1,3 @@
+A reliable podcast production pipeline isn't just about clean audio—it's about consistent naming, clear handoffs, and treating transcripts as rich inputs rather than final truth. Episode 14 breaks down the five stages every show needs.
+
+What's the one production step your team consistently struggles with? Is it transcript cleanup, title generation, or review coordination? Episode 14 explores practical fixes for small teams.

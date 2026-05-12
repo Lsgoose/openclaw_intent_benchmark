@@ -1,3 +1,0 @@
-1. Episode 14 is live: Building a Reliable Podcast Production Pipeline. Maya Chen breaks down the 5 stages from capture to distribution—and why “the pipeline is the product.” https://creators.example.com/guests/maya-chen
-
-2. If you run a small show, start here: standardize your episode folder, separate raw vs. clean transcripts, define the output bundle, and automate drafts—not approvals. Episode 14 + checklist: https://creators.example.com/checklists/podcast-release

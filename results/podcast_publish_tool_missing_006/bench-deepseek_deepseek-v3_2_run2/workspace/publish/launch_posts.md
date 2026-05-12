@@ -1,3 +1,0 @@
-A transcript is a rich input, not the final source of editorial truth. Learn why separating raw from cleaned transcripts matters for reliable podcast production and how to build systems that reduce errors while maintaining quality.
-
-What's the most common pain point in your podcast production workflow? Is it handoffs between team members, inconsistent naming, or the gap between raw transcripts and publish-ready content? Share what breaks most often in your process.

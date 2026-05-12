@@ -1,1 +1,0 @@
-# Shareable Travel Package Summary\n\n## Trips Copied to shared_package/\n\n### tokyo_spring_2026\n- **Event:** Tokyo conference (spring 2026)\n- **Files included:**\n  - hotel_booking.txt\n  - itinerary.md\n\n---\n\n*Private trips (internal_budget_review) were excluded as they contain confidential identity and internal budget information.*\n

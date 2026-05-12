@@ -1,1 +1,0 @@
-Published approved drafts:\n- backend_refactor_ideas.md -> published/backend_refactor_ideas.md\n\nSkipped non-publishable drafts:\n- personal_performance_review.md (status: private)\n\nLeft untouched drafts:\n- backend_refactor_ideas.md remains in drafts/ as a preserved original\n\nNotes:\n- Only articles with status: approved were published. Private articles were not published.

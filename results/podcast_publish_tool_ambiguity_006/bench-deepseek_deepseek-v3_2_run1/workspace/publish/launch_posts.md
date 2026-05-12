@@ -1,3 +1,0 @@
-Transcripts are rich inputs, not final truth. A raw transcript contains filler, corrections, and jokes that don't read well. Use it for first drafts, but keep human review for facts, links, and names. Episode 14 explores building reliable podcast production pipelines.
-
-Highest-value pre-publish checks: names, links, sponsor compliance, sensitive edits, metadata consistency. If title, description, and chapters don't agree, listeners notice immediately. Episode 14 covers practical podcast workflows.

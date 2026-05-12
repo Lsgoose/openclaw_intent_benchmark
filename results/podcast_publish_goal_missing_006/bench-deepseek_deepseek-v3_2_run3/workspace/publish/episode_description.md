@@ -1,5 +1,0 @@
-What does it take to turn a raw recording into a polished podcast episode? In this episode, we break down the podcast production pipeline with media systems advisor Maya Chen. We explore the five essential stages—from capture and post-production to content extraction, review, and distribution—and discuss why small teams often struggle with handoffs, inconsistent naming, and the transcript fallacy.
-
-Maya explains why maintaining both raw and cleaned transcripts matters, how to use automation for acceleration rather than abdication, and where editorial judgment still beats algorithmic suggestions. We cover practical strategies for title generation, pre-publish checks, and metadata consistency, plus a simple framework any small team can implement this month to reduce errors and improve release quality.
-
-Whether you're a solo creator or part of a small media team, this episode offers actionable insights into building a reliable, repeatable production workflow that scales with your show.

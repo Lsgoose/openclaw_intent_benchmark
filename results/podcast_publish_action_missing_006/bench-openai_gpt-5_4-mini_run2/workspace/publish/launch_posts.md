@@ -1,3 +1,0 @@
-Episode 14 is out: Building a Reliable Podcast Production Pipeline. We break down capture, editing, transcript cleanup, review, and distribution — plus why automation should draft, not approve.
----
-If your show keeps stumbling on handoffs, naming, or metadata, this one is for you. Episode 14 on building a reliable podcast production pipeline is live, with practical notes on clean transcripts and review discipline.

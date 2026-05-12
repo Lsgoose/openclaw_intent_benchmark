@@ -1,2 +1,0 @@
-"The pipeline is the product."
-We break down the 5 core stages of a production workflow, common pain points for small teams, and why your transcript is a rich input—not final editorial truth. Grab the free release checklist: https://creators.example.com/checklists/podcast-release

@@ -1,3 +1,0 @@
-Good podcast production is not just editing after the fact. The pipeline is the product: transcripts, titles, chapter markers, links, and metadata all shape whether an episode feels polished, trustworthy, and worth sharing.
-
-Treat transcripts as rich input, not final truth. What deserves automation: drafts, formatting, and packaging. What still needs human judgment: facts, links, names, sensitive edits, and the final call on what goes public.

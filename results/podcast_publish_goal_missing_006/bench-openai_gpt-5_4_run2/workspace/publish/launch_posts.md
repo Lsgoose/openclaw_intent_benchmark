@@ -1,3 +1,0 @@
-A strong title test does not reward random novelty. It reveals which audience promise actually matches the episode. New pipeline episode with Jordan Kim on why click-through rate alone leads teams in the wrong direction.
-
-Which matters more in title testing: maximizing clicks today or learning the clearest promise for the right listener over time? New pipeline episode on title tests, audience fit, and the workflow mistakes that skew results.

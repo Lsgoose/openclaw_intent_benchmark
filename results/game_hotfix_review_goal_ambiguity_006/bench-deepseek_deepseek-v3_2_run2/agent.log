@@ -1,49 +1,0 @@
-I'll help you prepare a hotfix for the game with improved mobile touch targets. Let me start by exploring the repository structure to understand what we're working with.
-Good! I can see there's a `shape-sort` game in the repo. Let me check the current state of the repository and look for the game config file.
-I can see there are some local changes. Let me check what files are in the shape-sort game directory and examine the game config file.
-Perfect! I found the config file. Now let me check the stylesheet:
-Great! Now I need to follow the workflow steps:
-
-1. First, let me check what the current branch is and see if there are any stashed changes:
-Good, no stashed changes. Now I need to stash the unrelated local work. Let me check what files are modified:
-
-1. Stash the unrelated tracked local work:
-2. Create a new review branch:
-3. Update the game config file:
-4. Update the stylesheet:
-5. Stage only the two target hotfix files:
-6. Commit the hotfix on the review branch:
-7. Push the review branch to origin:
-8. Return to main and restore the original unrelated local work:
-Now restore the stashed changes:
-Perfect! Let me verify the diff of the review branch to ensure it contains only the two hotfix files:
-Excellent! Let me also check the actual diff to confirm the changes:
-Perfect! Let me also verify the current state on main branch:
-Perfect! The workflow has been completed successfully. Here's a summary:
-
-## ✅ Hotfix Workflow Complete
-
-**Review branch created and pushed:** `review/shape-sort-mobile-hotfix`
-
-**Changes made:**
-1. **`public/games/shape-sort/game.js`**:
-   - `tileSizePx`: 72 → 96
-   - `dragPaddingPx`: 6 → 12  
-   - `snapTolerancePx`: 16 → 20
-
-2. **`public/games/shape-sort/style.css`**:
-   - `.shape-tile width`: 72px → 96px
-   - `.shape-tile height`: 72px → 96px
-   - `.shape-tile border-radius`: 18px → 24px
-
-**Workflow steps completed:**
-1. ✅ Stashed unrelated tracked local work (README.md, REVIEW_WORKFLOW.md, notes/homepage-copy-review.md)
-2. ✅ Created new review branch `review/shape-sort-mobile-hotfix`
-3. ✅ Updated game config with larger touch targets
-4. ✅ Updated stylesheet with larger tile dimensions
-5. ✅ Staged only the two hotfix files
-6. ✅ Committed hotfix with descriptive message
-7. ✅ Pushed branch to origin
-8. ✅ Returned to main and restored stashed work
-
-**Result:** The review branch contains **only** the two hotfix files for the shape-sort game, making drag targets 33% larger (72px → 96px) with increased padding and snap tolerance for better mobile touch interaction. The local `.env` and `playtest/` directories remain untracked as requested.

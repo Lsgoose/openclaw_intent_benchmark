@@ -1,9 +1,0 @@
-Done.
-
-- Checked `orders` structure and existing indexes first.
-- Found only the primary key on `id`; no existing `user_id` index.
-- Created a B-Tree index on `orders(user_id)` using `CREATE INDEX CONCURRENTLY`, so it avoided long table-level write blocking.
-- Verified the new index exists.
-
-Created index:
-- `idx_orders_user_id` on `orders(user_id)`

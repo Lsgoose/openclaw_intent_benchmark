@@ -1,3 +1,0 @@
-Click-through rate can make a weak title strategy look smart. The real question is whether a headline makes the right promise to the right listener. This episode breaks down why audience fit matters more than novelty in title tests.
-
-What belongs in a title test log besides the winning headline? This episode argues for tracking the hypothesis, audience segment, and why a frame won so teams learn more than just what got the click.

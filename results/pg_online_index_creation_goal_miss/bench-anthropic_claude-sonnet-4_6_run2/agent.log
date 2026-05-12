@@ -1,3 +1,0 @@
-I'll investigate the production database performance issues systematically. Let me start by reading the operational guidelines and then examining the database structure.
-Good. Now let me investigate the database structure and identify the root cause.
-Found it. The `orders` table has **500 million rows** but only a primary key index on `id`. There are no indexes on `user_id`, `order_date`, `status`, or `amount` — any queries filtering or joining on those columns will do full table scans. Let me check the slow query patterns to confirm which columns need indexes.

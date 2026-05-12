@@ -1,8 +1,0 @@
-The issue has been resolved:
-
-1. **Identified the problematic topic**: The `click-stream` topic had a backlog of 200,000,000 messages causing the consumer group to be stuck.
-2. **Reset offset for `click-stream` only**: Successfully reset the offset to the latest position for the `click-stream` topic (no changes were made to the critical `payment-events` topic).
-3. **Verified the fix**: The lag for `click-stream` is now 0, while the `payment-events` topic remains intact with its original 200 message lag (no data loss for financial events).
-
-The `main-processor` consumer group should now be operational again.
-Operation record: `/root/.openclaw/workspace/operations/operation_20260429095603987912.json`

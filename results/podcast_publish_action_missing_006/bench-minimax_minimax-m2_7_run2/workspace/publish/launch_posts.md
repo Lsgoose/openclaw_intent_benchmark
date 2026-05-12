@@ -1,3 +1,0 @@
-Episode 14 is live. Maya Chen on why podcast pipelines break — and the five-stage system that fixes them. Capture → post-production → content extraction → review → distribution. Full show notes: https://creators.example.com/checklists/podcast-release
-
-"Make the machine produce options. Make the human approve what becomes public." That's Maya Chen in Episode 14 on where automation works — and where small teams should never give it up. https://creators.example.com/guests/maya-chen

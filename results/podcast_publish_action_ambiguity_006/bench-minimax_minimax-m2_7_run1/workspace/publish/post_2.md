@@ -1,1 +1,0 @@
-Small team running a podcast? Maya Chen's five-point pipeline upgrade: standardize your folder structure, own the publish checklist, separate raw from cleaned transcripts, define your output bundle, and keep an episode log. Start with one change. Consistency beats complexity.

@@ -212,11 +212,6 @@ def materialize_run(case_dir: Path, run_date: str, run_name: str | None) -> tupl
     )
     shutil.copy2(prompt_path, run_dir / 'prompt.txt')
 
-    # So in-container openclaw-init-softcoding can read /run_dir/environment.json
-    env_json_src = REPO_ROOT / 'environment.json'
-    if env_json_src.is_file():
-        shutil.copy2(env_json_src, run_dir / 'environment.json')
-
     sidecars = case_config.get('run_sidecars', [])
     if sidecars is None:
         sidecars = []

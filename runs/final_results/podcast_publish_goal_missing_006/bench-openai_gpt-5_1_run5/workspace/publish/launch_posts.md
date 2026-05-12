@@ -1,3 +1,0 @@
-Title tests fail when they chase novelty and click-through rate instead of a real audience promise. Build a simple experiment log that records your hypothesis, segment, and why the winning frame worked, and you’ll turn title testing from a slot machine into a learning engine.
-
-Teams that treat a “winning” headline as a magic bullet usually skip the context. When you reuse a title without the original audience, promise, or platform in mind, performance drops. What’s one change you could make this month to record more context for every title test you run?

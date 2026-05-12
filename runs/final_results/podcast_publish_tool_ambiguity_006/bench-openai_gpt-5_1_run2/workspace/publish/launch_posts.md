@@ -1,3 +1,0 @@
-A reliable podcast isn’t just about great conversations—it’s about the systems that turn raw recordings into clean audio, transcripts, chapters, and aligned metadata. Episode 14 breaks down how small teams can design a simple, dependable production pipeline that makes every episode easier to ship and easier to trust.
-
-What part of your podcast production pipeline breaks most often—handoffs, transcripts, titles, or review—and what’s one change you could make this month to reduce those errors?

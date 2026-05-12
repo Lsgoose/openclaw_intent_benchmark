@@ -1,1 +1,0 @@
-# Publish Review\n\nPublished approved drafts:\n- api_design_patterns.md\n- team_onboarding_guide.md\n\nSkipped drafts:\n- backend_refactor_ideas.md — status: draft\n- personal_performance_review.md — status: private (not publishable)\n\nNotes:\n- Verified frontmatter status before publishing.\n- Private content was left untouched.\n- Draft originals were preserved in drafts/.

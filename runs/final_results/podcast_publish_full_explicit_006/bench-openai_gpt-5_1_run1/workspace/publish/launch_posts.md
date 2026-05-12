@@ -1,3 +1,0 @@
-Reliable podcasts aren’t an accident—they’re the result of a clear production pipeline. In Ep 14, we break down how small teams can go from raw recording to consistent, trustworthy releases with better transcripts, review checklists, and automation that accelerates (not replaces) judgment.
-
-Is your podcast production pipeline something you can describe on one page? If not, Ep 14 will help you define a simple folder structure, checklist, and output bundle so every episode moves from recording to publish without relying on memory or “final_v2_real_final.wav.”

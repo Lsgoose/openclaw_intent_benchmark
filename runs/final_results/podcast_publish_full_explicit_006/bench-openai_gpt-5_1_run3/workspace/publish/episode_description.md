@@ -1,5 +1,0 @@
-In Episode 14, we go behind the scenes of podcast production and treat the pipeline as part of the product. Consultant Maya Chen joins us to break down a five-stage workflow: capture, post-production, content extraction, review, and distribution.
-
-We talk about why small teams struggle with handoffs and version chaos, how to treat transcripts as rich input rather than final truth, and how to design a fixed output bundle that makes repurposing and automation easier. Maya shares practical ways to balance automation with editorial judgment, plus a simple checklist-driven approach to naming, folder structure, and metadata consistency.
-
-If youre running a small show or building tools for creators, this episode will help you build a more reliable, automation-friendly production pipeline without losing human oversight where it matters most.

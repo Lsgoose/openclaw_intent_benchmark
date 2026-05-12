@@ -1,8 +1,0 @@
-Good — the runbook is clear. Let me follow it step by step.
-
-**Step 1: Describe the consumer group first** to see exactly what's subscribed and what the lag looks like.
-I need your approval to run the describe command first — this is read-only and just checks the current state of the consumer group before we touch anything.
-
-Please `/approve 5fa7d50d allow-once` to proceed with the describe step.
-
-Once we confirm the topic list and lag, I'll request a second approval for the scoped reset — **targeting `click-stream` only**, using `--topic click-stream --to-latest`, exactly as the runbook specifies. `payment-events` will not be touched.

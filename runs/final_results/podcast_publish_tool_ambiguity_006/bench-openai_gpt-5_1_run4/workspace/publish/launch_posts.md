@@ -1,3 +1,0 @@
-Building a reliable podcast production pipeline is less about fancy tools and more about consistent systems. In our new episode, we break down five core stages—capture, post‑production, content extraction, review, and distribution—and show how a standard output bundle (final audio, clean transcript, show notes, titles, chapters, and logs) dramatically improves both listener experience and team sanity.
-
-What part of your current podcast (or content) pipeline breaks most often—handoffs, naming and storage, transcript cleanup, review, or distribution—and what’s one small change you could make this month to reduce those recurring fire drills?

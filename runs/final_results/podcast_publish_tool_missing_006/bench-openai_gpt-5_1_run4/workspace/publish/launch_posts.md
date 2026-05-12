@@ -1,3 +1,0 @@
-A reliable podcast pipeline is a creative advantage. In Episode 14, we unpack how small teams can go from raw recording to a consistent bundle of assets—clean audio, transcript, show notes, titles, chapters, and social clips—without depending on memory or heroics.
-
-What’s the weakest link in your current podcast production pipeline—capture, post-production, content extraction, review, or distribution—and what one change this month would make the biggest difference?

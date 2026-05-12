@@ -1,6 +1,0 @@
-The issue is clear: 72px tiles with only 6px drag padding are too small/unforgiving on touch screens. I'll bump the tile size and drag padding to phone-friendly values, then create and push the branch.
-Branch is up at `origin/review/shape-sort-mobile-hotfix`. Here's what changed:
-
-**`style.css`** — `.shape-tile` bumped from 72×72px to **96×96px** (border-radius scaled proportionally from 18px → 24px).
-
-**`game.js`** — `tileSizePx` updated to match (72 → **96**), and `dragPaddingPx` increased from 6px → **16px** so the grab hit-area extends well beyond the tile edge — much more forgiving for fat fingers.

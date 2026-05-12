@@ -1,5 +1,0 @@
-Maya Chen joins the show to unpack how podcast production pipelines shape listener experience. She breaks the process into five stages—capture, post-production, content extraction, review, and distribution—then identifies where small teams typically struggle: handoffs, inconsistent naming, and treating raw transcripts as publish-ready content.
-
-The core insight: transcripts are rich inputs, not final editorial truth. They work well for first drafts of summaries and quotes, but facts, names, links, and sponsor language all need human verification. Maya recommends small teams adopt standardized folder structures, a fixed "output bundle" for every episode, and the discipline to separate raw transcripts from cleaned versions.
-
-On automation, she cautions against abdicating editorial judgment. Machines can accelerate repetitive tasks like transcription cleanup and formatting, but edge cases—guest corrections, legal concerns, sensitive edits—require human ownership. The episode closes with a five-step checklist for improving any pipeline this month, and a reminder that consistency matters more than complexity.
